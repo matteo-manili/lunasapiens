@@ -16,8 +16,9 @@ public class LunasapiensApplication {
 
     @GetMapping("/")
     public String homePage(@RequestParam(value = "myName", defaultValue = "World") String name) {
-        return String.format("HOME PAGE", name);
+        return String.format("HOME PAGE AAAAA", name);
     }
+    /// ciao
 
     @GetMapping("/hello")
     public String sayHello(@RequestParam(value = "myName", defaultValue = "World") String name) {
