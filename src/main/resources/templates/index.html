@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>La mia Pagina</title>
+    <meta charset="UTF-8">
+    <title>Landing Page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h1>Benvenuto sulla mia pagina Spring Boot!</h1>
-<p>Questa è una pagina HTML di esempio. INDEX</p>
+<div class="container">
+    <h1>Welcome to our colorful landing page!</h1>
+    <p th:text="${message}">This is a dynamic message with style.</p>
+    <button class="btn" onclick="changeColor()">Change Color</button>
+</div>
+
+<script>
+    function changeColor() {
+        const colors = ["#ff6666", "#66ff66", "#6666ff", "#ffff66"];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.style.backgroundColor = randomColor;
+    }
+</script>
 </body>
 </html>

@@ -11,7 +11,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-        model.addAttribute("name", name);
+        model.addAttribute("message", "Welcome to our dynamic landing page!");
         return "index";
     }
 
@@ -22,13 +22,6 @@ public class IndexController {
         return "greeting";
     }
 
-
-    @GetMapping("/index")
-    public String index_2(Model model) {
-        model.addAttribute("message", "Benvenuto!");
-        // Puoi eseguire operazioni o passare dati al model qui se necessario
-        return "index"; // Assumi che "index" sia il nome del tuo template HTML (senza estensione)
-    }
 
 
 
