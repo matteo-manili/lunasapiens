@@ -51,7 +51,7 @@ public class DatabaseConfig {
             dataSource.setUsername(env.getProperty("spring.datasource.username"));
             dataSource.setPassword(env.getProperty("spring.datasource.password"));
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
             Properties properties = new Properties();
             try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
