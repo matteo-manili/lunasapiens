@@ -1,42 +1,23 @@
 package com.lunasapiens;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 
 @Configuration
-// in questo modo può leggere il file application-local.properties. per attivare il servizio spring profiles ho inserito
-// nel file application.properties la riga "spring.profiles.active=local", spring sa che dovrà leggere il application-local.properties
-// perché contiene "local" nel nome
-//@PropertySource("classpath:application-${spring.profiles.active}.properties")
-
-//@PropertySource("file:C:/intellij_work/lunasapiens-application-db.properties")
-
-
 public class DatabaseConfig {
-
-    /*
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
-
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
-*/
-
 
     @Autowired
     private Environment env;
@@ -51,6 +32,9 @@ public class DatabaseConfig {
             dataSource.setUsername(env.getProperty("spring.datasource.username"));
             dataSource.setPassword(env.getProperty("spring.datasource.password"));
 
+            String databaseVersion = getPostgreSQLVersion(dataSource);
+            System.out.println("111 Versione di PostgreSQL: " + databaseVersion);
+
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
             Properties properties = new Properties();
@@ -59,6 +43,9 @@ public class DatabaseConfig {
                 dataSource.setUrl(properties.getProperty("spring.datasource.url"));
                 dataSource.setUsername(properties.getProperty("spring.datasource.username"));
                 dataSource.setPassword(properties.getProperty("spring.datasource.password"));
+
+                String databaseVersion = getPostgreSQLVersion(dataSource);
+                System.out.println("222 Versione di PostgreSQL: " + databaseVersion);
             } catch (IOException ioException) {
                 throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
             }
@@ -66,5 +53,24 @@ public class DatabaseConfig {
 
         return dataSource;
     }
+
+
+    // Metodo per ottenere la versione di PostgreSQL dal database
+    private String getPostgreSQLVersion(DataSource dataSource) {
+        String version = null;
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT version()")) {
+
+            if (resultSet.next()) {
+                version = resultSet.getString(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return version;
+    }
+
+
 }
 
