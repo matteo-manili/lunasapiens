@@ -1,3 +1,9 @@
+
+### FILE DEL PROGETTO LUNASAPIENS ESCLUSI DAL REPOSITORY GITHUB ###
+application-local.properties
+
+
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
