@@ -31,10 +31,7 @@ public class DatabaseConfig {
             dataSource.setUrl(env.getProperty("spring.datasource.url"));
             dataSource.setUsername(env.getProperty("spring.datasource.username"));
             dataSource.setPassword(env.getProperty("spring.datasource.password"));
-
-            String databaseVersion = getPostgreSQLVersion(dataSource);
-            System.out.println("111 Versione di PostgreSQL: " + databaseVersion);
-
+            //System.out.println("111 Versione di PostgreSQL: " + getPostgreSQLVersion(dataSource));
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
             Properties properties = new Properties();
@@ -43,14 +40,11 @@ public class DatabaseConfig {
                 dataSource.setUrl(properties.getProperty("spring.datasource.url"));
                 dataSource.setUsername(properties.getProperty("spring.datasource.username"));
                 dataSource.setPassword(properties.getProperty("spring.datasource.password"));
-
-                String databaseVersion = getPostgreSQLVersion(dataSource);
-                System.out.println("222 Versione di PostgreSQL: " + databaseVersion);
+                //System.out.println("222 Versione di PostgreSQL: " + getPostgreSQLVersion(dataSource));
             } catch (IOException ioException) {
                 throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
             }
         }
-
         return dataSource;
     }
 
