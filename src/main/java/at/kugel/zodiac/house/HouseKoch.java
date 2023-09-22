@@ -19,7 +19,7 @@ public final class HouseKoch extends HouseBasic {
 
    /** Berechnet H&auml;user in Radiant. Verwendet nur Erh&ouml;hung.*/
    protected void calcHouses() {
-      if (test.D.bug) test.D.log("HouseKoch ("+this.getClass()+") - calcHouses called");
+      if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseKoch ("+this.getClass()+") - calcHouses called");
       if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
 
       double A2, A3, KN, D, X;

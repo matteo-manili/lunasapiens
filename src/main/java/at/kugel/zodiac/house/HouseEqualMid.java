@@ -19,7 +19,7 @@ public final class HouseEqualMid extends HouseBasic {
 
    /** Berechnet H&auml;user in Radiant. Verwendet <code>midHeaven</code>. */
    protected void calcHouses() {
-     if (test.D.bug) test.D.log("HouseEqualMid ("+this.getClass()+") - calcHouses called");
+     if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseEqualMid ("+this.getClass()+") - calcHouses called");
      if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
 
      for (int i = 0; i < NUMBER_HOUSE; i++)

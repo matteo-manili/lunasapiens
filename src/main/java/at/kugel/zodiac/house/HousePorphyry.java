@@ -19,7 +19,7 @@ public final class HousePorphyry extends HouseBasic {
    /** Berechnet H&auml;user in Radiant. Verwendet <code>ascendant</code> und
        <code>midHeaven</code>.*/
    protected void calcHouses() {
-      if (test.D.bug) test.D.log("HousePorphyry ("+this.getClass()+") - calcHouses called");
+      if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HousePorphyry ("+this.getClass()+") - calcHouses called");
       if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
 
       housesR[0]=CalcUtil.Mod2PI(ascendant+siderealOffset);

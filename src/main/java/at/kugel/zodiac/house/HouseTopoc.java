@@ -29,7 +29,7 @@ public final class HouseTopoc extends HouseBasic {
 
    /** Berechnet H&auml;user in Radiant. Verwendet nur <code>midHeaven</code>. */
    protected void calcHouses() {
-     if (test.D.bug) test.D.log("HouseTopoc ("+this.getClass()+") - calcHouses called");
+     if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseTopoc ("+this.getClass()+") - calcHouses called");
      if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
 
      double TL = Math.tan(latR);

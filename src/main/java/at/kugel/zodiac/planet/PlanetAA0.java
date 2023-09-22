@@ -57,7 +57,7 @@ public class PlanetAA0 extends PlanetBasic {
              c,c1=0,d, // heliozentrische Long und Lat in Radians, Long of sun
              x,x1=0,y,y1=0,z,z1=0; // actual planar coordinates, of sun
 
-      if (test.D.bug) test.D.log("PlanetAA0 ("+this.getClass()+") - calcPlanets called");
+      if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("PlanetAA0 ("+this.getClass()+") - calcPlanets called");
       for (int i = 1; i < NUMBER_PLANET; i ++) { // loop f�r 9 Planeten
 
          // Mean anomaly (in radians) einlesen.

@@ -15,7 +15,7 @@ public final class HouseMorinus extends HouseBasic {
 
    /** Berechnet H&auml;user in Radiant. Verwendet nur Erh&ouml;hung, */
    protected void calcHouses() {
-      if (test.D.bug) test.D.log("HouseMorinus ("+this.getClass()+") - calcHouses called");
+      if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseMorinus ("+this.getClass()+") - calcHouses called");
       if ((latR<range[0])||(latR>range[1])) return; // do nothing
 
       double D, X;

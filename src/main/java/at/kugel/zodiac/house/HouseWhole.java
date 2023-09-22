@@ -16,7 +16,7 @@ public final class HouseWhole extends HouseBasic {
 
    /** Berechnet H&auml;user in Radiant. Verwendet <code>ascendant</code>. */
    protected void calcHouses() {
-     if (test.D.bug) test.D.log("HouseWhole ("+this.getClass()+") - calcHouses called");
+     if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseWhole ("+this.getClass()+") - calcHouses called");
      if ((latR<range[0])||(latR>range[1])) return; // do nothing
 
      // Hack: horoscopemode = 3 hardcoded!

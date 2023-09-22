@@ -46,7 +46,7 @@ public final class HousePlacidus extends HouseBasic {
    /** Berechnet H&auml;user in Radiant. Verwendet <code>ascendant</code> und
        <code>midHeaven</code>.*/
    protected void calcHouses() {
-     if (test.D.bug) test.D.log("HousePlacidus ("+this.getClass()+") - calcHouses called");
+     if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HousePlacidus ("+this.getClass()+") - calcHouses called");
      if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
      /*
      if ( Math.abs(latR) > CalcUtil.RFromD(90.0-rAxis) ) {
