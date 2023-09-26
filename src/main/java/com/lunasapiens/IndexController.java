@@ -97,7 +97,7 @@ public class IndexController {
         // @@@@@@@@@@@@@@@@ OPENAI Azure @@@@@@@@@@@@@@@@@@@@@@
 
 
-        /*
+
         OpenAIClient client = new OpenAIClientBuilder()
                 .credential(new KeyCredential("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"))
                 .buildClient();
@@ -107,7 +107,7 @@ public class IndexController {
           //      "e basati su questi dati astrologici/astronomi che riguardano il mio tema natale alla mia nascira : "+horoscop.toString());
 
         prompt.add(" " +
-                "in base a questi dati, mi dici Urano e Nettuno in che segno si trovano? : "+horoscop.toString());
+                "in base a questi dati, fammi l'oroscopo del giorno: "+horoscop.toString());
         // gpt-3.5-turbo-instruct
         // davinci-002
         Completions completions = client.getCompletions("gpt-3.5-turbo-instruct", new CompletionsOptions(prompt)
@@ -122,7 +122,7 @@ public class IndexController {
         }
 
         model.addAttribute("oroscopoGpt", textContent.toString()  );
-*/
+
 
 
 
