@@ -185,14 +185,14 @@ public final class TextHoroscop extends Object {
       double julianTime = julianDay - 0.5 + worldTime / 24.0;
 
       /* Berechnet die Anzahl Julianischer Jahrhunderte seit 0.1.1900 aus dem angegebenen
-         Julianischen Tag seit der angegebenen Uhrzeit in Stunden. Notwendig für mehrere
+         Julianischen Tag seit der angegebenen Uhrzeit in Stunden. Notwendig fï¿½r mehrere
          Formeln, die ab 0.1.1900 rechnen. (Century Increment T, [2], 41).
          @param worldTime (F) Zeit in Stunden, alle Zeitverschiebungen einberechnet, d.h. in GMT.
          @return Anzahl der Julianischen Jahrhunderte seit 0.1.1900 F Uhr. */
       //    public static double julianCenturies(int julianDay, double worldTime) {
       julianCenturies = (julianTime - 2415020) / 36525.0;
       // -0.5. damit 0.1.1900 Mitternacht habe
-      // rechnet mit Julianischen Jahren. Sternenjahr wäre 366.2422 Sternentage.
+      // rechnet mit Julianischen Jahren. Sternenjahr wï¿½re 366.2422 Sternentage.
 
       /* Berechnet Erh&ouml;hung aus Juliantime, worldTime, Longitude.
          Das ist die Sternenzeit in 360 Grad Notation, aber nicht klar, was das
@@ -211,14 +211,14 @@ public final class TextHoroscop extends Object {
 
       /* Berechnet die Schiefe der Ekliptik. Diese ist ca. 23 Grad 26' = 23.43333 Grad
          ([1], 63). (Obliquity of the Ecliptic for Date OB, [2], 41)
-         @param T julianCenturies seit 0.1.1900. 0:00, für den wohl der Wert 23.452294
+         @param T julianCenturies seit 0.1.1900. 0:00, fï¿½r den wohl der Wert 23.452294
                   berechnet ist.
          @return Die Schiefe der Ekliptik in Radiant. */
       //    public static double eclipticObliquity(double julianCenturies) {
       // Compute angle that the ecliptic is inclined to the Celestial Equator
       eclipticObliquity = CalcUtil.RFromD(23.452294 - 0.0130125 * julianCenturies);
 
-      /* Berechnet Offset für Sternen Horoskop (Sidereal Offset SD, [1], 42) */
+      /* Berechnet Offset fï¿½r Sternen Horoskop (Sidereal Offset SD, [1], 42) */
       //    public static double siderealOffset(double T) {
       /*
             if (Parameters.calculateUseSidereal) {
@@ -229,7 +229,7 @@ public final class TextHoroscop extends Object {
                      (5025.64+1.11*julianCenturies)*julianCenturies;
                siderealOffset = CalcUtil.RFromD((Off-84038.27)/3600.0); // + us.rZodiacOffset;
                // real rZodiacOffset - Position shifting value passed to -s switch.
-               // if (test.D.bug) test.D.log("siderealOffset="+CalcUtil.DFromR(siderealOffset)+"°("+siderealOffset+")");
+               // if (test.D.bug) test.D.log("siderealOffset="+CalcUtil.DFromR(siderealOffset)+"ï¿½("+siderealOffset+")");
             } else */
       siderealOffset = 0.0;
 

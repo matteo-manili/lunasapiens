@@ -10,6 +10,10 @@ package at.kugel.zodiac.util;
    @since JDK 1.0
 */
 public final class HMS {
+
+   /** Segno Zodiaclae */
+   public String segnoZodiacale;
+
    /** Stunden. */
    public int h;
    /** Minuten. */
@@ -56,7 +60,8 @@ public final class HMS {
    /** HMS im Format d�m's\quot; auf String ausgeben. Ist z gesetzt, so
        wird der Winkel modulo Anzahl der Zeichen reduziert. */
    public String toString() {
-      return h+"�"+m+'\''+s+'\"';
+      //return h+"�"+m+'\''+s+'\"';
+      return h+"°"+m+'\''+s+'\"'+" "+segnoZodiacale; // <--- modificato da me matteo
    }
 }
 

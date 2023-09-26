@@ -1,6 +1,7 @@
 package at.kugel.zodiac.util;
 
 import at.kugel.zodiac.Constants;
+
 /**
    Sammlung von statischen Hilfsroutinen zur Berechnung. Das sind
    mathematische Konstanten, Umrechenroutinen von Radiant und Grad,
@@ -76,6 +77,10 @@ public final class CalcUtil {
       }
 */
       hms.h = (int)Math.floor(d); // Y
+
+       SegnoZodiacale sZ = new SegnoZodiacale(); // <--- aggiunto da me matteo
+       hms.segnoZodiacale = sZ.determinaSegnoZodiacale( hms.h  ); // <--- aggiunto da me matteo
+
       final double t = (d-hms.h)*60;
       hms.m = (int)Math.floor(t); // Z
       hms.s = (int)Math.floor((t-hms.m)*60);
@@ -131,7 +136,8 @@ public final class CalcUtil {
       s = (int)Math.floor((t-m)*60);
       if (h<10) buf.append('0');
       buf.append(h);
-      buf.append('�');
+      //buf.append('�');
+      buf.append('°'); // <--- modificato da me matteo
       if (m<10) buf.append('0');
       buf.append(m);
       buf.append('\'');

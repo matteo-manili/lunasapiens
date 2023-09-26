@@ -1,45 +1,31 @@
 package at.kugel.zodiac.house;
 
 import at.kugel.zodiac.util.CalcUtil;
-/**
-   Regiomontanus Hausberechnung (1470, [1], 57).
-   @see HouseBasic
-   @author Kugel, <i>Theossos Comp Group</i>
-   @version 1.00 - 17062000 finished
-                 - 22062000 values compared ok.
-   @version 1.01 - 24062000 problems with latitude fixed.
-   @version 1.10 - 02022002 ok for JDK 1.0 and 1.1; no changes
-   @since JDK 1.0
-*/
+
 public final class HouseRegio extends HouseBasic {
+    private final double[] subRange = new double[] { -CalcUtil.RFromD(66.55421111D), 1.5707963267948966D };
 
-   /** Validity range of the house system. */
-   private final  double[] subRange = {-CalcUtil.RFromD(90.0-rAxis),CalcUtil.PIH};
+    protected void calcHouses() {
+        if (this.latR < this.subRange[0] || this.latR > this.subRange[1])
+            return;
+        double d1 = Math.cos(this.eclipticObliquity);
+        double d2 = Math.tan(this.latR) * Math.sin(this.eclipticObliquity);
+        for (byte b = 0; b < 12; b++) {
+            double d3 = 0.5235987755982988D * b + 1.5707963267948966D;
+            double d4 = CalcUtil.Angle(Math.cos(this.rightAscension + d3) * d1 - Math.sin(d3) * d2, Math.sin(this.rightAscension + d3));
+            if (this.siderealOffset != 0.0D) {
+                this.housesR[b] = CalcUtil.Mod2PI(d4 + this.siderealOffset);
+            } else {
+                this.housesR[b] = d4;
+            }
+        }
+    }
 
-   /** Berechnet H&auml;user in Radiant. Verwendet nur Erh&ouml;hung. */
-   protected void calcHouses() {
-      if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseRegio ("+this.getClass()+") - calcHouses called");
-      if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
+    public String getHouseName() {
+        return "Regiomontanus";
+    }
 
-      double D, X;
-      final double Z = Math.cos(eclipticObliquity);
-      final double Z2 = Math.tan(latR)*Math.sin(eclipticObliquity);
-      for (int i = 0; i < NUMBER_HOUSE; i++) {
-        D = ANGLE_HOUSE_R*i+CalcUtil.PIH;
-        X = CalcUtil.Angle(Math.cos(rightAscension+D)*Z-Math.sin(D)*Z2,Math.sin(rightAscension+D));
-        if (siderealOffset!=0.0) housesR[i] = CalcUtil.Mod2PI(X+siderealOffset);
-        else housesR[i] = X; // Angle returns right values
-     }
-   }
-
-   /** Namen des Hausberechnungs Algorithmus.
-       @return Name des Systems. */
-   public String getHouseName() { return "Regiomontanus"; }
-
-   /** G&uuml;ltigkeit des Hausberechnungs Algorithmus.
-       @return Radiant des Ranges, d.h. range(1) &lt; r &lt; range(1). */
-   public double[] getValidityRange() {
-      return subRange;
-   }
+    public double[] getValidityRange() {
+        return this.subRange;
+    }
 }
-

@@ -1,39 +1,22 @@
 package at.kugel.zodiac.house;
 
 import at.kugel.zodiac.util.CalcUtil;
-/**
-   EqualMid Hausberechnung: This house system is just like the Equal system
-   except that we start our 12 equal segments from the Midheaven instead of
-   the Ascendant.
-   @see HouseBasic
-   @author Kugel, <i>Theossos Comp Group</i>
-   @version 1.00 - 17062000 finished.
-   @version 1.01 - 24062000 problems with latitude fixed.
-   @version 1.10 - 02022002 ok for JDK 1.0 and 1.1; no changes
-   @since JDK 1.0
-*/
+
 public final class HouseEqualMid extends HouseBasic {
+    private final double[] subRange = new double[] { -CalcUtil.RFromD(66.55421111D), 1.5707963267948966D };
 
-   /** Validity range of the house system. */
-   private final double[] subRange = {-CalcUtil.RFromD(90.0-rAxis),CalcUtil.PIH};
+    protected void calcHouses() {
+        if (this.latR < this.subRange[0] || this.latR > this.subRange[1])
+            return;
+        for (byte b = 0; b < 12; b++)
+            this.housesR[b] = CalcUtil.Mod2PI(this.midHeaven + 1.5707963267948966D + 0.5235987755982988D * b + this.siderealOffset);
+    }
 
-   /** Berechnet H&auml;user in Radiant. Verwendet <code>midHeaven</code>. */
-   protected void calcHouses() {
-     if (at.kugel.zodiac.test.D.bug) at.kugel.zodiac.test.D.log("HouseEqualMid ("+this.getClass()+") - calcHouses called");
-     if ((latR<subRange[0])||(latR>subRange[1])) return; // do nothing
+    public String getHouseName() {
+        return "EqualMidheaven";
+    }
 
-     for (int i = 0; i < NUMBER_HOUSE; i++)
-         housesR[i] = CalcUtil.Mod2PI(midHeaven+CalcUtil.PIH+ANGLE_HOUSE_R*i+ siderealOffset);
-   }
-
-   /** Namen des Hausberechnungs Algorithmus.
-       @return Name des Systems. */
-   public String getHouseName() { return "EqualMidheaven"; }
-
-   /** G&uuml;ltigkeit des Hausberechnungs Algorithmus.
-       @return Radiant des Ranges, d.h. range(1) &lt; r &lt; range(1). */
-   public double[] getValidityRange() {
-      return subRange;
-   }
+    public double[] getValidityRange() {
+        return this.subRange;
+    }
 }
-
