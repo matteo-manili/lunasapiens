@@ -5,7 +5,8 @@ import at.kugel.zodiac.util.CalcUtil;
 public abstract class PlanetBasic implements PlanetInt {
    protected final int NUMBER_PLANET = 10;
 
-   protected final String[] NAME_PLANET = new String[] { "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto" };
+   //protected final String[] NAME_PLANET = new String[] { "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto" };
+   protected final String[] NAME_PLANET = new String[] { "Sole", "Luna", "Mercurio", "Venere", "Marte", "Giove", "Saturno", "Urano", "Nettuno", "Plutone" };
 
    protected double julianCenturies;
 

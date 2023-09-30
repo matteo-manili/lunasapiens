@@ -1,6 +1,8 @@
-package at.kugel.zodiac.util;
+package com.lunasapiens.zodiac;
 
-public class SegnoZodiacale {
+import java.util.ArrayList;
+
+public class SegniZodiacali {
 
 
     public static String determinaSegnoZodiacale(int grado) {
@@ -9,7 +11,7 @@ public class SegnoZodiacale {
         } else if (grado >= 30 && grado < 60) {
             return "Toro";
         } else if (grado >= 60 && grado < 90) {
-            return "Gemelli)";
+            return "Gemelli";
         } else if (grado >= 90 && grado < 120) {
             return "Cancro";
         } else if (grado >= 120 && grado < 150) {
@@ -35,5 +37,21 @@ public class SegnoZodiacale {
 
 
 
+    public static ArrayList<String> segni(){
+        ArrayList<String> segniZodiacali = new ArrayList<>();
+        segniZodiacali.add("Ariete");
+        segniZodiacali.add("Toro");
+        segniZodiacali.add("Gemelli");
+        segniZodiacali.add("Cancro");
+        segniZodiacali.add("Leone");
+        segniZodiacali.add("Vergine");
+        segniZodiacali.add("Bilancia");
+        segniZodiacali.add("Scorpione");
+        segniZodiacali.add("Sagittario");
+        segniZodiacali.add("Capricorno");
+        segniZodiacali.add("Acquario");
+        segniZodiacali.add("Pesci");
+        return segniZodiacali;
+    }
 
 }

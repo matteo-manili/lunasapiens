@@ -4,29 +4,28 @@ package com.lunasapiens;
 
 import at.kugel.zodiac.TextHoroscop;
 import at.kugel.zodiac.house.HousePlacidus;
+import com.lunasapiens.zodiac.*;
 import at.kugel.zodiac.planet.PlanetAA0;
-import at.kugel.zodiac.planet.PlanetInt;
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.ai.openai.models.Choice;
 import com.azure.ai.openai.models.Completions;
 import com.azure.ai.openai.models.CompletionsOptions;
 import com.azure.core.credential.KeyCredential;
-import com.theokanning.openai.completion.CompletionRequest;
-import com.theokanning.openai.service.OpenAiService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class IndexController {
+
+    @Autowired
+    private ZodiacConfig zodiacConfig;
 
     @GetMapping("/")
     public String index(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
@@ -43,6 +42,86 @@ public class IndexController {
 
     @GetMapping("/oroscopo")
     public String oroscopo(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
+
+        int giorno = 30; int mese = 9; int anno = 2023;
+        double lon = 49.9; double lat = 12.4;
+        int ora = 12; int minuti = 0;
+
+        String horoscop = TextHoroscop(ora, minuti, giorno, mese, anno, lon, lat);
+        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia();
+        //System.out.println("############################ setOroscopoBase ###################################");
+        OroscopoBase aa = buildInfoAstrologia.setOroscopoBase(horoscop);
+        //System.out.println( aa.toString() );
+
+        System.out.println("############################ setCasePlacide ###################################");
+        ArrayList<CasePlacide> bb = buildInfoAstrologia.setCasePlacide(horoscop);
+        for(CasePlacide var : bb){
+            System.out.println( var.toString() );
+        }
+        System.out.println("############################ setPianetiAspetti ###################################");
+        ArrayList<PianetiAspetti> cc = buildInfoAstrologia.setPianetiAspetti(horoscop);
+        for(PianetiAspetti var : cc){
+            System.out.println( var.toString() );
+        }
+
+
+        System.out.println("############################ TEXT IA ###################################");
+        String multilineString = "Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del "+SegniZodiacali.segni().get(10) +" in base a questi dati \n" +
+            "Il giorno di oggi è: "+giorno+ "/" +mese+ "/" +anno+ " ore"+ora+":"+minuti+ "\n"+
+
+            "Transiti o anche detti aspetti dei pianeti: " + "\n";
+        for(PianetiAspetti var : cc){
+            multilineString += var.toString();
+            //System.out.println( var.toString() );
+        }
+
+        multilineString += "\n" + "Case Placide: " + "\n";
+        for(CasePlacide var : bb){
+            multilineString += var.toString();
+            //System.out.println( var.toString() );
+        }
+
+        System.out.println( multilineString );
+
+
+        model.addAttribute("result", multilineString );
+
+
+
+        // @@@@@@@@@@@@@@@@ OPENAI Azure @@@@@@@@@@@@@@@@@@@@@@
+
+
+        String apiKey = zodiacConfig.getKeyOpenAi();
+        System.out.println("API Key di OpenAI: " + apiKey);
+
+        OpenAIClient client = new OpenAIClientBuilder().credential(new KeyCredential( apiKey )).buildClient();
+
+        List<String> prompt = new ArrayList<>();
+
+        prompt.add( multilineString );
+        // gpt-3.5-turbo-instruct
+        // davinci-002
+        Completions completions = client.getCompletions("gpt-3.5-turbo-instruct", new CompletionsOptions(prompt)
+                .setMaxTokens(1500).setTemperature(0.5));
+
+        System.out.printf("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt());
+
+        StringBuilder textContent = new StringBuilder();
+        for (Choice choice : completions.getChoices()) {
+            System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
+            textContent.append(choice.getText()).append("\n");
+        }
+
+        model.addAttribute("oroscopoGpt", textContent.toString()  );
+
+
+
+        return "oroscopo";
+    }
+
+
+    // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
+    private String TextHoroscop(int ora, int minuti, int giorno, int mese, int anno, double lon, double lat){
 
 
         // ottiene un'istanza di oroscopo
@@ -65,74 +144,18 @@ public class IndexController {
         // may be anything from the at.kugel.zodiac.house package.
         horoscop.setHouse(new HousePlacidus());
         // set your user data time value
-        double orario = (6 + (31 / 60.0)) / 24.0;
-        horoscop.setTime(26, 9, 2023, orario);
+        double orario = (ora + (minuti / 60.0)) / 24.0;
+        horoscop.setTime(giorno, mese, anno, orario);
         // set your user data location value
         // Pisa 43.7 e 10.4 --- Roma 49.9 e 12.4
-        horoscop.setLocationDegree(49.9, 12.4);
+        horoscop.setLocationDegree(lon, lat);
         // calculate the values
         horoscop.calcValues();
         // do something with the data or output raw data
         System.out.println(horoscop.toString());
 
-
-        model.addAttribute("result", horoscop.toString()  );
-
-        // @@@@@@@@@@@@@@@@@@ KEY @@@@@@@@@@@@@@@@@
-
-        // test 1: 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
-        // test 2: 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
-
-        // @@@@@@@@@@@@@@@@ OPENAI API TheoKanning @@@@@@@@@@@@@@@@@@@@@@
-        /*
-        OpenAiService service = new OpenAiService("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");
-        CompletionRequest completionRequest = CompletionRequest.builder()
-                .prompt("Somebody once told me the world is gonna roll me")
-                .model("ada")
-                .echo(true)
-                .build();
-        service.createCompletion(completionRequest).getChoices().forEach(System.out::println);
-        */
-
-        // @@@@@@@@@@@@@@@@ OPENAI Azure @@@@@@@@@@@@@@@@@@@@@@
-
-
-
-        OpenAIClient client = new OpenAIClientBuilder()
-                .credential(new KeyCredential("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"))
-                .buildClient();
-
-        List<String> prompt = new ArrayList<>();
-        //prompt.add("Fammi l'orosoco del giorno sul mio segno zodiacale che è l'acquario, oggi è 26 settembre 2023 " +
-          //      "e basati su questi dati astrologici/astronomi che riguardano il mio tema natale alla mia nascira : "+horoscop.toString());
-
-        prompt.add(" " +
-                "in base a questi dati, fammi l'oroscopo del giorno: "+horoscop.toString());
-        // gpt-3.5-turbo-instruct
-        // davinci-002
-        Completions completions = client.getCompletions("gpt-3.5-turbo-instruct", new CompletionsOptions(prompt)
-                .setMaxTokens(500).setTemperature(0d));
-
-        System.out.printf("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt());
-
-        StringBuilder textContent = new StringBuilder();
-        for (Choice choice : completions.getChoices()) {
-            System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
-            textContent.append(choice.getText()).append("\n");
-        }
-
-        model.addAttribute("oroscopoGpt", textContent.toString()  );
-
-
-
-
-
-        return "oroscopo";
+        return horoscop.toString();
     }
-
-
-
-
 
 
 }

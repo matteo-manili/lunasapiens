@@ -11,8 +11,6 @@ package at.kugel.zodiac.util;
 */
 public final class HMS {
 
-   /** Segno Zodiaclae */
-   public String segnoZodiacale;
 
    /** Stunden. */
    public int h;
@@ -61,7 +59,7 @@ public final class HMS {
        wird der Winkel modulo Anzahl der Zeichen reduziert. */
    public String toString() {
       //return h+"�"+m+'\''+s+'\"';
-      return h+"°"+m+'\''+s+'\"'+" "+segnoZodiacale; // <--- modificato da me matteo
+      return h+"°"+m+'\''+s+'\"'; // <--- modificato da me matteo
    }
 }
 

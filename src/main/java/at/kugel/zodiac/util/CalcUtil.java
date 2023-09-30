@@ -77,10 +77,6 @@ public final class CalcUtil {
       }
 */
       hms.h = (int)Math.floor(d); // Y
-
-       SegnoZodiacale sZ = new SegnoZodiacale(); // <--- aggiunto da me matteo
-       hms.segnoZodiacale = sZ.determinaSegnoZodiacale( hms.h  ); // <--- aggiunto da me matteo
-
       final double t = (d-hms.h)*60;
       hms.m = (int)Math.floor(t); // Z
       hms.s = (int)Math.floor((t-hms.m)*60);
