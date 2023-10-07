@@ -1,10 +1,14 @@
 package com.lunasapiens;
 
+import com.model.FacebookConfig;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.io.FileInputStream;
@@ -17,10 +21,74 @@ import java.util.Properties;
 
 
 @Configuration
-public class DatabaseConfig {
+public class AppConfig {
 
     @Autowired
     private Environment env;
+
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+
+
+    @Bean
+    public FacebookConfig getfacebookConfig() {
+        FacebookConfig facebookConfig;
+        try{
+
+            facebookConfig = new FacebookConfig(
+                    env.getProperty("api.facebook.version"),
+                    env.getProperty("api.facebook.appid"),
+                    env.getProperty("api.facebook.appsecret"),
+                    env.getProperty("api.facebook.accesstoken"),
+                    env.getProperty("api.facebook.pageaccesstoken"));
+
+
+        } catch (IllegalArgumentException e) {
+            // In caso di eccezione, utilizza il file di configurazione esterno
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+                properties.load(fis);
+
+
+                facebookConfig = new FacebookConfig(
+                        properties.getProperty("api.facebook.version"),
+                        properties.getProperty("api.facebook.appid"),
+                        properties.getProperty("api.facebook.appsecret"),
+                        properties.getProperty("api.facebook.accesstoken"),
+                        properties.getProperty("api.facebook.pageaccesstoken"));
+
+
+            } catch (IOException ioException) {
+                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+            }
+        }
+        return facebookConfig;
+    }
+
+
+    @Bean
+    public String getKeyOpenAi() {
+        String api = "";
+        try{
+            api = env.getProperty("api.key.openai");
+            System.out.println("111 api_openai: " + api);
+        } catch (IllegalArgumentException e) {
+            // In caso di eccezione, utilizza il file di configurazione esterno
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+                properties.load(fis);
+                api = properties.getProperty("api.key.openai");
+                System.out.println("222 api_openai: " + api);
+            } catch (IOException ioException) {
+                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+            }
+        }
+        return api;
+    }
 
 
     @Bean
@@ -47,7 +115,6 @@ public class DatabaseConfig {
         }
         return dataSource;
     }
-
 
     // Metodo per ottenere la versione di PostgreSQL dal database
     private String getPostgreSQLVersion(DataSource dataSource) {

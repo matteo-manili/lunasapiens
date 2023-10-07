@@ -39,6 +39,6 @@ public class PianetiAspetti {
 
     @Override
     public String toString() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + ".";
+        return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
     }
 }

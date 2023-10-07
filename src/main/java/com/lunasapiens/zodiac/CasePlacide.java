@@ -40,6 +40,6 @@ public class CasePlacide {
 
     @Override
     public String toString() {
-        return "Casa " + nomeCasa + ": " + nomeSegnoZodiacale + ".";
+        return "Casa " + nomeCasa + ": " + nomeSegnoZodiacale + ". ";
     }
 }
