@@ -1,23 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Landing Page</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrologia Celeste</title>
+    <link rel="stylesheet" href="style.css"> <!-- Includi il tuo foglio di stile CSS personalizzato -->
 </head>
 <body>
-<div class="container">
-    <h1>Welcome to our colorful landing page!</h1>
-    <p th:text="${message}">This is a dynamic message with style.</p>
-    <button class="btn" onclick="changeColor()">Change Color</button>
-</div>
+<header>
+    <h1>Benvenuti su Astrologia Celeste</h1>
+    <p>Esplora l'influenza delle stelle sulla tua vita e il tuo destino.</p>
+</header>
 
-<script>
-    function changeColor() {
-        const colors = ["#ff6666", "#66ff66", "#6666ff", "#ffff66"];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        document.body.style.backgroundColor = randomColor;
-    }
-</script>
+<main>
+    <section class="horoscope-section">
+        <h2>Scopri il tuo Segno Zodiacale</h2>
+        <p>Esplora il mondo dell'astrologia e scopri come le stelle influenzano la tua personalità, il tuo amore e il tuo futuro.</p>
+        <a href="greeting" class="button">Scopri di più</a>
+    </section>
+
+    <section class="astrologer-section">
+        <h2>Il Nostro Astrologo Esperto</h2>
+        <p>Consultate il nostro astrologo esperto per un'analisi personalizzata del vostro segno zodiacale e del vostro futuro.</p>
+        <a href="facebook" class="button">Scopri di più</a>
+    </section>
+</main>
+
+
+<footer>
+    <p>&copy; 2023 Astrologia Celeste | <a href="info-privacy">Informativa sulla Privacy</a></p>
+</footer>
+
 </body>
 </html>
