@@ -57,7 +57,8 @@ public class FacebookController {
                     "?client_id=" + fConfig.getAppId() +
                     //"&redirect_uri=http://localhost:8081/facebook" +
                     "&client_secret=" + fConfig.getAppSecret() +
-                    "&scopes=" + "public_profile,pages_manage_cta,manage_pages,publish_pages,pages_read_engagement,pages_manage_posts"+
+                    //"&scopes=" + "public_profile,pages_manage_cta,manage_pages,publish_pages,pages_read_engagement,pages_manage_posts"+
+                    "&scopes=" + "pages_read_engagement,pages_manage_posts"+
                     "&grant_type=client_credentials";
 
                     //"&code=" + "code";
@@ -86,7 +87,10 @@ public class FacebookController {
 
             // -----------------------------------
 
-            String ID_USER = "10229951572203398";
+            //String ID_USER = "10229951572203398";
+            String ID_USER = "130228343511175";
+
+
 
             String message = "Hello World!";
             HttpHeaders headers = new HttpHeaders();

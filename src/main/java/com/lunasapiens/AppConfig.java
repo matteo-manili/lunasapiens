@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.FileInputStream;
@@ -21,7 +23,7 @@ import java.util.Properties;
 
 
 @Configuration
-public class AppConfig {
+public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
     private Environment env;
@@ -31,7 +33,6 @@ public class AppConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
 
 
     @Bean
@@ -132,6 +133,15 @@ public class AppConfig {
         return version;
     }
 
+
+
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+                .addResourceHandler("/static/**") // Percorso URL delle risorse statiche
+                .addResourceLocations("classpath:/static/"); // Percorso reale delle risorse statiche nel progetto
+    }
 
 }
 
