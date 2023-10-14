@@ -26,10 +26,11 @@ public class TikTokController {
 
 
 
-    @GetMapping("/videos/download")
+    @GetMapping({"/videos", "/videos/"})
     public ResponseEntity<byte[]> downloadFileTikTok() throws IOException {
         // Carica il file TXT dal percorso specificato, ad esempio dalla directory delle risorse della tua applicazione
-        Resource resource = new ClassPathResource("static/file.txt");
+        String fileName = "tiktokeVXnQAYg9OQQA35O7IuERbDCTSG5ICWV";
+        Resource resource = new ClassPathResource("static/"+fileName + ".txt");
 
         // Controlla se il file esiste
         if (resource.exists()) {
@@ -38,7 +39,7 @@ public class TikTokController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("tiktokeVXnQAYg9OQQA35O7IuERbDCTSG5ICWV", "tiktokeVXnQAYg9OQQA35O7IuERbDCTSG5ICWV.txt");  // Specifica il nome del file quando viene scaricato
+            headers.setContentDispositionFormData(fileName, fileName + ".txt");  // Specifica il nome del file quando viene scaricato
 
             return ResponseEntity.ok()
                     .headers(headers)
