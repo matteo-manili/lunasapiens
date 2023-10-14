@@ -28,6 +28,12 @@ public class IndexController {
         return "info-privacy";
     }
 
+    @GetMapping("/termini-di-servizio")
+    public String terminiDiServizio(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
+        model.addAttribute("name", name);
+        return "termini-di-servizio";
+    }
+
 
     @GetMapping("/greeting")
     public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {

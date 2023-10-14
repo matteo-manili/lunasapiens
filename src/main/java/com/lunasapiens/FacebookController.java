@@ -87,8 +87,16 @@ public class FacebookController {
 
             // -----------------------------------
 
-            //String ID_USER = "10229951572203398";
-            String ID_USER = "130228343511175";
+            /*
+            Come trovare l'ID della Pagina Facebook
+            Ecco come trovare l'ID della Pagina Facebook dal computer:
+            Apri la Pagina di cui vuoi trovare l'ID.
+            Dal menu sotto il nome della Pagina, clicca su Altro.
+            Clicca su Informazioni. In Maggiori informazioni, vai a ID della Pagina.
+            VEDERE ANCHE IMMAGINE SCREENSHOT NELLA CARTELLA STATIC
+             */
+
+            String ID_PAGE = "130228343511175";
 
 
 
@@ -96,7 +104,7 @@ public class FacebookController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            String url_2 = "https://graph.facebook.com/" + ID_USER + "/feed";
+            String url_2 = "https://graph.facebook.com/" + ID_PAGE + "/feed";
             // Costruisci il corpo della richiesta
             String requestBody = "message=" + message + "&access_token=" + accessTokenTEMP + "&permission=pages_read_engagement,pages_manage_posts";
             // Costruisci l'oggetto RequestEntity con il corpo e le intestazioni
