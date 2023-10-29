@@ -8,7 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +41,12 @@ public class TikTokController {
                 .body(fileData);
     }
 
-
+    @GetMapping("/tiktok-outh")
+    //public String tikTokRedirect(@RequestParam("code") String authorizationCode, Model model) {
+    public String tikTokRedirect(@RequestParam(name="code", required=false, defaultValue="World") String code, Model model) {
+        model.addAttribute("code", code);
+        return "tiktok-outh";
+    }
 
 
 }

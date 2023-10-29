@@ -2,10 +2,11 @@ package com.lunasapiens.zodiac;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.ai.openai.models.Choice;
-import com.azure.ai.openai.models.Completions;
-import com.azure.ai.openai.models.CompletionsOptions;
+import com.azure.ai.openai.models.*;
+import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.credential.KeyCredential;
+import com.azure.core.exception.HttpResponseException;
+import com.azure.core.models.ResponseError;
 import com.lunasapiens.Constants;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class ServiziAstrologici {
         return servizioOroscopoDelGiorno(temperature, maxTokens, segno, ora, minuti, giorno, mese, anno, lon, lat);
     }
 
-    public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, int ora, int minuti, int giorno, int mese, int anno, double lon, double lat) {
+    public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, int ora, int minuti, int giorno, int mese, int
+            anno, double lon, double lat) {
 
         BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia(ora, minuti, giorno, mese, anno, lon, lat);
 
@@ -57,7 +59,7 @@ public class ServiziAstrologici {
 
 
         // @@@@@@@@@@@@@@@@ OPENAI Azure @@@@@@@@@@@@@@@@@@@@@@
-
+/*
         OpenAIClient client = new OpenAIClientBuilder().credential(new KeyCredential( keyOpenAi )).buildClient();
         List<String> prompt = new ArrayList<>();
         prompt.add( domanda );
@@ -73,8 +75,49 @@ public class ServiziAstrologici {
             System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
             risposta.append(choice.getText()).append("\n");
         }
+*/
+  // ######################################################## IMMAGINE OPENAI ########################################################
+        // esempio preso da https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/openai/azure-ai-openai/src/samples/java/com/azure/ai/openai/usage/GetImagesSample.java
+        try {
 
-        return risposta;
+            //String azureOpenaiKey = "{azure-open-ai-key}";
+            //String endpoint = "{azure-open-ai-endpoint}";
+
+            /*
+
+            L'idea è di mettere il testo generato dell'orscoppo giornaliero come parametro per generare l'immaginr IA
+
+             */
+
+            OpenAIClient client = new OpenAIClientBuilder().credential(new AzureKeyCredential( this.keyOpenAi )).
+                    buildClient();
+
+            ImageGenerationOptions imageGenerationOptions = new ImageGenerationOptions(
+                    "segno zodiacale acquario gioioso");
+
+            imageGenerationOptions.setSize(ImageSize.fromString("256x256")) ;
+            ImageResponse images = client.getImages(imageGenerationOptions);
+
+            for (ImageLocation imageLocation : images.getData()) {
+                ResponseError error = imageLocation.getError();
+                if (error != null) {
+                    System.out.printf("Image generation operation failed. Error code: %s, error message: %s.%n",
+                            error.getCode(), error.getMessage());
+                } else {
+                    System.out.printf(
+                            "Image location URL that provides temporary access to download the generated image is %s.%n",
+                            imageLocation.getUrl());
+                    String urlImege = imageLocation.getUrl();
+                    //model.addAttribute("oroscopoGpt", urlImege  );
+                    System.out.println("urlImege: "+urlImege);
+                }
+            }
+        } catch (HttpResponseException hre){
+            //model.addAttribute("oroscopoGpt", hre.getValue() +" "+ hre.getMessage()  );
+        }
+
+        StringBuilder aa = new StringBuilder("");
+        return aa; //risposta;
     }
 
 
@@ -113,4 +156,5 @@ public class ServiziAstrologici {
         } catch (HttpResponseException hre){
             model.addAttribute("oroscopoGpt", hre.getValue() +" "+ hre.getMessage()  );
         }
-        */
+
+*/

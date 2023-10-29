@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TikTok Authorization Callback</title>
+    <script>
+        // Parse the URL to get the authorization code
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+
+        // Send the authorization code to your server for further processing
+        // You can use JavaScript to make an AJAX request to your server here
+
+        // For example:
+        // const xhr = new XMLHttpRequest();
+        // xhr.open("POST", "/handle-tiktok-authorization", true);
+        // xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.send(JSON.stringify({ code: code }));
+    </script>
+</head>
+<body>
+<h1>TikTok Authorization Callback</h1>
+<p>Please wait while we process your authorization.</p>
+</body>
+</html>
