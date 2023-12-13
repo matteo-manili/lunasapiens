@@ -41,7 +41,8 @@ public class TikTokController {
                 .body(fileData);
     }
 
-    @GetMapping("/tiktok-outh")
+    //@GetMapping("/tiktok-outh")
+    @GetMapping({"/tiktok-outh", "/tiktok-outh/"})
     //public String tikTokRedirect(@RequestParam("code") String authorizationCode, Model model) {
     public String tikTokRedirect(@RequestParam(name="code", required=false, defaultValue="World") String code, Model model) {
         model.addAttribute("code", code);

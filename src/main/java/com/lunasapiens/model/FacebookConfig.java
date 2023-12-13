@@ -1,4 +1,4 @@
-package com.model;
+package com.lunasapiens.model;
 
 public class FacebookConfig {
 

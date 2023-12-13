@@ -1,9 +1,7 @@
 package com.lunasapiens;
 
-import com.model.FacebookConfig;
-import org.springframework.beans.PropertyValues;
+import com.lunasapiens.model.FacebookConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
