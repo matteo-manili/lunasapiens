@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 @Controller
 public class TikTokController {
 
@@ -46,6 +45,7 @@ public class TikTokController {
     //public String tikTokRedirect(@RequestParam("code") String authorizationCode, Model model) {
     public String tikTokRedirect(@RequestParam(name="code", required=false, defaultValue="World") String code, Model model) {
         model.addAttribute("code", code);
+        System.out.println("tiktok-outh controller");
         return "tiktok-outh";
     }
 

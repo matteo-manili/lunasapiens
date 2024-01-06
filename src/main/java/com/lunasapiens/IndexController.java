@@ -45,9 +45,6 @@ public class IndexController {
     public String oroscopo(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
 
         //09-03-1996 ore 21
-
-        
-        //
         //Latitudine di Palermo	38.1156879
         //Longitudine di Palermo	13.3612671
 
@@ -67,9 +64,6 @@ public class IndexController {
         StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get(9), ora, minuti, giorno, mese, anno, lon, lat);
 
         //servizioOroscopoDelGiorno
-
-
-
 
         model.addAttribute("oroscopoGpt", sB  );
         return "oroscopo";

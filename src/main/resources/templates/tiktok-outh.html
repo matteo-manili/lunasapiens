@@ -16,10 +16,17 @@
         // xhr.open("POST", "/handle-tiktok-authorization", true);
         // xhr.setRequestHeader("Content-Type", "application/json");
         // xhr.send(JSON.stringify({ code: code }));
+
+        // Display the authorization code in the page
+        document.addEventListener("DOMContentLoaded", function() {
+            const codeElement = document.getElementById("authorizationCode");
+            codeElement.innerText = "code: " + code;
+        });
     </script>
 </head>
 <body>
 <h1>TikTok Authorization Callback</h1>
 <p>Please wait while we process your authorization.</p>
+<p id="authorizationCode"></p>
 </body>
 </html>
