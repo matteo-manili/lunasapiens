@@ -1,7 +1,9 @@
 package com.lunasapiens;
 
 
+import jakarta.servlet.ServletContext;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,15 @@ import java.io.InputStream;
 public class TikTokController {
 
 
+
+    private TikTokApiClient tikTokApiClient;
+    private ServletContext servletContext;
+
+    @Autowired
+    public TikTokController(TikTokApiClient tikTokApiClient, ServletContext servletContext) {
+        this.tikTokApiClient = tikTokApiClient;
+        this.servletContext = servletContext;
+    }
 
     @GetMapping("/tiktok/tiktokz8RIHr0Hiiqijh8czuAojvvevrI58VSV.txt")
     public ResponseEntity<byte[]> tiktokVerificationFile() throws IOException {
@@ -40,14 +51,42 @@ public class TikTokController {
                 .body(fileData);
     }
 
-    //@GetMapping("/tiktok-outh")
+
     @GetMapping({"/tiktok-outh", "/tiktok-outh/"})
-    //public String tikTokRedirect(@RequestParam("code") String authorizationCode, Model model) {
-    public String tikTokRedirect(@RequestParam(name="code", required=false, defaultValue="World") String code, Model model) {
+    public String tikTokCallback(@RequestParam String code, @RequestParam String state, Model model) {
+
+        // Verifica lo stato CSRF prima di procedere
+        String storedCSRFState = (String) servletContext.getAttribute("csrfStateTikTok");
+
+        if (storedCSRFState == null || !storedCSRFState.equals(state)) {
+            // Gestisci l'errore CSRF, ad esempio reindirizzando a una pagina di errore
+            model.addAttribute("code", code);
+            System.out.println("tiktok-outh tikTokCallback controller ERRATO");
+            return "tiktok-outh";
+        }
+
+        // Eseguire la richiesta per ottenere l'access token utilizzando il code ottenuto
+        String accessToken = exchangeCodeForAccessToken(code);
+
+        // Ora puoi utilizzare l'accessToken per effettuare richieste API a TikTok
+        // Implementa qui la logica di gestione dell'accessToken
+
+
         model.addAttribute("code", code);
-        System.out.println("tiktok-outh controller");
+        System.out.println("tiktok-outh tikTokCallback controller OKK");
         return "tiktok-outh";
     }
+
+    private String exchangeCodeForAccessToken(String code) {
+        // Implementa la logica per scambiare il code con l'access token utilizzando le API TikTok
+        // Usa Apache HttpClient o un'altra libreria HTTP per eseguire la richiesta POST
+        // alla URL "https://open.tiktokapis.com/v2/oauth/token/"
+        // con i parametri richiesti come descritto nella documentazione
+        // Restituisci l'access token ottenuto
+        return "il_tuo_access_token";
+    }
+
+
 
 
 }

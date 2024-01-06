@@ -3,8 +3,10 @@ package com.lunasapiens;
 import com.lunasapiens.model.FacebookConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,6 +23,7 @@ import java.util.Properties;
 
 
 @Configuration
+@ComponentScan(basePackages = "com.lunasapiens")
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -91,6 +94,12 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+
+    @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
@@ -132,14 +141,13 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
-
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/static/**") // Percorso URL delle risorse statiche
                 .addResourceLocations("classpath:/static/"); // Percorso reale delle risorse statiche nel progetto
     }
+
 
 }
 

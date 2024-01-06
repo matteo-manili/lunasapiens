@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -23,7 +24,7 @@ risultato:
 "message":{"message_id":15,"from":{"id":1034805278,"is_bot":false,"first_name":"Matte","username":"MatteoBcn81","language_code":"it"},"chat":{"id":1034805278,"first_name":"Matte","username":"MatteoBcn81","type":"private"},"date":1704505207,"text":"Ghggg"}}]}
  */
 
-@Service
+@Component
 public class TelegramBot extends TelegramLongPollingBot {
 
 
@@ -32,7 +33,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String token = "6410764803:AAFl2i4OYn2htKW7H4Wd2mgZLybd0pC2jas";
     private final String chatId = "1034805278";
 
-
+/*
     public TelegramBot()  {
         // Disabilita il webhook
         try {
@@ -41,7 +42,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-
+*/
     @Override
     public String getBotUsername() {
         return USERNAME;
@@ -55,24 +56,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         // Gestisci gli aggiornamenti qui, se necessario
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
-
            System.out.println("chatId: "+chatId+" messageText: "+messageText);
         }
-
-
     }
-
 
     public void inviaMessaggio(String testoMessaggio) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(testoMessaggio);
-
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
