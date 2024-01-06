@@ -30,6 +30,10 @@ public class TikTokApiClient {
                     .queryParam("state", csrfState)
                     .build().toUriString();
 
+            //TelegramBotService telegramService = new TelegramBotService(new TelegramBot());
+            //telegramService.inviaMessaggio("LunaSapiensUser_bot", "ciao bello");
+
+
             // Apertura dell'URL nel browser o integrazione con il tuo frontend
             System.out.println("Apri l'URL nel browser: " + authorizationUri);
 
