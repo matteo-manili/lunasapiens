@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -9,6 +10,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 public class TikTokApiClient {
+
+
 
         public static void main(String[] args) {
             // Configurazione
@@ -30,9 +33,8 @@ public class TikTokApiClient {
                     .queryParam("state", csrfState)
                     .build().toUriString();
 
-            //TelegramBotService telegramService = new TelegramBotService(new TelegramBot());
-            //telegramService.inviaMessaggio("LunaSapiensUser_bot", "ciao bello");
-
+            TelegramBot telegramBot = new TelegramBot();
+            telegramBot.inviaMessaggio("link autenticazione tiktok: "+authorizationUri);
 
             // Apertura dell'URL nel browser o integrazione con il tuo frontend
             System.out.println("Apri l'URL nel browser: " + authorizationUri);
