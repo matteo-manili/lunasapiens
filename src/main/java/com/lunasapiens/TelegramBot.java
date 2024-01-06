@@ -6,6 +6,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 /*
 Questo passaggio è obbligatorio poiché creerà un chat_id in background per la tua comunicazione privata con il tuo bot in background.
@@ -31,6 +32,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String token = "6410764803:AAFl2i4OYn2htKW7H4Wd2mgZLybd0pC2jas";
     private final String chatId = "1034805278";
 
+
+    public TelegramBot()  {
+        // Disabilita il webhook
+        try {
+            clearWebhook();
+        } catch (TelegramApiRequestException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String getBotUsername() {
@@ -61,6 +71,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(testoMessaggio);
+
 
         try {
             execute(message);

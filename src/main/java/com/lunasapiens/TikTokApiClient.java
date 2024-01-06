@@ -6,14 +6,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 
 public class TikTokApiClient {
 
 
 
-        public static void main(String[] args) {
+        public static void main(String[] args) throws TelegramApiRequestException {
             // Configurazione
             String clientKey = "awk0myrx70nr9gkr";
             String clientSecret = "9dDg7Kgg2lXK8JoO1THhOl5kbDz8tuxL";
