@@ -6,12 +6,16 @@ import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.OperazioniDbTikTokService;
 import jakarta.servlet.ServletContext;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class TikTokController {
@@ -110,6 +116,8 @@ public class TikTokController {
     private String redirectUri;
 
     public String fetchAccessToken(String authorizationCode) throws IOException, URISyntaxException {
+
+        /*
         URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/")
                 .addParameter("client_key", clientKey)
                 .addParameter("client_secret", clientSecret)
@@ -117,10 +125,20 @@ public class TikTokController {
                 .addParameter("grant_type", "authorization_code")
                 .addParameter("redirect_uri", redirectUri)
                 .build();
-
         logger.info("URIBuilder: "+uri.toString());
-
         return executeTokenRequest(uri);
+        */
+
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("client_key", clientKey));
+        parameters.add(new BasicNameValuePair("client_secret", clientSecret));
+        parameters.add(new BasicNameValuePair("code", authorizationCode));
+        parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
+        parameters.add(new BasicNameValuePair("redirect_uri", redirectUri));
+
+        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/").build();
+        return executeTokenRequest(uri, parameters);
+
     }
 
     public String refreshAccessToken(String refreshToken) throws IOException, URISyntaxException {
@@ -139,6 +157,20 @@ public class TikTokController {
             HttpUriRequest request = RequestBuilder.post(uri)
                     .setHeader("Content-Type", "application/x-www-form-urlencoded")
                     .build();
+
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                return EntityUtils.toString(response.getEntity());
+            }
+        }
+    }
+
+    private String executeTokenRequest(URI uri, List<NameValuePair> parameters) throws IOException {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost request = new HttpPost(uri);
+            request.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.setEntity(new UrlEncodedFormEntity(parameters));
+
+            logger.info(parameters.toString());
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 return EntityUtils.toString(response.getEntity());
