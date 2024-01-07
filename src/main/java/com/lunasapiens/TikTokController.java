@@ -118,6 +118,8 @@ public class TikTokController {
                 .addParameter("redirect_uri", redirectUri)
                 .build();
 
+        logger.info("URIBuilder: "+uri.toString());
+
         return executeTokenRequest(uri);
     }
 
