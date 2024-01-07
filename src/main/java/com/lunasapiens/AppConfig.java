@@ -1,6 +1,5 @@
 package com.lunasapiens;
 
-import com.lunasapiens.model.FacebookConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -147,6 +146,7 @@ public class AppConfig implements WebMvcConfigurer {
                 .addResourceHandler("/static/**") // Percorso URL delle risorse statiche
                 .addResourceLocations("classpath:/static/"); // Percorso reale delle risorse statiche nel progetto
     }
+
 
 
 }
