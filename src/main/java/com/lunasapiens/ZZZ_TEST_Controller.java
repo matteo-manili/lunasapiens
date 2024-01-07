@@ -24,7 +24,7 @@ public class ZZZ_TEST_Controller {
     public String ZZZ_TEST() {
         try{
 
-            //doAutenticazioneTikTok();
+            doAutenticazioneTikTok();
 
         }catch (Exception e){
             e.printStackTrace();
