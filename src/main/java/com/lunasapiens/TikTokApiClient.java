@@ -47,12 +47,9 @@ public class TikTokApiClient {
 
 
 
-    private void postVideoToTikTok() {
+    public void postVideoToTikTok() {
         HttpHeaders headers = new HttpHeaders();
-
         headers.set("Authorization", "Bearer " + ACCESS_TOKEN);
-
-
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // Inizializza la richiesta per ottenere informazioni sul creatore
@@ -65,7 +62,7 @@ public class TikTokApiClient {
 
         // Inizializza la richiesta per pubblicare il video
         String postVideoUrl = BASE_URL + "/v2/post/publish/video/init/";
-        String videoSourceUrl = "URL_DEL_TUO_VIDEO_O_PATHTO_FILE"; // Sostituisci con l'URL del tuo video o il percorso del file locale
+        String videoSourceUrl = "https://lunasapiens.com/static/video_playa.mp4"; // Sostituisci con l'URL del tuo video o il percorso del file locale
         String requestBody = "{\n" +
                 "  \"post_info\": {\n" +
                 "    \"title\": \"Titolo del video\",\n" +
