@@ -18,11 +18,24 @@ public class ZZZ_TEST_Controller {
     private static final Logger logger = LoggerFactory.getLogger(TikTokApiClient.class);
 
 
-    @GetMapping("/test")
-    public String ZZZ_TEST() {
+    @GetMapping("/test_1")
+    public String ZZZ_TEST_1() {
         try{
 
-            //tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
+            tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "ZZZ_TEST";
+    }
+
+    @GetMapping("/test_2")
+    public String ZZZ_TEST_2() {
+        try{
+
 
             tikTokApiClient.refreshToken();
 
