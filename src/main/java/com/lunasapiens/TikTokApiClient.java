@@ -41,7 +41,7 @@ public class TikTokApiClient {
     private Environment env;
 
 
-    public void doAutenticazioneTikTok(){
+    public void doAutenticazioneTikTok_via_Telegram(){
 
         // Creazione del CSRF state token
         String csrfState = generateCSRFState();
@@ -71,8 +71,6 @@ public class TikTokApiClient {
         logger.info("salvo la csrfState nel database: " + csrfState);
 
         try {
-            //operazioniDbTikTokService.saveValue("columnName", "exampleValue");
-
             // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
             GestioneApplicazione csrfEntity = gestioneApplicazioneRepository.findByName("CSRF_TIKTOK");
 

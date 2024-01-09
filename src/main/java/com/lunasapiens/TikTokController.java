@@ -1,6 +1,8 @@
 package com.lunasapiens;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.OperazioniDbTikTokService;
@@ -46,11 +48,11 @@ public class TikTokController {
     private static final Logger logger = LoggerFactory.getLogger(TikTokController.class);
 
 
-    private final TikTokApiClient tikTokApiClient;
-    private final ServletContext servletContext;
-    private final OperazioniDbTikTokService operazioniDbTikTokService;
-    private final JdbcTemplate jdbcTemplate;
-    private final GestioneApplicazioneRepository gestioneApplicazioneRepository;
+    private TikTokApiClient tikTokApiClient;
+    private ServletContext servletContext;
+    private OperazioniDbTikTokService operazioniDbTikTokService;
+    private JdbcTemplate jdbcTemplate;
+    private GestioneApplicazioneRepository gestioneApplicazioneRepository;
 
 
     @Autowired
@@ -72,14 +74,11 @@ public class TikTokController {
         try{
 
             logger.info("state: "+state);
-
             GestioneApplicazione csrfEntity = gestioneApplicazioneRepository.findByName("CSRF_TIKTOK");
 
             // Verifica lo stato CSRF prima di procedere
             final String storedCSRFState = csrfEntity.getValueString();
-
             logger.info("db state: "+storedCSRFState);
-
             if (storedCSRFState == null || !storedCSRFState.equals(state)) {
                 // Gestisci l'errore CSRF, ad esempio reindirizzando a una pagina di errore
                 model.addAttribute("code", code);
@@ -88,9 +87,10 @@ public class TikTokController {
             }
 
             // Eseguire la richiesta per ottenere l'access token utilizzando il code ottenuto
-            String accessToken = fetchAccessToken(code);
+            String json = fetchAccessToken(code);
+            logger.info("accessToken: "+json);
 
-            logger.info("accessToken: "+accessToken);
+            saveToken_e_refreshToke(json);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -103,7 +103,43 @@ public class TikTokController {
 
 
 
-    // ---------------------------------------------------------------------------
+    private void saveToken_e_refreshToke(String json){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(json);
+            String accessToken = jsonNode.get("access_token").asText();
+            String refreshToken = jsonNode.get("refresh_token").asText();
+            logger.info("Access Token: " + accessToken);
+            logger.info("Refresh Token: " + refreshToken);
+
+
+            // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
+            GestioneApplicazione tokenTiktok = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK");
+            if (tokenTiktok != null) {
+                tokenTiktok.setValueString( accessToken );
+                gestioneApplicazioneRepository.save(tokenTiktok);
+                logger.info("Value accessToken updated in the database!");
+            } else {
+                logger.info("Record with name 'TOKEN_TIKTOK' not found in the database.");
+            }
+
+            // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
+            GestioneApplicazione tokenRefreshTiktok = gestioneApplicazioneRepository.findByName("TOKEN_REFRESH_TIKTOK");
+            if (tokenRefreshTiktok != null) {
+                tokenTiktok.setValueString( refreshToken );
+                gestioneApplicazioneRepository.save(tokenRefreshTiktok);
+                logger.info("Value refreshToken updated in the database!");
+            } else {
+                logger.info("Record with name 'TOKEN_REFRESH_TIKTOK' not found in the database.");
+            }
+
+
+        } catch (Exception e) {
+            logger.info("Error updating value in the database: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 
     @Value("${api.tiktok.clientKey}")
@@ -116,19 +152,6 @@ public class TikTokController {
     private String redirectUri;
 
     public String fetchAccessToken(String authorizationCode) throws IOException, URISyntaxException {
-
-        /*
-        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/")
-                .addParameter("client_key", clientKey)
-                .addParameter("client_secret", clientSecret)
-                .addParameter("code", authorizationCode)
-                .addParameter("grant_type", "authorization_code")
-                .addParameter("redirect_uri", redirectUri)
-                .build();
-        logger.info("URIBuilder: "+uri.toString());
-        return executeTokenRequest(uri);
-        */
-
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("client_key", clientKey));
         parameters.add(new BasicNameValuePair("client_secret", clientSecret));
@@ -142,27 +165,16 @@ public class TikTokController {
     }
 
     public String refreshAccessToken(String refreshToken) throws IOException, URISyntaxException {
-        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/")
-                .addParameter("client_key", clientKey)
-                .addParameter("client_secret", clientSecret)
-                .addParameter("grant_type", "refresh_token")
-                .addParameter("refresh_token", refreshToken)
-                .build();
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("client_key", clientKey));
+        parameters.add(new BasicNameValuePair("client_secret", clientSecret));
+        parameters.add(new BasicNameValuePair("grant_type", "refresh_token"));
+        parameters.add(new BasicNameValuePair("refresh_token", refreshToken));
 
-        return executeTokenRequest(uri);
+        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/").build();
+        return executeTokenRequest(uri, parameters);
     }
 
-    private String executeTokenRequest(URI uri) throws IOException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.post(uri)
-                    .setHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                return EntityUtils.toString(response.getEntity());
-            }
-        }
-    }
 
     private String executeTokenRequest(URI uri, List<NameValuePair> parameters) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -170,7 +182,7 @@ public class TikTokController {
             request.setHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setEntity(new UrlEncodedFormEntity(parameters));
 
-            logger.info(parameters.toString());
+            logger.info(  parameters.toString());
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 return EntityUtils.toString(response.getEntity());

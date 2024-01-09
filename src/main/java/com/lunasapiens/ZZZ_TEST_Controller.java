@@ -76,8 +76,6 @@ public class ZZZ_TEST_Controller {
         System.out.println("Apri l'URL nel browser: " + authorizationUri);
 
         saveCSRFState(csrfState);
-        // Ora puoi gestire la risposta dell'utente dopo il login e ottenere l'access token
-        // ...
     }
 
     private void saveCSRFState(String csrfState) {

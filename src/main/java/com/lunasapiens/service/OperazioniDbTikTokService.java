@@ -16,6 +16,7 @@ public class OperazioniDbTikTokService {
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
     }
 
+    /*
     public void saveValue(String columnName, Object value) {
         GestioneApplicazione entity = new GestioneApplicazione();
         entity.setName(columnName);
@@ -25,7 +26,7 @@ public class OperazioniDbTikTokService {
 
         gestioneApplicazioneRepository.save(entity);
     }
-
+*/
 
 
 
