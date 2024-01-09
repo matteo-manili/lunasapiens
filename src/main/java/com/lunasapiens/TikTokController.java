@@ -127,7 +127,7 @@ public class TikTokController {
             // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
             GestioneApplicazione tokenRefreshTiktok = gestioneApplicazioneRepository.findByName("TOKEN_REFRESH_TIKTOK");
             if (tokenRefreshTiktok != null) {
-                tokenTiktok.setValueString( refreshToken );
+                tokenRefreshTiktok.setValueString( refreshToken );
                 gestioneApplicazioneRepository.save(tokenRefreshTiktok);
                 logger.info("Value refreshToken updated in the database!");
             } else {
