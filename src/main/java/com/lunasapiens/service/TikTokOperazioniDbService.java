@@ -61,8 +61,8 @@ public class TikTokOperazioniDbService {
     }
 
     /**
-     * attraverso quuesto motodo, quando scade il token per fare le operazioni su tiktok, se viene passato il refresh_token,
-     * genera un nuovo token senza chiedere l'autenticazione, che può essere usato per fare le operazioni come il precedente.
+     * attraverso quuesto motodo, quando scade il token per fare le operazioni su tiktok, passando il refresh_token,
+     * genera un nuovo token senza chiedere l'autenticazione, che può essere usato per continuare le operazioni come il precedente.
      * @param refreshToken
      * @return
      * @throws IOException

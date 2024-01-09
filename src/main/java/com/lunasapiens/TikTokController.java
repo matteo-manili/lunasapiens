@@ -51,9 +51,7 @@ public class TikTokController {
 
     @GetMapping({"/tiktok-outh", "/tiktok-outh/"})
     public String tikTokCallback(@RequestParam String code, @RequestParam String state, Model model) {
-
         try{
-
             logger.info("state: "+state);
             GestioneApplicazione csrfEntity = gestioneApplicazioneRepository.findByName("CSRF_TIKTOK");
 
@@ -72,7 +70,6 @@ public class TikTokController {
             logger.info("accessToken: "+json);
             tikTokOperazioniDbService.saveToken_e_refreshToke(json);
 
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -81,9 +78,6 @@ public class TikTokController {
         logger.info("tiktok-outh tikTokCallback controller OKK");
         return "tiktok-outh";
     }
-
-
-
 
 
 

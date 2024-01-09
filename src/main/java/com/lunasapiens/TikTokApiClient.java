@@ -61,8 +61,6 @@ public class TikTokApiClient {
         System.out.println("Apri l'URL nel browser: " + authorizationUri);
 
         saveCSRFState(csrfState);
-        // Ora puoi gestire la risposta dell'utente dopo il login e ottenere l'access token
-        // ...
     }
 
     private void saveCSRFState(String csrfState) {
@@ -72,7 +70,6 @@ public class TikTokApiClient {
         try {
             // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
             GestioneApplicazione csrfEntity = gestioneApplicazioneRepository.findByName("CSRF_TIKTOK");
-
             if (csrfEntity != null) {
                 // Aggiorna i valori di valueString e valueNumber
                 csrfEntity.setValueString( csrfState );
@@ -97,15 +94,17 @@ public class TikTokApiClient {
     }
 
 
+    /**
+     * attraverso quuesto motodo, quando scade il token per fare le operazioni su tiktok, passando il refresh_token,
+     * genera un nuovo token senza chiedere l'autenticazione, che può essere usato per continuare le operazioni come il precedente.
+     */
     public void refreshToken(){
         try{
             logger.info("sono in refreshToken");
             GestioneApplicazione tokenRefreshTiktok = gestioneApplicazioneRepository.findByName("TOKEN_REFRESH_TIKTOK");
             String json = tikTokOperazioniDbService.refreshAccessToken( tokenRefreshTiktok.getValueString() );
             logger.info("json refreshAccessToken:"+ json);
-
             tikTokOperazioniDbService.saveToken_e_refreshToke(json);
-
         } catch (Exception e) {
             logger.info("Error updating value in the database: " + e.getMessage());
             e.printStackTrace();

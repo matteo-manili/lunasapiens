@@ -1,13 +1,12 @@
 package com.lunasapiens;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 /*
 Questo passaggio è obbligatorio poiché creerà un chat_id in background per la tua comunicazione privata con il tuo bot in background.
@@ -27,13 +26,19 @@ risultato:
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-
     // https://t.me/LunaSapiensUser_bot
-    private final static String USERNAME = "LunaSapiensUser_bot";
-    private final String token = "6410764803:AAFl2i4OYn2htKW7H4Wd2mgZLybd0pC2jas";
-    private final String chatId = "1034805278";
 
-/*
+    @Value("${api.telegram.bot.username}")
+    private String telegramBotUsername;
+
+    @Value("${api.telegram.token}")
+    private String telegramToken;
+
+    @Value("${api.telegram.chatId}")
+    private String telegramChatId;
+
+
+    /*
     public TelegramBot()  {
         // Disabilita il webhook
         try {
@@ -42,15 +47,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-*/
+    */
+
     @Override
     public String getBotUsername() {
-        return USERNAME;
+        return telegramBotUsername;
     }
 
     @Override
     public String getBotToken() {
-        return token;
+        return telegramToken;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public void inviaMessaggio(String testoMessaggio) {
         SendMessage message = new SendMessage();
-        message.setChatId(chatId);
+        message.setChatId( telegramChatId );
         message.setText(testoMessaggio);
         try {
             execute(message);

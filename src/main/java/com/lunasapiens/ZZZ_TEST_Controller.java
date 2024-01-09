@@ -24,8 +24,6 @@ public class ZZZ_TEST_Controller {
 
             tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
 
-
-
         }catch (Exception e){
             e.printStackTrace();
         }
