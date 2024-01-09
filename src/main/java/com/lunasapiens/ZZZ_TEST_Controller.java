@@ -22,9 +22,7 @@ public class ZZZ_TEST_Controller {
     public String ZZZ_TEST_1() {
         try{
 
-            //tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
-
-            tikTokApiClient.postVideoToTikTok();
+            tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -36,8 +34,19 @@ public class ZZZ_TEST_Controller {
     public String ZZZ_TEST_2() {
         try{
 
-
             tikTokApiClient.refreshToken();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "ZZZ_TEST";
+    }
+
+    @GetMapping("/test_3")
+    public String ZZZ_TEST_3() {
+        try{
+
+            tikTokApiClient.postVideoToTikTok();
 
         }catch (Exception e){
             e.printStackTrace();

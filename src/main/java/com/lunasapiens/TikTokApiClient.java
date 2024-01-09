@@ -62,7 +62,7 @@ public class TikTokApiClient {
 
         // Inizializza la richiesta per pubblicare il video
         String postVideoUrl = BASE_URL + "/v2/post/publish/video/init/";
-        String videoSourceUrl = "https://lunasapiens.com/static/video_playa.mp4"; // Sostituisci con l'URL del tuo video o il percorso del file locale
+        String videoSourceUrl = "https://www.lunasapiens.com/static/video_playa.mp4"; // Sostituisci con l'URL del tuo video o il percorso del file locale
         String requestBody = "{\n" +
                 "  \"post_info\": {\n" +
                 "    \"title\": \"Titolo del video\",\n" +
