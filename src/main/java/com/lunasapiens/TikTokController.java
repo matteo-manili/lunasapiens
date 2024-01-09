@@ -1,29 +1,14 @@
 package com.lunasapiens;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
-import com.lunasapiens.service.OperazioniDbTikTokService;
+import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -37,10 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class TikTokController {
@@ -51,18 +32,18 @@ public class TikTokController {
     private TikTokApiClient tikTokApiClient;
     private ServletContext servletContext;
     private JdbcTemplate jdbcTemplate;
-    private OperazioniDbTikTokService operazioniDbTikTokService;
+    private TikTokOperazioniDbService tikTokOperazioniDbService;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
 
 
     @Autowired
     public TikTokController(TikTokApiClient tikTokApiClient, ServletContext servletContext,
-                            JdbcTemplate jdbcTemplate, OperazioniDbTikTokService operazioniDbTikTokService,
+                            JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
                             GestioneApplicazioneRepository gestioneApplicazioneRepository) {
         this.tikTokApiClient = tikTokApiClient;
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
-        this.operazioniDbTikTokService = operazioniDbTikTokService;
+        this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
     }
 
@@ -87,9 +68,9 @@ public class TikTokController {
             }
 
             // Eseguire la richiesta per ottenere l'access token utilizzando il code ottenuto
-            String json = operazioniDbTikTokService.fetchAccessToken(code);
+            String json = tikTokOperazioniDbService.fetchAccessToken(code);
             logger.info("accessToken: "+json);
-            operazioniDbTikTokService.saveToken_e_refreshToke(json);
+            tikTokOperazioniDbService.saveToken_e_refreshToke(json);
 
 
         }catch (Exception e){

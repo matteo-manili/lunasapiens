@@ -3,7 +3,7 @@ package com.lunasapiens;
 
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
-import com.lunasapiens.service.OperazioniDbTikTokService;
+import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +21,18 @@ public class TikTokApiClient {
 
 
     private ServletContext servletContext;
-    private OperazioniDbTikTokService operazioniDbTikTokService;
+    private TikTokOperazioniDbService tikTokOperazioniDbService;
     private JdbcTemplate jdbcTemplate;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
     private TelegramBot telegramBot;
 
     @Autowired
-    public TikTokApiClient(ServletContext servletContext, JdbcTemplate jdbcTemplate, OperazioniDbTikTokService operazioniDbTikTokService,
-                               GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBot telegramBot) {
+    public TikTokApiClient(ServletContext servletContext, JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
+                           GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBot telegramBot) {
 
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
-        this.operazioniDbTikTokService = operazioniDbTikTokService;
+        this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
         this.telegramBot = telegramBot;
     }
@@ -42,7 +42,6 @@ public class TikTokApiClient {
 
 
     public void doAutenticazioneTikTok_via_Telegram(){
-
         // Creazione del CSRF state token
         String csrfState = generateCSRFState();
 
@@ -98,7 +97,20 @@ public class TikTokApiClient {
     }
 
 
+    public void refreshToken(){
+        try{
+            logger.info("sono in refreshToken");
+            GestioneApplicazione tokenRefreshTiktok = gestioneApplicazioneRepository.findByName("TOKEN_REFRESH_TIKTOK");
+            String json = tikTokOperazioniDbService.refreshAccessToken( tokenRefreshTiktok.getValueString() );
+            logger.info("json refreshAccessToken:"+ json);
 
+            tikTokOperazioniDbService.saveToken_e_refreshToke(json);
+
+        } catch (Exception e) {
+            logger.info("Error updating value in the database: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 
 

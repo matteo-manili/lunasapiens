@@ -2,7 +2,6 @@ package com.lunasapiens.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lunasapiens.TikTokController;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import org.apache.http.NameValuePair;
@@ -27,14 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OperazioniDbTikTokService {
+public class TikTokOperazioniDbService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperazioniDbTikTokService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TikTokOperazioniDbService.class);
 
     private final GestioneApplicazioneRepository gestioneApplicazioneRepository;
 
     @Autowired
-    public OperazioniDbTikTokService(GestioneApplicazioneRepository gestioneApplicazioneRepository) {
+    public TikTokOperazioniDbService(GestioneApplicazioneRepository gestioneApplicazioneRepository) {
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
     }
 
@@ -134,32 +133,7 @@ public class OperazioniDbTikTokService {
     }
 
 
-    public void refreshToken(){
-        try{
-            logger.info("sono in refreshToken");
-            GestioneApplicazione tokenRefreshTiktok = gestioneApplicazioneRepository.findByName("TOKEN_REFRESH_TIKTOK");
-            String json = refreshAccessToken( tokenRefreshTiktok.getValueString() );
-            logger.info("json refreshAccessToken:"+ json);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(json);
-            String newAccessToken = jsonNode.get("access_token").asText();
-
-            // Recupera l'entità con name uguale a "CSRF_TIKTOK" dal database
-            GestioneApplicazione tokenTiktok = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK");
-            if (tokenTiktok != null) {
-                tokenTiktok.setValueString( newAccessToken );
-                gestioneApplicazioneRepository.save(tokenTiktok);
-                logger.info("Value newAccessToken updated in the database!");
-            } else {
-                logger.info("Record with name 'TOKEN_TIKTOK' not found in the database.");
-            }
-
-        } catch (Exception e) {
-            logger.info("Error updating value in the database: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
 
 
