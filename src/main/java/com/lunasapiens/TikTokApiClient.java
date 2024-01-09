@@ -13,12 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
 @Component
 public class TikTokApiClient {
 
     private static final Logger logger = LoggerFactory.getLogger(TikTokApiClient.class);
-
-
 
     private ServletContext servletContext;
     private TikTokOperazioniDbService tikTokOperazioniDbService;
@@ -39,6 +40,59 @@ public class TikTokApiClient {
 
     @Autowired
     private Environment env;
+
+    private final String BASE_URL = "https://open.tiktokapis.com";
+    private final String ACCESS_TOKEN = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
+    private final String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
+
+
+
+    private void postVideoToTikTok() {
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("Authorization", "Bearer " + ACCESS_TOKEN);
+
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Inizializza la richiesta per ottenere informazioni sul creatore
+        String creatorInfoUrl = BASE_URL + "/v2/post/publish/creator_info/query/";
+        HttpEntity<String> creatorInfoRequest = new HttpEntity<>(headers);
+        ResponseEntity<String> creatorInfoResponse = new RestTemplate().exchange(
+                creatorInfoUrl, HttpMethod.POST, creatorInfoRequest, String.class);
+
+        // Estrai informazioni sul creatore dal response (es. creator_username, creator_nickname)
+
+        // Inizializza la richiesta per pubblicare il video
+        String postVideoUrl = BASE_URL + "/v2/post/publish/video/init/";
+        String videoSourceUrl = "URL_DEL_TUO_VIDEO_O_PATHTO_FILE"; // Sostituisci con l'URL del tuo video o il percorso del file locale
+        String requestBody = "{\n" +
+                "  \"post_info\": {\n" +
+                "    \"title\": \"Titolo del video\",\n" +
+                "    \"privacy_level\": \"MUTUAL_FOLLOW_FRIENDS\",\n" +
+                "    \"disable_duet\": false,\n" +
+                "    \"disable_comment\": true,\n" +
+                "    \"disable_stitch\": false,\n" +
+                "    \"video_cover_timestamp_ms\": 1000\n" +
+                "  },\n" +
+                "  \"source_info\": {\n" +
+                "      \"source\": \"PULL_FROM_URL\",\n" +
+                "      \"video_url\": \"" + videoSourceUrl + "\"\n" +
+                "  }\n" +
+                "}";
+        HttpEntity<String> postVideoRequest = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> postVideoResponse = new RestTemplate().exchange(
+                postVideoUrl, HttpMethod.POST, postVideoRequest, String.class);
+
+        // Estrai l'ID di pubblicazione e l'URL di upload dal response (es. publish_id, upload_url)
+
+        // Se stai usando source=FILE_UPLOAD, invia il video ai server di TikTok
+        // Usa l'upload_url e il publish_id ottenuti dalla risposta precedente
+        // Assicurati di implementare la gestione della trasmissione del file video
+
+        // Puoi implementare anche la verifica dello stato dell'upload utilizzando il Get Post Status endpoint
+    }
+
 
 
     public void doAutenticazioneTikTok_via_Telegram(){
