@@ -22,7 +22,9 @@ public class ZZZ_TEST_Controller {
     public String ZZZ_TEST_1() {
         try{
 
-            tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
+            //tikTokApiClient.doAutenticazioneTikTok_via_Telegram();
+
+            tikTokApiClient.postVideoToTikTok();
 
         }catch (Exception e){
             e.printStackTrace();
