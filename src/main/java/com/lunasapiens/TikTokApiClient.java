@@ -42,13 +42,13 @@ public class TikTokApiClient {
     private Environment env;
 
     private final String BASE_URL = "https://open.tiktokapis.com";
-    private final String ACCESS_TOKEN = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
     private final String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
 
 
 
     public void postVideoToTikTok() {
         HttpHeaders headers = new HttpHeaders();
+        String ACCESS_TOKEN = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
         headers.set("Authorization", "Bearer " + ACCESS_TOKEN);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
