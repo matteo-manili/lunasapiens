@@ -4,26 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class TikTokOperazioniDbService {
@@ -38,61 +22,6 @@ public class TikTokOperazioniDbService {
     }
 
 
-    @Value("${api.tiktok.clientKey}")
-    private String clientKey;
-
-    @Value("${api.tiktok.clientSecret}")
-    private String clientSecret;
-
-    @Value("${api.tiktok.redirectUri}")
-    private String redirectUri;
-
-    public String fetchAccessToken(String authorizationCode) throws IOException, URISyntaxException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("client_key", clientKey));
-        parameters.add(new BasicNameValuePair("client_secret", clientSecret));
-        parameters.add(new BasicNameValuePair("code", authorizationCode));
-        parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
-        parameters.add(new BasicNameValuePair("redirect_uri", redirectUri));
-
-        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/").build();
-        return executeTokenRequest(uri, parameters);
-
-    }
-
-    /**
-     * attraverso quuesto motodo, quando scade il token per fare le operazioni su tiktok, passando il refresh_token,
-     * genera un nuovo token senza chiedere l'autenticazione, che può essere usato per continuare le operazioni come il precedente.
-     * @param refreshToken
-     * @return
-     * @throws IOException
-     * @throws URISyntaxException
-     */
-    public String refreshAccessToken(String refreshToken) throws IOException, URISyntaxException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("client_key", clientKey));
-        parameters.add(new BasicNameValuePair("client_secret", clientSecret));
-        parameters.add(new BasicNameValuePair("grant_type", "refresh_token"));
-        parameters.add(new BasicNameValuePair("refresh_token", refreshToken));
-
-        URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/").build();
-        return executeTokenRequest(uri, parameters);
-    }
-
-
-    private String executeTokenRequest(URI uri, List<NameValuePair> parameters) throws IOException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost request = new HttpPost(uri);
-            request.setHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.setEntity(new UrlEncodedFormEntity(parameters));
-
-            logger.info(  parameters.toString());
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                return EntityUtils.toString(response.getEntity());
-            }
-        }
-    }
 
     //---------------------------------------------------------------------------------
 

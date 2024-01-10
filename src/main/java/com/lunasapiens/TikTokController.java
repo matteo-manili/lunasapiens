@@ -31,7 +31,6 @@ public class TikTokController {
 
     private TikTokApiClient tikTokApiClient;
     private ServletContext servletContext;
-    private JdbcTemplate jdbcTemplate;
     private TikTokOperazioniDbService tikTokOperazioniDbService;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
 
@@ -42,7 +41,6 @@ public class TikTokController {
                             GestioneApplicazioneRepository gestioneApplicazioneRepository) {
         this.tikTokApiClient = tikTokApiClient;
         this.servletContext = servletContext;
-        this.jdbcTemplate = jdbcTemplate;
         this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
     }
@@ -66,7 +64,7 @@ public class TikTokController {
             }
 
             // Eseguire la richiesta per ottenere l'access token utilizzando il code ottenuto
-            String json = tikTokOperazioniDbService.fetchAccessToken(code);
+            String json = tikTokApiClient.fetchAccessToken(code);
             logger.info("accessToken: "+json);
             tikTokOperazioniDbService.saveToken_e_refreshToke(json);
 
