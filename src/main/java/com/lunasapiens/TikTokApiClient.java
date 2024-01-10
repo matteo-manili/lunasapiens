@@ -5,21 +5,23 @@ import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
+
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,11 +31,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -61,8 +67,7 @@ public class TikTokApiClient {
     @Autowired
     private Environment env;
 
-    private final String BASE_URL = "https://open.tiktokapis.com";
-    private final String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
+
 
     @Value("${api.tiktok.clientKey}")
     private String clientKey;
@@ -73,6 +78,67 @@ public class TikTokApiClient {
     @Value("${api.tiktok.redirectUri}")
     private String redirectUri;
 
+
+    private static final String USER_ACCESS_TOKEN = "your_user_access_token";
+    private String BASE_URL = "https://open.tiktokapis.com";
+    private String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
+
+
+
+    public static String initializeVideoUpload(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = "https://open.tiktokapis.com/v2/post/publish/video/init/";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+
+        String requestBody = "{\n" +
+                "  \"post_info\": {\n" +
+                "    \"title\": \"This is my TikTok video\",\n" +
+                "    \"privacy_level\": \"MUTUAL_FOLLOW_FRIENDS\",\n" +
+                "    \"disable_duet\": false,\n" +
+                "    \"disable_comment\": true,\n" +
+                "    \"disable_stitch\": false,\n" +
+                "    \"video_cover_timestamp_ms\": 1000\n" +
+                "  },\n" +
+                "  \"source_info\": {\n" +
+                "    \"source\": \"FILE_UPLOAD\",\n" +
+                "    \"video_size\": 50000123,\n" +
+                "    \"chunk_size\": 10000000,\n" +
+                "    \"total_chunk_count\": 5\n" +
+                "  }\n" +
+                "}";
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+        // Parse the response to get the upload URL
+        // Note: You should add proper error handling here
+        return "https://open-upload.tiktokapis.com/video/?upload_id=67890&upload_token=Xza123";
+    }
+
+    public static void uploadVideo(String uploadUrl, String videoPath) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        FileSystemResource videoFile = new FileSystemResource(new File(videoPath));
+
+        headers.setContentLength(videoFile.contentLength());
+
+        HttpEntity<FileSystemResource> requestEntity = new HttpEntity<>(videoFile, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(uploadUrl, requestEntity, String.class);
+
+        // Handle the response as needed
+        // Note: You should add proper error handling here
+        System.out.println(responseEntity.getBody());
+    }
+
+    // ################################################################
 
 
     /*
@@ -123,63 +189,6 @@ public class TikTokApiClient {
             e.printStackTrace();
         }
     }
-
-
-    public void postVideoToTikTok() {
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            String ACCESS_TOKEN = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
-            headers.set("Authorization", "Bearer " + ACCESS_TOKEN);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            // Inizializza la richiesta per ottenere informazioni sul creatore
-            String creatorInfoUrl = BASE_URL + "/v2/user/" + USER_ID + "/info/";
-
-            HttpEntity<String> creatorInfoRequest = new HttpEntity<>(headers);
-            ResponseEntity<String> creatorInfoResponse = new RestTemplate().exchange(
-                    creatorInfoUrl, HttpMethod.GET, creatorInfoRequest, String.class);
-
-            // Estrai informazioni sul creatore dal response (es. creator_username, creator_nickname)
-
-            // Inizializza la richiesta per pubblicare il video
-            String postVideoUrl = BASE_URL + "/v2/post/publish/video/init/";
-            String videoSourceUrl = "https://www.lunasapiens.com/static/video_playa.mp4"; // Sostituisci con l'URL del tuo video o il percorso del file locale
-            String requestBody = "{\n" +
-                    "  \"post_info\": {\n" +
-                    "    \"title\": \"Titolo del video\",\n" +
-                    "    \"description\": \"Descrizione del video qui\",\n" +
-                    "    \"privacy_level\": \"MUTUAL_FOLLOW_FRIENDS\",\n" +
-                    "    \"disable_duet\": false,\n" +
-                    "    \"disable_comment\": true,\n" +
-                    "    \"disable_stitch\": false,\n" +
-                    "    \"video_cover_timestamp_ms\": 1000\n" +
-                    "  },\n" +
-                    "  \"source_info\": {\n" +
-                    "      \"source\": \"PULL_FROM_URL\",\n" +
-                    "      \"video_url\": \"" + videoSourceUrl + "\"\n" +
-                    "  }\n" +
-                    "}";
-            HttpEntity<String> postVideoRequest = new HttpEntity<>(requestBody, headers);
-            ResponseEntity<String> postVideoResponse = new RestTemplate().exchange(
-                    postVideoUrl, HttpMethod.POST, postVideoRequest, String.class);
-
-            // Estrai l'ID di pubblicazione e l'URL di upload dal response (es. publish_id, upload_url)
-
-            // Se stai usando source=FILE_UPLOAD, invia il video ai server di TikTok
-            // Usa l'upload_url e il publish_id ottenuti dalla risposta precedente
-            // Assicurati di implementare la gestione della trasmissione del file video
-
-            // Puoi implementare anche la verifica dello stato dell'upload utilizzando il Get Post Status endpoint
-        } catch (HttpClientErrorException e) {
-            System.err.println("Errore durante la richiesta a TikTok: " + e.getRawStatusCode() + " " + e.getStatusText());
-            System.err.println("Dettagli: " + e.getResponseBodyAsString());
-        } catch (Exception e) {
-            System.err.println("Errore generico durante la richiesta a TikTok: " + e.getMessage());
-        }
-    }
-
-
 
 
 

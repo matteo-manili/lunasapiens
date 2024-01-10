@@ -46,7 +46,15 @@ public class ZZZ_TEST_Controller {
     public String ZZZ_TEST_3() {
         try{
 
-            tikTokApiClient.postVideoToTikTok();
+            //tikTokApiClient.publishVideo( gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString() );
+
+            String accessToken = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
+            String videoPath = "src/main/resources/static/video_playa.mp4";
+
+            String uploadUrl = tikTokApiClient.initializeVideoUpload(accessToken);
+            if (uploadUrl != null) {
+                tikTokApiClient.uploadVideo(uploadUrl, videoPath);
+            }
 
         }catch (Exception e){
             e.printStackTrace();
