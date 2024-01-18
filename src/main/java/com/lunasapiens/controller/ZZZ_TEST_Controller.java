@@ -1,5 +1,7 @@
-package com.lunasapiens;
+package com.lunasapiens.controller;
 
+import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.TikTokApiClient;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
@@ -62,24 +64,33 @@ public class ZZZ_TEST_Controller {
         return "ZZZ_TEST";
     }
 
+    @GetMapping("/test_4")
+    public String ZZZ_TEST_4() {
+
+            tikTokApiClient.TikTokCreatorInfoRequest();
+
+        return "ZZZ_TEST";
+    }
+
+
 
 
     private ServletContext servletContext;
     private TikTokOperazioniDbService tikTokOperazioniDbService;
     private JdbcTemplate jdbcTemplate;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
-    private TelegramBot telegramBot;
+    private TelegramBotClient telegramBotClient;
     private TikTokApiClient tikTokApiClient;
 
     @Autowired
     public ZZZ_TEST_Controller(ServletContext servletContext, JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
-                               GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBot telegramBot, TikTokApiClient tikTokApiClient) {
+                               GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBotClient telegramBotClient, TikTokApiClient tikTokApiClient) {
 
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
         this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
-        this.telegramBot = telegramBot;
+        this.telegramBotClient = telegramBotClient;
         this.tikTokApiClient = tikTokApiClient;
     }
 

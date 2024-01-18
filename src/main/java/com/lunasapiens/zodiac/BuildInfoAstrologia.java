@@ -3,6 +3,7 @@ package com.lunasapiens.zodiac;
 import at.kugel.zodiac.TextHoroscop;
 import at.kugel.zodiac.house.HousePlacidus;
 import at.kugel.zodiac.planet.PlanetAA0;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -13,23 +14,17 @@ public class BuildInfoAstrologia {
 
     private String horoscop;
 
-    private int ora;
-    private int minuti;
-    private int giorno;
-    private int mese;
-    private int anno;
-    private double lon;
-    private double lat;
+    private GiornoOraPosizioneDTO giornoOraPosizioneDTO;
 
     // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
 
-    public BuildInfoAstrologia( int ora, int minuti, int giorno, int mese, int anno, double lon, double lat ) {
+    public BuildInfoAstrologia(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        this.ora = ora; this.minuti = minuti;
-        this.giorno = giorno; this.mese = mese; this.anno = anno;
-        this.lon = lon; this.lat = lat;
+        this.horoscop = textHoroscop(giornoOraPosizioneDTO.getOra(), giornoOraPosizioneDTO.getMinuti(), giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getMese(),
+                giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getLon(), giornoOraPosizioneDTO.getLat());
 
-        this.horoscop = textHoroscop(ora, minuti, giorno, mese, anno, lon, lat);
+
+
         OroscopoBase aa = getOroscopoBase();
         ArrayList<CasePlacide> bb = getCasePlacide();
         ArrayList<PianetiAspetti> cc = getPianetiAspetti();
@@ -38,6 +33,8 @@ public class BuildInfoAstrologia {
     /**
      * inserisce per default la ora a 12.00
      */
+
+    /*
     public BuildInfoAstrologia( int giorno, int mese, int anno, double lon, double lat ) {
         this.ora = 12; this.minuti = 0;
         this.giorno = giorno; this.mese = mese; this.anno = anno; this.lon = lon; this.lat = lat;
@@ -47,7 +44,7 @@ public class BuildInfoAstrologia {
         ArrayList<CasePlacide> bb = getCasePlacide();
         ArrayList<PianetiAspetti> cc = getPianetiAspetti();
     }
-
+    */
 
 
     public ArrayList<PianetiAspetti> getPianetiAspetti(){
@@ -210,32 +207,11 @@ public class BuildInfoAstrologia {
     }
 
 
-    public int getOra() {
-        return ora;
+    public GiornoOraPosizioneDTO getGiornoOraPosizioneDTO() {
+        return giornoOraPosizioneDTO;
     }
 
-    public int getMinuti() {
-        return minuti;
+    public void setGiornoOraPosizioneDTO(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        this.giornoOraPosizioneDTO = giornoOraPosizioneDTO;
     }
-
-    public int getGiorno() {
-        return giorno;
-    }
-
-    public int getMese() {
-        return mese;
-    }
-
-    public int getAnno() {
-        return anno;
-    }
-
-    public double getLon() {
-        return lon;
-    }
-
-    public double getLat() {
-        return lat;
-    }
-
 }

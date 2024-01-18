@@ -8,12 +8,18 @@ import com.azure.core.credential.KeyCredential;
 import com.azure.core.exception.HttpResponseException;
 import com.azure.core.models.ResponseError;
 import com.lunasapiens.Constants;
+import com.lunasapiens.TikTokApiClient;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ServiziAstrologici {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiziAstrologici.class);
 
     private String keyOpenAi;
     private Double temperature = 1.0;
@@ -24,20 +30,23 @@ public class ServiziAstrologici {
         this.keyOpenAi = keyOpenAi;
     }
 
-    public StringBuilder servizioOroscopoDelGiorno(String segno, int ora, int minuti, int giorno, int mese, int anno, double lon, double lat) {
-        return servizioOroscopoDelGiorno(temperature, maxTokens, segno, ora, minuti, giorno, mese, anno, lon, lat);
+    public StringBuilder servizioOroscopoDelGiorno(String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        return servizioOroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
     }
 
-    public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, int ora, int minuti, int giorno, int mese, int
-            anno, double lon, double lat) {
+    public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia(ora, minuti, giorno, mese, anno, lon, lat);
+
+        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia( giornoOraPosizioneDTO );
 
         System.out.println("############################ TEXT IA ###################################");
+        System.out.println("############################ TEXT IA ###################################");
         String domanda = "Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del "+ segno +" in base a questi dati. \n" +
-                "Il giorno di oggi è: "+giorno+ "/" +mese+ "/" +anno+ " ore "+ora+":"+minuti+ "\n"+
-
+                "il testo generato deve essere diviso in blocchi di 30-40 parole e tra un blocco e l'altro devi inserie il carattere speciale "+Constants.SeparatoreTestoOroscopo+". \n"+
+                "Il giorno di oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
+                + " ore "+giornoOraPosizioneDTO.getOra()+":"+giornoOraPosizioneDTO.getMinuti()+ "\n"+
                 "Transiti di oggi: " + "\n";
+
         for(PianetiAspetti var : buildInfoAstrologia.getPianetiAspetti()){
             if ( var.getNomePianeta().equals(Constants.NAME_PLANET[0]) ||
                     var.getNomePianeta().equals(Constants.NAME_PLANET[1]) ||
@@ -55,11 +64,11 @@ public class ServiziAstrologici {
             //System.out.println( var.toString() );
         }
 
-        System.out.println("DOMANDA: "+ domanda );
+        logger.info("DOMANDA: "+ domanda );
 
 
-        // @@@@@@@@@@@@@@@@ OPENAI Azure @@@@@@@@@@@@@@@@@@@@@@
-/*
+        // @@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@
+
         OpenAIClient client = new OpenAIClientBuilder().credential(new KeyCredential( keyOpenAi )).buildClient();
         List<String> prompt = new ArrayList<>();
         prompt.add( domanda );
@@ -67,27 +76,25 @@ public class ServiziAstrologici {
         Completions completions = client.getCompletions("gpt-3.5-turbo-instruct",
                 new CompletionsOptions(prompt).setMaxTokens( maxTokens ).setTemperature( temperature ));
 
-        System.out.printf("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt());
-        System.out.println("setMaxTokens: "+temperature +" setMaxTokens: "+maxTokens);
+        logger.info("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt());
+        logger.info("setMaxTokens: "+temperature +" setMaxTokens: "+maxTokens);
 
         StringBuilder risposta = new StringBuilder();
         for (Choice choice : completions.getChoices()) {
             System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
             risposta.append(choice.getText()).append("\n");
         }
-*/
-  // ######################################################## IMMAGINE OPENAI ########################################################
-        // esempio preso da https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/openai/azure-ai-openai/src/samples/java/com/azure/ai/openai/usage/GetImagesSample.java
-        try {
 
+
+
+  // ######################################################## IMMAGINE OPENAI - OPENAI Azure ########################################################
+        // esempio preso da https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/openai/azure-ai-openai/src/samples/java/com/azure/ai/openai/usage/GetImagesSample.java
+        /*
+        try {
             //String azureOpenaiKey = "{azure-open-ai-key}";
             //String endpoint = "{azure-open-ai-endpoint}";
 
-            /*
-
-            L'idea è di mettere il testo generato dell'orscoppo giornaliero come parametro per generare l'immaginr IA
-
-             */
+            //L'idea è di mettere il testo generato dell'orscoppo giornaliero come parametro per generare l'immaginr IA
 
             OpenAIClient client = new OpenAIClientBuilder().credential(new AzureKeyCredential( this.keyOpenAi )).
                     buildClient();
@@ -116,8 +123,12 @@ public class ServiziAstrologici {
             //model.addAttribute("oroscopoGpt", hre.getValue() +" "+ hre.getMessage()  );
         }
 
+        */
+        // ####################### FINE IMMAGINE OPENAI ##################
+
+
         StringBuilder aa = new StringBuilder("");
-        return aa; //risposta;
+        return risposta; //risposta;
     }
 
 

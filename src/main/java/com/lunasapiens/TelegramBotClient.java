@@ -24,7 +24,7 @@ risultato:
  */
 
 @Component
-public class TelegramBot extends TelegramLongPollingBot {
+public class TelegramBotClient extends TelegramLongPollingBot {
 
     // https://t.me/LunaSapiensUser_bot
 

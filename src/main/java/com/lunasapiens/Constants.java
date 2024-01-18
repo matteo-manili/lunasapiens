@@ -5,11 +5,12 @@ import java.util.ArrayList;
 public class Constants {
 
 
+
+    public static String SeparatoreTestoOroscopo = "#@#";
+
     public static final String[] NAME_PLANET = new String[] {
             "Sole", "Luna", "Mercurio", "Venere", "Marte", "Giove", "Saturno", "Urano", "Nettuno", "Plutone"
     };
-
-
 
     public static ArrayList<String> segniZodiacali(){
         ArrayList<String> segniZodiacali = new ArrayList<>();

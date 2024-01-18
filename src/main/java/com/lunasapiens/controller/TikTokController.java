@@ -1,6 +1,7 @@
-package com.lunasapiens;
+package com.lunasapiens.controller;
 
 
+import com.lunasapiens.TikTokApiClient;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.TikTokOperazioniDbService;

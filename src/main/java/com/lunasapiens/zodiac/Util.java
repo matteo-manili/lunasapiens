@@ -1,10 +1,35 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Util {
+
+
+    // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
+
+    public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
+
+
+        LocalDateTime now = LocalDateTime.now();
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
+                now.getMonthValue(), now.getYear(), 49.9, 12.4);
+
+
+        return giornoOraPosizioneDTO;
+    }
+
+
+
+
+
+
+
+
 
 
     public static String determinaSegnoZodiacale(int grado) {

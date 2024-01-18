@@ -1,7 +1,13 @@
-package com.lunasapiens;
+package com.lunasapiens.controller;
 
 
+import com.lunasapiens.AppConfig;
+import com.lunasapiens.Constants;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.entity.OroscopoGiornaliero;
+import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
+import com.lunasapiens.zodiac.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +20,13 @@ public class IndexController {
 
     @Autowired
     private AppConfig appConfig;
+
+    private OroscopoGiornalieroService oroscopoGiornalieroService;
+
+    @Autowired
+    public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
+        this.oroscopoGiornalieroService = oroscopoGiornalieroService;
+    }
 
     @GetMapping("/")
     public String index(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
@@ -35,11 +48,6 @@ public class IndexController {
     }
 
 
-    @GetMapping("/greeting")
-    public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
-    }
 
     @GetMapping("/oroscopo")
     public String oroscopo(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
@@ -53,19 +61,20 @@ public class IndexController {
         double lon = 38.1; double lat = 13.3;
 
         /*
-
         int ora = 12; int minuti = 0;
         int giorno = 30; int mese = 9; int anno = 2023;
         double lon = 49.9; double lat = 12.4;
-
          */
 
+        int segnoNumero = 10;
         ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-        StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get(9), ora, minuti, giorno, mese, anno, lon, lat);
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get( segnoNumero ), giornoOraPosizioneDTO);
+        OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(segnoNumero, sB, giornoOraPosizioneDTO);
 
-        //servizioOroscopoDelGiorno
 
-        model.addAttribute("oroscopoGpt", sB  );
+
+        model.addAttribute("oroscopoGpt", oroscopoGiornaliero.getTestoOroscopo() );
         return "oroscopo";
     }
 

@@ -1,17 +1,20 @@
 package com.lunasapiens;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -35,11 +38,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -51,17 +51,17 @@ public class TikTokApiClient {
     private TikTokOperazioniDbService tikTokOperazioniDbService;
     private JdbcTemplate jdbcTemplate;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
-    private TelegramBot telegramBot;
+    private TelegramBotClient telegramBotClient;
 
     @Autowired
     public TikTokApiClient(ServletContext servletContext, JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
-                           GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBot telegramBot) {
+                           GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBotClient telegramBotClient) {
 
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
         this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
-        this.telegramBot = telegramBot;
+        this.telegramBotClient = telegramBotClient;
     }
 
     @Autowired
@@ -79,13 +79,12 @@ public class TikTokApiClient {
     private String redirectUri;
 
 
-    private static final String USER_ACCESS_TOKEN = "your_user_access_token";
-    private String BASE_URL = "https://open.tiktokapis.com";
-    private String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
+    //private static final String USER_ACCESS_TOKEN = "your_user_access_token";
+    //private String BASE_URL = "https://open.tiktokapis.com";
+    //private String USER_ID = "_000ZcdXGKAidjCzF6YAktD42NIR7lf2MSed"; // Sostituisci con l'ID utente TikTok
 
 
-
-    public static String initializeVideoUpload(String accessToken) {
+    public static String initializeVideoUpload_old(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://open.tiktokapis.com/v2/post/publish/video/init/";
 
@@ -104,20 +103,113 @@ public class TikTokApiClient {
                 "  },\n" +
                 "  \"source_info\": {\n" +
                 "    \"source\": \"FILE_UPLOAD\",\n" +
+                "    \"video_size\": 1490000,  // Dimensione del video in byte\n" +
+                "    \"chunk_size\": 1000000,  // Dimensione di ogni chunk in byte\n" +
+                "    \"total_chunk_count\": 2    // Numero totale di chunk\n" +
+                "  }\n" +
+                "}";
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode responseJson;
+        try {
+            responseJson = objectMapper.readTree(responseEntity.getBody());
+
+            logger.info("Risultato JSON: " + responseJson.toString());
+
+
+            String uploadId = responseJson.get("upload_id").asText();
+            String uploadToken = responseJson.get("upload_token").asText();
+
+            // Puoi estrarre altre informazioni se necessario
+
+            // Restituisci un oggetto contenente i valori estratti
+            //return new VideoUploadResponse(uploadId, uploadToken);
+            return "";
+
+        } catch (JsonProcessingException e) {
+            // Gestisci l'eccezione come preferisci, ad esempio, loggando un messaggio di errore
+            e.printStackTrace(); // o usa un logger per registrare l'errore in modo appropriato
+            return null; // o lancia un'eccezione personalizzata se necessario
+        }
+
+        // Parse the response to get the upload URL
+        // Note: You should add proper error handling here
+        //return "https://open-upload.tiktokapis.com/video/?upload_id=67890&upload_token=Xza123";
+    }
+
+
+    private static String API_URL = "https://open.tiktokapis.com/v2/post/publish/video/init/";
+    //private static String API_URL = "https://open.tiktokapis.com/v2/post/publish/content/init/";
+
+
+    public static String initializeVideoUpload(String accessToken)  {
+
+        // Creare l'oggetto JSON per la richiesta
+        ObjectMapper objectMapper = new ObjectMapper();
+        //String requestBody = "{\"post_info\": { /* ... dati della richiesta ... */ }, \"source_info\": { /* ... dati della richiesta ... */ }}";
+
+        String requestBody = "{\n" +
+                "  \"post_info\": {\n" +
+                "    \"title\": \"Titolo del video\",\n" +
+                "    \"privacy_level\": \"MUTUAL_FOLLOW_FRIENDS\",\n" +
+                "    \"disable_duet\": false,\n" +
+                "    \"disable_comment\": true,\n" +
+                "    \"disable_stitch\": false,\n" +
+                "    \"video_cover_timestamp_ms\": 1000\n" +
+                "  },\n" +
+                "  \"source_info\": {\n" +
+                "    \"source\": \"FILE_UPLOAD\",\n" +
                 "    \"video_size\": 50000123,\n" +
                 "    \"chunk_size\": 10000000,\n" +
                 "    \"total_chunk_count\": 5\n" +
                 "  }\n" +
                 "}";
 
+
+        // Effettuare la chiamata API
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth( accessToken );
+
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, String.class);
 
-        // Parse the response to get the upload URL
-        // Note: You should add proper error handling here
-        return "https://open-upload.tiktokapis.com/video/?upload_id=67890&upload_token=Xza123";
+
+        System.out.println("Risposta JSON:\n" + responseEntity.getBody().toString());
+
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            // Analizzare la risposta JSON
+            try {
+                JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
+                JsonNode dataNode = rootNode.path("data");
+
+                // Estrarre i dati necessari dalla risposta
+                String publishId = dataNode.path("publish_id").asText();
+                String uploadUrl = dataNode.path("upload_url").asText();
+
+                // Utilizzare publishId e uploadUrl secondo le istruzioni della documentazione
+                // ...
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Gestire errori HTTP
+            System.out.println("Errore nella chiamata API: " + responseEntity.getStatusCodeValue());
+        }
+
+
+        return "";
     }
+
+
+
 
     public static void uploadVideo(String uploadUrl, String videoPath) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
@@ -174,7 +266,7 @@ public class TikTokApiClient {
             // Ottieni la risposta
             String responseBody = responseEntity.getBody();
 
-            logger.info(responseBody);
+            logger.info("responseBody: "+responseBody);
 
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().value() == 401) {
@@ -207,7 +299,7 @@ public class TikTokApiClient {
 
 
         //TelegramBot telegramBot = new TelegramBot();
-        telegramBot.inviaMessaggio("link autenticazione tiktok: "+authorizationUri);
+        telegramBotClient.inviaMessaggio("link autenticazione tiktok: "+authorizationUri);
 
         // Apertura dell'URL nel browser o integrazione con il tuo frontend
         System.out.println("Apri l'URL nel browser: " + authorizationUri);
