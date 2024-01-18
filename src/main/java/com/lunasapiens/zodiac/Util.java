@@ -14,6 +14,8 @@ public class Util {
     public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
 
 
+        // ufffff
+
         LocalDateTime now = LocalDateTime.now();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
