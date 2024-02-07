@@ -42,9 +42,9 @@ public class VideoGenerator {
 
             // Inizializza il recorder per il video
             FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath, width, height);
-            recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG4);
-            recorder.setFrameRate(frameRate);
-            recorder.setVideoBitrate(20000); // 2 Mbps
+            recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG4); // Imposta il codec video su MPEG4
+            recorder.setFrameRate(frameRate); // Imposta il frame rate del video
+            recorder.setVideoBitrate(20000); // Imposta il bitrate video a 2 Mbps
 
             // Inizializza il grabber per l'audio
             FFmpegFrameGrabber audioGrabber = new FFmpegFrameGrabber(audioFilePath);
@@ -73,10 +73,8 @@ public class VideoGenerator {
                 recorder.record(audioFrame);
             }
 
-
             double secondsDurationAudio = getSecondsDurationAudio();
             logger.info( "durata traccia audio: "+secondsDurationAudio );
-
             for (int i = 0; i < (durataSecondiImmagine * numImages) / secondsDurationAudio; i++) {
                 // Registra nuovamente la stessa traccia audio alla fine
                 audioGrabber.setTimestamp(0); // Riporta il grabber audio all'inizio del file
