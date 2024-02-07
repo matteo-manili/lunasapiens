@@ -33,9 +33,7 @@ public class OroscopoGiornalieroService {
     //---------------------------------------------------------------------------------
 
     public OroscopoGiornaliero salvaOroscoopoGiornaliero(int segnoNumero, StringBuilder sB, GiornoOraPosizioneDTO giornoOraPosizioneDTO){
-
         try {
-
             // Creare un oggetto Calendar e impostare i valori
             Calendar calendar = Calendar.getInstance();
             calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese(), giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),

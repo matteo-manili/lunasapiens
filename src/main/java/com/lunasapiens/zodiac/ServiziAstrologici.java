@@ -36,7 +36,6 @@ public class ServiziAstrologici {
 
     public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-
         BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia( giornoOraPosizioneDTO );
 
         System.out.println("############################ TEXT IA ###################################");

@@ -4,9 +4,23 @@
     <title>La mia Pagina</title>
 </head>
 <body>
-<h1>LunaSapiens.com!</h1>
+<h1>LunaSapiens.com</h1>
 <p>Questa è una pagina HTML di esempio OROSCOPO.</p>
 <p th:text="${result}">This is a dynamic message with style.</p>
 <p th:text="${oroscopoGpt}">This is a dynamic message with style.</p>
+
+
+<div th:if="${videoCreated}">
+    <p>Il video è stato creato con successo!</p>
+    <video width="400" controls>
+        <source th:src="@{/static/generatedVideo.mp4}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+<div th:unless="${videoCreated}">
+    <p>Nessuna immagine trovata per creare il video.</p>
+</div>
+
+
 </body>
 </html>

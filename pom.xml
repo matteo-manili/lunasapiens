@@ -17,7 +17,15 @@
         <java.version>17</java.version>
     </properties>
 
-    
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <!-- Altri repository possono essere già presenti qui -->
+    </repositories>
+
+
     <dependencies>
 
         <!-- ###################### SPRING FRAMEWORK ###################### -->
@@ -52,6 +60,7 @@
             <version>42.6.0</version>
         </dependency>
 
+
         <!-- ###################### UTIL ###################### -->
 
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -81,7 +90,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.14.0</version>
         </dependency>
-
 
 
         <!-- ###################### OPEN_AI ###################### -->
@@ -134,13 +142,57 @@
         </dependency>
 
 
+        <!-- ###################### EXTERNAL LIB ###################### -->
+
+        <dependency>
+            <groupId>com.xuggle</groupId>
+            <artifactId>xuggle-xuggler</artifactId>
+            <version>5.4</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/lib/xuggle-xuggler-5.4.jar</systemPath>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/io.humble/humble-video-all -->
+        <dependency>
+            <groupId>io.humble</groupId>
+            <artifactId>humble-video-all</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.5.9</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.bytedeco/opencv -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.7.0-1.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.9</version> <!-- Controlla la versione più recente su Maven Central -->
+        </dependency>
 
 
     </dependencies>
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -152,12 +204,27 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.lunasapiens.LunasapiensApplication</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
                 </configuration>
             </plugin>
 
         </plugins>
+
+
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>static/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/static</directory>
+                <targetPath>${project.build.outputDirectory}/static</targetPath>
+            </resource>
+        </resources>
+
+
     </build>
-
-
-
 </project>

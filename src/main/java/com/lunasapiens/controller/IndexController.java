@@ -3,20 +3,42 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
+import com.lunasapiens.ImageGenerator;
+import com.lunasapiens.VideoGenerator;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
 import com.lunasapiens.zodiac.Util;
+import com.xuggle.mediatool.IMediaWriter;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.xuggler.IPixelFormat;
+import com.xuggle.xuggler.IRational;
+import com.xuggle.xuggler.IVideoPicture;
+import com.xuggle.xuggler.video.ConverterFactory;
+import com.xuggle.xuggler.video.IConverter;
+import io.humble.video.Video;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Arrays;
 
 @Controller
 public class IndexController {
+
+    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
     private AppConfig appConfig;
@@ -69,12 +91,51 @@ public class IndexController {
         int segnoNumero = 10;
         ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-        StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get( segnoNumero ), giornoOraPosizioneDTO);
-        OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(segnoNumero, sB, giornoOraPosizioneDTO);
+
+        //StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get( segnoNumero ), giornoOraPosizioneDTO);
+        //OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(segnoNumero, sB, giornoOraPosizioneDTO);
 
 
 
-        model.addAttribute("oroscopoGpt", oroscopoGiornaliero.getTestoOroscopo() );
+        // @@@@@@@ò@ crezione immagine @@@@@@@@
+        String text = "Hello, World!";
+        String fontName = "Arial";
+        int fontSize = 20;
+        Color textColor = Color.BLUE;
+
+        ImageGenerator igenerat = new ImageGenerator();
+        //igenerat.generateImage(text, fontName, fontSize, textColor, "src/main/resources/static/image-generated/generatedImage.png");
+
+        // Verifica se il file esiste
+        File imageFileExists = new File("src/main/resources/static/image-generated/generatedImage.png");
+        boolean imageExists = imageFileExists.exists();
+
+        if (imageExists) {
+            // L'immagine è stata generata con successo
+            logger.info("L'immagine è stata generata con successo");
+            model.addAttribute("imageExists", true);
+        } else {
+            // L'immagine non è stata generata
+            logger.info("L'immagine non è stata generata");
+            model.addAttribute("imageExists", false);
+        }
+
+        // @@@@@@@@@@@ creazione video @@@@@@@@@
+
+
+        try{
+            VideoGenerator aa = new VideoGenerator();
+            aa.createVideoFromImages();
+
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+
+
+
+
+        // @@@@@@ fine creazione video
+        model.addAttribute("oroscopoGpt", ""/*oroscopoGiornaliero.getTestoOroscopo()*/ );
         return "oroscopo";
     }
 
