@@ -64,27 +64,27 @@
 
         <!-- ###################### UTIL ###################### -->
 
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
             <scope>provided</scope>
-        </dependency> -->
+        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.15.2</version>
-        </dependency> -->
+        </dependency>
 
-        <!--
+        <!--  -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
-        </dependency> -->
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
@@ -145,7 +145,8 @@
 
         <!-- ###################### EXTERNAL LIB ###################### -->
 
-        <!-- ESEMPIO DI COME INSERIRE UNA LIBRERIA ESTERNA VIA MAVEN POM
+        <!--  #### NON CANCELLARE !!!! ####
+        ESEMPIO DI COME INSERIRE UNA LIBRERIA ESTERNA VIA MAVEN POM
         <dependency>
             <groupId>com.xuggle</groupId>
             <artifactId>xuggle-xuggler</artifactId>
@@ -169,13 +170,6 @@
             <version>1.6.0</version>
         </dependency> -->
 
-        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>1.5.9</version>
-        </dependency> -->
-
 
         <!-- https://mvnrepository.com/artifact/org.bytedeco/opencv
         <dependency>
@@ -187,9 +181,16 @@
         <!-- Controlla la versione più recente su Maven Central -->
         <dependency>
             <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
+            <artifactId>javacv-platform</artifactId>
             <version>1.5.9</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/ffmpeg
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>4.1-1.4.4</version>
+        </dependency>  -->
 
 
     </dependencies>
