@@ -157,12 +157,12 @@
         -->
 
 
-        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
+        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
             <version>1.5.10</version>
-        </dependency>
+        </dependency> -->
 
 
 

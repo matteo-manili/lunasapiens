@@ -4,19 +4,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
-
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
-
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+/*
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.ffmpeg.global.avcodec;
-
+*/
 
 
 @Component
@@ -36,6 +35,8 @@ public class VideoGenerator {
     private String audioFilePath = "src/main/resources/static/audio/music_9.mp3";
 
     public void createVideoFromImages() {
+
+        /*
 
         final int durataSecondiImmagine = 5;
         final int width = 1280; // Imposta la larghezza del video
@@ -101,6 +102,8 @@ public class VideoGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        */
     }
 
     private BufferedImage convertImageToType(BufferedImage originalImage, int targetType) {
@@ -109,6 +112,7 @@ public class VideoGenerator {
         return convertedImage;
     }
 
+    /*
     private Frame bufferedImageToFrame(BufferedImage bi) {
         Java2DFrameConverter converter = new Java2DFrameConverter();
         return converter.getFrame(bi);
@@ -131,5 +135,7 @@ public class VideoGenerator {
             return 0;
         }
     }
+*/
+
 
 }
