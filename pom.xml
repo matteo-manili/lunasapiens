@@ -187,6 +187,7 @@
                 </configuration>
             </plugin>
 
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -200,7 +201,7 @@
                         <configuration>
                             <filters>
                                 <filter>
-                                    <!-- Includi solo i pacchetti specifici -->
+
                                     <artifact>org.bytedeco:javacv-platform</artifact>
                                     <includes>
                                         <include>org/bytedeco/javacv/**</include>
@@ -208,15 +209,27 @@
                                     </includes>
                                 </filter>
                             </filters>
-                            <!-- Rinomina il JAR risultante -->
+
                             <finalName>my-custom-javacv-ffmpeg</finalName>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <finalName>subset</finalName>
+                    <includes>
+                        <include>org/bytedeco/javacv/**</include>
 
 
-
+                    </includes>
+                </configuration>
+            </plugin>
 
 
         </plugins>

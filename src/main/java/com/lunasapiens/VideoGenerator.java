@@ -14,6 +14,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
+
+
 import org.bytedeco.ffmpeg.global.avcodec;
 
 
@@ -35,7 +37,7 @@ public class VideoGenerator {
 
     public void createVideoFromImages() {
 
-        /*
+
 
         final int durataSecondiImmagine = 5;
         final int width = 1280; // Imposta la larghezza del video
@@ -102,7 +104,7 @@ public class VideoGenerator {
             e.printStackTrace();
         }
 
-        */
+
     }
 
     private BufferedImage convertImageToType(BufferedImage originalImage, int targetType) {
@@ -111,7 +113,7 @@ public class VideoGenerator {
         return convertedImage;
     }
 
-    /*
+
     private Frame bufferedImageToFrame(BufferedImage bi) {
         Java2DFrameConverter converter = new Java2DFrameConverter();
         return converter.getFrame(bi);
@@ -134,7 +136,7 @@ public class VideoGenerator {
             return 0;
         }
     }
-*/
+
 
 
 }
