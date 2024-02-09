@@ -157,12 +157,12 @@
         -->
 
 
-        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv
+        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
             <version>1.5.10</version>
-        </dependency> -->
+        </dependency>
 
 
 
@@ -178,7 +178,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.1.0</version>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -187,6 +186,38 @@
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <!-- Includi solo i pacchetti specifici -->
+                                    <artifact>org.bytedeco:javacv-platform</artifact>
+                                    <includes>
+                                        <include>org/bytedeco/javacv/**</include>
+                                        <include>org/bytedeco/ffmpeg/**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <!-- Rinomina il JAR risultante -->
+                            <finalName>my-custom-javacv-ffmpeg</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+
 
         </plugins>
 
