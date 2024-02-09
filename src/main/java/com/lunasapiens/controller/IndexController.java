@@ -18,14 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
-
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.Arrays;
 
 @Controller
 public class IndexController {

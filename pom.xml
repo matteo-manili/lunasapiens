@@ -152,12 +152,15 @@
             <artifactId>xuggle-xuggler</artifactId>
             <version>5.4</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/lib/xuggle-xuggler.jar</systemPath>
-        </dependency>
-        -->
+            <systemPath>${pom.basedir}/src/lib/xuggle-xuggler-5.4.jar</systemPath>
+        </dependency>  -->
 
 
-        <!-- questa dipendenza fa salire il jar finale lunasapiens-0.0.1-SNAPSHOT.jar oltre i 500mb comportando il  -->
+        <!-- !uesta dipendenza fa salire il jar finale lunasapiens-0.0.1-SNAPSHOT.jar oltre i 500mb comportando il fallimento del deploy su heroku.
+                per questo ho inserito molti exclusion.
+         Quindi la soluzione potrebbe essere raggruppare solo i jar necessari, creare un jar manuale e includerlo come jar esterno nel progetto
+            (lunasapiens/src/lib) via maven   -->
+
         <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
         <dependency>
             <groupId>org.bytedeco</groupId>
@@ -184,8 +187,6 @@
                     <groupId>org.bytedeco</groupId>
                     <artifactId>libfreenect2-platform</artifactId>
                 </exclusion>
-
-
                 <exclusion>
                     <groupId>org.bytedeco</groupId>
                     <artifactId>libdc1394-platform</artifactId>
@@ -206,13 +207,13 @@
                     <groupId>org.bytedeco</groupId>
                     <artifactId>videoinput-platform</artifactId>
                 </exclusion>
+                <!-- <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>ffmpeg-platform</artifactId>
+                </exclusion> -->
 
             </exclusions>
         </dependency>
-
-
-
-
 
 
 

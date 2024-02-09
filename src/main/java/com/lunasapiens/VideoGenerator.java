@@ -9,15 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-
 import org.bytedeco.ffmpeg.global.avcodec;
-
 
 @Component
 public class VideoGenerator {
@@ -37,12 +34,11 @@ public class VideoGenerator {
 
     public void createVideoFromImages() {
 
-
-
         final int durataSecondiImmagine = 5;
+
         final int width = 1280; // Imposta la larghezza del video
         final int height = 720; // Imposta l'altezza del video
-        final int audioCodec = avcodec.AV_CODEC_ID_MP3; // Codice del codec audio (MP3)
+
 
         try {
             // Calcola la durata totale del video in base al numero di immagini
@@ -53,7 +49,8 @@ public class VideoGenerator {
 
             // Inizializza il recorder per il video
             FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath, width, height);
-            recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG4); // Imposta il codec video su MPEG4
+            recorder.setVideoCodec( avcodec.AV_CODEC_ID_MPEG4 ); // Imposta il codec video su MPEG4
+
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
             recorder.setVideoBitrate(20000); // Imposta il bitrate video a 2 Mbps
 
@@ -63,7 +60,7 @@ public class VideoGenerator {
 
             // Aggiungi la traccia audio al recorder
             recorder.setAudioChannels(audioGrabber.getAudioChannels());
-            recorder.setAudioCodec(audioCodec); // Imposta il codec audio
+            recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio
             recorder.setSampleRate(audioGrabber.getSampleRate());
             recorder.start();
 
@@ -106,6 +103,7 @@ public class VideoGenerator {
 
 
     }
+
 
     private BufferedImage convertImageToType(BufferedImage originalImage, int targetType) {
         BufferedImage convertedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), targetType);
