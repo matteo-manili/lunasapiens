@@ -171,12 +171,6 @@
                     <groupId>org.bytedeco</groupId>
                     <artifactId>openblas-platform</artifactId>
                 </exclusion>
-                <!--
-                <exclusion>
-                    <groupId>org.bytedeco</groupId>
-                    <artifactId>ffmpeg-platform</artifactId>
-                </exclusion>
-                -->
                 <exclusion>
                     <groupId>org.bytedeco</groupId>
                     <artifactId>librealsense2-platform</artifactId>
@@ -186,8 +180,12 @@
                     <artifactId>leptonica-platform</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
+
+
+
+
+
 
 
     </dependencies>
