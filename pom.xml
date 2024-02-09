@@ -162,14 +162,36 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
             <version>1.5.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>opencv-platform</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>openblas-platform</artifactId>
+                </exclusion>
+                <!--
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>ffmpeg-platform</artifactId>
+                </exclusion>
+                -->
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>librealsense2-platform</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>leptonica-platform</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
 
-
-
-
-
     </dependencies>
+
 
     <build>
         <plugins>
@@ -184,50 +206,6 @@
                 <configuration>
                     <mainClass>com.lunasapiens.LunasapiensApplication</mainClass>
                     <includeSystemScope>true</includeSystemScope>
-                </configuration>
-            </plugin>
-
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <filters>
-                                <filter>
-
-                                    <artifact>org.bytedeco:javacv-platform</artifact>
-                                    <includes>
-                                        <include>org/bytedeco/javacv/**</include>
-                                        <include>org/bytedeco/ffmpeg/**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-
-                            <finalName>my-custom-javacv-ffmpeg</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <finalName>subset</finalName>
-                    <includes>
-                        <include>org/bytedeco/javacv/**</include>
-
-
-                    </includes>
                 </configuration>
             </plugin>
 
