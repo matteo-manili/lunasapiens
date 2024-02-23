@@ -28,17 +28,22 @@ public class VideoGenerator {
 
     public VideoGenerator() {}
 
-    private String inputImagePath = "src/main/resources/static/aaa_immagini";
-    private String outputVideoPath = "src/main/resources/static/aaa_video/test.mov";
-    private String audioFilePath = "src/main/resources/static/audio/music_9.mp3";
 
-    public void createVideoFromImages() {
+    private String outputVideoPath = "src/main/resources/static/oroscopo_giornaliero/video/";
+    private String audioFilePath = "src/main/resources/static/oroscopo_giornaliero/audio/music_9.mp3";
 
-        final int durataSecondiImmagine = 5;
+    public void createVideoFromImages(String inputImagePath, String nomeFileVideo) {
+
+        final int durataSecondiImmagine = 7;
 
         final int width = 1280; // Imposta la larghezza del video
         final int height = 720; // Imposta l'altezza del video
 
+        // Verifica se la cartella di output esiste, altrimenti crea la cartella
+        File outputFolder = new File(outputVideoPath);
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
+        }
 
         try {
             // Calcola la durata totale del video in base al numero di immagini
@@ -48,7 +53,7 @@ public class VideoGenerator {
             double frameRate = (double) numImages / totalDurationSeconds;
 
             // Inizializza il recorder per il video
-            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath, width, height);
+            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath + nomeFileVideo + ".mp4", width, height);
             recorder.setVideoCodec( avcodec.AV_CODEC_ID_MPEG4 ); // Imposta il codec video su MPEG4
 
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video

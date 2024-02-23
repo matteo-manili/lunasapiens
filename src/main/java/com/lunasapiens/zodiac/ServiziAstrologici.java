@@ -41,7 +41,7 @@ public class ServiziAstrologici {
         System.out.println("############################ TEXT IA ###################################");
         System.out.println("############################ TEXT IA ###################################");
         String domanda = "Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del "+ segno +" in base a questi dati. \n" +
-                "il testo generato deve essere diviso in blocchi di 30-40 parole e tra un blocco e l'altro devi inserie il carattere speciale "+Constants.SeparatoreTestoOroscopo+". \n"+
+                "il testo generato deve essere diviso in blocchi sensati di 30-40 parole e ogni blocco deve terminare con il carattere speciale "+Constants.SeparatoreTestoOroscopo+". \n"+
                 "Il giorno di oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
                 + " ore "+giornoOraPosizioneDTO.getOra()+":"+giornoOraPosizioneDTO.getMinuti()+ "\n"+
                 "Transiti di oggi: " + "\n";

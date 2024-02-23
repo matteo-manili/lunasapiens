@@ -1,10 +1,7 @@
 package com.lunasapiens.controller;
 
 
-import com.lunasapiens.AppConfig;
-import com.lunasapiens.Constants;
-import com.lunasapiens.ImageGenerator;
-import com.lunasapiens.VideoGenerator;
+import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.service.OroscopoGiornalieroService;
@@ -17,9 +14,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class IndexController {
@@ -35,6 +41,9 @@ public class IndexController {
     public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
         this.oroscopoGiornalieroService = oroscopoGiornalieroService;
     }
+
+    @Autowired
+    private ScheduledTasks scheduledTasks;
 
     @GetMapping("/")
     public String index(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
@@ -57,74 +66,43 @@ public class IndexController {
 
 
 
+    /*
     @GetMapping("/oroscopo")
     public String oroscopo(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
 
-        //09-03-1996 ore 21
-        //Latitudine di Palermo	38.1156879
-        //Longitudine di Palermo	13.3612671
-
-        int ora = 21; int minuti = 0;
-        int giorno = 9; int mese = 3; int anno = 1996;
-        double lon = 38.1; double lat = 13.3;
-
-        /*
-        int ora = 12; int minuti = 0;
-        int giorno = 30; int mese = 9; int anno = 2023;
-        double lon = 49.9; double lat = 12.4;
-         */
-
-        int segnoNumero = 10;
-        ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-
-        //StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get( segnoNumero ), giornoOraPosizioneDTO);
-        //OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(segnoNumero, sB, giornoOraPosizioneDTO);
+        scheduledTasks.creaOroscopoGiornaliero();
 
 
-
-        // @@@@@@@ò@ crezione immagine @@@@@@@@
-        String text = "Hello, World!";
-        String fontName = "Arial";
-        int fontSize = 20;
-        Color textColor = Color.BLUE;
-
-        ImageGenerator igenerat = new ImageGenerator();
-        //igenerat.generateImage(text, fontName, fontSize, textColor, "src/main/resources/static/image-generated/generatedImage.png");
-
-        // Verifica se il file esiste
-        File imageFileExists = new File("src/main/resources/static/image-generated/generatedImage.png");
-        boolean imageExists = imageFileExists.exists();
-
-        if (imageExists) {
-            // L'immagine è stata generata con successo
-            logger.info("L'immagine è stata generata con successo");
-            model.addAttribute("imageExists", true);
-        } else {
-            // L'immagine non è stata generata
-            logger.info("L'immagine non è stata generata");
-            model.addAttribute("imageExists", false);
-        }
-
-        // @@@@@@@@@@@ creazione video @@@@@@@@@
-
-
-        try{
-            VideoGenerator aa = new VideoGenerator();
-            aa.createVideoFromImages();
-
-        }catch(Exception exc){
-            exc.printStackTrace();
-        }
-
-
-
-
-        // @@@@@@ fine creazione video
-        model.addAttribute("oroscopoGpt", ""/*oroscopoGiornaliero.getTestoOroscopo()*/ );
+        model.addAttribute("oroscopoGpt", "" );
         return "oroscopo";
     }
+    */
 
+
+
+    @GetMapping("/oroscopo")
+    public String mostraOroscopo(Model model) {
+
+        scheduledTasks.creaOroscopoGiornaliero();
+
+        File directory = new File("src/main/resources/static/oroscopo_giornaliero/video");
+        File[] files = directory.listFiles();
+        List<Map<String, String>> videos = new ArrayList<>();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    Map<String, String> video = new HashMap<>();
+                    video.put("name", file.getName());
+                    video.put("path", "/oroscopo_giornaliero/video/" + file.getName());
+                    videos.add(video);
+                }
+            }
+        }
+
+        model.addAttribute("videos", videos);
+        return "oroscopo";
+    }
 
 
 

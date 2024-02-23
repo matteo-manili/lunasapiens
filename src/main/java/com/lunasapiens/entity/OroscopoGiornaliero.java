@@ -1,21 +1,24 @@
 package com.lunasapiens.entity;
 
-
-
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 
 @Entity
-@Table(name = "oroscopo_giornaliero", uniqueConstraints = @UniqueConstraint(columnNames = {"id_segno", "data_oroscopo"}))
+@Table(name = "oroscopo_giornaliero", uniqueConstraints = @UniqueConstraint(columnNames = {"num_segno", "data_oroscopo"}))
 public class OroscopoGiornaliero implements Serializable {
 
     private Long id;
 
-    private Long idSegno;
+    private Integer numSegno;
     private String testoOroscopo;
     private Date dataOroscopo;
+
+
+    public OroscopoGiornaliero() {
+        // Costruttore vuoto richiesto da Hibernate
+    }
 
 
     @Id
@@ -28,17 +31,16 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
 
-    @Column(name = "id_segno")
-    public Long getIdSegno() {
-        return idSegno;
+    @Column(name = "num_segno", nullable = false)
+    public Integer getNumSegno() {
+        return numSegno;
     }
-
-    public void setIdSegno(Long id_segno) {
-        this.idSegno = idSegno;
+    public void setNumSegno(Integer numSegno) {
+        this.numSegno = numSegno;
     }
 
     @Lob
-    @Column(name = "testo_oroscopo", columnDefinition = "TEXT")
+    @Column(name = "testo_oroscopo", columnDefinition = "TEXT", nullable = false)
     public String getTestoOroscopo() {
         return testoOroscopo;
     }
@@ -47,7 +49,7 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
 
-    @Column(name = "data_oroscopo")
+    @Column(name = "data_oroscopo", nullable = false)
     public Date getDataOroscopo() {
         return dataOroscopo;
     }
@@ -56,8 +58,8 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
 
-    public OroscopoGiornaliero(Long idSegno, String testoOroscopo, Date dataOroscopo) {
-        this.idSegno = idSegno;
+    public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, Date dataOroscopo) {
+        this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;
         this.dataOroscopo = dataOroscopo;
     }

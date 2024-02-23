@@ -5,13 +5,13 @@ import java.util.Date;
 public class OroscopoGiornalieroDTO {
 
     private Long id;
-    private Long idSegno;
+    private Integer numSegno;
     private String testoOroscopo;
     private Date dataOroscopo;
 
-    public OroscopoGiornalieroDTO(Long id, Long idSegno, String testoOroscopo, Date dataOroscopo) {
+    public OroscopoGiornalieroDTO(Long id, Integer numSegno, String testoOroscopo, Date dataOroscopo) {
         this.id = id;
-        this.idSegno = idSegno;
+        this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;
         this.dataOroscopo = dataOroscopo;
     }
@@ -28,13 +28,9 @@ public class OroscopoGiornalieroDTO {
         this.id = id;
     }
 
-    public Long getIdSegno() {
-        return idSegno;
-    }
+    public Integer getNumSegno() { return numSegno; }
 
-    public void setIdSegno(Long idSegno) {
-        this.idSegno = idSegno;
-    }
+    public void setNumSegno(Integer numSegno) { this.numSegno = numSegno; }
 
     public String getTestoOroscopo() {
         return testoOroscopo;

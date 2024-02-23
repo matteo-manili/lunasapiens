@@ -3,8 +3,14 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class Util {
 
@@ -12,22 +18,25 @@ public class Util {
     // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
 
     public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
-
-
-        // ufffff
-
-        LocalDateTime now = LocalDateTime.now();
+        ZoneId romaZone = ZoneId.of("Europe/Rome");
+        ZonedDateTime now = ZonedDateTime.now(romaZone);
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
                 now.getMonthValue(), now.getYear(), 49.9, 12.4);
 
-
         return giornoOraPosizioneDTO;
     }
 
-
-
-
+    public static final Date OggiRomaOre12(){
+        // Ottieni il fuso orario di Roma
+        ZoneId romaZone = ZoneId.of("Europe/Rome");
+        // Ottieni l'orario attuale nel fuso orario di Roma
+        ZonedDateTime now = ZonedDateTime.now(romaZone);
+        // Imposta l'ora a mezzogiorno (12:00:00)
+        ZonedDateTime mezzogiorno = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
+        // Converte ZonedDateTime in Date
+        return Date.from(mezzogiorno.toInstant());
+    }
 
 
 
@@ -63,8 +72,5 @@ public class Util {
             return "Grado non valido";
         }
     }
-
-
-
 
 }
