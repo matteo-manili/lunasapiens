@@ -68,7 +68,7 @@ public class ScheduledTasks {
                 }
 
                 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(i, Util.OggiRomaOre12());
+                OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiRomaOre12());
                 ArrayList<String> pezziStringa = estraiPezziStringa(oroscopoGiornaliero.getTestoOroscopo());
 
 
