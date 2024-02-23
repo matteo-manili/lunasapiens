@@ -72,7 +72,6 @@ public class OroscopoGiornalieroService {
             //OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero((long)segnoNumero, sB.toString(), date);
             OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date);
 
-
             // Salvare l'oggetto nel database utilizzando il repository
             return oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
 

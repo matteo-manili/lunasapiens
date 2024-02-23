@@ -52,7 +52,7 @@ public class ScheduledTasks {
     public void creaOroscopoGiornaliero() {
 
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 1; numeroSegno++) {
+        for (int numeroSegno = 1; numeroSegno <= 2; numeroSegno++) {
 
             if (oroscopoGiornalieroService.existsByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiRomaOre12()) == false) {
                 logger.info("Il record NON esiste");
@@ -62,24 +62,22 @@ public class ScheduledTasks {
                 GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
                 StringBuilder sB = sA.servizioOroscopoDelGiorno(Constants.segniZodiacali().get(numeroSegno), giornoOraPosizioneDTO);
-                OroscopoGiornaliero oroscopoGiornalieroSaved = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO);
 
+                if(oroscopoGiornalieroService.existsByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiRomaOre12()) == false) {
+                    oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO);
+                }
 
                 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                //OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(i, Util.OggiRomaOre12());
-
-
-                ArrayList<String> pezziStringa = estraiPezziStringa(oroscopoGiornalieroSaved.getTestoOroscopo());
+                OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(i, Util.OggiRomaOre12());
+                ArrayList<String> pezziStringa = estraiPezziStringa(oroscopoGiornaliero.getTestoOroscopo());
 
 
                 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
                 String fontName = "Arial"; int fontSize = 20; Color textColor = Color.BLUE;
-
                 // Formattatore per la data
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 // Converti la data nel formato desiderato
-                String dataOroscopoString = formatter.format(oroscopoGiornalieroSaved.getDataOroscopo());
+                String dataOroscopoString = formatter.format(oroscopoGiornaliero.getDataOroscopo());
 
 
                 String directoryPath = "src/main/resources/static/oroscopo_giornaliero/immagini/" + dataOroscopoString + "/" + numeroSegno + "/";
