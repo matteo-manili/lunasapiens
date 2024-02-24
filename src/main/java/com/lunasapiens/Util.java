@@ -1,4 +1,4 @@
-package com.lunasapiens.zodiac;
+package com.lunasapiens;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -17,29 +17,27 @@ public class Util {
 
     // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
 
-    public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
+    public static final ZonedDateTime getNowRomeEurope(){
+
         ZoneId romaZone = ZoneId.of("Europe/Rome");
         ZonedDateTime now = ZonedDateTime.now(romaZone);
-
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
-                now.getMonthValue(), now.getYear(), 49.9, 12.4);
-
-        return giornoOraPosizioneDTO;
+        return now;
     }
 
     public static final Date OggiRomaOre12(){
-        // Ottieni il fuso orario di Roma
-        ZoneId romaZone = ZoneId.of("Europe/Rome");
-        // Ottieni l'orario attuale nel fuso orario di Roma
-        ZonedDateTime now = ZonedDateTime.now(romaZone);
+        ZonedDateTime now = getNowRomeEurope();
         // Imposta l'ora a mezzogiorno (12:00:00)
         ZonedDateTime mezzogiorno = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
         // Converte ZonedDateTime in Date
         return Date.from(mezzogiorno.toInstant());
     }
 
-
-
+    public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
+        ZonedDateTime now = getNowRomeEurope();
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
+                now.getMonthValue(), now.getYear(), 49.9, 12.4);
+        return giornoOraPosizioneDTO;
+    }
 
 
 

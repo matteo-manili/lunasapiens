@@ -14,6 +14,8 @@ public class OroscopoGiornaliero implements Serializable {
     private Integer numSegno;
     private String testoOroscopo;
     private Date dataOroscopo;
+    private byte[] video;
+    private String nomeFileVideo;
 
 
     public OroscopoGiornaliero() {
@@ -48,7 +50,6 @@ public class OroscopoGiornaliero implements Serializable {
         this.testoOroscopo = testoOroscopo;
     }
 
-
     @Column(name = "data_oroscopo", nullable = false)
     public Date getDataOroscopo() {
         return dataOroscopo;
@@ -57,10 +58,31 @@ public class OroscopoGiornaliero implements Serializable {
         this.dataOroscopo = dataOroscopo;
     }
 
+    @Lob
+    @Column(name = "video", nullable = true)
+    public byte[] getVideo() {
+        return video;
+    }
+    public void setVideo(byte[] video) {
+        this.video = video;
+    }
 
-    public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, Date dataOroscopo) {
+    @Column(name = "nome_file_video")
+    public String getNomeFileVideo() {
+        return nomeFileVideo;
+    }
+    public void setNomeFileVideo(String nomeFileVideo) {
+        this.nomeFileVideo = nomeFileVideo;
+    }
+
+
+
+
+    public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, Date dataOroscopo, byte[] video, String nomeFileVideo) {
         this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;
         this.dataOroscopo = dataOroscopo;
+        this.video = video;
+        this.nomeFileVideo = nomeFileVideo;
     }
 }

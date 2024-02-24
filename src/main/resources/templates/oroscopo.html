@@ -4,12 +4,11 @@
     <title>Oroscopo</title>
 </head>
 <body>
-<h1>Video dell'oroscopo giornaliero</h1>
+<h1>Oroscopo</h1>
 <div th:each="video : ${videos}">
-    <video th:attr="src=@{${video.path}}" width="320" height="240" controls>
+    <video th:attr="src=@{'data:video/mp4;base64,' + ${#strings.toString(video.video)}}" controls>
         Your browser does not support the video tag.
     </video>
-    <p th:text="${video.name}"></p>
 </div>
 </body>
 </html>

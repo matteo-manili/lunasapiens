@@ -2,11 +2,8 @@ package com.lunasapiens.controller;
 
 
 import com.lunasapiens.*;
-import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.service.OroscopoGiornalieroService;
-import com.lunasapiens.zodiac.ServiziAstrologici;
-import com.lunasapiens.zodiac.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.awt.*;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class IndexController {
@@ -85,10 +75,10 @@ public class IndexController {
 
         scheduledTasks.creaOroscopoGiornaliero();
 
+        /*
         File directory = new File("src/main/resources/static/oroscopo_giornaliero/video");
         File[] files = directory.listFiles();
         List<Map<String, String>> videos = new ArrayList<>();
-
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
@@ -99,7 +89,11 @@ public class IndexController {
                 }
             }
         }
+        model.addAttribute("videos", videos);
+         */
 
+        // Recupera i video dal servizio
+        List<OroscopoGiornaliero> videos = oroscopoGiornalieroService.findAll();
         model.addAttribute("videos", videos);
         return "oroscopo";
     }

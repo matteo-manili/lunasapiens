@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,39 +57,32 @@ public class OroscopoGiornalieroService {
     }
 
 
-    public OroscopoGiornaliero salvaOroscoopoGiornaliero(int segnoNumero, StringBuilder sB, GiornoOraPosizioneDTO giornoOraPosizioneDTO){
-        try {
-            // Creare un oggetto Calendar e impostare i valori
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
-                    giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
+    @Transactional
+    public OroscopoGiornaliero salvaOroscoopoGiornaliero(int segnoNumero, StringBuilder sB, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
+                                                         byte[] video, String nomeFileVideo) throws Exception {
 
-            // Impostare i millisecondi e secondi a 0
-            calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
+        // Creare un oggetto Calendar e impostare i valori
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
+                giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
 
-            // Ottenere l'oggetto Date dal Calendar
-            Date date = calendar.getTime();
+        // Impostare i millisecondi e secondi a 0
+        calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
 
-            //OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero((long)segnoNumero, sB.toString(), date);
-            OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date);
+        // Ottenere l'oggetto Date dal Calendar
+        Date date = calendar.getTime();
 
-            // Salvare l'oggetto nel database utilizzando il repository
-            return oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
+        OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date, video, nomeFileVideo);
 
-
-        } catch (DataIntegrityViolationException e) {
-            logger.info("Error DataIntegrityViolationException in the database: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            logger.info("Error updating value in the database: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return null;
+        // Salvare l'oggetto nel database utilizzando il repository
+        return oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
 
     }
 
 
+    public List<OroscopoGiornaliero> findAll() {
+        return oroscopoGiornalieroRepository.findAll();
+    }
 
 
 

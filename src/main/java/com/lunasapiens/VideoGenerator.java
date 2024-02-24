@@ -2,6 +2,8 @@ package com.lunasapiens;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
@@ -32,7 +34,12 @@ public class VideoGenerator {
     private String outputVideoPath = "src/main/resources/static/oroscopo_giornaliero/video/";
     private String audioFilePath = "src/main/resources/static/oroscopo_giornaliero/audio/music_9.mp3";
 
-    public void createVideoFromImages(String inputImagePath, String nomeFileVideo) {
+
+    public String formatoVideo(){
+        return ".mp4";
+    }
+
+    public byte[] createVideoFromImages(String inputImagePath, String nomeFileVideo) {
 
         final int durataSecondiImmagine = 7;
 
@@ -53,7 +60,7 @@ public class VideoGenerator {
             double frameRate = (double) numImages / totalDurationSeconds;
 
             // Inizializza il recorder per il video
-            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath + nomeFileVideo + ".mp4", width, height);
+            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath + nomeFileVideo + formatoVideo(), width, height);
             recorder.setVideoCodec( avcodec.AV_CODEC_ID_MPEG4 ); // Imposta il codec video su MPEG4
 
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
@@ -102,10 +109,15 @@ public class VideoGenerator {
             recorder.release();
             audioGrabber.stop();
             audioGrabber.release();
+
+            byte[] videoBytes = Files.readAllBytes(Paths.get(outputVideoPath, nomeFileVideo + formatoVideo()));
+            return videoBytes;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return null;
 
     }
 
