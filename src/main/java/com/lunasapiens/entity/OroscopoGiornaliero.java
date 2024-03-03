@@ -59,6 +59,7 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(name = "video", nullable = true)
     public byte[] getVideo() {
         return video;
@@ -77,7 +78,6 @@ public class OroscopoGiornaliero implements Serializable {
 
 
 
-
     public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, Date dataOroscopo, byte[] video, String nomeFileVideo) {
         this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;
@@ -85,4 +85,14 @@ public class OroscopoGiornaliero implements Serializable {
         this.video = video;
         this.nomeFileVideo = nomeFileVideo;
     }
+
+    public OroscopoGiornaliero(Long id, Integer numSegno, String testoOroscopo, Date dataOroscopo, String nomeFileVideo) {
+        this.id = id;
+        this.numSegno = numSegno;
+        this.testoOroscopo = testoOroscopo;
+        this.dataOroscopo = dataOroscopo;
+        this.nomeFileVideo = nomeFileVideo;
+    }
+
+
 }

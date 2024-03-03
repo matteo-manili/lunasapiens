@@ -2,18 +2,24 @@ package com.lunasapiens;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.entity.OroscopoGiornaliero;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 public class Util {
 
+    private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
     // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
 
@@ -40,6 +46,45 @@ public class Util {
     }
 
 
+    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+        // Creare un oggetto Calendar e impostare i valori
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
+                giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
+        // Impostare i millisecondi e secondi a 0
+        calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
+        // Ottenere l'oggetto Date dal Calendar
+        return calendar.getTime();
+    }
+
+
+    public static void createDirectory(String pathDirectory){
+        File outputFolder = new File(pathDirectory);
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
+            logger.info("La cartella o il file NON esistono!");
+        }else{
+            logger.info("La cartella o il file esistono!");
+        }
+    }
+
+
+    public static void deleteDirectory(File directory) {
+        File[] contents = directory.listFiles();
+        if (contents != null) {
+            for (File file : contents) {
+                if (file.isDirectory()) {
+                    // Se è una cartella, elimina ricorsivamente i suoi contenuti
+                    deleteDirectory(file);
+                } else {
+                    // Se è un file, elimina il file
+                    file.delete();
+                }
+            }
+        }
+        // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
+        directory.delete();
+    }
 
     public static String determinaSegnoZodiacale(int grado) {
         if (grado >= 0 && grado < 30) {

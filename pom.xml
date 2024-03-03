@@ -52,6 +52,7 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+
         <!-- ###################### DB ###################### -->
 
         <!-- -->
@@ -239,20 +240,6 @@
 
         </plugins>
 
-
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>static/**</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources/static</directory>
-                <targetPath>${project.build.outputDirectory}/static</targetPath>
-            </resource>
-        </resources>
 
 
     </build>

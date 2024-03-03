@@ -2,6 +2,7 @@ package com.lunasapiens.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.entity.OroscopoGiornaliero;
@@ -34,14 +35,25 @@ public class OroscopoGiornalieroService {
         this.oroscopoGiornalieroRepository = oroscopoGiornalieroRepository;
     }
 
-    public boolean existsByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo) {
-        return oroscopoGiornalieroRepository.existsByNumSegnoAndDataOroscopo(numSegno, dataOroscopo);
-    }
 
+    @Transactional(readOnly = true)
     public OroscopoGiornaliero findByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo) {
         return oroscopoGiornalieroRepository.findByNumSegnoAndDataOroscopo(numSegno, dataOroscopo);
     }
 
+    @Transactional(readOnly = true)
+    public OroscopoGiornaliero findByNomeFileVideo(String nomeFileVideo) {
+        return oroscopoGiornalieroRepository.findByNomeFileVideo(nomeFileVideo);
+    }
+
+    public boolean existsByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo) {
+        return oroscopoGiornalieroRepository.existsByNumSegnoAndDataOroscopo(numSegno, dataOroscopo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OroscopoGiornaliero> findAllByDataOroscopo(Date dataOroscopo) {
+        return oroscopoGiornalieroRepository.findAllByDataOroscopo(dataOroscopo);
+    }
 
     // Metodo per recuperare l'oroscopo attraverso l'ID
     public Optional<OroscopoGiornaliero> getOroscopoById(Long id) {
@@ -52,8 +64,13 @@ public class OroscopoGiornalieroService {
     // Metodo per recuperare l'ultimo record inserito
     @Transactional(readOnly = true) // Disabilita l'autocommit
     public Optional<OroscopoGiornaliero> getUltimoRecordInserito() {
-        Optional<OroscopoGiornaliero> oroscopoOptional = oroscopoGiornalieroRepository.findFirstByOrderByIdDesc();
-        return oroscopoOptional;
+        return oroscopoGiornalieroRepository.findFirstByOrderByIdDesc();
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<OroscopoGiornaliero> findAllByDataOroscopoWithoutVideo(Date dataOroscopo) {
+        return oroscopoGiornalieroRepository.findAllByDataOroscopoWithoutVideo(dataOroscopo);
     }
 
 
@@ -61,16 +78,8 @@ public class OroscopoGiornalieroService {
     public OroscopoGiornaliero salvaOroscoopoGiornaliero(int segnoNumero, StringBuilder sB, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
                                                          byte[] video, String nomeFileVideo) throws Exception {
 
-        // Creare un oggetto Calendar e impostare i valori
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
-                giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
-
-        // Impostare i millisecondi e secondi a 0
-        calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
-
         // Ottenere l'oggetto Date dal Calendar
-        Date date = calendar.getTime();
+        Date date = Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO);
 
         OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date, video, nomeFileVideo);
 

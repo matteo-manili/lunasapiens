@@ -144,8 +144,17 @@ public class AppConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/static/**") // Percorso URL delle risorse statiche
-                .addResourceLocations("classpath:/static/"); // Percorso reale delle risorse statiche nel progetto
+                .addResourceLocations("classpath:/static/", "file:src/main/resources/static/")
+                .setCachePeriod(0); // Disabilita la cache
+
+        registry
+                .addResourceHandler("/static/oroscopo_giornaliero/**") // Percorso URL delle risorse statiche
+                .addResourceLocations("classpath:/static/oroscopo_giornaliero/", "file:src/main/resources/static/oroscopo_giornaliero/")
+                .setCachePeriod(0);
+
     }
+
+
 
 
 

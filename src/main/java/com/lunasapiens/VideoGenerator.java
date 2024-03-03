@@ -3,9 +3,11 @@ package com.lunasapiens;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 
+import org.bytedeco.ffmpeg.global.avutil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -28,29 +30,24 @@ public class VideoGenerator {
         this.resourceLoader = resourceLoader;
     }
 
-    public VideoGenerator() {}
+
+    private static final String pathStatic = "src/main/resources/static/";
+    private static final String audioFilePath = pathStatic + "oroscopo_giornaliero/audio/music_9.mp3";
+    public static final String pathOroscopoGiornalieroVideo = pathStatic + "oroscopo_giornaliero/video/";
+
+    public VideoGenerator() {
+
+    }
 
 
-    private String outputVideoPath = "src/main/resources/static/oroscopo_giornaliero/video/";
-    private String audioFilePath = "src/main/resources/static/oroscopo_giornaliero/audio/music_9.mp3";
-
-
-    public String formatoVideo(){
+    public static String formatoVideo(){
         return ".mp4";
     }
 
-    public byte[] createVideoFromImages(String inputImagePath, String nomeFileVideo) {
 
-        final int durataSecondiImmagine = 7;
+    public static byte[] createVideoFromImages(String inputImagePath, String nomeFileVideo) {
 
-        final int width = 1280; // Imposta la larghezza del video
-        final int height = 720; // Imposta l'altezza del video
-
-        // Verifica se la cartella di output esiste, altrimenti crea la cartella
-        File outputFolder = new File(outputVideoPath);
-        if (!outputFolder.exists()) {
-            outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
-        }
+        final int width = 700; final int height = 400; final int durataSecondiImmagine = 7;
 
         try {
             // Calcola la durata totale del video in base al numero di immagini
@@ -59,10 +56,12 @@ public class VideoGenerator {
             int totalDurationSeconds = numImages * durataSecondiImmagine; // Ogni immagine dura 5 secondi
             double frameRate = (double) numImages / totalDurationSeconds;
 
-            // Inizializza il recorder per il video
-            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoPath + nomeFileVideo + formatoVideo(), width, height);
-            recorder.setVideoCodec( avcodec.AV_CODEC_ID_MPEG4 ); // Imposta il codec video su MPEG4
+            Util.createDirectory( pathOroscopoGiornalieroVideo );
 
+            // Inizializza il recorder per il video
+            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(pathOroscopoGiornalieroVideo + nomeFileVideo + formatoVideo(), width, height);
+            recorder.setVideoCodec( avcodec.AV_CODEC_ID_H264 ); //avcodec.AV_CODEC_ID_MPEG4 // avcodec.AV_CODEC_ID_H264 // Imposta il codec video su MPEG4
+            //recorder.setPixelFormat( avutil.AV_PIX_FMT_YUV420P10 ); //
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
             recorder.setVideoBitrate(20000); // Imposta il bitrate video a 2 Mbps
 
@@ -110,7 +109,22 @@ public class VideoGenerator {
             audioGrabber.stop();
             audioGrabber.release();
 
-            byte[] videoBytes = Files.readAllBytes(Paths.get(outputVideoPath, nomeFileVideo + formatoVideo()));
+            byte[] videoBytes = Files.readAllBytes(Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo()));
+
+
+
+
+
+            // TODO questo non serve più farlo forse perché salvo il video nella classe VideoService
+            // Copia il video nella cartella di destinazione
+            /*
+            Path destinationPath = Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo());
+            Files.createDirectories(destinationPath.getParent());
+            Files.write(destinationPath, videoBytes);
+            logger.info("HO salvato il video nella cartella: "+ destinationPath.toString());
+            */
+
+
             return videoBytes;
 
         } catch (Exception e) {
@@ -122,20 +136,20 @@ public class VideoGenerator {
     }
 
 
-    private BufferedImage convertImageToType(BufferedImage originalImage, int targetType) {
+    private static BufferedImage convertImageToType(BufferedImage originalImage, int targetType) {
         BufferedImage convertedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), targetType);
         convertedImage.getGraphics().drawImage(originalImage, 0, 0, null);
         return convertedImage;
     }
 
 
-    private Frame bufferedImageToFrame(BufferedImage bi) {
+    private static Frame bufferedImageToFrame(BufferedImage bi) {
         Java2DFrameConverter converter = new Java2DFrameConverter();
         return converter.getFrame(bi);
     }
 
 
-    private double getSecondsDurationAudio() {
+    private static double getSecondsDurationAudio() {
         try {
             // Inizializza il grabber per l'audio
             FFmpegFrameGrabber audioGrabber = new FFmpegFrameGrabber(audioFilePath);

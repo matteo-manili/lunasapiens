@@ -1,5 +1,9 @@
 package com.lunasapiens;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,29 +14,30 @@ import java.util.List;
 
 public class ImageGenerator {
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageGenerator.class);
+
     public static void main(String[] args) {
         String text = "The stars shine for those who believe.";
         String fontName = "Arial";
         int fontSize = 30;
-        Color textColor = Color.BLUE;
+        Color textColor = Color.BLACK;
 
         generateImage(text, fontName, fontSize, textColor, "src/main/resources/generatedImage.png");
     }
 
     public static void generateImage(String text, String fontName, int fontSize, Color textColor, String outputPath) {
         // Creazione di un'immagine con dimensioni fisse
-        int width = 700;
-        int height = 400;
+        int width = 1400; int height = 800;
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = bufferedImage.createGraphics();
 
         // Impostazione del colore di sfondo
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(0, 0, width, height);
 
         // Impostazione del font e del colore del testo
-        Font font = new Font(fontName, Font.PLAIN, fontSize);
+        Font font = new Font(fontName, Font.BOLD, fontSize);
         graphics.setFont(font);
         graphics.setColor(textColor);
 
@@ -52,7 +57,9 @@ public class ImageGenerator {
 
         // Salvataggio dell'immagine su disco
         try {
+            Util.createDirectory( outputPath );
             ImageIO.write(bufferedImage, "png", new File(outputPath));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
