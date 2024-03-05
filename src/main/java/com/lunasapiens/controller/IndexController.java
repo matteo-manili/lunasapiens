@@ -80,6 +80,8 @@ public class IndexController {
 
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model) {
+
+        logger.info( "Util.OggiRomaOre12(): "+Util.OggiRomaOre12() );
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
 
         if( listOroscopoGiorn != null ){
