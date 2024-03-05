@@ -49,7 +49,7 @@ public class ScheduledTasks {
     public void creaOroscopoGiornaliero() {
 
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 3; numeroSegno++) {
+        for (int numeroSegno = 1; numeroSegno <= 1; numeroSegno++) {
 
 
             if (oroscopoGiornalieroService.existsByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiRomaOre12()) == false) {

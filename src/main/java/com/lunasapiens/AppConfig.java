@@ -1,6 +1,10 @@
 package com.lunasapiens;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,15 +23,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
 @ComponentScan(basePackages = "com.lunasapiens")
+@EnableCaching
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
     private Environment env;
 
+    @Bean
+    public CacheManager cacheManager() {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .expireAfterWrite(10, TimeUnit.MINUTES) // Adjust as needed
+                .maximumSize(100)); // Adjust as needed
+        return cacheManager;
+    }
 
     @Bean
     public RestTemplate restTemplate() {

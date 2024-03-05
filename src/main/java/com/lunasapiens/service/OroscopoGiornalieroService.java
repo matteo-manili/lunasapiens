@@ -42,7 +42,7 @@ public class OroscopoGiornalieroService {
     }
 
     @Transactional(readOnly = true)
-    public OroscopoGiornaliero findByNomeFileVideo(String nomeFileVideo) {
+    public Optional<OroscopoGiornaliero> findByNomeFileVideo(String nomeFileVideo) {
         return oroscopoGiornalieroRepository.findByNomeFileVideo(nomeFileVideo);
     }
 

@@ -30,7 +30,7 @@ public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGio
     OroscopoGiornaliero findByNumSegnoAndDataOroscopo(@Param("numSegno") Integer numSegno, @Param("dataOroscopo") Date dataOroscopo);
 
     @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.nomeFileVideo = :nomeFileVideo")
-    OroscopoGiornaliero findByNomeFileVideo(@Param("nomeFileVideo") String nomeFileVideo);
+    Optional<OroscopoGiornaliero> findByNomeFileVideo(@Param("nomeFileVideo") String nomeFileVideo);
 
 
     @Query("SELECT new com.lunasapiens.entity.OroscopoGiornaliero(o.id, o.numSegno, o.testoOroscopo, o.dataOroscopo, o.nomeFileVideo) FROM OroscopoGiornaliero o WHERE o.dataOroscopo = :dataOroscopo")
