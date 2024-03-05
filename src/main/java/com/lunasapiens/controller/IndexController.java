@@ -71,6 +71,7 @@ public class IndexController {
         scheduledTasks.creaOroscopoGiornaliero();
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
+
         model.addAttribute("videos", listOroscopoGiorn);
         return "oroscopo";
     }
@@ -80,6 +81,14 @@ public class IndexController {
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model) {
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
+
+        if( listOroscopoGiorn != null ){
+            logger.info( "listOroscopoGiorn.size() :" +listOroscopoGiorn.size() );
+        }else{
+            logger.info( "listOroscopoGiorn.size() è NULL" );
+        }
+
+
         model.addAttribute("videos", listOroscopoGiorn);
         return "oroscopo";
     }
