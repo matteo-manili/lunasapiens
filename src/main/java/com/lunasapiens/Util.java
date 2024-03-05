@@ -30,13 +30,25 @@ public class Util {
         return now;
     }
 
-    public static final Date OggiRomaOre12(){
+
+    public static final Date OggiOre12(){
+        /*
         ZonedDateTime now = getNowRomeEurope();
         // Imposta l'ora a mezzogiorno (12:00:00)
         ZonedDateTime mezzogiorno = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
         // Converte ZonedDateTime in Date
         return Date.from(mezzogiorno.toInstant());
+*/
+
+        // Creare un oggetto Calendar e impostare i valori
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR, 12); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
+        // Ottenere l'oggetto Date dal Calendar
+        return calendar.getTime();
+
+
     }
+
 
     public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
         ZonedDateTime now = getNowRomeEurope();

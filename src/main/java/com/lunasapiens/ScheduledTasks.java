@@ -52,7 +52,7 @@ public class ScheduledTasks {
         for (int numeroSegno = 1; numeroSegno <= 1; numeroSegno++) {
 
 
-            if (oroscopoGiornalieroService.existsByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiRomaOre12()) == false) {
+            if (oroscopoGiornalieroService.existsByNumSegnoAndDataOroscopo(numeroSegno, Util.OggiOre12()) == false) {
                 logger.info("Il record NON esiste");
 
                 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -60,6 +60,10 @@ public class ScheduledTasks {
                 GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
                 OroscopoGiornaliero aaa = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+
+                logger.info( "Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO): "
+                        + Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO).toString() );
+
 
                 StringBuilder sB;
 

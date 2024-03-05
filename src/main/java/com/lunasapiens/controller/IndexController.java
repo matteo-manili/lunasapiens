@@ -70,7 +70,7 @@ public class IndexController {
 
         scheduledTasks.creaOroscopoGiornaliero();
 
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
 
         model.addAttribute("videos", listOroscopoGiorn);
         return "oroscopo";
@@ -81,8 +81,8 @@ public class IndexController {
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model) {
 
-        logger.info( "Util.OggiRomaOre12(): "+Util.OggiRomaOre12() );
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
+        logger.info( "Util.OggiRomaOre12(): "+Util.OggiOre12() );
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
 
         if( listOroscopoGiorn != null ){
             logger.info( "listOroscopoGiorn.size() :" +listOroscopoGiorn.size() );
