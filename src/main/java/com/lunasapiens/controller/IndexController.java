@@ -96,17 +96,14 @@ public class IndexController {
     }
 
 
+
+
+    @Cacheable(value = "videoCache", key = "#videoName")
     @GetMapping("/oroscopo-giornaliero/{videoName}")
     @ResponseBody
     public ResponseEntity<Resource> getVideo(@PathVariable String videoName) {
         logger.info("sono in oroscopo-giornaliero videoName: " + videoName);
-        return streamVideo(videoName);
 
-    }
-
-
-    @Cacheable(value = "videoCache", key = "#videoName")
-    public ResponseEntity<Resource> streamVideo(String videoName) {
 
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with id: " + videoName));
@@ -121,6 +118,7 @@ public class IndexController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(resource);
+
 
     }
 

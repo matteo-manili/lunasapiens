@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGiornaliero, Long> {
-        // Puoi aggiungere eventuali metodi personalizzati se necessario
 
     OroscopoGiornaliero findByDataOroscopo(Date dataOroscopo);
 
@@ -22,12 +21,14 @@ public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGio
 
     List<OroscopoGiornaliero> findAllByDataOroscopo(Date dataOroscopo);
 
+
     @Query("SELECT COUNT(o) > 0 FROM OroscopoGiornaliero o WHERE o.video IS NOT NULL AND o.numSegno = :numSegno AND o.dataOroscopo = :dataOroscopo")
     boolean existsByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo);
 
 
     @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.numSegno = :numSegno AND o.dataOroscopo = :dataOroscopo")
     OroscopoGiornaliero findByNumSegnoAndDataOroscopo(@Param("numSegno") Integer numSegno, @Param("dataOroscopo") Date dataOroscopo);
+
 
     @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.nomeFileVideo = :nomeFileVideo")
     Optional<OroscopoGiornaliero> findByNomeFileVideo(@Param("nomeFileVideo") String nomeFileVideo);
