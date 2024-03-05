@@ -65,14 +65,15 @@ public class VideoGenerator {
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
             recorder.setVideoBitrate(20000); // Imposta il bitrate video a 2 Mbps
 
+
             // Inizializza il grabber per l'audio
-            FFmpegFrameGrabber audioGrabber = new FFmpegFrameGrabber(audioFilePath);
-            audioGrabber.start();
+            //FFmpegFrameGrabber audioGrabber = new FFmpegFrameGrabber(audioFilePath);
+            //audioGrabber.start();
 
             // Aggiungi la traccia audio al recorder
-            recorder.setAudioChannels(audioGrabber.getAudioChannels());
-            recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio
-            recorder.setSampleRate(audioGrabber.getSampleRate());
+            //recorder.setAudioChannels(audioGrabber.getAudioChannels());
+            //recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio
+            //recorder.setSampleRate(audioGrabber.getSampleRate());
             recorder.start();
 
             // Aggiungi le immagini al video
@@ -87,10 +88,12 @@ public class VideoGenerator {
             }
 
             // Registra la traccia audio una volta
+            /*
             Frame audioFrame;
             while ((audioFrame = audioGrabber.grabFrame()) != null) {
                 recorder.record(audioFrame);
             }
+
 
             double secondsDurationAudio = getSecondsDurationAudio();
             logger.info( "durata traccia audio: "+secondsDurationAudio );
@@ -102,12 +105,13 @@ public class VideoGenerator {
                     recorder.record(audioFrame);
                 }
             }
+            */
 
             // Ferma e rilascia il recorder e il grabber audio
             recorder.stop();
             recorder.release();
-            audioGrabber.stop();
-            audioGrabber.release();
+            //audioGrabber.stop();
+            //audioGrabber.release();
 
             byte[] videoBytes = Files.readAllBytes(Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo()));
 
