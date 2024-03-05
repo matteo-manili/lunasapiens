@@ -65,14 +65,21 @@ public class IndexController {
     }
 
 
-    @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model) {
+    @GetMapping("/genera-video")
+    public String gerneraVideo(Model model) {
 
         scheduledTasks.creaOroscopoGiornaliero();
 
-
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
+        model.addAttribute("videos", listOroscopoGiorn);
+        return "oroscopo";
+    }
 
+
+
+    @GetMapping("/oroscopo")
+    public String mostraOroscopo(Model model) {
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiRomaOre12());
         model.addAttribute("videos", listOroscopoGiorn);
         return "oroscopo";
     }
@@ -81,9 +88,7 @@ public class IndexController {
     @GetMapping("/oroscopo-giornaliero/{videoName}")
     @ResponseBody
     public ResponseEntity<Resource> getVideo(@PathVariable String videoName) {
-
         logger.info("sono in oroscopo-giornaliero videoName: " + videoName);
-
         return streamVideo(videoName);
 
     }
