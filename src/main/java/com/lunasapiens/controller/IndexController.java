@@ -107,7 +107,7 @@ public class IndexController {
 
     @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
     @GetMapping("/oroscopo-giornaliero/{videoName}")
-    public ResponseEntity<ByteArrayResource> getVideo(@PathVariable String videoName) throws IOException {
+    public ResponseEntity<Resource> getVideo(@PathVariable String videoName) throws IOException {
         logger.info("Sono in oroscopo-giornaliero/{videoName}: " +videoName);
 
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
