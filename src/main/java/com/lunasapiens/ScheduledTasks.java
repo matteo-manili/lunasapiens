@@ -125,11 +125,11 @@ public class ScheduledTasks {
                             cache.put(nomeFileVideo + VideoGenerator.formatoVideo(), videoBytes);
                         }
 
-                        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         File directory = new File(pathOroscopoGiornalieroImmagini);
-                        //Util.deleteDirectory(directory);
+                        Util.deleteDirectory(directory);
                         directory = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
-                        //Util.deleteDirectory(directory);
+                        Util.deleteDirectory(directory);
 
                     }catch(Exception exc){
                         exc.printStackTrace();
