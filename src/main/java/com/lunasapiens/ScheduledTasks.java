@@ -103,11 +103,10 @@ public class ScheduledTasks {
                     try{
                         String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
                         byte[] videoBytes = VideoGenerator.createVideoFromImages(inputImagePath, nomeFileVideo );
-                        oroscopoGiornaliero.setVideo(videoBytes);
-                        oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
 
                         try{
-                            oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO, null, null);
+                            oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO,
+                                    videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
 
                         } catch (DataIntegrityViolationException e) {
                             oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
