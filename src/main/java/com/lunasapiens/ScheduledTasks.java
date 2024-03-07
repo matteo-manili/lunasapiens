@@ -56,7 +56,8 @@ public class ScheduledTasks {
             logger.info( "Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO): "
                     + Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO).toString() );
 
-            if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null || oroscopoGiornaliero.getTestoOroscopo() == null) {
+            if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
+                    || oroscopoGiornaliero.getTestoOroscopo() == null) {
 
                 if(oroscopoGiornaliero == null){
                     oroscopoGiornaliero = new OroscopoGiornaliero();
@@ -121,7 +122,6 @@ public class ScheduledTasks {
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
                         if (cache != null) {
-                            // Il nome del video potrebbe essere adatto come chiave di cache
                             cache.put(nomeFileVideo + VideoGenerator.formatoVideo(), videoBytes);
                         }
 
@@ -145,7 +145,10 @@ public class ScheduledTasks {
 
             } else {
                 logger.info("Il record esiste");
-
+                Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
+                if (cache != null) {
+                    cache.put(oroscopoGiornaliero.getNomeFileVideo(), oroscopoGiornaliero.getVideo());
+                }
             }
 
 
