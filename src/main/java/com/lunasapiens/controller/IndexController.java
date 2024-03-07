@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -105,9 +106,8 @@ public class IndexController {
 
 
 
-    @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
-    @GetMapping("/oroscopo-giornaliero/{videoName}")
-    public ResponseEntity<Resource> getVideo(@PathVariable String videoName) throws IOException {
+    /*
+    public ResponseEntity<ByteArrayResource> getVideo(@PathVariable String videoName) throws IOException {
         logger.info("Sono in oroscopo-giornaliero/{videoName}: " +videoName);
 
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
@@ -123,6 +123,27 @@ public class IndexController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(byteArrayResource);
+    }
+*/
+
+    @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
+    @GetMapping("/oroscopo-giornaliero/{videoName}")
+    public ResponseEntity<StreamingResponseBody> handleStreamingVideo(@PathVariable String videoName) {
+        OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
+                .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
+
+        byte[] videoData = oroscopoGiornaliero.getVideo();
+
+        StreamingResponseBody responseBody = out -> {
+            // Scrivi i dati del video nello stream di output
+            out.write(videoData);
+        };
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("inline").filename(videoName).build());
+
+        return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
     }
 
 
