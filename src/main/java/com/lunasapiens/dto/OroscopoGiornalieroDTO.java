@@ -1,6 +1,11 @@
 package com.lunasapiens.dto;
 
+import com.lunasapiens.Constants;
+import com.lunasapiens.entity.OroscopoGiornaliero;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OroscopoGiornalieroDTO {
 
@@ -8,17 +13,28 @@ public class OroscopoGiornalieroDTO {
     private Integer numSegno;
     private String testoOroscopo;
     private Date dataOroscopo;
+    private String nomeFileVideo;
 
-    public OroscopoGiornalieroDTO(Long id, Integer numSegno, String testoOroscopo, Date dataOroscopo) {
-        this.id = id;
-        this.numSegno = numSegno;
-        this.testoOroscopo = testoOroscopo;
-        this.dataOroscopo = dataOroscopo;
-    }
+    String nomeSegnoZodiacale;
+    String testoOroscopoRifinito;
 
     public OroscopoGiornalieroDTO() {
-        // Costruttore vuoto necessario per la deserializzazione JSON
     }
+
+
+    public OroscopoGiornalieroDTO(OroscopoGiornaliero oroscopoGiornaliero) {
+        this.id = oroscopoGiornaliero.getId();
+        this.numSegno = oroscopoGiornaliero.getNumSegno();
+        this.testoOroscopo = oroscopoGiornaliero.getTestoOroscopo();
+        this.dataOroscopo = oroscopoGiornaliero.getDataOroscopo();
+        this.nomeFileVideo = oroscopoGiornaliero.getNomeFileVideo();
+
+        this.nomeSegnoZodiacale = Constants.getSegnoZodiacale(oroscopoGiornaliero.getNumSegno());
+        this.testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo().replaceAll(Constants.SeparatoreTestoOroscopo, "");
+    }
+
+
+
 
     public Long getId() {
         return id;
@@ -28,9 +44,13 @@ public class OroscopoGiornalieroDTO {
         this.id = id;
     }
 
-    public Integer getNumSegno() { return numSegno; }
+    public Integer getNumSegno() {
+        return numSegno;
+    }
 
-    public void setNumSegno(Integer numSegno) { this.numSegno = numSegno; }
+    public void setNumSegno(Integer numSegno) {
+        this.numSegno = numSegno;
+    }
 
     public String getTestoOroscopo() {
         return testoOroscopo;
@@ -47,5 +67,28 @@ public class OroscopoGiornalieroDTO {
     public void setDataOroscopo(Date dataOroscopo) {
         this.dataOroscopo = dataOroscopo;
     }
-}
 
+    public String getNomeFileVideo() {
+        return nomeFileVideo;
+    }
+
+    public void setNomeFileVideo(String nomeFileVideo) {
+        this.nomeFileVideo = nomeFileVideo;
+    }
+
+    public String getNomeSegnoZodiacale() {
+        return nomeSegnoZodiacale;
+    }
+
+    public void setNomeSegnoZodiacale(String nomeSegnoZodiacale) {
+        this.nomeSegnoZodiacale = nomeSegnoZodiacale;
+    }
+
+    public String getTestoOroscopoRifinito() {
+        return testoOroscopoRifinito;
+    }
+
+    public void setTestoOroscopoRifinito(String testoOroscopoRifinito) {
+        this.testoOroscopoRifinito = testoOroscopoRifinito;
+    }
+}

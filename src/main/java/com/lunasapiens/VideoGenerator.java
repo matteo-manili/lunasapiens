@@ -31,9 +31,9 @@ public class VideoGenerator {
     }
 
 
-    private static final String pathStatic = "src/main/resources/static/";
-    private static final String audioFilePath = pathStatic + "oroscopo_giornaliero/audio/music_9.mp3";
-    public static final String pathOroscopoGiornalieroVideo = pathStatic + "oroscopo_giornaliero/video/";
+
+    private static final String audioFilePath = Constants.PATH_STATIC + "oroscopo_giornaliero/audio/music_9.mp3";
+    public static final String pathOroscopoGiornalieroVideo = Constants.PATH_STATIC + "oroscopo_giornaliero/video/";
 
     public VideoGenerator() {
 
@@ -63,7 +63,7 @@ public class VideoGenerator {
             recorder.setVideoCodec( avcodec.AV_CODEC_ID_H264 ); //avcodec.AV_CODEC_ID_MPEG4 // avcodec.AV_CODEC_ID_H264 // Imposta il codec video su MPEG4
             //recorder.setPixelFormat( avutil.AV_PIX_FMT_YUV420P10 ); //
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
-            recorder.setVideoBitrate(20000); // Imposta il bitrate video a 2 Mbps
+            recorder.setVideoBitrate(6000000); // Imposta il bitrate video a 2 Mbps //6000000 6 Mbps
 
 
             // Inizializza il grabber per l'audio

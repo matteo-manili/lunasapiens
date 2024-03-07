@@ -21,7 +21,7 @@ public class ServiziAstrologici {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiziAstrologici.class);
 
-    private String keyOpenAi;
+    private static String keyOpenAi;
     private Double temperature = 1.0;
     private Integer maxTokens = 1000;
 
@@ -30,19 +30,47 @@ public class ServiziAstrologici {
         this.keyOpenAi = keyOpenAi;
     }
 
-    public StringBuilder servizioOroscopoDelGiorno(String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        return servizioOroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
+    public StringBuilder oroscopoDelGiornoIA(String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
     }
 
-    public StringBuilder servizioOroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+
+    public static String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+
+        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia( giornoOraPosizioneDTO );
+
+        String descrizioneOggi = "Oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
+                + " ore "+giornoOraPosizioneDTO.getOra()+":"+giornoOraPosizioneDTO.getMinuti()+ "\n"+
+                "Transiti di oggi: " + "\n";
+
+        for(PianetiAspetti var : buildInfoAstrologia.getPianetiAspetti()){
+            if ( var.getNomePianeta().equals(Constants.NAME_PLANET[0]) ||
+                    var.getNomePianeta().equals(Constants.NAME_PLANET[1]) ||
+                    var.getNomePianeta().equals(Constants.NAME_PLANET[2]) ||
+                    var.getNomePianeta().equals(Constants.NAME_PLANET[3]) ||
+                    var.getNomePianeta().equals(Constants.NAME_PLANET[4]) ){
+                descrizioneOggi += var.toString();
+                //System.out.println( var.toString() );
+            }
+        }
+
+        descrizioneOggi += "\n" + "Case Placide di oggi: " + "\n";
+        for(CasePlacide var : buildInfoAstrologia.getCasePlacide()){
+            descrizioneOggi += var.toString();
+        }
+
+        return descrizioneOggi;
+    }
+
+
+    public static StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia( giornoOraPosizioneDTO );
 
         System.out.println("############################ TEXT IA ###################################");
-        System.out.println("############################ TEXT IA ###################################");
         String domanda = "Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del "+ segno +" in base a questi dati. \n" +
                 "il testo generato deve essere diviso in blocchi sensati di 30-40 parole e ogni blocco deve terminare con il carattere speciale "+Constants.SeparatoreTestoOroscopo+". \n"+
-                "Il giorno di oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
+                "Oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
                 + " ore "+giornoOraPosizioneDTO.getOra()+":"+giornoOraPosizioneDTO.getMinuti()+ "\n"+
                 "Transiti di oggi: " + "\n";
 
@@ -65,7 +93,6 @@ public class ServiziAstrologici {
 
         logger.info("DOMANDA: "+ domanda );
 
-
         // @@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@
 
         OpenAIClient client = new OpenAIClientBuilder().credential(new KeyCredential( keyOpenAi )).buildClient();
@@ -83,7 +110,6 @@ public class ServiziAstrologici {
             System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
             risposta.append(choice.getText()).append("\n");
         }
-
 
 
   // ######################################################## IMMAGINE OPENAI - OPENAI Azure ########################################################

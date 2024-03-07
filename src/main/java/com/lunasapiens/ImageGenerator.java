@@ -32,6 +32,10 @@ public class ImageGenerator {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = bufferedImage.createGraphics();
 
+
+        // Abilita l'antialiasing per migliorare la qualità del testo
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
         // Impostazione del colore di sfondo
         graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(0, 0, width, height);

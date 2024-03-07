@@ -34,6 +34,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private Environment env;
 
+
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();

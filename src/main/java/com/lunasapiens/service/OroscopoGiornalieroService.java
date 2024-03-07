@@ -46,10 +46,6 @@ public class OroscopoGiornalieroService {
         return oroscopoGiornalieroRepository.findByNomeFileVideo(nomeFileVideo);
     }
 
-    public boolean existsByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo) {
-        return oroscopoGiornalieroRepository.existsByNumSegnoAndDataOroscopo(numSegno, dataOroscopo);
-    }
-
     @Transactional(readOnly = true)
     public List<OroscopoGiornaliero> findAllByDataOroscopo(Date dataOroscopo) {
         return oroscopoGiornalieroRepository.findAllByDataOroscopo(dataOroscopo);

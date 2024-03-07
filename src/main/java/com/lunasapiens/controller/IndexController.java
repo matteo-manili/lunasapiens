@@ -2,13 +2,17 @@ package com.lunasapiens.controller;
 
 
 import com.lunasapiens.*;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.zodiac.ServiziAstrologici;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.*;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,10 +76,7 @@ public class IndexController {
 
         scheduledTasks.creaOroscopoGiornaliero();
 
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
-
-        model.addAttribute("videos", listOroscopoGiorn);
-        return "oroscopo";
+        return "index";
     }
 
 
@@ -82,44 +85,44 @@ public class IndexController {
     public String mostraOroscopo(Model model) {
 
         logger.info( "Util.OggiRomaOre12(): "+Util.OggiOre12() );
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        String oroscopoDelGiornoDescrizioneOggi = ServiziAstrologici.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
+
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
-
-        if( listOroscopoGiorn != null ){
-            logger.info( "listOroscopoGiorn.size() :" +listOroscopoGiorn.size() );
-        }else{
-            logger.info( "listOroscopoGiorn.size() è NULL" );
+        List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+        for (OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+            OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
+            listOroscopoGiornoDTO.add(dto);
         }
+        model.addAttribute("videos", listOroscopoGiornoDTO);
 
-
-        model.addAttribute("videos", listOroscopoGiorn);
         return "oroscopo";
     }
 
 
 
 
-    @Cacheable(value = "videoCache", key = "#videoName")
-    @GetMapping("/oroscopo-giornaliero/{videoName}")
-    @ResponseBody
-    public ResponseEntity<Resource> getVideo(@PathVariable String videoName) {
-        logger.info("sono in oroscopo-giornaliero videoName: " + videoName);
 
+    @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
+    @GetMapping("/oroscopo-giornaliero/{videoName}")
+    public ResponseEntity<ByteArrayResource> getVideo(@PathVariable String videoName) throws IOException {
+        logger.info("Sono in oroscopo-giornaliero/{videoName}: " +videoName);
 
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with id: " + videoName));
 
-
         byte[] videoData = oroscopoGiornaliero.getVideo();
-        ByteArrayResource resource = new ByteArrayResource(videoData);
+        ByteArrayResource byteArrayResource = new ByteArrayResource(videoData);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        // Imposta Content-Disposition su "inline" per riprodurre il video direttamente nella pagina
         headers.setContentDisposition(ContentDisposition.builder("inline").filename(videoName).build());
+
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(resource);
-
-
+                .body(byteArrayResource);
     }
 
 

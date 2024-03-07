@@ -12,8 +12,8 @@ public class OroscopoGiornaliero implements Serializable {
     private Long id;
 
     private Integer numSegno;
-    private String testoOroscopo;
     private Date dataOroscopo;
+    private String testoOroscopo;
     private byte[] video;
     private String nomeFileVideo;
 
