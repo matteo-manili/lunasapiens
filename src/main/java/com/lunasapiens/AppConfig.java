@@ -40,8 +40,8 @@ public class AppConfig implements WebMvcConfigurer {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofDays(5))
-                .maximumSize(200)); // Adjust as needed
+                .expireAfterAccess(Duration.ofDays(5))
+                .maximumSize(12)); // Adjust as needed
         return cacheManager;
     }
 
