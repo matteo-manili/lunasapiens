@@ -79,32 +79,19 @@ public class VideoGenerator {
             recorder.start();
 
 
-            // questo Arrays.sort serve per ordinare le immagini in base al nome file
+
+            // Ordina gli oggetti File[] in base ai loro nomi
             Arrays.sort(imageFiles, new Comparator<File>() {
                 @Override
-                public int compare(File o1, File o2) {
-                    int n1 = extractNumber(o1.getName());
-                    int n2 = extractNumber(o2.getName());
-                    return n1 - n2;
-                }
-                private int extractNumber(String name) {
-                    int i = 0;
-                    try {
-                        int s = name.indexOf(0);
-                        int e = name.lastIndexOf('.');
-                        String number = name.substring(s, e);
-                        i = Integer.parseInt(number);
-                    } catch(Exception e) {
-                        i = 0; // if filename does not match the format
-                        // then default to 0
-                    }
-                    return i;
+                public int compare(File file1, File file2) {
+                    return file1.getName().compareTo(file2.getName());
                 }
             });
-
-            for(File f : imageFiles) {
-                logger.info("f.getName(): "+f. getName());
+            // Stampa i nomi ordinati dei file
+            for (File file : imageFiles) {
+                logger.info(file.getName());
             }
+
 
 
             for (File f : imageFiles) {

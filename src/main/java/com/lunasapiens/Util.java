@@ -73,9 +73,9 @@ public class Util {
         File outputFolder = new File(pathDirectory);
         if (!outputFolder.exists()) {
             outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
-            logger.info("La cartella o il file NON esistono!");
+            //logger.info("La cartella o il file NON esistono!");
         }else{
-            logger.info("La cartella o il file esistono!");
+            //logger.info("La cartella o il file esistono!");
         }
     }
 
