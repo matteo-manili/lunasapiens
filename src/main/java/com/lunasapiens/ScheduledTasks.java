@@ -50,6 +50,10 @@ public class ScheduledTasks {
 
 
     public void creaOroscopoGiornaliero() {
+
+        Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
+        cache.clear();
+
         // ciclo i 12 segni astrologici
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
 
@@ -119,7 +123,6 @@ public class ScheduledTasks {
                         }
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                        Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
                         cache.put(nomeFileVideo+VideoGenerator.formatoVideo(), Util.VideoResponseEntityByteArrayResource(videoBytes));
 
 
@@ -143,7 +146,6 @@ public class ScheduledTasks {
 
             } else {
                 logger.info("Il record esiste");
-                Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
                 cache.put(oroscopoGiornaliero.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo()));
 
             }
