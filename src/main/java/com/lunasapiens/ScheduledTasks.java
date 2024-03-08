@@ -42,16 +42,19 @@ public class ScheduledTasks {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private TelegramBotClient telegramBotClient;
 
-    @Scheduled(cron = "0 0 12 * * *", zone = "Europe/Rome")
+
+    @Scheduled(cron = "0 0 6 * * *", zone = "Europe/Rome")
     public void executeTask() {
-        // Implementa qui il codice da eseguire
-        System.out.println("Task eseguito alle " + LocalDateTime.now());
+        creaOroscopoGiornaliero();
+        telegramBotClient.inviaMessaggio("Eseguito! ScheduledTasks.executeTask() "+ LocalDateTime.now());
+        logger.info("Task eseguito alle " + LocalDateTime.now());
     }
 
 
     public void creaOroscopoGiornaliero() {
-
         // ciclo i 12 segni astrologici
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
 
@@ -72,15 +75,13 @@ public class ScheduledTasks {
 
                 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                 StringBuilder sB;
-                if(oroscopoGiornaliero.getTestoOroscopo() == null){
+                if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
                     ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
                     sB = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
                     oroscopoGiornaliero.setTestoOroscopo(sB.toString());
-
                 }else{
                     sB = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                 }
-
 
                 try{
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -88,7 +89,7 @@ public class ScheduledTasks {
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
-                    int fontSize = 60; Color textColor = Color.BLUE;
+                    int fontSize = 40; Color textColor = Color.BLUE;
 
                     // Formattatore per la data
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,10 +130,10 @@ public class ScheduledTasks {
 
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                        File directory = new File(pathOroscopoGiornalieroImmagini);
-                        Util.deleteDirectory(directory);
-                        directory = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
-                        Util.deleteDirectory(directory);
+                        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
+                        Util.deleteDirectory(directoryImmagini);
+                        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
+                        Util.deleteDirectory(directoryVideo);
 
                     }catch(Exception exc){
                         exc.printStackTrace();

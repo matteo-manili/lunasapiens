@@ -21,17 +21,16 @@ public class ImageGenerator {
         String fontName = "Arial";
         int fontSize = 30;
         Color textColor = Color.BLACK;
-
         generateImage(text, fontName, fontSize, textColor, "src/main/resources/generatedImage.png");
     }
 
+
     public static void generateImage(String text, String fontName, int fontSize, Color textColor, String outputPath) {
         // Creazione di un'immagine con dimensioni fisse
-        int width = 1400; int height = 800;
+        int width = 700; int height = 400;
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = bufferedImage.createGraphics();
-
 
         // Abilita l'antialiasing per migliorare la qualità del testo
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

@@ -63,7 +63,7 @@ public class VideoGenerator {
             recorder.setVideoCodec( avcodec.AV_CODEC_ID_H264 ); //avcodec.AV_CODEC_ID_MPEG4 // avcodec.AV_CODEC_ID_H264 // Imposta il codec video su MPEG4
             //recorder.setPixelFormat( avutil.AV_PIX_FMT_YUV420P10 ); //
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
-            recorder.setVideoBitrate(6000000); // Imposta il bitrate video a 2 Mbps //6000000 6 Mbps
+            recorder.setVideoBitrate(3000000); // Imposta il bitrate video a 2 Mbps //3000000 3 Mbps //6000000 6 Mbps
 
 
             // Inizializza il grabber per l'audio
@@ -72,7 +72,7 @@ public class VideoGenerator {
 
             // Aggiungi la traccia audio al recorder
             recorder.setAudioChannels(audioGrabber.getAudioChannels());
-            recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio
+            recorder.setAudioCodec( avcodec.AV_CODEC_ID_AAC ); // Imposta il codec audio //avcodec.AV_CODEC_ID_MP3 avcodec.AV_CODEC_ID_AAC
             recorder.setSampleRate(audioGrabber.getSampleRate());
             recorder.start();
 
