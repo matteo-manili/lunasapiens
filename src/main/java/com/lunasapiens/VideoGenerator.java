@@ -3,13 +3,11 @@ package com.lunasapiens;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.imageio.ImageIO;
 
-import org.bytedeco.ffmpeg.global.avutil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -79,8 +77,6 @@ public class VideoGenerator {
             recorder.start();
 
 
-
-
             // Ordina gli oggetti File[] in base ai numeri nei loro nomi di file
             Arrays.sort(imageFiles, new Comparator<File>() {
                 @Override
@@ -96,11 +92,7 @@ public class VideoGenerator {
                 }
             });
             // Stampa i nomi ordinati dei file
-            for (File file : imageFiles) {
-                System.out.println(file.getName());
-            }
-
-
+            // for (File file : imageFiles) { System.out.println(file.getName()); }
 
             for (File f : imageFiles) {
                 if (f.isFile()) {
@@ -113,12 +105,10 @@ public class VideoGenerator {
             }
 
             // Registra la traccia audio una volta
-
             Frame audioFrame;
             while ((audioFrame = audioGrabber.grabFrame()) != null) {
                 recorder.record(audioFrame);
             }
-
 
             double secondsDurationAudio = getSecondsDurationAudio();
             logger.info( "durata traccia audio: "+secondsDurationAudio );
@@ -131,22 +121,18 @@ public class VideoGenerator {
                 }
             }
 
-
             // Ferma e rilascia il recorder e il grabber audio
             recorder.stop();
             recorder.release();
             audioGrabber.stop();
             audioGrabber.release();
-
             return Files.readAllBytes(Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo()));
-
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
-
     }
 
 

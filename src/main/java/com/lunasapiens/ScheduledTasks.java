@@ -51,7 +51,7 @@ public class ScheduledTasks {
 
     public void creaOroscopoGiornaliero() {
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 3; numeroSegno++) {
+        for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
 
             GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
