@@ -41,7 +41,7 @@ public class ScheduledTasks {
     private TelegramBotClient telegramBotClient;
 
 
-    @Scheduled(cron = "0 0 6 * * *", zone = "Europe/Rome")
+    @Scheduled(cron = "0 0 5 * * *", zone = "Europe/Rome")
     public void executeTask() {
         creaOroscopoGiornaliero();
         telegramBotClient.inviaMessaggio("Eseguito! ScheduledTasks.executeTask() "+ LocalDateTime.now());
@@ -56,8 +56,7 @@ public class ScheduledTasks {
             GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
 
-            logger.info( "Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO): "
-                    + Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO).toString() );
+            //logger.info( "Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO): " + Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO).toString() );
 
             if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
                     || oroscopoGiornaliero.getTestoOroscopo() == null) {
@@ -84,26 +83,26 @@ public class ScheduledTasks {
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
-                    int fontSize = 40; Color textColor = Color.BLUE;
+                    int fontSize = 30; Color textColor = Color.BLUE;
 
                     // Formattatore per la data
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     String dataOroscopoString = formatter.format( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
 
                     String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
-                    String inputImagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
+                    String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     ImageGenerator igenerat = new ImageGenerator();
                     // Itera su ogni pezzo della stringa
                     for (int i = 0; i < pezziStringa.size(); i++) {
                         String fileName = i + ".png";
-                        String outputPath = inputImagePath + fileName;
-                        igenerat.generateImage(pezziStringa.get(i), fontName, fontSize, textColor, outputPath);
+                        String imagePathFileName = imagePath + fileName;
+                        igenerat.generateImage(pezziStringa.get(i), fontName, fontSize, textColor, imagePathFileName);
                     }
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE VIDEO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     try{
                         String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
-                        byte[] videoBytes = VideoGenerator.createVideoFromImages(inputImagePath, nomeFileVideo );
+                        byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
 
                         try{
                             oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO,

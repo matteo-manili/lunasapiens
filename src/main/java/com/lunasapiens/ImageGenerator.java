@@ -25,7 +25,7 @@ public class ImageGenerator {
     }
 
 
-    public static void generateImage(String text, String fontName, int fontSize, Color textColor, String outputPath) {
+    public static void generateImage(String text, String fontName, int fontSize, Color textColor, String imagePathFileName) {
         // Creazione di un'immagine con dimensioni fisse
         int width = 700; int height = 400;
 
@@ -60,8 +60,8 @@ public class ImageGenerator {
 
         // Salvataggio dell'immagine su disco
         try {
-            Util.createDirectory( outputPath );
-            ImageIO.write(bufferedImage, "png", new File(outputPath));
+            Util.createDirectory( imagePathFileName );
+            ImageIO.write(bufferedImage, "png", new File(imagePathFileName));
 
         } catch (IOException e) {
             e.printStackTrace();

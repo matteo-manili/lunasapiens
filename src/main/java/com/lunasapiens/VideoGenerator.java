@@ -5,6 +5,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
 import javax.imageio.ImageIO;
 
 import org.bytedeco.ffmpeg.global.avutil;
@@ -72,11 +74,39 @@ public class VideoGenerator {
 
             // Aggiungi la traccia audio al recorder
             recorder.setAudioChannels(audioGrabber.getAudioChannels());
-            recorder.setAudioCodec( avcodec.AV_CODEC_ID_AAC ); // Imposta il codec audio //avcodec.AV_CODEC_ID_MP3 avcodec.AV_CODEC_ID_AAC
+            recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio //avcodec.AV_CODEC_ID_MP3 avcodec.AV_CODEC_ID_AAC
             recorder.setSampleRate(audioGrabber.getSampleRate());
             recorder.start();
 
-            // Aggiungi le immagini al video
+
+            // questo Arrays.sort serve per ordinare le immagini in base al nome file
+            Arrays.sort(imageFiles, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    int n1 = extractNumber(o1.getName());
+                    int n2 = extractNumber(o2.getName());
+                    return n1 - n2;
+                }
+                private int extractNumber(String name) {
+                    int i = 0;
+                    try {
+                        int s = name.indexOf(0);
+                        int e = name.lastIndexOf('.');
+                        String number = name.substring(s, e);
+                        i = Integer.parseInt(number);
+                    } catch(Exception e) {
+                        i = 0; // if filename does not match the format
+                        // then default to 0
+                    }
+                    return i;
+                }
+            });
+            /*
+            for(File f : imageFiles) {
+                logger.info("f.getName(): "+f. getName());
+            }
+            */
+
             for (File f : imageFiles) {
                 if (f.isFile()) {
                     BufferedImage image = ImageIO.read(f);
@@ -100,7 +130,7 @@ public class VideoGenerator {
             for (int i = 0; i < (durataSecondiImmagine * numImages) / secondsDurationAudio; i++) {
                 // Registra nuovamente la stessa traccia audio alla fine
                 audioGrabber.setTimestamp(0); // Riporta il grabber audio all'inizio del file
-                logger.info("registro una volta in più!");
+                //logger.info("registro una volta in più!");
                 while ((audioFrame = audioGrabber.grabFrame()) != null) {
                     recorder.record(audioFrame);
                 }
@@ -113,23 +143,8 @@ public class VideoGenerator {
             audioGrabber.stop();
             audioGrabber.release();
 
-            byte[] videoBytes = Files.readAllBytes(Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo()));
+            return Files.readAllBytes(Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo()));
 
-
-
-
-
-            // TODO questo non serve più farlo forse perché salvo il video nella classe VideoService
-            // Copia il video nella cartella di destinazione
-            /*
-            Path destinationPath = Paths.get(pathOroscopoGiornalieroVideo, nomeFileVideo + formatoVideo());
-            Files.createDirectories(destinationPath.getParent());
-            Files.write(destinationPath, videoBytes);
-            logger.info("HO salvato il video nella cartella: "+ destinationPath.toString());
-            */
-
-
-            return videoBytes;
 
         } catch (Exception e) {
             e.printStackTrace();
