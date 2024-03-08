@@ -101,11 +101,11 @@ public class VideoGenerator {
                     return i;
                 }
             });
-            /*
+
             for(File f : imageFiles) {
                 logger.info("f.getName(): "+f. getName());
             }
-            */
+
 
             for (File f : imageFiles) {
                 if (f.isFile()) {
