@@ -41,7 +41,7 @@ public class AppConfig implements WebMvcConfigurer {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder()
                 .expireAfterAccess(Duration.ofDays(2))
-                .maximumSize(20)); // Adjust as needed
+                .maximumSize(12)); // Adjust as needed
         return cacheManager;
     }
 
