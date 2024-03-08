@@ -126,8 +126,7 @@ public class IndexController {
     }
 */
 
-    @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
-    @GetMapping("/oroscopo-giornaliero/{videoName}")
+
     public ResponseEntity<StreamingResponseBody> handleStreamingVideo(@PathVariable String videoName) {
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
@@ -145,6 +144,30 @@ public class IndexController {
 
         return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
     }
+
+
+
+        @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
+        @GetMapping("/oroscopo-giornaliero/{videoName}")
+        public ResponseEntity<ByteArrayResource> streamVideo(@PathVariable String videoName) throws IOException {
+
+            OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
+                    .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
+
+
+            if (oroscopoGiornaliero.getVideo() != null) {
+
+
+                ByteArrayResource byteArrayResource = new ByteArrayResource(oroscopoGiornaliero.getVideo());
+
+                ByteArrayInputStream bis = new ByteArrayInputStream(oroscopoGiornaliero.getVideo());
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(byteArrayResource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
 
 
 

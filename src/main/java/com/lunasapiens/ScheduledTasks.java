@@ -119,10 +119,13 @@ public class ScheduledTasks {
                         }
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                        /*
                         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
                         if (cache != null) {
                             cache.put(nomeFileVideo + VideoGenerator.formatoVideo(), videoBytes);
                         }
+
+                         */
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         File directory = new File(pathOroscopoGiornalieroImmagini);
