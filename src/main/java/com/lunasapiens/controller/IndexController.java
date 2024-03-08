@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -21,14 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class IndexController {
@@ -74,22 +67,15 @@ public class IndexController {
 
     @GetMapping("/genera-video")
     public String gerneraVideo(Model model) {
-
         scheduledTasks.creaOroscopoGiornaliero();
-
         return "index";
     }
 
 
-
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model) {
-
-        logger.info( "Util.OggiRomaOre12(): "+Util.OggiOre12() );
-
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
         String oroscopoDelGiornoDescrizioneOggi = ServiziAstrologici.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
@@ -97,80 +83,25 @@ public class IndexController {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
             listOroscopoGiornoDTO.add(dto);
         }
+        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
         model.addAttribute("videos", listOroscopoGiornoDTO);
-
         return "oroscopo";
     }
 
 
 
 
-
-    /*
-    public ResponseEntity<ByteArrayResource> getVideo(@PathVariable String videoName) throws IOException {
-        logger.info("Sono in oroscopo-giornaliero/{videoName}: " +videoName);
-
-        OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
-                .orElseThrow(() -> new NoSuchElementException("Video not found with id: " + videoName));
-
-        byte[] videoData = oroscopoGiornaliero.getVideo();
-        ByteArrayResource byteArrayResource = new ByteArrayResource(videoData);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDisposition(ContentDisposition.builder("inline").filename(videoName).build());
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(byteArrayResource);
-    }
-*/
-
-
-    public ResponseEntity<StreamingResponseBody> handleStreamingVideo(@PathVariable String videoName) {
+    @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
+    @GetMapping("/oroscopo-giornaliero/{videoName}")
+    public ResponseEntity<ByteArrayResource> streamVideo(@PathVariable String videoName) throws IOException {
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
-
-        byte[] videoData = oroscopoGiornaliero.getVideo();
-
-        StreamingResponseBody responseBody = out -> {
-            // Scrivi i dati del video nello stream di output
-            out.write(videoData);
-        };
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDisposition(ContentDisposition.builder("inline").filename(videoName).build());
-
-        return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
-    }
-
-
-
-        @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
-        @GetMapping("/oroscopo-giornaliero/{videoName}")
-        public ResponseEntity<ByteArrayResource> streamVideo(@PathVariable String videoName) throws IOException {
-
-            OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
-                    .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
-
-
-            if (oroscopoGiornaliero.getVideo() != null) {
-                /*
-                ByteArrayResource byteArrayResource = new ByteArrayResource(oroscopoGiornaliero.getVideo());
-                ByteArrayInputStream bis = new ByteArrayInputStream(oroscopoGiornaliero.getVideo());
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .contentLength(oroscopoGiornaliero.getVideo().length)
-                        .body(byteArrayResource);
-                 */
-
-                return Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo());
-
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+        if (oroscopoGiornaliero.getVideo() != null) {
+            return Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo());
+        } else {
+            return ResponseEntity.notFound().build();
         }
+    }
 
 
 
