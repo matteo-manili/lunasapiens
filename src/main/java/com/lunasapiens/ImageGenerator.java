@@ -16,14 +16,6 @@ public class ImageGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageGenerator.class);
 
-    public static void main(String[] args) {
-        String text = "The stars shine for those who believe.";
-        String fontName = "Arial";
-        int fontSize = 30;
-        Color textColor = Color.BLACK;
-        generateImage(text, fontName, fontSize, textColor, "src/main/resources/generatedImage.png");
-    }
-
 
     public static void generateImage(String text, String fontName, int fontSize, Color textColor, String imagePathFileName) {
         // Creazione di un'immagine con dimensioni fisse
@@ -89,5 +81,18 @@ public class ImageGenerator {
         lines.add(line.toString());
         return lines;
     }
+
+
+
+    public static void main(String[] args) {
+        String text = "The stars shine for those who believe.";
+        String fontName = "Arial";
+        int fontSize = 30;
+        Color textColor = Color.BLACK;
+        generateImage(text, fontName, fontSize, textColor, "src/main/resources/generatedImage.png");
+    }
+
+
+
 }
 
