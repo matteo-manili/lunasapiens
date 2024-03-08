@@ -25,18 +25,16 @@ public class Util {
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
-    // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
 
     public static final ZonedDateTime getNowRomeEurope(){
-
         ZoneId romaZone = ZoneId.of("Europe/Rome");
         ZonedDateTime now = ZonedDateTime.now(romaZone);
+        logger.info("ZonedDateTime Roma_:" +now);
         return now;
     }
 
 
     public static final Date OggiOre12(){
-
         ZonedDateTime now = getNowRomeEurope();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
@@ -51,7 +49,9 @@ public class Util {
         return calendar.getTime();
     }
 
-
+    /**
+     * Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
+     */
     public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
         ZonedDateTime now = getNowRomeEurope();
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
