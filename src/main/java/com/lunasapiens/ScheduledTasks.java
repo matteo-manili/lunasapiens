@@ -52,7 +52,7 @@ public class ScheduledTasks {
     public void creaOroscopoGiornaliero() {
 
         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
-        cache.clear();
+        cache.invalidate();
 
         // ciclo i 12 segni astrologici
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {

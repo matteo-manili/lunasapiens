@@ -78,11 +78,16 @@ public class IndexController {
         String oroscopoDelGiornoDescrizioneOggi = ServiziAstrologici.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+
+        logger.info("listOroscopoGiorns: "+listOroscopoGiorn.size() +"Ore: "+Util.OggiOre12());
+
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+
         for (OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
             listOroscopoGiornoDTO.add(dto);
         }
+        logger.info("listOroscopoGiornoDTO: "+listOroscopoGiornoDTO.size());
         model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
         model.addAttribute("videos", listOroscopoGiornoDTO);
         return "oroscopo";
