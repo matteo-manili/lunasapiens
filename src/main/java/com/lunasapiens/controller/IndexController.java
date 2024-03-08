@@ -156,14 +156,17 @@ public class IndexController {
 
 
             if (oroscopoGiornaliero.getVideo() != null) {
-
-
+                /*
                 ByteArrayResource byteArrayResource = new ByteArrayResource(oroscopoGiornaliero.getVideo());
-
                 ByteArrayInputStream bis = new ByteArrayInputStream(oroscopoGiornaliero.getVideo());
                 return ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .contentLength(oroscopoGiornaliero.getVideo().length)
                         .body(byteArrayResource);
+                 */
+
+                return Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo());
+
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -39,8 +40,8 @@ public class AppConfig implements WebMvcConfigurer {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES) // Adjust as needed
-                .maximumSize(100)); // Adjust as needed
+                .expireAfterWrite(Duration.ofDays(5))
+                .maximumSize(200)); // Adjust as needed
         return cacheManager;
     }
 
@@ -54,7 +55,6 @@ public class AppConfig implements WebMvcConfigurer {
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
         try{
-
             facebookConfig = new FacebookConfig(
                     env.getProperty("api.facebook.version"),
                     env.getProperty("api.facebook.appid"),
@@ -62,13 +62,11 @@ public class AppConfig implements WebMvcConfigurer {
                     env.getProperty("api.facebook.accesstoken"),
                     env.getProperty("api.facebook.pageaccesstoken"));
 
-
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
             Properties properties = new Properties();
             try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
                 properties.load(fis);
-
 
                 facebookConfig = new FacebookConfig(
                         properties.getProperty("api.facebook.version"),
@@ -76,8 +74,6 @@ public class AppConfig implements WebMvcConfigurer {
                         properties.getProperty("api.facebook.appsecret"),
                         properties.getProperty("api.facebook.accesstoken"),
                         properties.getProperty("api.facebook.pageaccesstoken"));
-
-
             } catch (IOException ioException) {
                 throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
             }

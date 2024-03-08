@@ -10,9 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -48,7 +53,7 @@ public class ScheduledTasks {
     public void creaOroscopoGiornaliero() {
 
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 2; numeroSegno++) {
+        for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
 
             GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
@@ -119,13 +124,9 @@ public class ScheduledTasks {
                         }
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                        /*
                         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
-                        if (cache != null) {
-                            cache.put(nomeFileVideo + VideoGenerator.formatoVideo(), videoBytes);
-                        }
+                        cache.put(nomeFileVideo+VideoGenerator.formatoVideo(), Util.VideoResponseEntityByteArrayResource(videoBytes));
 
-                         */
 
                         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         File directory = new File(pathOroscopoGiornalieroImmagini);
@@ -148,14 +149,15 @@ public class ScheduledTasks {
             } else {
                 logger.info("Il record esiste");
                 Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
-                if (cache != null) {
-                    cache.put(oroscopoGiornaliero.getNomeFileVideo(), oroscopoGiornaliero.getVideo());
-                }
+                cache.put(oroscopoGiornaliero.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo()));
+
             }
-
-
         }
     }
+
+
+
+
 
 
 

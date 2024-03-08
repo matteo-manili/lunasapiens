@@ -5,6 +5,10 @@ import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -32,21 +36,16 @@ public class Util {
 
 
     public static final Date OggiOre12(){
-        /*
-        ZonedDateTime now = getNowRomeEurope();
+        /* ZonedDateTime now = getNowRomeEurope();
         // Imposta l'ora a mezzogiorno (12:00:00)
         ZonedDateTime mezzogiorno = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
         // Converte ZonedDateTime in Date
-        return Date.from(mezzogiorno.toInstant());
-*/
-
+        return Date.from(mezzogiorno.toInstant()); */
         // Creare un oggetto Calendar e impostare i valori
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR, 12); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
         // Ottenere l'oggetto Date dal Calendar
         return calendar.getTime();
-
-
     }
 
 
@@ -97,6 +96,23 @@ public class Util {
         // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
         directory.delete();
     }
+
+
+    public static ResponseEntity<ByteArrayResource> VideoResponseEntityByteArrayResource(byte[] videoBytes){
+        ByteArrayResource resource = new ByteArrayResource(videoBytes);
+        // Creazione delle intestazioni HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(videoBytes.length);
+        // Creazione dell'oggetto ResponseEntity contenente la risorsa ByteArrayResource e le intestazioni
+        ResponseEntity<ByteArrayResource> responseEntity = ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
+        return responseEntity;
+    }
+
+
+
 
     public static String determinaSegnoZodiacale(int grado) {
         if (grado >= 0 && grado < 30) {
