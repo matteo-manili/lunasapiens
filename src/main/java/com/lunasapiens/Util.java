@@ -39,7 +39,7 @@ public class Util {
 
         ZonedDateTime now = getNowRomeEurope();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth()-1);
+        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
         calendar.set(Calendar.MONTH, now.getMonthValue()-1);
         calendar.set(Calendar.YEAR, now.getYear());
         calendar.set(Calendar.HOUR_OF_DAY, 12);
