@@ -80,16 +80,24 @@ public class VideoGenerator {
 
 
 
-            // Ordina gli oggetti File[] in base ai loro nomi
+
+            // Ordina gli oggetti File[] in base ai numeri nei loro nomi di file
             Arrays.sort(imageFiles, new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {
-                    return file1.getName().compareTo(file2.getName());
+                    int number1 = extractNumber(file1.getName());
+                    int number2 = extractNumber(file2.getName());
+                    return Integer.compare(number1, number2);
+                }
+                private int extractNumber(String fileName) {
+                    String[] parts = fileName.split("\\.");
+                    // Assumiamo che il numero sia prima dell'estensione del file
+                    return Integer.parseInt(parts[0]);
                 }
             });
             // Stampa i nomi ordinati dei file
             for (File file : imageFiles) {
-                logger.info(file.getName());
+                System.out.println(file.getName());
             }
 
 

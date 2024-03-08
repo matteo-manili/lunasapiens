@@ -83,7 +83,7 @@ public class ScheduledTasks {
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
-                    int fontSize = 30; Color textColor = Color.BLUE;
+                    int fontSize = 25; Color textColor = Color.BLUE;
 
                     // Formattatore per la data
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
