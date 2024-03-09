@@ -1,7 +1,6 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 @Component
 public class ScheduledTasks {

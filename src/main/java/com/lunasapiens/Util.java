@@ -1,8 +1,6 @@
 package com.lunasapiens;
 
-import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.entity.OroscopoGiornaliero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,15 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class Util {
 
