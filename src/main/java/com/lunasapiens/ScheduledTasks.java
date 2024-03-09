@@ -128,7 +128,7 @@ public class ScheduledTasks {
         logger.info("faccio pausa Thread.sleep......");
         try{
             // Faccio una pausa per smalite le operazioni fatte
-            Thread.sleep(20000); // 20000 = 20 secondi
+            Thread.sleep(10000); // 10000 = 10 secondi
         }catch(InterruptedException e){
             e.printStackTrace();
         }
