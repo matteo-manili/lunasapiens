@@ -40,7 +40,7 @@ public class ScheduledTasks {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
-
+    // settato per le 23:50 ogni giorno
     @Scheduled(cron = "0 50 23 * * *", zone = "Europe/Rome")
     public void executeTask() {
         creaOroscopoGiornaliero();

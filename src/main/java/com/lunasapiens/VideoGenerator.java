@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -24,22 +23,9 @@ import org.bytedeco.ffmpeg.global.avcodec;
 public class VideoGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(VideoGenerator.class);
-    private ResourceLoader resourceLoader;
-
-    public VideoGenerator(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-
-
 
     private static final String audioFilePath = Constants.PATH_STATIC + "oroscopo_giornaliero/audio/music_9.mp3";
     public static final String pathOroscopoGiornalieroVideo = Constants.PATH_STATIC + "oroscopo_giornaliero/video/";
-
-    public VideoGenerator() {
-
-    }
-
-
     public static String formatoVideo(){
         return ".mp4";
     }
