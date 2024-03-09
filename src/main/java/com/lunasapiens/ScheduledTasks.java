@@ -60,7 +60,7 @@ public class ScheduledTasks {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 2; numeroSegno++) {
+        for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
 
             if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
