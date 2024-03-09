@@ -50,14 +50,12 @@ public class ScheduledTasks {
 
 
     public void creaOroscopoGiornaliero() {
-
         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
         cache.invalidate();
 
         String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
-        // ciclo i 12 segni astrologici
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
 
@@ -90,7 +88,6 @@ public class ScheduledTasks {
                     // Formattatore per la data
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     String dataOroscopoString = formatter.format( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
-
 
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     ImageGenerator igenerat = new ImageGenerator();
@@ -133,22 +130,22 @@ public class ScheduledTasks {
             e.printStackTrace();
         }
 
-        logger.info("elimino cartelle e file dal classpath");
+        logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
         Util.deleteDirectory(directoryImmagini);
         File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
         Util.deleteDirectory(directoryVideo);
 
+        logger.info("metto i video in cache...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        logger.info("metto i video in cache");
         java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Util.OggiOre12());
         for (OroscopoGiornaliero oroscopoGiorno : listOroscopoGiorn) {
             if(oroscopoGiorno.getVideo() != null){
                 cache.put(oroscopoGiorno.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiorno.getVideo()));
             }
         }
-        logger.info("Fine Task creaOroscopoGiornaliero");
+        logger.info("Fine Task creaOroscopoGiornaliero.");
     }
 
 
