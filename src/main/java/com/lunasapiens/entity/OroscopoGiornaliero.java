@@ -42,7 +42,7 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
     @Lob
-    @Column(name = "testo_oroscopo", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "testo_oroscopo", columnDefinition = "TEXT", nullable = true)
     public String getTestoOroscopo() {
         return testoOroscopo;
     }

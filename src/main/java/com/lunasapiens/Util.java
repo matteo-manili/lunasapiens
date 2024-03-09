@@ -60,7 +60,7 @@ public class Util {
     }
 
 
-    public Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
         // Creare un oggetto Calendar e impostare i valori
         Calendar calendar = Calendar.getInstance();
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
