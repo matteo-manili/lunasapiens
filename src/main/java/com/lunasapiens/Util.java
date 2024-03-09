@@ -28,8 +28,7 @@ public class Util {
 
 
     public static Date OggiOre12(){
-        ZonedDateTime now = getNowRomeEurope();
-        Calendar calendar = Calendar.getInstance();
+        ZonedDateTime now = getNowRomeEurope(); Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
         calendar.set(Calendar.MONTH, now.getMonthValue()-1);
         calendar.set(Calendar.YEAR, now.getYear());
