@@ -26,7 +26,7 @@ public class Util {
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 
-    public static final ZonedDateTime getNowRomeEurope(){
+    public static ZonedDateTime getNowRomeEurope(){
         ZoneId romaZone = ZoneId.of("Europe/Rome");
         ZonedDateTime now = ZonedDateTime.now(romaZone);
         logger.info("ZonedDateTime Roma_:" +now);
@@ -34,7 +34,7 @@ public class Util {
     }
 
 
-    public static final Date OggiOre12(){
+    public static Date OggiOre12(){
         ZonedDateTime now = getNowRomeEurope();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
@@ -52,7 +52,7 @@ public class Util {
     /**
      * Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
      */
-    public static final GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
+    public static GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
         ZonedDateTime now = getNowRomeEurope();
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
                 now.getMonthValue(), now.getYear(), 49.9, 12.4);
@@ -60,7 +60,7 @@ public class Util {
     }
 
 
-    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+    public Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
         // Creare un oggetto Calendar e impostare i valori
         Calendar calendar = Calendar.getInstance();
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
@@ -113,7 +113,6 @@ public class Util {
                 .body(resource);
         return responseEntity;
     }
-
 
 
 

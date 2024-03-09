@@ -151,28 +151,20 @@ public class ScheduledTasks {
             }
         }
         logger.info("Fine Task creaOroscopoGiornaliero");
-
-
     }
 
 
 
 
-
-
-
-
-    public ArrayList<String> estraiPezziStringa(String testoCompleto) {
+    private ArrayList<String> estraiPezziStringa(String testoCompleto) {
         ArrayList<String> pezziStringa = new ArrayList<>();
         int startIndex = 0;
         int endIndex;
-
         while ((endIndex = testoCompleto.indexOf(Constants.SeparatoreTestoOroscopo, startIndex)) != -1) {
             String pezzo = testoCompleto.substring(startIndex, endIndex);
             pezziStringa.add(pezzo);
             startIndex = endIndex + 3; // Avanza oltre il carattere speciale "#@#"
         }
-
         return pezziStringa;
     }
 
@@ -180,7 +172,3 @@ public class ScheduledTasks {
 
 
 }
-
-
-
-
