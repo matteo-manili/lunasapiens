@@ -146,7 +146,7 @@ public class ScheduledTasks {
         logger.info("metto i video in cache");
         java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Util.OggiOre12());
         for (OroscopoGiornaliero oroscopoGiorno : listOroscopoGiorn) {
-            if(oroscopoGiorno != null){
+            if(oroscopoGiorno.getVideo() != null){
                 cache.put(oroscopoGiorno.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiorno.getVideo()));
             }
         }
