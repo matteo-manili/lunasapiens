@@ -34,11 +34,7 @@ public class Util {
         calendar.set(Calendar.MONTH, now.getMonthValue()-1);
         calendar.set(Calendar.YEAR, now.getYear());
         calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        // Ottenere l'oggetto Date dal Calendar
-
+        calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
 
