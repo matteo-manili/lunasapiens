@@ -1,7 +1,5 @@
 package com.lunasapiens.repository;
 
-
-import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +17,6 @@ public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGio
 
     Optional<OroscopoGiornaliero> findFirstByOrderByIdDesc();
 
-    List<OroscopoGiornaliero> findAllByDataOroscopo(Date dataOroscopo);
-
-
-
 
     @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.numSegno = :numSegno AND o.dataOroscopo = :dataOroscopo")
     OroscopoGiornaliero findByNumSegnoAndDataOroscopo(@Param("numSegno") Integer numSegno, @Param("dataOroscopo") Date dataOroscopo);
@@ -35,6 +29,10 @@ public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGio
 
     @Query("SELECT new com.lunasapiens.entity.OroscopoGiornaliero(o.id, o.numSegno, o.testoOroscopo, o.dataOroscopo, o.nomeFileVideo) FROM OroscopoGiornaliero o WHERE o.dataOroscopo = :dataOroscopo ORDER BY o.numSegno ASC")
     List<OroscopoGiornaliero> findAllByDataOroscopoWithoutVideo(@Param("dataOroscopo") Date dataOroscopo);
+
+
+    @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.dataOroscopo = :dataOroscopo ORDER BY o.numSegno ASC")
+    List<OroscopoGiornaliero> findAllByDataOroscopo(@Param("dataOroscopo") Date dataOroscopo);
 
 
 

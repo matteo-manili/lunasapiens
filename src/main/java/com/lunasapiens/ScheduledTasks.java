@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Component
 public class ScheduledTasks {
@@ -41,7 +43,7 @@ public class ScheduledTasks {
     private TelegramBotClient telegramBotClient;
 
 
-    @Scheduled(cron = "0 0 5 * * *", zone = "Europe/Rome")
+    @Scheduled(cron = "0 50 23 * * *", zone = "Europe/Rome")
     public void executeTask() {
         creaOroscopoGiornaliero();
         telegramBotClient.inviaMessaggio("Eseguito! ScheduledTasks.executeTask() "+ LocalDateTime.now());
@@ -54,13 +56,12 @@ public class ScheduledTasks {
         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
         cache.invalidate();
 
+        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+
         // ciclo i 12 segni astrologici
-        for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
-
-            GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        for (int numeroSegno = 1; numeroSegno <= 2; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
-
-            //logger.info( "Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO): " + Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO).toString() );
 
             if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
                     || oroscopoGiornaliero.getTestoOroscopo() == null) {
@@ -70,18 +71,17 @@ public class ScheduledTasks {
                     oroscopoGiornaliero.setNumSegno(numeroSegno);
                     oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                 }
-
-                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                StringBuilder sB;
-                if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
-                    ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-                    sB = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
-                    oroscopoGiornaliero.setTestoOroscopo(sB.toString());
-                }else{
-                    sB = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
-                }
-
                 try{
+                    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    StringBuilder sB;
+                    if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
+                        ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
+                        sB = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                        oroscopoGiornaliero.setTestoOroscopo(sB.toString());
+                    }else{
+                        sB = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
+                    }
+
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     ArrayList<String> pezziStringa = estraiPezziStringa( sB.toString() );
 
@@ -93,7 +93,7 @@ public class ScheduledTasks {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     String dataOroscopoString = formatter.format( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
 
-                    String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
+
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     ImageGenerator igenerat = new ImageGenerator();
                     // Itera su ogni pezzo della stringa
@@ -104,52 +104,55 @@ public class ScheduledTasks {
                     }
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE VIDEO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
+                    byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
+
                     try{
-                        String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
-                        byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
+                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO,
+                                videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
 
-                        try{
-                            oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO,
-                                    videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
-
-                        } catch (DataIntegrityViolationException e) {
-                            oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
-                            oroscopoGiornaliero.setNumSegno(numeroSegno);
-                            oroscopoGiornaliero.setTestoOroscopo(sB.toString());
-                            oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
-                            oroscopoGiornaliero.setVideo(videoBytes);
-                            oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
-                            oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
-                        }
-
-                        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                        cache.put(nomeFileVideo+VideoGenerator.formatoVideo(), Util.VideoResponseEntityByteArrayResource(videoBytes));
-
-
-                        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
-                        Util.deleteDirectory(directoryImmagini);
-                        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
-                        Util.deleteDirectory(directoryVideo);
-
-                    }catch(Exception exc){
-                        exc.printStackTrace();
+                    } catch (DataIntegrityViolationException e) {
+                        oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+                        oroscopoGiornaliero.setNumSegno(numeroSegno);
+                        oroscopoGiornaliero.setTestoOroscopo(sB.toString());
+                        oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                        oroscopoGiornaliero.setVideo(videoBytes);
+                        oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
+                        oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
                     }
-
-                } catch (DataIntegrityViolationException e) {
-                    logger.info("Error DataIntegrityViolationException in the database: " + e.getMessage());
-                    e.printStackTrace();
                 } catch (Exception e) {
-                    logger.info("Error updating value in the database: " + e.getMessage());
+                    logger.info("Error in creaOroscopoGiornaliero(): " + e.getMessage());
                     e.printStackTrace();
                 }
-
-            } else {
-                logger.info("Il record esiste");
-                cache.put(oroscopoGiornaliero.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo()));
-
             }
         }
+
+        logger.info("faccio pausa Thread.sleep......");
+        try{
+            // Faccio una pausa per smalite le operazioni fatte
+            Thread.sleep(20000); // 20000 = 20 secondi
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+
+        logger.info("elimino cartelle e file dal classpath");
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
+        Util.deleteDirectory(directoryImmagini);
+        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
+        Util.deleteDirectory(directoryVideo);
+
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        logger.info("metto i video in cache");
+        java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Util.OggiOre12());
+        for (OroscopoGiornaliero oroscopoGiorno : listOroscopoGiorn) {
+            if(oroscopoGiorno != null){
+                cache.put(oroscopoGiorno.getNomeFileVideo(), Util.VideoResponseEntityByteArrayResource(oroscopoGiorno.getVideo()));
+            }
+        }
+        logger.info("Fine Task creaOroscopoGiornaliero");
+
+
     }
 
 
