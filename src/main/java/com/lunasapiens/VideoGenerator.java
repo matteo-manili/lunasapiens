@@ -33,7 +33,7 @@ public class VideoGenerator {
 
     public static byte[] createVideoFromImages(String inputImagePath, String nomeFileVideo) {
 
-        final int width = 700; final int height = 400; final int durataSecondiImmagine = 7;
+        final int width = 700; final int height = 400; final int durataSecondiImmagine = 13;
 
         try {
             // Calcola la durata totale del video in base al numero di immagini

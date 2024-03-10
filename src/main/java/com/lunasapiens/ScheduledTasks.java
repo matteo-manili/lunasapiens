@@ -60,11 +60,15 @@ public class ScheduledTasks {
 
 
     public void creaOroscopoGiornaliero() {
+        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+
         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
         cache.invalidate();
 
-        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        logger.info("elimino cartelle e file dal classpath...");
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        eliminaCarteleFile(pathOroscopoGiornalieroImmagini);
 
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
@@ -158,10 +162,7 @@ public class ScheduledTasks {
 
         logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
-        Util.deleteDirectory(directoryImmagini);
-        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
-        Util.deleteDirectory(directoryVideo);
+        eliminaCarteleFile(pathOroscopoGiornalieroImmagini);
 
         logger.info("metto i video in cache...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -175,7 +176,12 @@ public class ScheduledTasks {
     }
 
 
-
+    private void eliminaCarteleFile(String pathOroscopoGiornalieroImmagini) {
+        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
+        Util.deleteDirectory(directoryImmagini);
+        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
+        Util.deleteDirectory(directoryVideo);
+    }
 
     private ArrayList<String> estraiPezziStringa(String testoCompleto) {
         ArrayList<String> pezziStringa = new ArrayList<>();
