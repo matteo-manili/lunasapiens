@@ -51,7 +51,7 @@ public class ScheduledTasks {
     }
 
     // eseguo 2 volte il task, perché lascia sempre qualche video a null
-    @Scheduled(cron = "0 5 0 * * *", zone = "Europe/Rome")
+    //@Scheduled(cron = "0 5 0 * * *", zone = "Europe/Rome")
     public void executeTask_2() {
         creaOroscopoGiornaliero();
         telegramBotClient.inviaMessaggio("executeTask_2 Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
@@ -79,17 +79,35 @@ public class ScheduledTasks {
                 }
                 try{
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    StringBuilder sB;
+                    StringBuilder sBTestoOroscopo = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
-                        ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-                        sB = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
-                        oroscopoGiornaliero.setTestoOroscopo(sB.toString());
+
+                    //*******************
+                        boolean found = false; int tentativi = 0;
+                        while (!found && tentativi < 3) {
+                            ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
+                            sBTestoOroscopo = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                            if (sBTestoOroscopo.toString().contains(Constants.SeparatoreTestoOroscopo)) {
+                                logger.info("La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" è stata trovata nel StringBuilder.");
+                                found = true;
+                            } else {
+                                logger.info("La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" non è stata trovata nel StringBuilder.");
+                                tentativi++;
+                            }
+                        }
+                        if (!found) {
+                            logger.info("Limite di tentativi raggiunto. La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" non è stata trovata.");
+                        }
+                    //****************
+
                     }else{
-                        sB = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
+                        sBTestoOroscopo = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                     }
 
+
+
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    ArrayList<String> pezziStringa = estraiPezziStringa( sB.toString() );
+                    ArrayList<String> pezziStringa = estraiPezziStringa( sBTestoOroscopo.toString() );
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
@@ -113,13 +131,13 @@ public class ScheduledTasks {
                     byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
 
                     try{
-                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sB, giornoOraPosizioneDTO,
+                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sBTestoOroscopo, giornoOraPosizioneDTO,
                                 videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
 
                     } catch (DataIntegrityViolationException e) {
                         oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
                         oroscopoGiornaliero.setNumSegno(numeroSegno);
-                        oroscopoGiornaliero.setTestoOroscopo(sB.toString());
+                        oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopo.toString());
                         oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                         oroscopoGiornaliero.setVideo(videoBytes);
                         oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
