@@ -51,7 +51,10 @@ public class ZZZ_TEST_Controller {
             //tikTokApiClient.publishVideo( gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString() );
 
             String accessToken = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
-            String videoPath = "src/main/resources/static/video_playa.mp4";
+
+
+
+            String videoPath = "https://lunasapiens.com/oroscopo-giornaliero/2024-03-09_1.mp4";
 
             String uploadUrl = tikTokApiClient.initializeVideoUpload(accessToken);
             if (uploadUrl != null) {
@@ -67,7 +70,39 @@ public class ZZZ_TEST_Controller {
     @GetMapping("/test_4")
     public String ZZZ_TEST_4() {
 
-            tikTokApiClient.TikTokCreatorInfoRequest();
+        String accessToken = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
+
+        //tikTokApiClient.TikTokCreatorInfoRequest();
+
+        try {
+            String openId = tikTokApiClient.getUserOpenId(accessToken);
+            if (openId != null) {
+                logger.info("Open ID dell'utente TikTok: " + openId);
+                // Puoi fare qualcosa con l'openId qui
+            } else {
+                logger.error("Impossibile ottenere l'open ID dell'utente TikTok.");
+            }
+
+
+            String shareId = tikTokApiClient.initializeVideoUpload(accessToken, openId);
+            if (shareId != null) {
+                // Fai qualcosa con shareId
+                logger.info("shareIddddd: "+shareId);
+            } else {
+                // Gestisci la risposta null
+            }
+
+
+
+
+        } catch (Exception e) {
+            logger.error("Errore durante il recupero dell'open ID dell'utente TikTok: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+
+
 
         return "ZZZ_TEST";
     }

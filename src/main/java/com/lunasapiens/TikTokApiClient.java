@@ -13,6 +13,7 @@ import jakarta.servlet.ServletContext;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,10 +24,15 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.slf4j.LoggerFactory;
@@ -112,14 +118,12 @@ public class TikTokApiClient {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
-
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode responseJson;
         try {
             responseJson = objectMapper.readTree(responseEntity.getBody());
 
             logger.info("Risultato JSON: " + responseJson.toString());
-
 
             String uploadId = responseJson.get("upload_id").asText();
             String uploadToken = responseJson.get("upload_token").asText();
@@ -210,7 +214,6 @@ public class TikTokApiClient {
 
 
 
-
     public static void uploadVideo(String uploadUrl, String videoPath) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -279,6 +282,111 @@ public class TikTokApiClient {
         } catch (Exception e) {
             logger.error("Errore generico durante la richiesta a TikTok: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+
+    public String getUserOpenId(String accessToken) {
+        try {
+            // Inizializza RestTemplate
+            RestTemplate restTemplate = new RestTemplate();
+
+            // Crea l'header con il token di accesso
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(accessToken);
+
+            // Imposta i parametri della richiesta
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://open.tiktokapis.com/v2/user/info/")
+                    .queryParam("fields", "open_id");
+
+            // Crea l'oggetto HttpEntity con l'header
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+            // Esegui la richiesta
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    requestEntity,
+                    String.class
+            );
+
+            // Ottieni la risposta
+            String responseBody = responseEntity.getBody();
+            //logger.info("responseBody: " + responseBody);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(responseBody);
+            JsonNode dataNode = rootNode.path("data");
+            JsonNode userNode = dataNode.path("user");
+            String openId = userNode.path("open_id").asText();
+
+            return openId;
+        } catch (Exception e) {
+            logger.error("Errore durante il recupero dell'open_id da TikTok: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    public String initializeVideoUpload(String accessToken, String openId) {
+        try {
+            String apiUrl = "https://open-api.tiktok.com/share/video/upload/";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.setBearerAuth(accessToken);
+
+            //http://localhost:8081/oroscopo-giornaliero/2024-03-09_1.mp4
+            //https://www.lunasapiens.com/oroscopo-giornaliero/2024-03-09_1.mp4
+            // Recupera il video dal metodo del controller
+            ResponseEntity<byte[]> videoResponse = restTemplate.exchange(
+                    "http://localhost:8081/oroscopo-giornaliero/2024-03-09_1.mp4", // Sostituisci con l'URL del metodo del controller
+                    HttpMethod.GET,
+                    null,
+                    byte[].class
+            );
+
+            // Verifica se il video è stato recuperato correttamente
+            if (videoResponse.getStatusCode() == HttpStatus.OK) {
+                // Crea un ByteArrayResource dal corpo della risposta
+                ByteArrayResource videoResource = new ByteArrayResource(videoResponse.getBody()) {
+                    @Override
+                    public String getFilename() {
+                        return "video.mp4"; // Sostituisci con il nome del video
+                    }
+                };
+
+                // Aggiungi il video come parte del corpo della richiesta
+                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+                body.add("video", videoResource);
+
+                // Aggiungi l'open_id ai parametri della richiesta
+                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+                        .queryParam("open_id", openId);
+
+                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+                ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, requestEntity, String.class);
+
+                if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
+                    JsonNode dataNode = rootNode.path("data");
+                    String shareId = dataNode.path("share_id").asText();
+                    return shareId;
+                } else {
+                    // Handle error response
+                    return null;
+                }
+            } else {
+                // Handle error response
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

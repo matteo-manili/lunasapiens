@@ -80,8 +80,6 @@ public class TikTokController {
 
 
 
-
-
     @GetMapping("/tiktok/tiktokz8RIHr0Hiiqijh8czuAojvvevrI58VSV.txt")
     public ResponseEntity<byte[]> tiktokVerificationFile() throws IOException {
         // Carica il file TXT specifico
