@@ -79,15 +79,15 @@ public class ScheduledTasks {
                 }
                 try{
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    StringBuilder sBTestoOroscopo = null;
+                    StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
 
                     //*******************
                         boolean found = false; int tentativi = 0;
                         while (!found && tentativi < 3) {
                             ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-                            sBTestoOroscopo = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
-                            if (sBTestoOroscopo.toString().contains(Constants.SeparatoreTestoOroscopo)) {
+                            sBTestoOroscopoIA = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                            if (sBTestoOroscopoIA.toString().contains(Constants.SeparatoreTestoOroscopo)) {
                                 logger.info("La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" è stata trovata nel StringBuilder.");
                                 found = true;
                             } else {
@@ -97,17 +97,19 @@ public class ScheduledTasks {
                         }
                         if (!found) {
                             logger.info("Limite di tentativi raggiunto. La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" non è stata trovata.");
+                            logger.info("sBTestoOroscopo null: esco dal ciclo generale della ctrazione del video");
+                            break;
                         }
                     //****************
 
                     }else{
-                        sBTestoOroscopo = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
+                        sBTestoOroscopoIA = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                     }
 
 
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    ArrayList<String> pezziStringa = estraiPezziStringa( sBTestoOroscopo.toString() );
+                    ArrayList<String> pezziStringa = estraiPezziStringa( sBTestoOroscopoIA.toString() );
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
@@ -131,13 +133,13 @@ public class ScheduledTasks {
                     byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
 
                     try{
-                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sBTestoOroscopo, giornoOraPosizioneDTO,
+                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sBTestoOroscopoIA, giornoOraPosizioneDTO,
                                 videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
 
                     } catch (DataIntegrityViolationException e) {
                         oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
                         oroscopoGiornaliero.setNumSegno(numeroSegno);
-                        oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopo.toString());
+                        oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopoIA.toString());
                         oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                         oroscopoGiornaliero.setVideo(videoBytes);
                         oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
