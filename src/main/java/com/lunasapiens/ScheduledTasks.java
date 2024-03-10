@@ -68,7 +68,7 @@ public class ScheduledTasks {
 
         logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        eliminaCarteleFile(pathOroscopoGiornalieroImmagini);
+        eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
         for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
@@ -162,7 +162,7 @@ public class ScheduledTasks {
 
         logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        eliminaCarteleFile(pathOroscopoGiornalieroImmagini);
+        eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
         logger.info("metto i video in cache...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -176,7 +176,7 @@ public class ScheduledTasks {
     }
 
 
-    private void eliminaCarteleFile(String pathOroscopoGiornalieroImmagini) {
+    private void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
         File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
         Util.deleteDirectory(directoryImmagini);
         File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
