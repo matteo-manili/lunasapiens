@@ -81,8 +81,6 @@ public class ScheduledTasks {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
-
-                    //*******************
                         boolean found = false; int tentativi = 0;
                         while (!found && tentativi < 3) {
                             ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
@@ -100,8 +98,6 @@ public class ScheduledTasks {
                             logger.info("sBTestoOroscopo null: esco dal ciclo generale della ctrazione del video");
                             break;
                         }
-                    //****************
-
                     }else{
                         sBTestoOroscopoIA = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                     }
