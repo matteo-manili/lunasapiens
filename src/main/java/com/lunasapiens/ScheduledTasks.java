@@ -42,12 +42,20 @@ public class ScheduledTasks {
 
     // (* secondi * minuti * ore * giorno del mese * mese * giorno della settimana)
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
-    // settato per le 00:50 ogni giorno: "0 5 0 * * *"
-    @Scheduled(cron = "0 5 0 * * *", zone = "Europe/Rome")
+    // settato per le 00:05 ogni giorno: "0 5 0 * * *"
+    @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Rome")
     public void executeTask() {
         creaOroscopoGiornaliero();
-        telegramBotClient.inviaMessaggio("Eseguito! ScheduledTasks.executeTask() "+ LocalDateTime.now());
-        logger.info("Task eseguito alle " + LocalDateTime.now());
+        telegramBotClient.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
+        logger.info("executeTask eseguito alle " + Util.getNowRomeEurope());
+    }
+
+    // eseguo 2 volte il task, perché lascia sempre qualche video a null
+    @Scheduled(cron = "0 5 0 * * *", zone = "Europe/Rome")
+    public void executeTask_2() {
+        creaOroscopoGiornaliero();
+        telegramBotClient.inviaMessaggio("executeTask_2 Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
+        logger.info("executeTask_2 eseguito alle " + Util.getNowRomeEurope());
     }
 
 
