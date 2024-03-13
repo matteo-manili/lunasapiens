@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -85,31 +84,19 @@ public class ScheduledTasks {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
-                        boolean found = false; int tentativi = 0;
-                        while (!found && tentativi < 3) {
-                            ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-                            sBTestoOroscopoIA = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
-                            if (sBTestoOroscopoIA.toString().contains(Constants.SeparatoreTestoOroscopo)) {
-                                logger.info("La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" è stata trovata nel StringBuilder.");
-                                found = true;
-                            } else {
-                                logger.info("La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" non è stata trovata nel StringBuilder.");
-                                tentativi++;
-                            }
-                        }
-                        if (!found) {
-                            logger.info("Limite di tentativi raggiunto. La stringa "+Constants.SeparatoreTestoOroscopo.toString()+" non è stata trovata.");
-                            logger.info("sBTestoOroscopo null: esco dal ciclo generale della ctrazione del video");
-                            break;
+                        ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
+                        sBTestoOroscopoIA = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                        if (sBTestoOroscopoIA == null) {
+                            logger.info("sBTestoOroscopo null: salto iterazione del ciclo della creazione del video");
+                            // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
+                            continue;
                         }
                     }else{
                         sBTestoOroscopoIA = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                     }
 
-
-
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    ArrayList<String> pezziStringa = estraiPezziStringa( sBTestoOroscopoIA.toString() );
+                    ArrayList<String> paragrafiTestoOroscopoIA = ServiziAstrologici.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
@@ -122,10 +109,10 @@ public class ScheduledTasks {
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     ImageGenerator igenerat = new ImageGenerator();
                     // Itera su ogni pezzo della stringa
-                    for (int i = 0; i < pezziStringa.size(); i++) {
+                    for (int i = 0; i < paragrafiTestoOroscopoIA.size(); i++) {
                         String fileName = i + ".png";
                         String imagePathFileName = imagePath + fileName;
-                        igenerat.generateImage(pezziStringa.get(i), fontName, fontSize, textColor, imagePathFileName);
+                        igenerat.generateImage(paragrafiTestoOroscopoIA.get(i), fontName, fontSize, textColor, imagePathFileName);
                     }
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE VIDEO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -183,17 +170,8 @@ public class ScheduledTasks {
         Util.deleteDirectory(directoryVideo);
     }
 
-    private ArrayList<String> estraiPezziStringa(String testoCompleto) {
-        ArrayList<String> pezziStringa = new ArrayList<>();
-        int startIndex = 0;
-        int endIndex;
-        while ((endIndex = testoCompleto.indexOf(Constants.SeparatoreTestoOroscopo, startIndex)) != -1) {
-            String pezzo = testoCompleto.substring(startIndex, endIndex);
-            pezziStringa.add(pezzo);
-            startIndex = endIndex + 3; // Avanza oltre il carattere speciale "#@#"
-        }
-        return pezziStringa;
-    }
+
+
 
 
 

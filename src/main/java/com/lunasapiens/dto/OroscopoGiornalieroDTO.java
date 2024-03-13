@@ -30,7 +30,7 @@ public class OroscopoGiornalieroDTO {
         this.nomeFileVideo = oroscopoGiornaliero.getNomeFileVideo();
 
         this.nomeSegnoZodiacale = Constants.getSegnoZodiacale(oroscopoGiornaliero.getNumSegno());
-        this.testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo().replaceAll(Constants.SeparatoreTestoOroscopo, "");
+        this.testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo();
     }
 
 

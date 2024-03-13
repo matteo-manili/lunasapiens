@@ -6,8 +6,6 @@ public class Constants {
 
     public static final String VIDEO_CACHE = "videoCache";
 
-    public static final String SeparatoreTestoOroscopo = "#@#";
-
     public static final String PATH_STATIC = "src/main/resources/static/";
 
     public static String getSegnoZodiacale(int numero) {
@@ -18,12 +16,6 @@ public class Constants {
             return null;
         }
     }
-
-
-
-
-
-
 
 
     public static final String[] NAME_PLANET = new String[] {
