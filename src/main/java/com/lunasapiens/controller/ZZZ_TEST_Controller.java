@@ -64,14 +64,12 @@ public class ZZZ_TEST_Controller {
         try {
 
             String accessToken = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
-            tikTokApiClient.TikTokCreatorInfoRequest();
-
-
             String openId = tikTokApiClient.getUserOpenId(accessToken);
+
             if (openId != null) {
                 logger.info("Open ID dell'utente TikTok: " + openId);
 
-                tikTokApiClient.initializeVideoUpload(accessToken, openId);
+                tikTokApiClient.shareVideo(accessToken, openId);
 
                 // Puoi fare qualcosa con l'openId qui
             } else {

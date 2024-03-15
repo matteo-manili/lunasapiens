@@ -36,12 +36,10 @@ public class IndexController {
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
-    private ResourceLoader resourceLoader;
 
     @Autowired
     public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
         this.oroscopoGiornalieroService = oroscopoGiornalieroService;
-        this.resourceLoader = resourceLoader;
     }
 
 
