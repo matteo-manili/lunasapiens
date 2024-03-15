@@ -19,7 +19,7 @@ public class ServiziAstrologici {
     private static final Logger logger = LoggerFactory.getLogger(ServiziAstrologici.class);
 
     private static String keyOpenAi;
-    private Double temperature = 0.8; private Integer maxTokens = 800;
+    private Double temperature = 1.0; private Integer maxTokens = 800;
 
 
     public ServiziAstrologici(String keyOpenAi) {

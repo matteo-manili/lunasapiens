@@ -331,6 +331,10 @@ public class TikTokApiClient {
     @Autowired
     private RestTemplate restTemplate;
 
+    // video di 54 secondi. sembra che tiktok non accetta video più lunghi
+    //https://www.lunasapiens.com/oroscopo-giornaliero/2024-03-15_1.mp4
+
+
     public String initializeVideoUpload(String accessToken, String openId) {
         try {
             String apiUrl = "https://open-api.tiktok.com/share/video/upload/";
@@ -343,7 +347,7 @@ public class TikTokApiClient {
             //https://www.lunasapiens.com/oroscopo-giornaliero/2024-03-09_1.mp4
             // Recupera il video dal metodo del controller
             ResponseEntity<byte[]> videoResponse = restTemplate.exchange(
-                    "http://localhost:8081/oroscopo-giornaliero/2024-03-09_1.mp4", // Sostituisci con l'URL del metodo del controller
+                    "https://www.lunasapiens.com/oroscopo-giornaliero/2024-03-15_1.mp4", // Sostituisci con l'URL del metodo del controller
                     HttpMethod.GET,
                     null,
                     byte[].class
@@ -355,7 +359,7 @@ public class TikTokApiClient {
                 ByteArrayResource videoResource = new ByteArrayResource(videoResponse.getBody()) {
                     @Override
                     public String getFilename() {
-                        return "video.mp4"; // Sostituisci con il nome del video
+                        return "2024-03-15_1.mp4"; // Sostituisci con il nome del video
                     }
                 };
 
