@@ -39,7 +39,10 @@ public class ServiziAstrologici {
                 + " ore " + giornoOraPosizioneDTO.getOra() + ":" + giornoOraPosizioneDTO.getMinuti() + "\n" +
                 "Transiti di oggi: " + "\n";
 
-        for (PianetaPosizione var : buildInfoAstroSwiss.getPianetiAspetti(giornoOraPosizioneDTO)) {
+
+        ArrayList<PianetaPosizione> pianetiPosizioni = buildInfoAstroSwiss.getPianetiAspetti(giornoOraPosizioneDTO);
+
+        for (PianetaPosizione var : pianetiPosizioni) {
             if (var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[0]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[1]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[2]) ||
@@ -50,9 +53,21 @@ public class ServiziAstrologici {
             }
         }
 
+
+        PianetiAspetti pianetiAspetti = new PianetiAspetti();
+        ArrayList<String> aspetti = pianetiAspetti.verificaAspetti(pianetiPosizioni);
+        if(aspetti.size() > 0) {
+            descrizioneOggi += "\n" + "Aspetti: " + "\n";
+            for(String var : aspetti){
+                descrizioneOggi += var + ". ";
+            }
+        }
+
+
+
         descrizioneOggi += "\n" + "Case Placide di oggi: " + "\n";
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            descrizioneOggi += var.toString();
+            descrizioneOggi += var.descrizioneCasa();
         }
 
         return descrizioneOggi;

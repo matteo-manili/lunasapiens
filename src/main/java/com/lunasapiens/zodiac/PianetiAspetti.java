@@ -48,6 +48,7 @@ public class PianetiAspetti {
     private static final int OPPOSIZIONE = 180;
     private static final int ORB = 2; // Orbita di tolleranza in gradi
 
+    public PianetiAspetti() { }
 
     public PianetiAspetti(ArrayList<PianetaPosizione> pianeti) {
         ArrayList<String> aspetti = verificaAspetti(pianeti);
@@ -57,7 +58,8 @@ public class PianetiAspetti {
     }
 
 
-    public static ArrayList<String> verificaAspetti(ArrayList<PianetaPosizione> pianeti) {
+
+    public ArrayList<String> verificaAspetti(ArrayList<PianetaPosizione> pianeti) {
         ArrayList<String> aspetti = new ArrayList<>();
 
         for (int i = 0; i < pianeti.size(); i++) {

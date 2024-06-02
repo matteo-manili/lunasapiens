@@ -38,6 +38,11 @@ public class CasePlacide {
     }
 
 
+    public String descrizioneCasa(){
+        return "Casa " + nomeCasa + " in "+ nomeSegnoZodiacale + ". ";
+    }
+
+
     @Override
     public String toString() {
         return "Casa " + nomeCasa + " gradi: "+ gradi + " segno: "+ nomeSegnoZodiacale + " | ";
