@@ -22,14 +22,26 @@
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
-        <!-- Altri repository possono essere già presenti qui -->
+
+        <!-- repository per scaricare swisseph -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
 
     <dependencies>
 
-        <!-- ###################### SPRING FRAMEWORK ###################### -->
+        <!-- ###################### LIBRERIA ASTROLOGICA swisseph ###################### -->
+        <dependency>
+            <groupId>com.github.krishnact</groupId>
+            <artifactId>swisseph</artifactId>
+            <version>-SNAPSHOT</version> <!-- versione 2.01.00_01 | ultimo commit github 6000e46 -->
 
+        </dependency>
+
+        <!-- ###################### SPRING FRAMEWORK ###################### -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

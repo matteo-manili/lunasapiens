@@ -19,7 +19,7 @@ public class Util {
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 
-    public static ZonedDateTime getNowRomeEurope(){
+    public static ZonedDateTime getNowRomeEurope() {
         ZoneId romaZone = ZoneId.of("Europe/Rome");
         ZonedDateTime now = ZonedDateTime.now(romaZone);
         logger.info("ZonedDateTime Roma_:" +now);
@@ -27,7 +27,7 @@ public class Util {
     }
 
 
-    public static Date OggiOre12(){
+    public static Date OggiOre12() {
         ZonedDateTime now = getNowRomeEurope(); Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
         calendar.set(Calendar.MONTH, now.getMonthValue()-1);
@@ -38,17 +38,25 @@ public class Util {
     }
 
     /**
-     * Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
+     * Roma 41.89 e 12.48
      */
-    public static GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12(){
+    public static GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12() {
         ZonedDateTime now = getNowRomeEurope();
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(12, 0, now.getDayOfMonth(),
-                now.getMonthValue(), now.getYear(), 49.9, 12.4);
+                now.getMonthValue(), now.getYear(), 41.89, 12.48);
+        return giornoOraPosizioneDTO;
+    }
+
+    public static GiornoOraPosizioneDTO GiornoOraPosizione_Custom() {
+        ZonedDateTime now = getNowRomeEurope();
+        ZonedDateTime domani = now.plusDays(1);
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(3, 0, 25,
+                5, 1981, -41.9, -12.516);
         return giornoOraPosizioneDTO;
     }
 
 
-    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Creare un oggetto Calendar e impostare i valori
         Calendar calendar = Calendar.getInstance();
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
@@ -60,7 +68,7 @@ public class Util {
     }
 
 
-    public static void createDirectory(String pathDirectory){
+    public static void createDirectory(String pathDirectory) {
         File outputFolder = new File(pathDirectory);
         if (!outputFolder.exists()) {
             outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
@@ -89,7 +97,7 @@ public class Util {
     }
 
 
-    public static ResponseEntity<ByteArrayResource> VideoResponseEntityByteArrayResource(byte[] videoBytes){
+    public static ResponseEntity<ByteArrayResource> VideoResponseEntityByteArrayResource(byte[] videoBytes) {
         ByteArrayResource resource = new ByteArrayResource(videoBytes);
         // Creazione delle intestazioni HTTP
         HttpHeaders headers = new HttpHeaders();
@@ -104,30 +112,30 @@ public class Util {
 
 
 
-    public static String determinaSegnoZodiacale(int grado) {
-        if (grado >= 0 && grado < 30) {
+    public static String determinaSegnoZodiacale(double grado) {
+        if (grado >= 0 && grado < 31) {
             return Constants.segniZodiacali().get(0);
-        } else if (grado >= 30 && grado < 60) {
+        } else if (grado >= 31 && grado < 61) {
             return Constants.segniZodiacali().get(1);
-        } else if (grado >= 60 && grado < 90) {
+        } else if (grado >= 61 && grado < 91) {
             return Constants.segniZodiacali().get(2);
-        } else if (grado >= 90 && grado < 120) {
+        } else if (grado >= 91 && grado < 121) {
             return Constants.segniZodiacali().get(3);
-        } else if (grado >= 120 && grado < 150) {
+        } else if (grado >= 121 && grado < 151) {
             return Constants.segniZodiacali().get(4);
-        } else if (grado >= 150 && grado < 180) {
+        } else if (grado >= 151 && grado < 181) {
             return Constants.segniZodiacali().get(5);
-        } else if (grado >= 180 && grado < 210) {
+        } else if (grado >= 181 && grado < 211) {
             return Constants.segniZodiacali().get(6);
-        } else if (grado >= 210 && grado < 240) {
+        } else if (grado >= 211 && grado < 241) {
             return Constants.segniZodiacali().get(7);
-        } else if (grado >= 240 && grado < 270) {
+        } else if (grado >= 241 && grado < 271) {
             return Constants.segniZodiacali().get(8);
-        } else if (grado >= 270 && grado < 300) {
+        } else if (grado >= 271 && grado < 301) {
             return Constants.segniZodiacali().get(9);
-        } else if (grado >= 300 && grado < 330) {
+        } else if (grado >= 301 && grado < 331) {
             return Constants.segniZodiacali().get(10);
-        } else if (grado >= 330 && grado <= 360) {
+        } else if (grado >= 331 && grado < 361) {
             return Constants.segniZodiacali().get(11);
         } else {
             return "Grado non valido";

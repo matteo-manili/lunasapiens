@@ -1,24 +1,24 @@
 package com.lunasapiens.zodiac;
 
-public class CasePlacide {
+public class PianetaPosizione {
 
-    private String nomeCasa;
+    private String nomePianeta;
     private double gradi;
     private int minuti;
     private int secondi;
     private String nomeSegnoZodiacale;
 
 
-    public CasePlacide(String nomeCasa, double gradi, int minuti, int secondi, String nomeSegnoZodiacale) {
-        this.nomeCasa = nomeCasa;
+    public PianetaPosizione(String nomePianeta, double gradi, int minuti, int secondi, String nomeSegnoZodiacale) {
+        this.nomePianeta = nomePianeta;
         this.gradi = gradi;
         this.minuti = minuti;
         this.secondi = secondi;
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
     }
 
-    public String getNomeCasa() {
-        return nomeCasa;
+    public String getNomePianeta() {
+        return nomePianeta;
     }
 
     public double getGradi() {
@@ -37,9 +37,14 @@ public class CasePlacide {
         return nomeSegnoZodiacale;
     }
 
-
     @Override
     public String toString() {
-        return "Casa " + nomeCasa + " gradi: "+ gradi + " segno: "+ nomeSegnoZodiacale + " | ";
+        return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
     }
+
+    public String toStringConPosizioni() {
+        return nomePianeta + " ("+gradi+"° "+minuti+"' "+secondi+"\") in " + nomeSegnoZodiacale + ". ";
+    }
+
+
 }

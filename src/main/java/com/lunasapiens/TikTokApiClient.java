@@ -304,6 +304,7 @@ public class TikTokApiClient {
         parameters.add(new BasicNameValuePair("redirect_uri", redirectUri));
 
         URI uri = new URIBuilder("https://open.tiktokapis.com/v2/oauth/token/").build();
+
         return executeTokenRequest(uri, parameters);
 
     }
@@ -334,10 +335,14 @@ public class TikTokApiClient {
             request.setHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setEntity(new UrlEncodedFormEntity(parameters));
 
-            logger.info(  parameters.toString());
+            logger.info( "parameters.toString:"+ parameters.toString());
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
+
+                logger.info("response.toString(): "+response.toString());
+
                 return EntityUtils.toString(response.getEntity());
+
             }
         }
     }

@@ -18,7 +18,7 @@ public class Constants {
     }
 
 
-    public static final String[] NAME_PLANET = new String[] {
+    public static final String[] NAME_ITA_PLANET = new String[] {
             "Sole", "Luna", "Mercurio", "Venere", "Marte", "Giove", "Saturno", "Urano", "Nettuno", "Plutone"
     };
 

@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
 import at.kugel.zodiac.TextHoroscop;
-import at.kugel.zodiac.house.HousePlacidus;
+import at.kugel.zodiac.house.*;
 import at.kugel.zodiac.planet.PlanetAA0;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -10,25 +10,24 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BuildInfoAstrologia {
+@Deprecated
+public class BuildInfoAstrologiaAstroLib {
 
 
     private String horoscop;
 
     private GiornoOraPosizioneDTO giornoOraPosizioneDTO;
 
-    // Roma 49.9 e 12.4 --- Pisa 43.7 e 10.4
+    // Roma 41.89 e 12.48
 
-    public BuildInfoAstrologia(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public BuildInfoAstrologiaAstroLib(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         this.horoscop = textHoroscop(giornoOraPosizioneDTO.getOra(), giornoOraPosizioneDTO.getMinuti(), giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getMese(),
                 giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getLon(), giornoOraPosizioneDTO.getLat());
 
-
-
-        OroscopoBase aa = getOroscopoBase();
-        ArrayList<CasePlacide> bb = getCasePlacide();
-        ArrayList<PianetiAspetti> cc = getPianetiAspetti();
+        //OroscopoBase aa = getOroscopoBase();
+        //ArrayList<CasePlacide> bb = getCasePlacide();
+        //ArrayList<PianetaPosizione> cc = getPianetiAspetti();
     }
 
     /**
@@ -48,8 +47,8 @@ public class BuildInfoAstrologia {
     */
 
 
-    public ArrayList<PianetiAspetti> getPianetiAspetti(){
-        ArrayList<PianetiAspetti> pianetiAspetti = null;
+    public ArrayList<PianetaPosizione> getPianetiAspetti(){
+        ArrayList<PianetaPosizione> pianetaPosizione = null;
         // Trova l'indice di inizio e fine di "Planets "AA0""
         int startIndex = horoscop.toString().indexOf("Planets \"AA0\"");
         if (startIndex != -1) {
@@ -61,7 +60,7 @@ public class BuildInfoAstrologia {
                 //System.out.println(planetsContent);
                 // Dividi la stringa in base ai punti e virgola per ottenere le informazioni sui pianeti
                 String[] planetInfos = planetsContent.split(";");
-                pianetiAspetti = new ArrayList<PianetiAspetti>();
+                pianetaPosizione = new ArrayList<PianetaPosizione>();
                 // Per ogni informazione sul pianeta, estrai le informazioni
                 for (String planetInfo : planetInfos) {
                     if (planetInfo.contains(":")) {
@@ -69,7 +68,7 @@ public class BuildInfoAstrologia {
                         String[] parts = planetInfo.split(":");
                         String planetName = parts[0].trim();
                         String[] degreesParts = parts[1].trim().split("°|'|\"");
-                        int degrees = Integer.parseInt(degreesParts[0]);
+                        double degrees = Integer.parseInt(degreesParts[0]);
                         int minutes = Integer.parseInt(degreesParts[1]);
                         int seconds = Integer.parseInt(degreesParts[2]);
 
@@ -77,15 +76,15 @@ public class BuildInfoAstrologia {
                         //System.out.println("Gradi: " + degrees);
                         //System.out.println("Minuti: " + minutes);
                         //System.out.println("Secondi: " + seconds);
-                        //System.out.println("segno: " + SegnoZodiacale.determinaSegnoZodiacale(degrees));
+                        //System.out.println("segno: " + Util.determinaSegnoZodiacale(degrees));
 
-                        PianetiAspetti aa = new PianetiAspetti(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees));
-                        pianetiAspetti.add(aa);
+                        PianetaPosizione aa = new PianetaPosizione(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees));
+                        pianetaPosizione.add(aa);
                     }
                 }
             }
         }
-        return pianetiAspetti;
+        return pianetaPosizione;
     }
 
     public ArrayList<CasePlacide> getCasePlacide(){
@@ -131,6 +130,8 @@ public class BuildInfoAstrologia {
         return casePlacides;
     }
 
+
+    /*
     public OroscopoBase getOroscopoBase(){
 
         OroscopoBase horoscopoBase = null;
@@ -161,6 +162,10 @@ public class BuildInfoAstrologia {
         return horoscopoBase;
     }
 
+
+     */
+
+    /*
     private static String extractValue(String input, String key) {
         int startIndex = input.indexOf(key);
         if (startIndex != -1) {
@@ -172,6 +177,8 @@ public class BuildInfoAstrologia {
         }
         return "";
     }
+
+     */
 
     private String textHoroscop(int ora, int minuti, int giorno, int mese, int anno, double lon, double lat){
         // ottiene un'istanza di oroscopo
@@ -190,19 +197,25 @@ public class BuildInfoAstrologia {
         final TextHoroscop horoscop = new TextHoroscop();
         // set your desired planet position calculation algorithm
         horoscop.setPlanet(new PlanetAA0());
+
         // set your desired house system calculation algorithm
         // may be anything from the at.kugel.zodiac.house package.
+        //horoscop.setHouse(new HousePlacidus());
         horoscop.setHouse(new HousePlacidus());
+
+
+
         // set your user data time value
         double orario = (ora + (minuti / 60.0)) / 24.0;
         horoscop.setTime(giorno, mese, anno, orario);
         // set your user data location value
-        // Pisa 43.7 e 10.4 --- Roma 49.9 e 12.4
         horoscop.setLocationDegree(lon, lat);
         // calculate the values
         horoscop.calcValues();
+
+
         // do something with the data or output raw data
-        System.out.println(horoscop.toString());
+        System.out.println("START: "+horoscop.toString());
 
         return horoscop.toString();
     }

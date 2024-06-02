@@ -33,25 +33,25 @@ public class ServiziAstrologici {
 
     public static String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia(giornoOraPosizioneDTO);
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + giornoOraPosizioneDTO.getOra() + ":" + giornoOraPosizioneDTO.getMinuti() + "\n" +
                 "Transiti di oggi: " + "\n";
 
-        for (PianetiAspetti var : buildInfoAstrologia.getPianetiAspetti()) {
-            if (var.getNomePianeta().equals(Constants.NAME_PLANET[0]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[1]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[2]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[3]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[4])) {
+        for (PianetaPosizione var : buildInfoAstroSwiss.getPianetiAspetti(giornoOraPosizioneDTO)) {
+            if (var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[0]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[1]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[2]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[3]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[4])) {
                 descrizioneOggi += var.toString();
                 //System.out.println( var.toString() );
             }
         }
 
         descrizioneOggi += "\n" + "Case Placide di oggi: " + "\n";
-        for (CasePlacide var : buildInfoAstrologia.getCasePlacide()) {
+        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
             descrizioneOggi += var.toString();
         }
 
@@ -61,7 +61,7 @@ public class ServiziAstrologici {
 
     public static StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        BuildInfoAstrologia buildInfoAstrologia = new BuildInfoAstrologia(giornoOraPosizioneDTO);
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
         System.out.println("############################ TEXT IA ###################################");
 
@@ -98,15 +98,15 @@ public class ServiziAstrologici {
                 .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/").append(giornoOraPosizioneDTO.getAnno())
                 .append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":").append(giornoOraPosizioneDTO.getMinuti()).append("\n")
                 .append("Transiti di oggi: ");
-        for (PianetiAspetti var : buildInfoAstrologia.getPianetiAspetti()) {
-            if (Arrays.asList(Constants.NAME_PLANET).contains(var.getNomePianeta())) {
+        for (PianetaPosizione var : buildInfoAstroSwiss.getPianetiAspetti(giornoOraPosizioneDTO)) {
+            if (Arrays.asList(Constants.NAME_ITA_PLANET).contains(var.getNomePianeta())) {
                 domandaBuilder.append(var.toString());
                 //System.out.println( var.toString() );
             }
         }
 
         domandaBuilder.append("\n").append("Case Placide di oggi: ");
-        for (CasePlacide var : buildInfoAstrologia.getCasePlacide()) {
+        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
             domandaBuilder.append(var.toString());
             //System.out.println( var.toString() );
         }
