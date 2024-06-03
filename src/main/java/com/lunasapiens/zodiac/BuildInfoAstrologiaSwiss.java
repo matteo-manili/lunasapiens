@@ -54,7 +54,7 @@ public class BuildInfoAstrologiaSwiss {
      * @param giornoOraPosizioneDTO
      * @return
      */
-    public ArrayList<PianetaPosizione> getPianetiAspetti(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public ArrayList<PianetaPosizione> getPianetiTransiti(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());

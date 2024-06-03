@@ -41,9 +41,9 @@ public class AAA_Prove {
 
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
-        ArrayList<PianetaPosizione> aa = buildInfoAstroSwiss.getPianetiAspetti(giornoOraPosizioneDTO);
+        ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
-        PianetiAspetti pianetiAspetti = new PianetiAspetti( aa );
+        PianetiAspetti pianetiAspetti = new PianetiAspetti( pianetiTransiti );
 
         buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
     }

@@ -37,12 +37,13 @@ public class PianetaPosizione {
         return nomeSegnoZodiacale;
     }
 
-    @Override
-    public String toString() {
+
+    public String descrizionePianeta() {
         return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
     }
 
-    public String toStringConPosizioni() {
+    @Override
+    public String toString() {
         return nomePianeta + " ("+gradi+"° "+minuti+"' "+secondi+"\") in " + nomeSegnoZodiacale + ". ";
     }
 
