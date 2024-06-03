@@ -105,36 +105,31 @@ public class ServiziAstrologici {
          */
 
         StringBuilder domandaBuilder = new StringBuilder();
-        domandaBuilder.append("Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del ").append(segno).append(".").append("\n")
-                //.append(" Il testo generato deve essere suddivisi paragrafi.").append("\n")
-                .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/").append(giornoOraPosizioneDTO.getAnno())
-                .append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":").append(giornoOraPosizioneDTO.getMinuti()).append("\n")
-                .append("Transiti di oggi: ");
-
+        domandaBuilder.append("Crea l'oroscopo del giorno (di massimo 300 parole) per il segno del ").append(segno).append(". ").append("\n")
+                .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/")
+                .append(giornoOraPosizioneDTO.getAnno()).append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":")
+                .append(giornoOraPosizioneDTO.getMinuti()).append("\n").append("Transiti: ");
 
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
         for (PianetaPosizione var : pianetiTransiti) {
             if (Arrays.asList(Constants.NAME_ITA_PLANET).contains(var.getNomePianeta())) {
-                domandaBuilder.append(var.toString());
+                domandaBuilder.append(var.descrizionePianeta());
                 //System.out.println( var.toString() );
             }
         }
 
-
         PianetiAspetti pianetiAspetti = new PianetiAspetti();
         ArrayList<String> aspetti = pianetiAspetti.verificaAspetti(pianetiTransiti);
         if(aspetti.size() > 0) {
-            domandaBuilder.append("\n" + "Aspetti: ");
+            domandaBuilder.append("\n").append("Aspetti: ");
             for(String var : aspetti) {
                 domandaBuilder.append(var + ". ");
             }
         }
 
-
-
-        domandaBuilder.append("\n").append("Case Placide di oggi: ");
+        domandaBuilder.append("\n").append("Case Placide: ");
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            domandaBuilder.append(var.toString());
+            domandaBuilder.append(var.descrizioneCasa());
             //System.out.println( var.toString() );
         }
 
