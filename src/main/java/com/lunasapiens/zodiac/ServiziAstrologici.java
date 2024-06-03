@@ -36,8 +36,8 @@ public class ServiziAstrologici {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-                + " ore " + giornoOraPosizioneDTO.getOra() + ":" + giornoOraPosizioneDTO.getMinuti() + "\n" +
-                "Transiti di oggi: " + "\n";
+                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
+                "Transiti di oggi: ";
 
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
@@ -46,7 +46,12 @@ public class ServiziAstrologici {
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[1]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[2]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[3]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[4])) {
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[4]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[5]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[6]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[7]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[8]) ||
+                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[9]) ) {
                 descrizioneOggi += var.descrizionePianeta();
                 //System.out.println( var.toString() );
             }
@@ -56,13 +61,13 @@ public class ServiziAstrologici {
         PianetiAspetti pianetiAspetti = new PianetiAspetti();
         ArrayList<String> aspetti = pianetiAspetti.verificaAspetti(pianetiTransiti);
         if(aspetti.size() > 0) {
-            descrizioneOggi += "\n" + "Aspetti: " + "\n";
+            descrizioneOggi += "\n" + "Aspetti: ";
             for(String var : aspetti){
                 descrizioneOggi += var + ". ";
             }
         }
 
-        descrizioneOggi += "\n" + "Case Placide di oggi: " + "\n";
+        descrizioneOggi += "\n" + "Case Placide di oggi: ";
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
             descrizioneOggi += var.descrizioneCasa();
         }
@@ -113,7 +118,7 @@ public class ServiziAstrologici {
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
         for (PianetaPosizione var : pianetiTransiti) {
             if (Arrays.asList(Constants.NAME_ITA_PLANET).contains(var.getNomePianeta())) {
-                domandaBuilder.append(var.descrizionePianeta());
+                domandaBuilder.append(var.descrizionePianetaGradi());
                 //System.out.println( var.toString() );
             }
         }
@@ -129,7 +134,7 @@ public class ServiziAstrologici {
 
         domandaBuilder.append("\n").append("Case Placide: ");
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            domandaBuilder.append(var.descrizioneCasa());
+            domandaBuilder.append(var.descrizioneCasaGradi());
             //System.out.println( var.toString() );
         }
 
@@ -142,7 +147,7 @@ public class ServiziAstrologici {
         prompt.add(domandaBuilder.toString());
         // gpt-3.5-turbo-instruct // babbage-002 // davinci-002
         Completions completions = client.getCompletions("gpt-3.5-turbo-instruct",
-                new CompletionsOptions(prompt).setMaxTokens(maxTokens).setTemperature(temperature));
+                new CompletionsOptions( prompt ).setMaxTokens( maxTokens ).setTemperature( temperature ));
 
         logger.info("temperature: " + temperature + " setMaxTokens: " + maxTokens + " Model ID:" + completions.getId() + " is created at: " + completions.getCreatedAt());
 
