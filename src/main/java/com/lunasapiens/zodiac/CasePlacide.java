@@ -43,7 +43,7 @@ public class CasePlacide {
     }
 
     public String descrizioneCasaGradi(){
-        return "Casa " + nomeCasa + " in "+ nomeSegnoZodiacale + " " + gradi+"°. ";
+        return "Casa " + nomeCasa + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°. ";
     }
 
     @Override

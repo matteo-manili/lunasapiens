@@ -7,14 +7,16 @@ public class PianetaPosizione {
     private int minuti;
     private int secondi;
     private String nomeSegnoZodiacale;
+    private boolean retrogrado;
 
 
-    public PianetaPosizione(String nomePianeta, double gradi, int minuti, int secondi, String nomeSegnoZodiacale) {
+    public PianetaPosizione(String nomePianeta, double gradi, int minuti, int secondi, String nomeSegnoZodiacale, boolean retrogrado) {
         this.nomePianeta = nomePianeta;
         this.gradi = gradi;
         this.minuti = minuti;
         this.secondi = secondi;
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
+        this.retrogrado = retrogrado;
     }
 
     public String getNomePianeta() {
@@ -37,13 +39,18 @@ public class PianetaPosizione {
         return nomeSegnoZodiacale;
     }
 
+    public boolean isRetrogrado() { return retrogrado; }
+
+
 
     public String descrizionePianeta() {
         return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
     }
 
-    public String descrizionePianetaGradi() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + gradi+"°. ";
+    public String descrizionePianetaGradiRetrogrado() {
+
+        // Usa String.format per rimuovere i decimali
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + ". ";
     }
 
     @Override

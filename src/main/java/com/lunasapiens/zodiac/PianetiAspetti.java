@@ -1,5 +1,8 @@
 package com.lunasapiens.zodiac;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 /**
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 
 public class PianetiAspetti {
 
+    private static final Logger logger = LoggerFactory.getLogger(PianetiAspetti.class);
 
     // Definisci i valori angolari degli aspetti principali
     private static final int CONGIUNZIONE = 0;
@@ -53,7 +57,7 @@ public class PianetiAspetti {
     public PianetiAspetti(ArrayList<PianetaPosizione> pianeti) {
         ArrayList<String> aspetti = verificaAspetti(pianeti);
         for (String aspetto : aspetti) {
-            System.out.println(aspetto);
+            logger.info(aspetto);
         }
     }
 

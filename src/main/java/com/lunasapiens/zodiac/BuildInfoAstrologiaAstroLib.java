@@ -81,7 +81,7 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("Secondi: " + seconds);
                         //System.out.println("segno: " + Util.determinaSegnoZodiacale(degrees));
 
-                        PianetaPosizione aa = new PianetaPosizione(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees));
+                        PianetaPosizione aa = new PianetaPosizione(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees), false);
                         pianetaPosizione.add(aa);
                     }
                 }

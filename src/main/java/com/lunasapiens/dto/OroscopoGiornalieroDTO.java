@@ -28,9 +28,13 @@ public class OroscopoGiornalieroDTO {
         this.testoOroscopo = oroscopoGiornaliero.getTestoOroscopo();
         this.dataOroscopo = oroscopoGiornaliero.getDataOroscopo();
         this.nomeFileVideo = oroscopoGiornaliero.getNomeFileVideo();
-
         this.nomeSegnoZodiacale = Constants.getSegnoZodiacale(oroscopoGiornaliero.getNumSegno());
-        this.testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo();
+
+        String testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo().replace("\n", "<br>");
+        //Questa espressione regolare viene utilizzata per rimuovere tutti i tag <br> che si trovano all'inizio della stringa,
+        // inclusi eventuali spazi che potrebbero precederli.
+        testoOroscopoRifinito = testoOroscopoRifinito.replaceFirst("^\\s*(<br>)+", "");
+        this.testoOroscopoRifinito = testoOroscopoRifinito;;
     }
 
 

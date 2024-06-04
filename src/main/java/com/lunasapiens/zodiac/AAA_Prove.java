@@ -28,11 +28,11 @@ public class AAA_Prove {
 
     public static void posizionePianetiSwiss() {
 
-        int anno = 1965;
-        int mese = 11;
+        int anno = 1995;
+        int mese = 6;
         int giorno = 6;
-        int ora = 4;
-        int minuti = 20;
+        int ora = 12;
+        int minuti = 0;
         double lat = 41.89;
         double lon = 12.48;
 

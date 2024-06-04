@@ -113,33 +113,38 @@ public class Util {
 
 
     public static String determinaSegnoZodiacale(double grado) {
-        if (grado >= 0 && grado < 31) {
+        if (grado > 0 && grado <= 30) {
             return Constants.segniZodiacali().get(0);
-        } else if (grado >= 31 && grado < 61) {
+        } else if (grado > 30 && grado <= 60) {
             return Constants.segniZodiacali().get(1);
-        } else if (grado >= 61 && grado < 91) {
+        } else if (grado > 60 && grado <= 90) {
             return Constants.segniZodiacali().get(2);
-        } else if (grado >= 91 && grado < 121) {
+        } else if (grado > 90 && grado <= 120) {
             return Constants.segniZodiacali().get(3);
-        } else if (grado >= 121 && grado < 151) {
+        } else if (grado > 120 && grado <= 150) {
             return Constants.segniZodiacali().get(4);
-        } else if (grado >= 151 && grado < 181) {
+        } else if (grado > 150 && grado <= 180) {
             return Constants.segniZodiacali().get(5);
-        } else if (grado >= 181 && grado < 211) {
+        } else if (grado > 180 && grado <= 210) {
             return Constants.segniZodiacali().get(6);
-        } else if (grado >= 211 && grado < 241) {
+        } else if (grado > 210 && grado <= 240) {
             return Constants.segniZodiacali().get(7);
-        } else if (grado >= 241 && grado < 271) {
+        } else if (grado > 240 && grado <= 270) {
             return Constants.segniZodiacali().get(8);
-        } else if (grado >= 271 && grado < 301) {
+        } else if (grado > 270 && grado <= 300) {
             return Constants.segniZodiacali().get(9);
-        } else if (grado >= 301 && grado < 331) {
+        } else if (grado > 300 && grado <= 330) {
             return Constants.segniZodiacali().get(10);
-        } else if (grado >= 331 && grado < 361) {
+        } else if (grado > 330 && grado <= 360) {
             return Constants.segniZodiacali().get(11);
         } else {
             return "Grado non valido";
         }
     }
+
+
+
+
+
 
 }

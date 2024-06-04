@@ -1,22 +1,23 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.ScheduledTasks;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 public class BuildInfoAstrologiaSwiss {
 
+    private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);
 
     /**
      * vedere http://th-mack.de/download/swisseph-doc/
-     *
-     * //iflag - Un flag che contiene specifiche dettagliate su come deve essere calcolato il corpo. Vedere SweConst per un elenco di flag validi (SEFLG_*).
-     * //int iflag = SweConst.SEFLG_SWIEPH | SweConst.SEFLG_SIDEREAL | SweConst.SEFLG_SPEED; // è possibile inserirli più di uno comeparametro del meotdo swissEph.swe_calc_ut
      *
      * // SweConst.SEFLG_JPLEPH // Utilizza le effemeridi JPL (Jet Propulsion Laboratory) per i calcoli
      * // SweConst.SEFLG_SWIEPH // Utilizza le effemeridi Swiss Ephemeris per i calcoli (solitamente il default per gli usi astrologici)
@@ -58,7 +59,7 @@ public class BuildInfoAstrologiaSwiss {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());
-        ArrayList<PianetaPosizione> pianetaPosizione = new ArrayList<PianetaPosizione>();
+        ArrayList<PianetaPosizione> pianetaPosizioneArrayList = new ArrayList<PianetaPosizione>();
 
         double[] position = new double[6]; // Ecliptic position (x, y, z) and speed (dx, dy, dz)
         double hour = giornoOraPosizioneDTO.getOra() + (giornoOraPosizioneDTO.getMinuti() / 60.0);
@@ -72,13 +73,21 @@ public class BuildInfoAstrologiaSwiss {
         };
 
         for (int i = 0; i < planetIds.length; i++) {
+            //iflag - Un flag che contiene specifiche dettagliate su come deve essere calcolato il corpo. Vedere SweConst per un elenco di flag validi (SEFLG_*).
+
+            int iflag = SweConst.SEFLG_SWIEPH | SweConst.SEFLG_SPEED; // è possibile inserirli più di uno comeparametro del meotdo swissEph.swe_calc_ut
+
+            // SweConst.SEFLG_SPEED3 // Calcola velocità dei pianeti utilizzando un metodo di terzo ordine
+            // SweConst.SEFLG_SPEED // Calcola la velocità dei corpi celesti (posizioni e velocità)
+            // SweConst.SEFLG_TRANSIT_SPEED // Calcola transiti basati sulla velocità
+
             // SweConst.SEFLG_SWIEPH // Utilizza le effemeridi Swiss Ephemeris per i calcoli (solitamente il default per gli usi astrologici)
-            int result = swissEph.swe_calc_ut(julianDate, planetIds[i], SweConst.SEFLG_SWIEPH /* iflag */, position, new StringBuffer());
+            int result = swissEph.swe_calc_ut(julianDate, planetIds[i], /* SweConst.SEFLG_SWIEPH */ iflag, position, new StringBuffer());
+
 
             // Check if calculation was successful
             if (result != SweConst.ERR) {
                 // Print the calculated position
-                //System.out.println("Position of Mars at JD " + julianDate + ":");
                 //System.out.println("Ecliptic Longitude: " + position[0]);
                 //System.out.println("Ecliptic Latitude: " + position[1]);
                 //System.out.println("Distance from Earth (AU): " + position[2]);
@@ -86,18 +95,23 @@ public class BuildInfoAstrologiaSwiss {
                 //System.out.println("Speed Latitude: " + position[4]);
                 //System.out.println("Speed Distance: " + position[5]);
 
-                PianetaPosizione aa = new PianetaPosizione(Constants.NAME_ITA_PLANET[i], position[0], 0, 0, Util.determinaSegnoZodiacale(position[0]));
-                pianetaPosizione.add(aa);
-                System.out.println("Result: "+result +" "+ Constants.NAME_ITA_PLANET[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) );
+                boolean retrogrado = position[3] < 0 ? true : false;
 
+                PianetaPosizione pianetaPosizione = new PianetaPosizione(Constants.NAME_ITA_PLANET[i], position[0], 0, 0, Util.determinaSegnoZodiacale(position[0]), retrogrado);
+                pianetaPosizioneArrayList.add(pianetaPosizione);
+
+                logger.info("Result: "+result +" "+ Constants.NAME_ITA_PLANET[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0])
+                        + " retrogrado: "+retrogrado );
             } else {
                 // Print error message if calculation failed
                 System.err.println("Calculation failed with error code: " + result);
             }
         }
         swissEph.swe_close();
-        return pianetaPosizione;
+        return pianetaPosizioneArrayList;
     }
+
+
 
 
     /**
@@ -127,19 +141,17 @@ public class BuildInfoAstrologiaSwiss {
         // Se aggiungi la costante SweConst.SEFLG_SIDEREAL al metodo swe_houses (secondo parametro), il calcolo delle posizioni delle case astrologiche
         // verrà effettuato nel sistema siderale anziché nel sistema tropicale. Il sistema siderale è quello usato nei siti web più famosi.
         // Per il sistema tropicale usare invece SweConst.SEFLG_SWIEPH
-        int result = swissEph.swe_houses(julday,  SweConst.SEFLG_SIDEREAL, giornoOraPosizioneDTO.getLat(), giornoOraPosizioneDTO.getLon(), 'P', cusps, ascmc);
+        int result = swissEph.swe_houses(julday, SweConst.SEFLG_SIDEREAL, giornoOraPosizioneDTO.getLat(), giornoOraPosizioneDTO.getLon(), 'P', cusps, ascmc);
 
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
-            System.out.println("Posizioni delle case astrologiche:");
             for (int i = 1; i <= 12; i++) {
-
                 CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, Util.determinaSegnoZodiacale(cusps[i]) );
                 casePlacides.add(aa);
-                System.out.println("Casa " + i + ": " + cusps[i] +" "+ Util.determinaSegnoZodiacale(cusps[i]));
+                logger.info("Casa " + i + ": " + cusps[i] +" "+ Util.determinaSegnoZodiacale(cusps[i]));
             }
         } else {
-            System.out.println("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
+            logger.info("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
         }
 
         swissEph.swe_close();

@@ -80,7 +80,7 @@ public class ScheduledTasks {
                     oroscopoGiornaliero.setNumSegno(numeroSegno);
                     oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                 }
-                try{
+                try {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
@@ -91,7 +91,7 @@ public class ScheduledTasks {
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
                             continue;
                         }
-                    }else{
+                    } else {
                         sBTestoOroscopoIA = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
                     }
 

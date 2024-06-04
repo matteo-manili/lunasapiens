@@ -37,7 +37,7 @@ public class ServiziAstrologici {
 
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
-                "Transiti di oggi: ";
+                "Transiti: ";
 
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
@@ -52,7 +52,7 @@ public class ServiziAstrologici {
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[7]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[8]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[9]) ) {
-                descrizioneOggi += var.descrizionePianeta();
+                descrizioneOggi += var.descrizionePianetaGradiRetrogrado();
                 //System.out.println( var.toString() );
             }
         }
@@ -110,7 +110,7 @@ public class ServiziAstrologici {
          */
 
         StringBuilder domandaBuilder = new StringBuilder();
-        domandaBuilder.append("Crea l'oroscopo del giorno (di massimo 300 parole) per il segno del ").append(segno).append(". ").append("\n")
+        domandaBuilder.append("Crea l'oroscopo del giorno (di circa 300 parole) per il segno del ").append(segno).append(". ").append("\n")
                 .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/")
                 .append(giornoOraPosizioneDTO.getAnno()).append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":")
                 .append(giornoOraPosizioneDTO.getMinuti()).append("\n").append("Transiti: ");
@@ -118,7 +118,7 @@ public class ServiziAstrologici {
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
         for (PianetaPosizione var : pianetiTransiti) {
             if (Arrays.asList(Constants.NAME_ITA_PLANET).contains(var.getNomePianeta())) {
-                domandaBuilder.append(var.descrizionePianetaGradi());
+                domandaBuilder.append(var.descrizionePianetaGradiRetrogrado());
                 //System.out.println( var.toString() );
             }
         }
@@ -173,14 +173,9 @@ public class ServiziAstrologici {
                 paragrafiList.add(paragrafo.trim());
             }
         }
-
-        // for (String paragrafo : paragrafiList) { logger.info("Paragrafo: "+paragrafo); }
-
         logger.info("paragrafiList.size: " + paragrafiList.size());
-
         // se non ci sono paragrafi, allora divido in base al carattere "."
         // in genere non ci sono paragrafi quando il testo generato è corto.
-
         if (paragrafiList.size() <= 1) {
             rispostaSplitParagrafi = paragrafiList.get(0).split("\\.");
             paragrafiList.clear();
@@ -188,6 +183,7 @@ public class ServiziAstrologici {
                 paragrafiList.add(paragrafo.trim() + ".");
             }
         }
+
         for (String paragrafo : paragrafiList) {
             logger.info("Paragrafo: " + paragrafo);
         }
