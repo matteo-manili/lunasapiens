@@ -2,10 +2,7 @@ package com.lunasapiens.dto;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class OroscopoGiornalieroDTO {
 

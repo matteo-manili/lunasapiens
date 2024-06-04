@@ -1,7 +1,6 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.ScheduledTasks;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
