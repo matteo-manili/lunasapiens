@@ -25,6 +25,9 @@ public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Autowired
+    private ServiziAstrologici serviziAstrologici;
+
+    @Autowired
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
     @Autowired
@@ -83,10 +86,9 @@ public class ScheduledTasks {
                 try {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
-                    if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty() ){
-                        ServiziAstrologici sA = new ServiziAstrologici(appConfig.getKeyOpenAi());
-                        sBTestoOroscopoIA = sA.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
-                        if (sBTestoOroscopoIA == null) {
+                    if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
+                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                        if(sBTestoOroscopoIA == null) {
                             logger.info("sBTestoOroscopo null: salto iterazione del ciclo della creazione del video");
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
                             continue;

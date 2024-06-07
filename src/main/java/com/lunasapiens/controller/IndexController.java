@@ -73,7 +73,9 @@ public class IndexController {
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-        String oroscopoDelGiornoDescrizioneOggi = ServiziAstrologici.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+
+        ServiziAstrologici servAstrolog = new ServiziAstrologici();
+        String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
 
 

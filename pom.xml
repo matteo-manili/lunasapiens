@@ -120,35 +120,29 @@
         </dependency>
 
 
+
         <!-- ###################### OPEN_AI ###################### -->
 
-        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/service
-        <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>service</artifactId>
-            <version>0.16.0</version>
-        </dependency> -->
-
-        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/api
-        <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>api</artifactId>
-            <version>0.16.0</version>
-        </dependency> -->
-
-        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/client
+        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/service -->
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>client</artifactId>
-            <version>0.16.0</version>
+            <version>0.18.2</version>
         </dependency>
-        -->
 
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>service</artifactId>
+            <version>0.18.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.azure/azure-ai-openai -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-ai-openai</artifactId>
-            <version>1.0.0-beta.5</version>
+            <version>1.0.0-beta.8</version>
         </dependency>
+
 
 
         <!-- ###################### SOCIAL TIKTOK TELEGRAM FACEBOOK ###################### -->

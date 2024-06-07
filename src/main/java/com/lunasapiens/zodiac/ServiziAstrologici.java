@@ -4,34 +4,37 @@ import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.ai.openai.models.*;
 import com.azure.core.credential.KeyCredential;
+import com.azure.core.http.HttpClient;
+import com.azure.core.http.netty.NettyAsyncHttpClientBuilder;
+import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+@Component
 public class ServiziAstrologici {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiziAstrologici.class);
 
-    private static String keyOpenAi;
+    @Autowired
+    private AppConfig appConfig;
+
     private Double temperature = 1.0; private Integer maxTokens = 800;
 
-
-    public ServiziAstrologici(String keyOpenAi) {
-        this.keyOpenAi = keyOpenAi;
-    }
 
     public StringBuilder oroscopoDelGiornoIA(String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
     }
 
-
-    public static String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
@@ -76,7 +79,7 @@ public class ServiziAstrologici {
     }
 
 
-    public static StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
@@ -142,23 +145,22 @@ public class ServiziAstrologici {
 
         // @@@@@@@@@@@@@@@@ INVIO LA DOMANDA ALLA IA @@@@@@@@@@@@@@@@@@@@@@
 
-        OpenAIClient client = new OpenAIClientBuilder().credential(new KeyCredential(keyOpenAi)).buildClient();
-        List<String> prompt = new ArrayList<>();
-        prompt.add(domandaBuilder.toString());
-        // gpt-3.5-turbo-instruct // babbage-002 // davinci-002
-        Completions completions = client.getCompletions("gpt-3.5-turbo-instruct",
-                new CompletionsOptions( prompt ).setMaxTokens( maxTokens ).setTemperature( temperature ));
 
-        logger.info("temperature: " + temperature + " setMaxTokens: " + maxTokens + " Model ID:" + completions.getId() + " is created at: " + completions.getCreatedAt());
+        //########################################## INIZIO #########################
 
-        StringBuilder risposta = new StringBuilder();
-        for (Choice choice : completions.getChoices()) {
-            risposta.append(choice.getText());
-            System.out.printf("Index: %d, Text: %s.\\n", choice.getIndex(), choice.getText());
-            //logger.info( "choice.getText(): "+choice.getText() );
-        }
 
-        return risposta;
+        OpenAIGptTheokanning we = new OpenAIGptTheokanning();
+        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+                appConfig.getParamOpenAi().getModelGpt4() );
+
+        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+                appConfig.getParamOpenAi().getModelGpt3_5());
+
+        OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
+        return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+                appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
+
+        //########################################## FINE #########################
 
     }
 
