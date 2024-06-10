@@ -125,35 +125,36 @@ public class Util {
     public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
         Map<Integer, String> segniZodiacali = new HashMap<>();
         ArrayList<String> nomiSegni = Constants.segniZodiacali();
-        if (grado >= 0 && grado < 30) {
+        if (grado >= 0 && grado < 30) {                 // Ariete
             segniZodiacali.put(0, nomiSegni.get(0));
-        } else if (grado >= 30 && grado < 60) {
+        } else if (grado >= 30 && grado < 60) {         // Toro
             segniZodiacali.put(1, nomiSegni.get(1));
-        } else if (grado >= 60 && grado < 90) {
+        } else if (grado >= 60 && grado < 90) {         // Gemelli
             segniZodiacali.put(2, nomiSegni.get(2));
-        } else if (grado >= 90 && grado < 120) {
+        } else if (grado >= 90 && grado < 120) {        // Cancro
             segniZodiacali.put(3, nomiSegni.get(3));
-        } else if (grado >= 120 && grado < 150) {
+        } else if (grado >= 120 && grado < 150) {       // Leone
             segniZodiacali.put(4, nomiSegni.get(4));
-        } else if (grado >= 150 && grado < 180) {
+        } else if (grado >= 150 && grado < 180) {       // Vergine
             segniZodiacali.put(5, nomiSegni.get(5));
-        } else if (grado >= 180 && grado < 210) {
+        } else if (grado >= 180 && grado < 210) {       // Bilancia
             segniZodiacali.put(6, nomiSegni.get(6));
-        } else if (grado >= 210 && grado < 240) {
+        } else if (grado >= 210 && grado < 240) {       // Scorpione
             segniZodiacali.put(7, nomiSegni.get(7));
-        } else if (grado >= 240 && grado < 270) {
+        } else if (grado >= 240 && grado < 270) {       // Sagittario
             segniZodiacali.put(8, nomiSegni.get(8));
-        } else if (grado >= 270 && grado < 300) {
+        } else if (grado >= 270 && grado < 300) {       // Capricorno
             segniZodiacali.put(9, nomiSegni.get(9));
-        } else if (grado >= 300 && grado < 330) {
+        } else if (grado >= 300 && grado < 330) {       // Acquario
             segniZodiacali.put(10, nomiSegni.get(10));
-        } else if (grado >= 330 && grado < 360) {
+        } else if (grado >= 330 && grado < 360) {       // Pesci
             segniZodiacali.put(11, nomiSegni.get(11));
         } else {
             segniZodiacali.put(-1, "Grado non valido");
         }
         return segniZodiacali;
     }
+
 
 
     public static String significatoTransitoPianetaSegno(Properties properties, int numero1, int numero2) {
