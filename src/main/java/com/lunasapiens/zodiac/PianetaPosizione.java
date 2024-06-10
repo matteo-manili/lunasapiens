@@ -2,27 +2,36 @@ package com.lunasapiens.zodiac;
 
 public class PianetaPosizione {
 
+    private int numeroPianeta;
     private String nomePianeta;
     private double gradi;
     private int minuti;
     private int secondi;
+
+    private int numeroSegnoZodiacale;
     private String nomeSegnoZodiacale;
     private boolean retrogrado;
 
+    private String significatoPianetaSegno;
 
-    public PianetaPosizione(String nomePianeta, double gradi, int minuti, int secondi, String nomeSegnoZodiacale, boolean retrogrado) {
+
+    public PianetaPosizione(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
+        String significatoPianetaSegno) {
+        this.numeroPianeta = numeroPianeta;
         this.nomePianeta = nomePianeta;
         this.gradi = gradi;
         this.minuti = minuti;
         this.secondi = secondi;
+        this.numeroSegnoZodiacale = numeroSegnoZodiacale;
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
         this.retrogrado = retrogrado;
+        this.significatoPianetaSegno = significatoPianetaSegno;
     }
 
-    public String getNomePianeta() {
-        return nomePianeta;
-    }
+    public int getNumeroPianeta() { return numeroPianeta; }
 
+    public String getNomePianeta() { return nomePianeta;
+    }
     public double getGradi() {
         return gradi;
     }
@@ -35,11 +44,18 @@ public class PianetaPosizione {
         return secondi;
     }
 
+    public int getNumeroSegnoZodiacale() { return numeroSegnoZodiacale; }
+
     public String getNomeSegnoZodiacale() {
         return nomeSegnoZodiacale;
     }
 
     public boolean isRetrogrado() { return retrogrado; }
+
+    public String getSignificatoPianetaSegno() { return significatoPianetaSegno; }
+
+
+
 
 
 
@@ -48,10 +64,17 @@ public class PianetaPosizione {
     }
 
     public String descrizionePianetaGradiRetrogrado() {
-
         // Usa String.format per rimuovere i decimali
         return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + ". ";
     }
+
+    public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() {
+        // Usa String.format per rimuovere i decimali
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno+" ";
+    }
+
+
+
 
     @Override
     public String toString() {

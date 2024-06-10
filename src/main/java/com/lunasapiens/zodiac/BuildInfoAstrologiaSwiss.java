@@ -1,19 +1,29 @@
 package com.lunasapiens.zodiac;
 
+import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
-import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
 
+@Component
 public class BuildInfoAstrologiaSwiss {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);
+
+
+    @Autowired
+    private AppConfig appConfig;
+
 
     /**
      * vedere http://th-mack.de/download/swisseph-doc/
@@ -51,25 +61,29 @@ public class BuildInfoAstrologiaSwiss {
      * // SweConst.SEFLG_PARTILE_TRANSIT_END // Fine del transito partile
      * // SweConst.SEFLG_PARTILE_TRANSIT // Transito partile (pianeta esattamente congiunto a un altro punto)
      *
-     * @param giornoOraPosizioneDTO
+     * @param giornOraPosDTO
      * @return
      */
-    public ArrayList<PianetaPosizione> getPianetiTransiti(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public ArrayList<PianetaPosizione> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO) {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());
         ArrayList<PianetaPosizione> pianetaPosizioneArrayList = new ArrayList<PianetaPosizione>();
 
-        double[] position = new double[6]; // Ecliptic position (x, y, z) and speed (dx, dy, dz)
-        double hour = giornoOraPosizioneDTO.getOra() + (giornoOraPosizioneDTO.getMinuti() / 60.0);
-        double julianDate = SweDate.getJulDay(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese(),
-                giornoOraPosizioneDTO.getGiorno(), hour, true);
+        double[] position = new double[6]; // Ecli
+
+        // ptic position (x, y, z) and speed (dx, dy, dz)
+        double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
+
+        logger.info("julianDate: " + julianDate);
 
         int[] planetIds = {
                 SweConst.SE_SUN, SweConst.SE_MOON, SweConst.SE_MERCURY, SweConst.SE_VENUS,
                 SweConst.SE_MARS, SweConst.SE_JUPITER, SweConst.SE_SATURN,
-                SweConst.SE_URANUS, SweConst.SE_NEPTUNE, SweConst.SE_PLUTO
-        };
+                SweConst.SE_URANUS, SweConst.SE_NEPTUNE, SweConst.SE_PLUTO };
+
+
+        Properties transitiPianetiSegniProperties = appConfig.transitiPianetiSegni();
 
         for (int i = 0; i < planetIds.length; i++) {
             //iflag - Un flag che contiene specifiche dettagliate su come deve essere calcolato il corpo. Vedere SweConst per un elenco di flag validi (SEFLG_*).
@@ -96,11 +110,15 @@ public class BuildInfoAstrologiaSwiss {
 
                 boolean retrogrado = position[3] < 0 ? true : false;
 
-                PianetaPosizione pianetaPosizione = new PianetaPosizione(Constants.NAME_ITA_PLANET[i], position[0], 0, 0, Util.determinaSegnoZodiacale(position[0]), retrogrado);
+                Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
+                String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
+
+                PianetaPosizione pianetaPosizione = new PianetaPosizione(i, Constants.NAME_ITA_PLANET[i], position[0], 0, 0,
+                        entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
+
                 pianetaPosizioneArrayList.add(pianetaPosizione);
 
-                logger.info("Result: "+result +" "+ Constants.NAME_ITA_PLANET[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0])
-                        + " retrogrado: "+retrogrado );
+                logger.info("Result: "+result +" "+ Constants.NAME_ITA_PLANET[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
             } else {
                 // Print error message if calculation failed
                 System.err.println("Calculation failed with error code: " + result);
@@ -123,31 +141,36 @@ public class BuildInfoAstrologiaSwiss {
      * fisse anziché alla posizione apparente del Sole. Altrimenti inserire valore 0 oppure SweConst.SEFLG_SIDEREAL and/or SEFLG_RADIANS
      * @return
      */
-    public ArrayList<CasePlacide> getCasePlacide(GiornoOraPosizioneDTO giornoOraPosizioneDTO){
+    public ArrayList<CasePlacide> getCasePlacide(GiornoOraPosizioneDTO giornOraPosDTO) {
 
         SwissEph swissEph = new SwissEph();
 
         ArrayList<CasePlacide> casePlacides = new ArrayList<CasePlacide>();
 
-        double hour = giornoOraPosizioneDTO.getOra() + (giornoOraPosizioneDTO.getMinuti() / 60.0);
-        double julday = SweDate.getJulDay(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese(),
-                giornoOraPosizioneDTO.getGiorno(), hour, true);
-
         // Calcolo delle case astrologiche
         double[] cusps = new double[13]; // Array per memorizzare le posizioni delle case
         double[] ascmc = new double[10]; // Array per memorizzare altri punti vitali
 
+
         // Se aggiungi la costante SweConst.SEFLG_SIDEREAL al metodo swe_houses (secondo parametro), il calcolo delle posizioni delle case astrologiche
         // verrà effettuato nel sistema siderale anziché nel sistema tropicale. Il sistema siderale è quello usato nei siti web più famosi.
         // Per il sistema tropicale usare invece SweConst.SEFLG_SWIEPH
-        int result = swissEph.swe_houses(julday, SweConst.SEFLG_SIDEREAL, giornoOraPosizioneDTO.getLat(), giornoOraPosizioneDTO.getLon(), 'P', cusps, ascmc);
+
+
+
+        double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
+        System.out.println("julianDate case placide: " + julianDate);
+
+        // SweConst.SEFLG_SIDEREAL con SweConst.SEFLG_SWIEPH
+        int result = swissEph.swe_houses(julianDate, SweConst.SEFLG_SIDEREAL, giornOraPosDTO.getLat(), giornOraPosDTO.getLon(), 'P', cusps, ascmc);
 
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
             for (int i = 1; i <= 12; i++) {
-                CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, Util.determinaSegnoZodiacale(cusps[i]) );
+                Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
+                CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);
-                logger.info("Casa " + i + ": " + cusps[i] +" "+ Util.determinaSegnoZodiacale(cusps[i]));
+                logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
             }
         } else {
             logger.info("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
@@ -155,8 +178,6 @@ public class BuildInfoAstrologiaSwiss {
 
         swissEph.swe_close();
         return casePlacides;
-
-
     }
 
 

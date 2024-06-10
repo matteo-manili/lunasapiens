@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import de.thmac.swisseph.SweDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,12 +12,17 @@ import org.springframework.http.ResponseEntity;
 import java.io.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class Util {
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
+
+
+    public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {
+        double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);
+        return SweDate.getJulDay(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), hour, true);
+    }
 
 
     public static ZonedDateTime getNowRomeEurope() {
@@ -111,38 +117,52 @@ public class Util {
     }
 
 
-
-    public static String determinaSegnoZodiacale(double grado) {
-        if (grado > 0 && grado <= 30) {
-            return Constants.segniZodiacali().get(0);
-        } else if (grado > 30 && grado <= 60) {
-            return Constants.segniZodiacali().get(1);
-        } else if (grado > 60 && grado <= 90) {
-            return Constants.segniZodiacali().get(2);
-        } else if (grado > 90 && grado <= 120) {
-            return Constants.segniZodiacali().get(3);
-        } else if (grado > 120 && grado <= 150) {
-            return Constants.segniZodiacali().get(4);
-        } else if (grado > 150 && grado <= 180) {
-            return Constants.segniZodiacali().get(5);
-        } else if (grado > 180 && grado <= 210) {
-            return Constants.segniZodiacali().get(6);
-        } else if (grado > 210 && grado <= 240) {
-            return Constants.segniZodiacali().get(7);
-        } else if (grado > 240 && grado <= 270) {
-            return Constants.segniZodiacali().get(8);
-        } else if (grado > 270 && grado <= 300) {
-            return Constants.segniZodiacali().get(9);
-        } else if (grado > 300 && grado <= 330) {
-            return Constants.segniZodiacali().get(10);
-        } else if (grado > 330 && grado <= 360) {
-            return Constants.segniZodiacali().get(11);
+    /**
+     * Metodo per determinare il segno zodiacale in base al grado
+     * @param grado
+     * @return
+     */
+    public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
+        Map<Integer, String> segniZodiacali = new HashMap<>();
+        ArrayList<String> nomiSegni = Constants.segniZodiacali();
+        if (grado >= 0 && grado < 30) {
+            segniZodiacali.put(0, nomiSegni.get(0));
+        } else if (grado >= 30 && grado < 60) {
+            segniZodiacali.put(1, nomiSegni.get(1));
+        } else if (grado >= 60 && grado < 90) {
+            segniZodiacali.put(2, nomiSegni.get(2));
+        } else if (grado >= 90 && grado < 120) {
+            segniZodiacali.put(3, nomiSegni.get(3));
+        } else if (grado >= 120 && grado < 150) {
+            segniZodiacali.put(4, nomiSegni.get(4));
+        } else if (grado >= 150 && grado < 180) {
+            segniZodiacali.put(5, nomiSegni.get(5));
+        } else if (grado >= 180 && grado < 210) {
+            segniZodiacali.put(6, nomiSegni.get(6));
+        } else if (grado >= 210 && grado < 240) {
+            segniZodiacali.put(7, nomiSegni.get(7));
+        } else if (grado >= 240 && grado < 270) {
+            segniZodiacali.put(8, nomiSegni.get(8));
+        } else if (grado >= 270 && grado < 300) {
+            segniZodiacali.put(9, nomiSegni.get(9));
+        } else if (grado >= 300 && grado < 330) {
+            segniZodiacali.put(10, nomiSegni.get(10));
+        } else if (grado >= 330 && grado < 360) {
+            segniZodiacali.put(11, nomiSegni.get(11));
         } else {
-            return "Grado non valido";
+            segniZodiacali.put(-1, "Grado non valido");
         }
+        return segniZodiacali;
     }
 
 
+    public static String significatoTransitoPianetaSegno(Properties properties, int numero1, int numero2) {
+        // Costruisci la chiave per recuperare il valore desiderato
+        String chiaveProperties = numero1 + "_" + numero2;
+        // Recupera il significato del pianeta
+        String significato = properties.getProperty(chiaveProperties);
+        return significato;
+    }
 
 
 

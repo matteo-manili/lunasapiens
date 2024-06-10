@@ -21,9 +21,9 @@ public class OpenAIGptAzure {
 
     /**
      * gpt-3.5-turbo-instruct non accetta ruoli come i modelli chatgpt 3.5 e 4.0 che vogliono user, system e assistant.
-     * Instructor vuole solo la domanda al prompt
+     * Instructor vuole solo la domanda al prompt.
      *
-     * chatgpt 3.5 e 4.0 li uso nella classe OpenAIGptTheokanning. utilizzano altre librerie.
+     * Chatgpt 3.5 e 4.0 li uso nella classe OpenAIGptTheokanning. utilizzano altre librerie.
      * ma posso anche implementarle qui con la libreria com.azure.ai.openai
      */
     public StringBuilder eseguiOpenAIGptAzure_Instruct(String apiKey, int maxTokens, double temperature, String domandaBuilder, final String modelGpt) {

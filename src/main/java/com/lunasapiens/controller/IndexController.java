@@ -1,6 +1,5 @@
 package com.lunasapiens.controller;
 
-
 import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +31,10 @@ public class IndexController {
 
     @Autowired
     private ScheduledTasks scheduledTasks;
+
+    @Autowired
+    ServiziAstrologici servAstrolog;
+
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
@@ -74,7 +76,6 @@ public class IndexController {
     public String mostraOroscopo(Model model) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
-        ServiziAstrologici servAstrolog = new ServiziAstrologici();
         String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
 

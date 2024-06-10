@@ -1,11 +1,5 @@
 package com.lunasapiens.zodiac;
 
-import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.ai.openai.models.*;
-import com.azure.core.credential.KeyCredential;
-import com.azure.core.http.HttpClient;
-import com.azure.core.http.netty.NettyAsyncHttpClientBuilder;
 import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -14,10 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class ServiziAstrologici {
@@ -27,6 +19,10 @@ public class ServiziAstrologici {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
+
+
     private Double temperature = 1.0; private Integer maxTokens = 800;
 
 
@@ -34,14 +30,12 @@ public class ServiziAstrologici {
         return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
     }
 
-    public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
+    public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
                 "Transiti: ";
-
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
         for (PianetaPosizione var : pianetiTransiti) {
@@ -55,8 +49,7 @@ public class ServiziAstrologici {
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[7]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[8]) ||
                     var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[9]) ) {
-                descrizioneOggi += var.descrizionePianetaGradiRetrogrado();
-                //System.out.println( var.toString() );
+                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n" ;
             }
         }
 
@@ -81,36 +74,7 @@ public class ServiziAstrologici {
 
     public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-
         System.out.println("############################ TEXT IA ###################################");
-
-        /*
-        String domanda = "Crea l'oroscopo del giorno (di massimo 200 parole) per il segno del "+ segno +" in base a questi dati. \n" +
-                "il testo generato deve essere diviso in blocchi sensati di 30-40 parole e ogni blocco deve terminare con il carattere speciale "+Constants.SeparatoreTestoOroscopo+"\n"+
-                "Oggi è: "+giornoOraPosizioneDTO.getGiorno()+ "/" +giornoOraPosizioneDTO.getMese()+ "/" +giornoOraPosizioneDTO.getAnno()
-                + " ore "+giornoOraPosizioneDTO.getOra()+":"+giornoOraPosizioneDTO.getMinuti()+ "\n"+
-                "Transiti di oggi: " + "\n";
-
-        for(PianetiAspetti var : buildInfoAstrologia.getPianetiAspetti()){
-            if ( var.getNomePianeta().equals(Constants.NAME_PLANET[0]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[1]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[2]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[3]) ||
-                    var.getNomePianeta().equals(Constants.NAME_PLANET[4]) ){
-                domanda += var.toString();
-                //System.out.println( var.toString() );
-            }
-        }
-
-        domanda += "\n" + "Case Placide di oggi: " + "\n";
-        for(CasePlacide var : buildInfoAstrologia.getCasePlacide()){
-            domanda += var.toString();
-            //System.out.println( var.toString() );
-        }
-
-        logger.info("DOMANDA: "+ domanda );
-         */
 
         StringBuilder domandaBuilder = new StringBuilder();
         domandaBuilder.append("Crea l'oroscopo del giorno (di circa 300 parole) per il segno del ").append(segno).append(". ").append("\n")
@@ -143,12 +107,19 @@ public class ServiziAstrologici {
 
         logger.info("DOMANDA: " + domandaBuilder.toString());
 
-        // @@@@@@@@@@@@@@@@ INVIO LA DOMANDA ALLA IA @@@@@@@@@@@@@@@@@@@@@@
+
+        /*
+        BuildInfoAstrologiaAstroLib buildInfoAstroAstroLib = new BuildInfoAstrologiaAstroLib(giornoOraPosizioneDTO);
+        buildInfoAstroAstroLib.getCasePlacide();
+        for (CasePlacide var : buildInfoAstroAstroLib.getCasePlacide()) {
+            System.out.println("AstroLib: "+ var.toString() );
+        }
+         */
 
 
-        //########################################## INIZIO #########################
+        //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
-
+        /*
         OpenAIGptTheokanning we = new OpenAIGptTheokanning();
         we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
                 appConfig.getParamOpenAi().getModelGpt4() );
@@ -156,9 +127,12 @@ public class ServiziAstrologici {
         we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
                 appConfig.getParamOpenAi().getModelGpt3_5());
 
+         */
+
         OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
         return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
                 appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
+
 
         //########################################## FINE #########################
 

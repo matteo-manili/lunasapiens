@@ -16,14 +16,14 @@ public class GiornoOraPosizioneDTO {
         // Costruttore vuoto necessario per la deserializzazione JSON
     }
 
-    public GiornoOraPosizioneDTO(int ora, int minuti, int giorno, int mese, int anno, double lon, double lat) {
+    public GiornoOraPosizioneDTO(int ora, int minuti, int giorno, int mese, int anno, double lat, double lon) {
         this.ora = ora;
         this.minuti = minuti;
         this.giorno = giorno;
         this.mese = mese;
         this.anno = anno;
-        this.lon = lon;
         this.lat = lat;
+        this.lon = lon;
     }
 
     // Getter e setter

@@ -3,10 +3,14 @@ package com.lunasapiens.zodiac;
 import at.kugel.zodiac.TextHoroscop;
 import at.kugel.zodiac.house.*;
 import at.kugel.zodiac.planet.PlanetAA0;
+import com.lunasapiens.AppConfig;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * questa classe si interfaccia con la libreria at.kugel.zodiac
@@ -14,13 +18,10 @@ import java.util.ArrayList;
 @Deprecated
 public class BuildInfoAstrologiaAstroLib {
 
-
     private String horoscop;
-
     private GiornoOraPosizioneDTO giornoOraPosizioneDTO;
 
     // Roma 41.89 e 12.48
-
     public BuildInfoAstrologiaAstroLib(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         this.horoscop = textHoroscop(giornoOraPosizioneDTO.getOra(), giornoOraPosizioneDTO.getMinuti(), giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getMese(),
@@ -79,7 +80,10 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("Secondi: " + seconds);
                         //System.out.println("segno: " + Util.determinaSegnoZodiacale(degrees));
 
-                        PianetaPosizione aa = new PianetaPosizione(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees), false);
+                        Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale( degrees ).entrySet().iterator().next();
+                        String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(null,0, entry.getKey());
+
+                        PianetaPosizione aa = new PianetaPosizione(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
                         pianetaPosizione.add(aa);
                     }
                 }
@@ -122,7 +126,8 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("Secondi: " + seconds);
                         //System.out.println("segno: " + SegnoZodiacale.determinaSegnoZodiacale(degrees));
 
-                        CasePlacide aa = new CasePlacide(planetName, degrees, minutes, seconds, Util.determinaSegnoZodiacale(degrees));
+                        Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(degrees).entrySet().iterator().next();
+                        CasePlacide aa = new CasePlacide(planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue());
                         casePlacides.add(aa);
                     }
                 }

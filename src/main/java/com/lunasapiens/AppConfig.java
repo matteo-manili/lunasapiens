@@ -17,7 +17,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,12 +29,52 @@ import java.util.Properties;
 
 
 @Configuration
-@ComponentScan(basePackages = {"com.lunasapiens"})
+@ComponentScan(basePackages = {"com.lunasapiens", "com.lunasapiens.zodiac"})
 @EnableCaching
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
     private Environment env;
+
+    @Bean
+    public Properties transitiPianetiSegni() {
+        Properties properties = new Properties();
+        try (InputStream is = getClass().getResourceAsStream("/transiti-pianeti-segni.properties")) {
+            if (is != null) {
+                properties.load(is);
+            } else {
+                throw new FileNotFoundException("File properties non trovato");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nel caricamento del file properties", e);
+        }
+        return properties;
+    }
+
+
+    @Bean
+    public OpenAiGptConfig getParamOpenAi() {
+        String apiKeyOpenAI = "";
+        try{
+            apiKeyOpenAI = env.getProperty("api.key.openai");
+            //System.out.println("111 api_openai: " + apiKeyOpenAI);
+        } catch (IllegalArgumentException e) {
+            // In caso di eccezione, utilizza il file di configurazione esterno
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+                properties.load(fis);
+                apiKeyOpenAI = properties.getProperty("api.key.openai");
+                //System.out.println("222 api_openai: " + apiKeyOpenAI);
+            } catch (IOException ioException) {
+                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+            }
+        }
+        OpenAiGptConfig openAiGptConfig = new OpenAiGptConfig(apiKeyOpenAI,
+                env.getProperty("api.openai.model.gpt.4"),
+                env.getProperty("api.openai.model.gpt.3.5"),
+                env.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
+        return openAiGptConfig;
+    }
 
     @Bean
     public CacheManager cacheManager() {
@@ -79,32 +121,6 @@ public class AppConfig implements WebMvcConfigurer {
         }
         return facebookConfig;
     }
-
-
-    @Bean
-    public OpenAiGptConfig getParamOpenAi() {
-        String apiKeyOpenAI = "";
-        try{
-            apiKeyOpenAI = env.getProperty("api.key.openai");
-            //System.out.println("111 api_openai: " + apiKeyOpenAI);
-        } catch (IllegalArgumentException e) {
-            // In caso di eccezione, utilizza il file di configurazione esterno
-            Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
-                properties.load(fis);
-                apiKeyOpenAI = properties.getProperty("api.key.openai");
-                //System.out.println("222 api_openai: " + apiKeyOpenAI);
-            } catch (IOException ioException) {
-                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
-            }
-        }
-        OpenAiGptConfig openAiGptConfig = new OpenAiGptConfig(apiKeyOpenAI,
-                env.getProperty("api.openai.model.gpt.4"),
-                env.getProperty("api.openai.model.gpt.3.5"),
-                env.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
-        return openAiGptConfig;
-    }
-
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {

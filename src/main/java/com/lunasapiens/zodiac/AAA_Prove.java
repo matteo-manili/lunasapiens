@@ -14,13 +14,8 @@ public class AAA_Prove {
     public static void main(String[] args) {
 
 
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_Custom();
+        //GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_Custom();
 
-
-
-        String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-                + " ore " + giornoOraPosizioneDTO.getOra() + ":" + giornoOraPosizioneDTO.getMinuti() + "\n" +
-                "Transiti di oggi: " + "\n";
 
         posizionePianetiSwiss();
     }
@@ -28,6 +23,7 @@ public class AAA_Prove {
 
     public static void posizionePianetiSwiss() {
 
+        /*
         int anno = 1995;
         int mese = 6;
         int giorno = 6;
@@ -35,9 +31,26 @@ public class AAA_Prove {
         int minuti = 0;
         double lat = 41.89;
         double lon = 12.48;
+         */
 
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO
-                = new GiornoOraPosizioneDTO(ora, minuti, giorno, mese, anno, lon, lat);
+        int giorno = 9;
+        int mese = 6;
+        int anno = 2024;
+
+        int ora = 0;
+        int minuti = 39;
+        double lat = 41.89;
+        double lon = 12.48;
+
+
+        //---------------------------
+
+
+
+
+        //-----------------------------
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(ora, minuti, giorno, mese, anno, lat, lon);
 
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
@@ -45,7 +58,11 @@ public class AAA_Prove {
 
         PianetiAspetti pianetiAspetti = new PianetiAspetti( pianetiTransiti );
 
-        buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
+        ArrayList<CasePlacide> aa = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
+
+
+
+
     }
 
 }

@@ -6,14 +6,17 @@ public class CasePlacide {
     private double gradi;
     private int minuti;
     private int secondi;
+
+    private int numeroSegnoZodiacale;
     private String nomeSegnoZodiacale;
 
 
-    public CasePlacide(String nomeCasa, double gradi, int minuti, int secondi, String nomeSegnoZodiacale) {
+    public CasePlacide(String nomeCasa, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale) {
         this.nomeCasa = nomeCasa;
         this.gradi = gradi;
         this.minuti = minuti;
         this.secondi = secondi;
+        this.numeroSegnoZodiacale = numeroSegnoZodiacale;
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
     }
 
@@ -33,9 +36,17 @@ public class CasePlacide {
         return secondi;
     }
 
+    public int getNumeroSegnoZodiacale() { return numeroSegnoZodiacale; }
+
     public String getNomeSegnoZodiacale() {
         return nomeSegnoZodiacale;
     }
+
+
+
+
+
+
 
 
     public String descrizioneCasa(){
