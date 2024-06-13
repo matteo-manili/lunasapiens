@@ -113,12 +113,12 @@ public class BuildInfoAstrologiaSwiss {
                 Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
                 String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
 
-                PianetaPosizione pianetaPosizione = new PianetaPosizione(i, Constants.NAME_ITA_PLANET[i], position[0], 0, 0,
+                PianetaPosizione pianetaPosizione = new PianetaPosizione(i, Constants.Pianeti[i], position[0], 0, 0,
                         entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
 
                 pianetaPosizioneArrayList.add(pianetaPosizione);
 
-                logger.info("Result: "+result +" "+ Constants.NAME_ITA_PLANET[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
+                logger.info("Result: "+result +" "+ Constants.Pianeti[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
             } else {
                 // Print error message if calculation failed
                 System.err.println("Calculation failed with error code: " + result);

@@ -11,10 +11,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageGenerator {
+public class GeneratorImage {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImageGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(GeneratorImage.class);
 
+    public static final String folderOroscopoGiornalieroImmagine = "oroscopo_giornaliero/immagini/";
 
     public static void generateImage(String text, String fontName, int fontSize, Color textColor, String imagePathFileName) {
         // Creazione di un'immagine con dimensioni fisse

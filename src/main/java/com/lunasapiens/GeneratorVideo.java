@@ -19,13 +19,14 @@ import org.bytedeco.javacv.Java2DFrameConverter;
 
 import org.bytedeco.ffmpeg.global.avcodec;
 
-@Component
-public class VideoGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(VideoGenerator.class);
+public class GeneratorVideo {
 
+    private static final Logger logger = LoggerFactory.getLogger(GeneratorVideo.class);
+
+    public static final String folderOroscopoGiornalieroVideo = "oroscopo_giornaliero/video/";
     private static final String audioFilePath = Constants.PATH_STATIC + "oroscopo_giornaliero/audio/music_9.mp3";
-    public static final String pathOroscopoGiornalieroVideo = Constants.PATH_STATIC + "oroscopo_giornaliero/video/";
+    public static final String pathOroscopoGiornalieroVideo = Constants.PATH_STATIC + folderOroscopoGiornalieroVideo;
     public static String formatoVideo(){
         return ".mp4";
     }

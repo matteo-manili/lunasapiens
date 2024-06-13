@@ -24,7 +24,7 @@ public class OpenAIGptTheokanning {
     public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, int maxTokens, double temperature, String domanda, final String modelGpt) {
 
 
-        System.out.println("INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +"###################: ");
+        System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
         Duration timeout = Duration.ofSeconds(30);
 
@@ -64,7 +64,7 @@ public class OpenAIGptTheokanning {
             e.printStackTrace();
         }
 
-        System.out.println("FINEEEEEEEEE eseguiOpenAiTheokanning "+ modelGpt +"###################: ");
+        System.out.println("FINEEEEEEEEE eseguiOpenAiTheokanning "+ modelGpt +" ###################: ");
 
         return risposta;
 

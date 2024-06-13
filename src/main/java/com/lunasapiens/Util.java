@@ -57,7 +57,7 @@ public class Util {
         ZonedDateTime now = getNowRomeEurope();
         ZonedDateTime domani = now.plusDays(1);
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(3, 0, 25,
-                5, 1981, -41.9, -12.516);
+                5, 1981, 41.89, 12.48);
         return giornoOraPosizioneDTO;
     }
 
@@ -85,6 +85,14 @@ public class Util {
     }
 
 
+    public static void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
+        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
+        deleteDirectory(directoryImmagini);
+        File directoryVideo = new File(GeneratorVideo.pathOroscopoGiornalieroVideo);
+        deleteDirectory(directoryVideo);
+    }
+
+
     public static void deleteDirectory(File directory) {
         File[] contents = directory.listFiles();
         if (contents != null) {
@@ -103,6 +111,12 @@ public class Util {
     }
 
 
+    /**
+     * In sintesi, questo metodo prepara e restituisce una risposta HTTP che contiene un video sotto forma di ByteArrayResource, con le appropriate
+     * intestazioni HTTP che descrivono il contenuto della risposta. Questo può essere utile per fornire file video ai client in modo efficiente.
+     * @param videoBytes
+     * @return
+     */
     public static ResponseEntity<ByteArrayResource> VideoResponseEntityByteArrayResource(byte[] videoBytes) {
         ByteArrayResource resource = new ByteArrayResource(videoBytes);
         // Creazione delle intestazioni HTTP

@@ -14,7 +14,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -62,7 +61,7 @@ public class ScheduledTasks {
 
 
     public void creaOroscopoGiornaliero() {
-        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + "oroscopo_giornaliero/immagini/";
+        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + GeneratorImage.folderOroscopoGiornalieroImmagine;
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
@@ -70,24 +69,25 @@ public class ScheduledTasks {
 
         logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
+        Util.eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
-        for (int numeroSegno = 1; numeroSegno <= 12; numeroSegno++) {
+        for (int numeroSegno = 0; numeroSegno <= 11; numeroSegno++) {
             OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
 
             if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
                     || oroscopoGiornaliero.getTestoOroscopo() == null) {
 
-                if(oroscopoGiornaliero == null){
+                if(oroscopoGiornaliero == null) {
                     oroscopoGiornaliero = new OroscopoGiornaliero();
                     oroscopoGiornaliero.setNumSegno(numeroSegno);
                     oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                 }
+
                 try {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
-                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno -1), giornoOraPosizioneDTO);
+                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno), giornoOraPosizioneDTO);
                         if(sBTestoOroscopoIA == null) {
                             logger.info("sBTestoOroscopo null: salto iterazione del ciclo della creazione del video");
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
@@ -100,6 +100,7 @@ public class ScheduledTasks {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     ArrayList<String> paragrafiTestoOroscopoIA = ServiziAstrologici.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
 
+
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
                     int fontSize = 25; Color textColor = Color.BLUE;
@@ -109,7 +110,7 @@ public class ScheduledTasks {
                     String dataOroscopoString = formatter.format( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
 
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
-                    ImageGenerator igenerat = new ImageGenerator();
+                    GeneratorImage igenerat = new GeneratorImage();
                     // Itera su ogni pezzo della stringa
                     for (int i = 0; i < paragrafiTestoOroscopoIA.size(); i++) {
                         String fileName = i + ".png";
@@ -119,11 +120,11 @@ public class ScheduledTasks {
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE VIDEO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
-                    byte[] videoBytes = VideoGenerator.createVideoFromImages(imagePath, nomeFileVideo );
+                    byte[] videoBytes = GeneratorVideo.createVideoFromImages(imagePath, nomeFileVideo );
 
                     try{
                         oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sBTestoOroscopoIA, giornoOraPosizioneDTO,
-                                videoBytes, nomeFileVideo + VideoGenerator.formatoVideo());
+                                videoBytes, nomeFileVideo + GeneratorVideo.formatoVideo());
 
                     } catch (DataIntegrityViolationException e) {
                         oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
@@ -131,7 +132,7 @@ public class ScheduledTasks {
                         oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopoIA.toString());
                         oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                         oroscopoGiornaliero.setVideo(videoBytes);
-                        oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + VideoGenerator.formatoVideo());
+                        oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + GeneratorVideo.formatoVideo());
                         oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
                     }
                 } catch (Exception e) {
@@ -151,7 +152,7 @@ public class ScheduledTasks {
 
         logger.info("elimino cartelle e file dal classpath...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
+        Util.eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
         logger.info("metto i video in cache...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -162,14 +163,6 @@ public class ScheduledTasks {
             }
         }
         logger.info("Fine Task creaOroscopoGiornaliero.");
-    }
-
-
-    private void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
-        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
-        Util.deleteDirectory(directoryImmagini);
-        File directoryVideo = new File(VideoGenerator.pathOroscopoGiornalieroVideo);
-        Util.deleteDirectory(directoryVideo);
     }
 
 

@@ -28,7 +28,7 @@ public class OpenAIGptAzure {
      */
     public StringBuilder eseguiOpenAIGptAzure_Instruct(String apiKey, int maxTokens, double temperature, String domandaBuilder, final String modelGpt) {
 
-        System.out.println("INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +"###################: ");
+        System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
         HttpClient httpClient = new NettyAsyncHttpClientBuilder().responseTimeout(Duration.ofSeconds( 30 )).build();
 

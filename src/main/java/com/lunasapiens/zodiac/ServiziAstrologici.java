@@ -32,27 +32,25 @@ public class ServiziAstrologici {
 
 
     public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
                 "Transiti: ";
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
         for (PianetaPosizione var : pianetiTransiti) {
-            if (var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[0]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[1]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[2]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[3]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[4]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[5]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[6]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[7]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[8]) ||
-                    var.getNomePianeta().equals(Constants.NAME_ITA_PLANET[9]) ) {
-                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n" ;
+            if (var.getNomePianeta().equals(Constants.Pianeti[0]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[1]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[2]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[3]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[4]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[5]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[6]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[7]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[8]) ||
+                    var.getNomePianeta().equals(Constants.Pianeti[9]) ) {
+                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegnoRiguardaSolo() + "\n" ;
             }
         }
-
 
         PianetiAspetti pianetiAspetti = new PianetiAspetti();
         ArrayList<String> aspetti = pianetiAspetti.verificaAspetti(pianetiTransiti);
@@ -63,10 +61,11 @@ public class ServiziAstrologici {
             }
         }
 
-        descrizioneOggi += "\n" + "Case Placide di oggi: ";
-        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            descrizioneOggi += var.descrizioneCasa();
-        }
+        // TODO le case placide non le uso più per l'oroscopo giornaliero
+        //descrizioneOggi += "\n" + "Case Placide di oggi: ";
+        //for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
+        //    descrizioneOggi += var.descrizioneCasa();
+        //}
 
         return descrizioneOggi;
     }
@@ -77,15 +76,15 @@ public class ServiziAstrologici {
         System.out.println("############################ TEXT IA ###################################");
 
         StringBuilder domandaBuilder = new StringBuilder();
-        domandaBuilder.append("Crea l'oroscopo del giorno (di circa 300 parole) per il segno del ").append(segno).append(". ").append("\n")
+        domandaBuilder.append("Crea l'oroscopo del giorno basandoti sui seguenti dati per il segno del ").append(segno).append(". ").append("\n")
                 .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/")
                 .append(giornoOraPosizioneDTO.getAnno()).append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":")
                 .append(giornoOraPosizioneDTO.getMinuti()).append("\n").append("Transiti: ");
 
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
         for (PianetaPosizione var : pianetiTransiti) {
-            if (Arrays.asList(Constants.NAME_ITA_PLANET).contains(var.getNomePianeta())) {
-                domandaBuilder.append(var.descrizionePianetaGradiRetrogrado());
+            if (Arrays.asList(Constants.Pianeti).contains(var.getNomePianeta())) {
+                domandaBuilder.append(var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegnoRiguardaSolo());
                 //System.out.println( var.toString() );
             }
         }
@@ -99,11 +98,13 @@ public class ServiziAstrologici {
             }
         }
 
-        domandaBuilder.append("\n").append("Case Placide: ");
-        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            domandaBuilder.append(var.descrizioneCasaGradi());
+        // TODO le case placide non le uso più per l'oroscopo giornaliero
+        //domandaBuilder.append("\n").append("Case Placide: ");
+        //for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
+        //    domandaBuilder.append(var.descrizioneCasaGradi());
             //System.out.println( var.toString() );
-        }
+        //}
+
 
         logger.info("DOMANDA: " + domandaBuilder.toString());
 
