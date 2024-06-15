@@ -67,7 +67,10 @@ public class IndexController {
 
     @GetMapping("/genera-video")
     public String gerneraVideo(Model model) {
-        scheduledTasks.creaOroscopoGiornaliero();
+
+        //scheduledTasks.creaOroscopoGiornaliero();
+        scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+
         return "index";
     }
 

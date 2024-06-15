@@ -6,10 +6,14 @@ import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 public class AAA_Prove {
+
+    private static final Logger logger = LoggerFactory.getLogger(AAA_Prove.class);
 
     public static void main(String[] args) {
 
@@ -22,7 +26,6 @@ public class AAA_Prove {
 
 
     public static void posizionePianetiSwiss() {
-
         /*
         int anno = 1995;
         int mese = 6;
@@ -32,7 +35,6 @@ public class AAA_Prove {
         double lat = 41.89;
         double lon = 12.48;
          */
-
         int giorno = 9;
         int mese = 6;
         int anno = 2024;
@@ -41,24 +43,16 @@ public class AAA_Prove {
         int minuti = 39;
         double lat = 41.89;
         double lon = 12.48;
-
-
         //---------------------------
-
-
-
-
-        //-----------------------------
-
+        /*
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(ora, minuti, giorno, mese, anno, lat, lon);
-
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-
         ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-
         PianetiAspetti pianetiAspetti = new PianetiAspetti( pianetiTransiti );
-
         ArrayList<CasePlacide> aa = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
+        */
+
+
 
 
 

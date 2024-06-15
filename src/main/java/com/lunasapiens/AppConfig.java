@@ -37,6 +37,21 @@ public class AppConfig implements WebMvcConfigurer {
     private Environment env;
 
     @Bean
+    public Properties AspettiPianeti() {
+        Properties properties = new Properties();
+        try (InputStream is = getClass().getResourceAsStream("/aspetti-pianeti.properties")) {
+            if (is != null) {
+                properties.load(is);
+            } else {
+                throw new FileNotFoundException("File properties non trovato");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nel caricamento del file properties", e);
+        }
+        return properties;
+    }
+
+    @Bean
     public Properties segniZodiacali() {
         Properties properties = new Properties();
         try (InputStream is = getClass().getResourceAsStream("/segni-zodiacali.properties")) {

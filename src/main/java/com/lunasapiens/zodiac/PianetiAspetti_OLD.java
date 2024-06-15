@@ -40,9 +40,9 @@ import java.util.ArrayList;
  */
 
 
-public class PianetiAspetti {
+public class PianetiAspetti_OLD {
 
-    private static final Logger logger = LoggerFactory.getLogger(PianetiAspetti.class);
+    private static final Logger logger = LoggerFactory.getLogger(PianetiAspetti_OLD.class);
 
     // Definisci i valori angolari degli aspetti principali
     private static final int CONGIUNZIONE = 0;
@@ -50,11 +50,11 @@ public class PianetiAspetti {
     private static final int QUADRATO = 90;
     private static final int TRIGONO = 120;
     private static final int OPPOSIZIONE = 180;
-    private static final int ORB = 2; // Orbita di tolleranza in gradi
+    private static final int ORB = 3; // Orbita di tolleranza in gradi
 
-    public PianetiAspetti() { }
+    public PianetiAspetti_OLD() { }
 
-    public PianetiAspetti(ArrayList<PianetaPosizione> pianeti) {
+    public PianetiAspetti_OLD(ArrayList<PianetaPosizione> pianeti) {
         ArrayList<String> aspetti = verificaAspetti(pianeti);
         for (String aspetto : aspetti) {
             logger.info(aspetto);

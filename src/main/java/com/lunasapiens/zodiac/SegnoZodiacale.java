@@ -1,16 +1,12 @@
 package com.lunasapiens.zodiac;
 
-import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
-@Component
+import java.util.Properties;
+
+
 public class SegnoZodiacale {
-
-    @Autowired
-    private AppConfig appConfig;
 
     private int numeroSegnoZodiacale;
     private String nomeSegnoZodiacale;
@@ -21,200 +17,204 @@ public class SegnoZodiacale {
     private String elemento;
     private String caratteristica;
 
-    private int[] pianetaSignoreDelSegno;
+    private int[] pianetiSignoreDelSegno;
     private int[] pianetainEsaltazione;
     private int[] pianetainEsilio;
     private int[] pianetainCaduta;
 
 
+    public SegnoZodiacale getSegnoZodiacale(int numeroSegno, Properties segniZodiacaliProperties) {
 
-    public void SegnoZodiacale(int numeroSegno) {
+        SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
+
         switch (numeroSegno) {
             case 0: // ariete
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(0);
-                this.elemento = Constants.segnoZodiacaleElemento.get(0);
-                this.caratteristica = "Impulsività";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(0);
+                segnoZodiacale.caratteristica = "Impulsività";
 
-                this.pianetaSignoreDelSegno = new int[]{ 4 };;
-                this.pianetainEsaltazione = new int[]{ 0 };;
-                this.pianetainEsilio = new int[]{ 3 };;
-                this.pianetainCaduta = new int[]{ 6 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 4 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 0 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 3 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 6 };;
                 break;
             case 1: // toro
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(1);
-                this.elemento = Constants.segnoZodiacaleElemento.get(1);
-                this.caratteristica = "Sforzo";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(1);
+                segnoZodiacale.caratteristica = "Sforzo";
 
-                this.pianetaSignoreDelSegno = new int[]{ 3 };;
-                this.pianetainEsaltazione = new int[]{ 1 };;
-                this.pianetainEsilio = new int[]{ 4 };;
-                this.pianetainCaduta = new int[]{ 7 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 3 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 1 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 4 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 7 };;
                 break;
             case 2: // gemelli
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(2);
-                this.elemento = Constants.segnoZodiacaleElemento.get(2);
-                this.caratteristica = "Dualità";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(2);
+                segnoZodiacale.caratteristica = "Dualità";
 
-                this.pianetaSignoreDelSegno = new int[]{ 2 };;
-                this.pianetainEsaltazione = new int[]{ 9 };;
-                this.pianetainEsilio = new int[]{ 5 };;
-                this.pianetainCaduta = null;;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 2 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 9 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 5 };;
+                segnoZodiacale.pianetainCaduta = null;;
                 break;
             case 3: // cancro
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(0);
-                this.elemento = Constants.segnoZodiacaleElemento.get(3);
-                this.caratteristica = "Passività";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(3);
+                segnoZodiacale.caratteristica = "Passività";
 
-                this.pianetaSignoreDelSegno = new int[]{ 1 };;
-                this.pianetainEsaltazione = new int[]{ 5 };;
-                this.pianetainEsilio = new int[]{ 6 };;
-                this.pianetainCaduta = new int[]{ 4 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 1 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 5 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 6 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 4 };;
                 break;
             case 4: // leone
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(1);
-                this.elemento = Constants.segnoZodiacaleElemento.get(0);
-                this.caratteristica = "Vitalità";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(0);
+                segnoZodiacale.caratteristica = "Vitalità";
 
-                this.pianetaSignoreDelSegno = new int[]{ 0 };;
-                this.pianetainEsaltazione = new int[]{ 8 };;
-                this.pianetainEsilio = new int[]{ 6, 7 };;
-                this.pianetainCaduta = null;;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 0 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 8 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 6, 7 };;
+                segnoZodiacale.pianetainCaduta = null;;
                 break;
             case 5: // vergine
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(2);
-                this.elemento = Constants.segnoZodiacaleElemento.get(1);
-                this.caratteristica = "Differenziazione";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(1);
+                segnoZodiacale.caratteristica = "Differenziazione";
 
-                this.pianetaSignoreDelSegno = new int[]{ 2 };;
-                this.pianetainEsaltazione = new int[]{ 2 };;
-                this.pianetainEsilio = new int[]{ 5, 8 };;
-                this.pianetainCaduta = new int[]{ 3 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 2 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 2 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 5, 8 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 3 };;
                 break;
             case 6: // bilancia
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(0);
-                this.elemento = Constants.segnoZodiacaleElemento.get(2);
-                this.caratteristica = "Sociovolezza";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(2);
+                segnoZodiacale.caratteristica = "Sociovolezza";
 
-                this.pianetaSignoreDelSegno = new int[]{ 3 };;
-                this.pianetainEsaltazione = new int[]{ 6 };;
-                this.pianetainEsilio = new int[]{ 4 };;
-                this.pianetainCaduta = new int[]{ 0, 9 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 3 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 6 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 4 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 0, 9 };;
                 break;
             case 7: // scorpione
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(1);
-                this.elemento = Constants.segnoZodiacaleElemento.get(3);
-                this.caratteristica = "Trasformazione";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(3);
+                segnoZodiacale.caratteristica = "Trasformazione";
 
-                this.pianetaSignoreDelSegno = new int[]{ 4 };;
-                this.pianetainEsaltazione = new int[]{ 7 };;
-                this.pianetainEsilio = new int[]{ 3 };;
-                this.pianetainCaduta = new int[]{ 1 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 4 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 7 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 3 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 1 };;
                 break;
             case 8: // sagittario
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(2);
-                this.elemento = Constants.segnoZodiacaleElemento.get(0);
-                this.caratteristica = "Dualità tra istinti e asprirazioni superiori";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(0);
+                segnoZodiacale.caratteristica = "Dualità tra istinti e asprirazioni superiori";
 
-                this.pianetaSignoreDelSegno = new int[]{ 5 };;
-                this.pianetainEsaltazione = null;;
-                this.pianetainEsilio = new int[]{ 2 };;
-                this.pianetainCaduta = null;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 5 };;
+                segnoZodiacale.pianetainEsaltazione = null;;
+                segnoZodiacale.pianetainEsilio = new int[]{ 2 };;
+                segnoZodiacale.pianetainCaduta = null;
                 break;
             case 9: // capricorno
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(0);
-                this.elemento = Constants.segnoZodiacaleElemento.get(1);
-                this.caratteristica = "Elevazione";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(1);
+                segnoZodiacale.caratteristica = "Elevazione";
 
-                this.pianetaSignoreDelSegno = new int[]{ 6 };;
-                this.pianetainEsaltazione = new int[]{ 4 };;
-                this.pianetainEsilio = new int[]{ 1, 9 };;
-                this.pianetainCaduta = new int[]{ 5 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 6 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 4 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 1, 9 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 5 };;
                 break;
             case 10: // acquario
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(0);
-                this.natura = Constants.segnoZodiacaleNatura.get(1);
-                this.elemento = Constants.segnoZodiacaleElemento.get(2);
-                this.caratteristica = "Passaggio a stati superiori";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(2);
+                segnoZodiacale.caratteristica = "Passaggio a stati superiori";
 
-                this.pianetaSignoreDelSegno = new int[]{ 7, 6 };;
-                this.pianetainEsaltazione = null;;
-                this.pianetainEsilio = new int[]{ 0 };;
-                this.pianetainCaduta = new int[]{ 8 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 7, 6 };;
+                segnoZodiacale.pianetainEsaltazione = null;;
+                segnoZodiacale.pianetainEsilio = new int[]{ 0 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 8 };;
                 break;
             case 11: // pesci
-                this.numeroSegnoZodiacale = numeroSegno;
-                this.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
-                this.descrizione = appConfig.segniZodiacali().getProperty( String.valueOf(numeroSegno) );
+                segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
+                segnoZodiacale.nomeSegnoZodiacale = Constants.segniZodiacali().get( numeroSegno );
+                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
 
-                this.genere = Constants.segnoZodiacaleGenere.get(1);
-                this.natura = Constants.segnoZodiacaleNatura.get(2);
-                this.elemento = Constants.segnoZodiacaleElemento.get(3);
-                this.caratteristica = "Mondo interiore";
+                segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
+                segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
+                segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(3);
+                segnoZodiacale.caratteristica = "Mondo interiore";
 
-                this.pianetaSignoreDelSegno = new int[]{ 5, 8 };;
-                this.pianetainEsaltazione = new int[]{ 3 };;
-                this.pianetainEsilio = new int[]{ 2 };;
-                this.pianetainCaduta = new int[]{ 2 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 5, 8 };;
+                segnoZodiacale.pianetainEsaltazione = new int[]{ 3 };;
+                segnoZodiacale.pianetainEsilio = new int[]{ 2 };;
+                segnoZodiacale.pianetainCaduta = new int[]{ 2 };;
                 break;
             default:
                 System.out.println("Scelta non valida. Inserisci un numero da 0 a 11.");
                 break;
         }
+        return segnoZodiacale;
     }
+
 
     public int getNumeroSegnoZodiacale() {
         return numeroSegnoZodiacale;
@@ -244,18 +244,34 @@ public class SegnoZodiacale {
         return caratteristica;
     }
 
-    public int[] getPianetaSignoreDelSegno() {
-        return pianetaSignoreDelSegno;
+    /**
+     * Sono quasi sempre solo 1, a parte acquario e pesci che ne hanno 2
+     * @return
+     */
+    public int[] getPianetiSignoreDelSegno() {
+        return pianetiSignoreDelSegno;
     }
 
+    /**
+     * Attenzione!!! alcuni segni non hanno pianeti e restituisce NULL
+     * @return
+     */
     public int[] getPianetainEsaltazione() {
         return pianetainEsaltazione;
     }
 
+    /**
+     * Attenzione!!! alcuni segni non hanno pianeti e restituisce NULL
+     * @return
+     */
     public int[] getPianetainEsilio() {
         return pianetainEsilio;
     }
 
+    /**
+     * Attenzione!!! alcuni segni non hanno pianeti e restituisce NULL
+     * @return
+     */
     public int[] getPianetainCaduta() {
         return pianetainCaduta;
     }

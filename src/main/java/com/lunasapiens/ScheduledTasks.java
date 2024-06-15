@@ -4,6 +4,8 @@ import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.zodiac.PianetaPosizione;
+import com.lunasapiens.zodiac.SegnoZodiacale;
 import com.lunasapiens.zodiac.ServiziAstrologici;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,7 @@ public class ScheduledTasks {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
+
     // (* secondi * minuti * ore * giorno del mese * mese * giorno della settimana)
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
     // settato per le 00:05 ogni giorno: "0 5 0 * * *"
@@ -58,6 +61,14 @@ public class ScheduledTasks {
         telegramBotClient.inviaMessaggio("executeTask_2 Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
         logger.info("executeTask_2 eseguito alle " + Util.getNowRomeEurope());
     }
+
+
+
+    public void test_Oroscopo_Segni_Transiti_Aspetti(){
+
+        serviziAstrologici.test_Oroscopo_Segni_Transiti_Aspetti();
+    }
+
 
 
     public void creaOroscopoGiornaliero() {
