@@ -25,7 +25,7 @@ public class ServiziAstrologici {
     @Autowired
     private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
-    private Double temperature = 0.3; private Integer maxTokens = 1500;
+    private Double temperature = 0.3; private Integer maxTokens = 2000;
 
 
 
