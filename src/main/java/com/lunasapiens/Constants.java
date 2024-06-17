@@ -14,6 +14,8 @@ public class Constants {
     public static final List<String> segnoZodiacaleNatura = Arrays.asList("Cardinale", "Fisso", "Mobile");
     public static final List<String> segnoZodiacaleElemento = Arrays.asList("Fuoco", "Terra", "Aria", "Acqua");
 
+    public static final String PIANETA_RETROGRADO = "Retrogrado";
+
     public enum Pianeti {
         SOLE(0, "Sole"),
         LUNA(1, "Luna"),

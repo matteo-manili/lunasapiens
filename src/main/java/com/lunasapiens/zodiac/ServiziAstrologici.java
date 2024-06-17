@@ -35,7 +35,7 @@ public class ServiziAstrologici {
 
 
     public void test_Oroscopo_Segni_Transiti_Aspetti() {
-        for(int numeroSegno = 10; numeroSegno <= 10; numeroSegno++) {
+        for(int numeroSegno = 4; numeroSegno <= 9; numeroSegno++) {
             test_Oroscopo_Segni_Transiti_Aspetti(numeroSegno);
         }
     }
@@ -43,7 +43,8 @@ public class ServiziAstrologici {
 
     public StringBuilder test_Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
         Properties segniZodDecrizProperties = appConfig.segniZodiacali();
-        Properties aspettiPianetiPorperties = appConfig.AspettiPianeti();
+        Properties aspettiPianetiProperties = appConfig.AspettiPianeti();
+        Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
         ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
@@ -65,46 +66,66 @@ public class ServiziAstrologici {
         //domandaBuilder.append( segnoDescrizione100Caratteri + "\n\n");
 
 
-        domandaBuilder.append("- Eventi di oggi:\n" );
+
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
-        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiPorperties);
-
-
+        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiProperties);
         List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
+        boolean presentePianetaRetrogrado = false;
+        boolean presentiAspetti = false;
         int contaEventi = 1;
+        domandaBuilder.append("- Eventi di oggi:\n" );
         for (int pianetaSig : pianetiSignori) {
             ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
-
 
             if(aspettiDelSegnoList.isEmpty()) {
                 PianetaPosizTransito pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianetaPosizTransito, pianetaSig);
                 domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
-                domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta()+": "+pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n\n");
+                domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta() + pianetaRetrogradoString(pianetaSenzaAspetti.isRetrogrado()) +
+                        pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n\n");
+                presentePianetaRetrogrado = presentePianetaRetrogrado || pianetaSenzaAspetti.isRetrogrado() ? true : false;
 
             }else{
+                presentiAspetti = true;
                 for(Aspetti aspettodelSegno: aspettiDelSegnoList) {
                     aspettiPresentiNelSegno.add(aspettodelSegno.getTipoAspetto());
                     PianetaPosizTransito pianetaTransito_1 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_1());
                     PianetaPosizTransito pianetaTransito_2 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_2());
                     domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                     if( pianetaTransito_1.getNumeroPianeta() == pianetaSig  ){
-                        domandaBuilder.append(pianetaTransito_1.getNomePianeta()+": "+pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
-                        domandaBuilder.append(pianetaTransito_2.getNomePianeta()+": "+pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_1.getNomePianeta() + pianetaRetrogradoString(pianetaTransito_1.isRetrogrado()) +
+                                pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_2.getNomePianeta() + pianetaRetrogradoString(pianetaTransito_2.isRetrogrado()) +
+                                pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
+                        presentePianetaRetrogrado = presentePianetaRetrogrado || pianetaTransito_1.isRetrogrado() || pianetaTransito_2.isRetrogrado() ? true : false;
+
                     }else{
-                        domandaBuilder.append(pianetaTransito_2.getNomePianeta()+": "+pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
-                        domandaBuilder.append(pianetaTransito_1.getNomePianeta()+": "+pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_2.getNomePianeta() + pianetaRetrogradoString(pianetaTransito_2.isRetrogrado()) +
+                                pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_1.getNomePianeta() + pianetaRetrogradoString(pianetaTransito_1.isRetrogrado()) +
+                                pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
+                        presentePianetaRetrogrado = presentePianetaRetrogrado || pianetaTransito_2.isRetrogrado() || pianetaTransito_1.isRetrogrado() ? true : false;
                     }
                     domandaBuilder.append("Tipo di Aspetto: "+aspettodelSegno.getTitoloAspetto() +"\n\n");
                 }
             }
         }
 
-        domandaBuilder.append("\n");
-        domandaBuilder.append("- Significato degli Aspetti:\n");
-        for (Constants.Aspetti aspetti : Constants.Aspetti.values()) {
-            if(aspettiPresentiNelSegno.contains(aspetti.getCode())) {
-                domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiPorperties.getProperty( String.valueOf(aspetti.getCode()))+"\n\n" );
+
+        if(presentiAspetti){
+            domandaBuilder.append("\n");
+            domandaBuilder.append("- Significato degli Aspetti:\n");
+            for (Constants.Aspetti aspetti : Constants.Aspetti.values()) {
+                if(aspettiPresentiNelSegno.contains(aspetti.getCode())) {
+                    domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspetti.getCode()))+"\n\n" );
+                }
             }
+        }
+
+
+        if(presentePianetaRetrogrado){
+            domandaBuilder.append("\n");
+            domandaBuilder.append("- Significato pianeta Retrogrado:\n");
+            domandaBuilder.append(pianetaRetrogradoProperties.getProperty( "0" ));
         }
 
 
@@ -114,6 +135,9 @@ public class ServiziAstrologici {
         return domandaBuilder;
     }
 
+    private String pianetaRetrogradoString(boolean pianetaRetrogrado){
+        return pianetaRetrogrado ? " ("+Constants.PIANETA_RETROGRADO+"): " : ": ";
+    }
 
     private ArrayList<PianetaPosizTransito> getPianetiPosizTransitoSegnoList(ArrayList<PianetaPosizTransito> pianetaPosizTransito, int[] pianetiSignor) {
         ArrayList<PianetaPosizTransito> pianetaPosizTransitoList = new ArrayList<>();;
@@ -175,7 +199,6 @@ public class ServiziAstrologici {
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
                 "Transiti: ";
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-
         for (PianetaPosizTransito var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
