@@ -177,7 +177,7 @@ public class ServiziAstrologici {
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
         for (PianetaPosizTransito var : pianetiTransiti) {
-            if (var.getNomePianeta().equals(Constants.Pianeti.fromNumero(0).getNumero()) ||
+            if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
@@ -199,12 +199,7 @@ public class ServiziAstrologici {
             }
         }
 
-
         // TODO le case placide non le uso più per l'oroscopo giornaliero
-        //descrizioneOggi += "\n" + "Case Placide di oggi: ";
-        //for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-        //    descrizioneOggi += var.descrizioneCasa();
-        //}
 
         return descrizioneOggi;
     }
@@ -214,50 +209,17 @@ public class ServiziAstrologici {
 
         System.out.println("############################ TEXT IA ###################################");
 
-        /*
-        StringBuilder domandaBuilder = new StringBuilder();
-        domandaBuilder.append("Crea l'oroscopo del giorno basandoti sui seguenti dati per il segno del ").append(segno).append(". ").append("\n")
-                .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/")
-                .append(giornoOraPosizioneDTO.getAnno()).append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":")
-                .append(giornoOraPosizioneDTO.getMinuti()).append("\n").append("Transiti: ");
-
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-        for (PianetaPosizTransito var : pianetiTransiti) {
-            if (Arrays.asList(Constants.Pianeti).contains(var.getNomePianeta())) {
-                domandaBuilder.append(var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
-                //System.out.println( var.toString() );
-            }
-        }
-
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
-        if(!aspetti.isEmpty()){
-            domandaBuilder.append("\n" + "Aspetti: ");
-            for(Aspetti var: aspetti) {
-                domandaBuilder.append(var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+".");
-            }
-        }
-
-        */
 
 
         // TODO le case placide non le uso più per l'oroscopo giornaliero
-        //domandaBuilder.append("\n").append("Case Placide: ");
-        //for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-        //    domandaBuilder.append(var.descrizioneCasaGradi());
-            //System.out.println( var.toString() );
-        //}
-
-
-
-
-
         /*
-        BuildInfoAstrologiaAstroLib buildInfoAstroAstroLib = new BuildInfoAstrologiaAstroLib(giornoOraPosizioneDTO);
-        buildInfoAstroAstroLib.getCasePlacide();
-        for (CasePlacide var : buildInfoAstroAstroLib.getCasePlacide()) {
-            System.out.println("AstroLib: "+ var.toString() );
+        domandaBuilder.append("\n").append("Case Placide: ");
+        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
+            domandaBuilder.append(var.descrizioneCasaGradi());
+            System.out.println( var.toString() );
         }
          */
+
 
 
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
@@ -269,7 +231,6 @@ public class ServiziAstrologici {
 
         we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
                 appConfig.getParamOpenAi().getModelGpt3_5());
-
          */
 
         StringBuilder domanda = test_Oroscopo_Segni_Transiti_Aspetti(segno);

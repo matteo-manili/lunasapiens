@@ -55,7 +55,6 @@ public class Constants {
     }
 
 
-
     public enum SegniZodiacali {
         ARIETE(0, "Ariete"),
         TORO(1, "Toro"),
@@ -97,7 +96,6 @@ public class Constants {
             return nomi;
         }
     }
-
 
 
     public enum Aspetti {
