@@ -25,7 +25,7 @@ public class OroscopoGiornalieroDTO {
         this.testoOroscopo = oroscopoGiornaliero.getTestoOroscopo();
         this.dataOroscopo = oroscopoGiornaliero.getDataOroscopo();
         this.nomeFileVideo = oroscopoGiornaliero.getNomeFileVideo();
-        this.nomeSegnoZodiacale = Constants.segnoZodiacale(oroscopoGiornaliero.getNumSegno());
+        this.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(oroscopoGiornaliero.getNumSegno()).getNome();
 
         String testoOroscopoRifinito = oroscopoGiornaliero.getTestoOroscopo().replace("\n", "<br>");
         //Questa espressione regolare viene utilizzata per rimuovere tutti i tag <br> che si trovano all'inizio della stringa,

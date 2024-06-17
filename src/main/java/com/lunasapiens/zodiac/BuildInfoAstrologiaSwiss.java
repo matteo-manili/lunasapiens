@@ -64,11 +64,11 @@ public class BuildInfoAstrologiaSwiss {
      * @param giornOraPosDTO
      * @return
      */
-    public ArrayList<PianetaPosizione> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO) {
+    public ArrayList<PianetaPosizTransito> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO) {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());
-        ArrayList<PianetaPosizione> pianetaPosizioneArrayList = new ArrayList<PianetaPosizione>();
+        ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList = new ArrayList<PianetaPosizTransito>();
 
         double[] position = new double[6]; // Ecli
 
@@ -113,19 +113,19 @@ public class BuildInfoAstrologiaSwiss {
                 Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
                 String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
 
-                PianetaPosizione pianetaPosizione = new PianetaPosizione(i, Constants.Pianeti[i], position[0], 0, 0,
+                PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(i, Constants.Pianeti.fromNumero(i).getNome(), position[0], 0, 0,
                         entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
 
-                pianetaPosizioneArrayList.add(pianetaPosizione);
+                pianetaPosizTransitoArrayList.add(pianetaPosizTransito);
 
-                logger.info("Result: "+result +" "+ Constants.Pianeti[i] + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
+                logger.info("Result: "+result +" "+ Constants.Pianeti.fromNumero(i).getNome() + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
             } else {
                 // Print error message if calculation failed
                 System.err.println("Calculation failed with error code: " + result);
             }
         }
         swissEph.swe_close();
-        return pianetaPosizioneArrayList;
+        return pianetaPosizTransitoArrayList;
     }
 
 

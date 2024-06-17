@@ -54,7 +54,7 @@ public class PianetiTransiti {
 
     public PianetiTransiti() { }
 
-    public PianetiTransiti(ArrayList<PianetaPosizione> pianeti) {
+    public PianetiTransiti(ArrayList<PianetaPosizTransito> pianeti) {
         ArrayList<String> aspetti = verificaAspetti(pianeti);
         for (String aspetto : aspetti) {
             logger.info(aspetto);
@@ -63,13 +63,13 @@ public class PianetiTransiti {
 
 
 
-    public ArrayList<String> verificaAspetti(ArrayList<PianetaPosizione> pianeti) {
+    public ArrayList<String> verificaAspetti(ArrayList<PianetaPosizTransito> pianeti) {
         ArrayList<String> aspetti = new ArrayList<>();
 
         for (int i = 0; i < pianeti.size(); i++) {
             for (int j = i + 1; j < pianeti.size(); j++) {
-                PianetaPosizione p1 = pianeti.get(i);
-                PianetaPosizione p2 = pianeti.get(j);
+                PianetaPosizTransito p1 = pianeti.get(i);
+                PianetaPosizTransito p2 = pianeti.get(j);
 
                 double angolo1 = p1.getGradi();
                 double angolo2 = p2.getGradi();

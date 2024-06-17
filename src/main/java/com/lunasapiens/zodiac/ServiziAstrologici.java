@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 @Component
@@ -24,80 +25,147 @@ public class ServiziAstrologici {
     @Autowired
     private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
-
-    // ######################## FINE SOLO PER TEST ################
-
-    private Double temperature = 1.0; private Integer maxTokens = 800;
+    private Double temperature = 0.3; private Integer maxTokens = 1500;
 
 
-    public StringBuilder oroscopoDelGiornoIA(String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+
+    public StringBuilder oroscopoDelGiornoIA(int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
     }
 
 
     public void test_Oroscopo_Segni_Transiti_Aspetti() {
+        for(int numeroSegno = 10; numeroSegno <= 10; numeroSegno++) {
+            test_Oroscopo_Segni_Transiti_Aspetti(numeroSegno);
+        }
+    }
 
+
+    public StringBuilder test_Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
         Properties segniZodDecrizProperties = appConfig.segniZodiacali();
         Properties aspettiPianetiPorperties = appConfig.AspettiPianeti();
 
-
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-        ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
+        ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
-        for(int numeroSegno = 9; numeroSegno <= 11; numeroSegno++) {
 
-            System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
+        System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
-            SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
-            StringBuilder domandaBuilder = new StringBuilder();
+        SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
+        StringBuilder domandaBuilder = new StringBuilder();
 
-            domandaBuilder.append("Crea l'oroscopo del giorno basandoti sui seguenti dati per il segno " +Constants.segniZodiacali().get(numeroSegno) +".\n \n" );
+        domandaBuilder.append("Tu sei un astrologo che risponde in base ai dati forniti, senza inventare e aggiungere nulla.\n" +
+                "Scrivi l'oroscopo del giorno per l'utente del segno del " +Constants.SegniZodiacali.fromNumero(numeroSegno).getNome()+". L'oroscopo deve argomentare gli eventi di oggi declinandoli agli aspetti.\n\n" );
 
-            SegnoZodiacale segnoZod = segnoZodiacale.getSegnoZodiacale( numeroSegno, segniZodDecrizProperties );
 
-            String segnoDescrizione100Caratteri = segnoZod.getDescrizione().substring(0, Math.min(segnoZod.getDescrizione().length(), 300));
+        domandaBuilder.append("- Descrizione segno zodiacale:\n" );
+        SegnoZodiacale segnoZod = segnoZodiacale.getSegnoZodiacale( numeroSegno, segniZodDecrizProperties );
+        domandaBuilder.append( segnoZod.getDescrizioneMin() + "\n \n");
+        //String segnoDescrizione100Caratteri = segnoZod.getDescrizione().substring(0, Math.min(segnoZod.getDescrizione().length(), 300));
+        //domandaBuilder.append( segnoDescrizione100Caratteri + "\n\n");
 
-            domandaBuilder.append( segnoDescrizione100Caratteri + "\n \n");
-            //domandaBuilder.append( segnoZod.getDescrizione() + "\n \n");
 
-            int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
+        domandaBuilder.append("- Eventi di oggi:\n" );
+        int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
+        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiPorperties);
 
-            for (int pianeta : pianetiSignori) {
-                for (PianetaPosizione var : pianetiTransiti) {
-                    if (var.getNumeroPianeta() == pianeta ) {
-                        domandaBuilder.append(var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n");
-                        //System.out.println( var.toString() );
+
+        List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
+        int contaEventi = 1;
+        for (int pianetaSig : pianetiSignori) {
+            ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
+
+
+            if(aspettiDelSegnoList.isEmpty()) {
+                PianetaPosizTransito pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianetaPosizTransito, pianetaSig);
+                domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
+                domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta()+": "+pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n\n");
+
+            }else{
+                for(Aspetti aspettodelSegno: aspettiDelSegnoList) {
+                    aspettiPresentiNelSegno.add(aspettodelSegno.getTipoAspetto());
+                    PianetaPosizTransito pianetaTransito_1 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_1());
+                    PianetaPosizTransito pianetaTransito_2 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_2());
+                    domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
+                    if( pianetaTransito_1.getNumeroPianeta() == pianetaSig  ){
+                        domandaBuilder.append(pianetaTransito_1.getNomePianeta()+": "+pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_2.getNomePianeta()+": "+pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
+                    }else{
+                        domandaBuilder.append(pianetaTransito_2.getNomePianeta()+": "+pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
+                        domandaBuilder.append(pianetaTransito_1.getNomePianeta()+": "+pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
                     }
+                    domandaBuilder.append("Tipo di Aspetto: "+aspettodelSegno.getTitoloAspetto() +"\n\n");
                 }
             }
+        }
 
-
-            ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, aspettiPianetiPorperties);
-            if(!aspetti.isEmpty()){
-                domandaBuilder.append("\n" + "Aspetti: ");
-                for(Aspetti var: aspetti) {
-                    int[] pianetiSignor = segnoZod.getPianetiSignoreDelSegno();
-
-                    int numeroPianeta1 = var.getNumeroPianeta_1();
-                    int numeroPianeta2 = var.getNumeroPianeta_2();
-
-                    boolean pianeta1Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_1());
-                    boolean pianeta2Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_2());
-
-                    if (pianeta1Presente || pianeta2Presente) {
-                        domandaBuilder.append("#-# "+var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()
-                                + " Significato: "+var.getSignificatoAspetto()+"\n");
-                    }
-                }
+        domandaBuilder.append("\n");
+        domandaBuilder.append("- Significato degli Aspetti:\n");
+        for (Constants.Aspetti aspetti : Constants.Aspetti.values()) {
+            if(aspettiPresentiNelSegno.contains(aspetti.getCode())) {
+                domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiPorperties.getProperty( String.valueOf(aspetti.getCode()))+"\n\n" );
             }
-
-
-            System.out.println( domandaBuilder.toString() );
-            System.out.println( "---------- fine segno "+numeroSegno +" ----------" );
         }
 
 
+        System.out.println( domandaBuilder.toString() );
+        System.out.println( "---------- fine segno "+numeroSegno +" ----------" );
+
+        return domandaBuilder;
     }
+
+
+    private ArrayList<PianetaPosizTransito> getPianetiPosizTransitoSegnoList(ArrayList<PianetaPosizTransito> pianetaPosizTransito, int[] pianetiSignor) {
+        ArrayList<PianetaPosizTransito> pianetaPosizTransitoList = new ArrayList<>();;
+        for(PianetaPosizTransito var : pianetaPosizTransito) {
+            for (int pianetaSig : pianetiSignor) {
+                if(var.getNumeroPianeta() == pianetaSig){
+                    pianetaPosizTransitoList.add(var);
+                }
+            }
+        }
+        return pianetaPosizTransitoList;
+    }
+
+    private PianetaPosizTransito getPianetaPosizTransitoSegno(ArrayList<PianetaPosizTransito> pianetaPosizTransitoTuttiList, int pianeta) {
+        PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito();
+        for(PianetaPosizTransito var : pianetaPosizTransitoTuttiList) {
+            if(var.getNumeroPianeta() == pianeta){
+                pianetaPosizTransito = var;
+            }
+        }
+        return pianetaPosizTransito;
+    }
+
+    private ArrayList<Aspetti> getAspettiPianetiSignoriList(ArrayList<Aspetti> aspetti, int[] pianetiSignor) {
+        ArrayList<Aspetti> aspettiSegnoList = new ArrayList<>();;
+        if(!aspetti.isEmpty()){
+            for(Aspetti var: aspetti) {
+                int numeroPianeta1 = var.getNumeroPianeta_1(); int numeroPianeta2 = var.getNumeroPianeta_2();
+                boolean pianeta1Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_1());
+                boolean pianeta2Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_2());
+                if (pianeta1Presente || pianeta2Presente) {
+                    aspettiSegnoList.add(var);
+                }
+            }
+        }
+        return aspettiSegnoList;
+    }
+
+    private ArrayList<Aspetti> getAspettiPianetaList(ArrayList<Aspetti> aspetti, int pianeta) {
+        ArrayList<Aspetti> aspettiSegnoList = new ArrayList<>();;
+        if (!aspetti.isEmpty()) {
+            for (Aspetti var : aspetti) {
+                int numeroPianeta1 = var.getNumeroPianeta_1(); int numeroPianeta2 = var.getNumeroPianeta_2();
+                // Controlla se uno dei due pianeti è uguale al pianeta passato
+                if (numeroPianeta1 == pianeta || numeroPianeta2 == pianeta) {
+                    aspettiSegnoList.add(var);
+                }
+            }
+        }
+        return aspettiSegnoList;
+    }
+
 
 
 
@@ -106,20 +174,20 @@ public class ServiziAstrologici {
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
                 "Transiti: ";
-        ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
 
-        for (PianetaPosizione var : pianetiTransiti) {
-            if (var.getNomePianeta().equals(Constants.Pianeti[0]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[1]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[2]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[3]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[4]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[5]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[6]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[7]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[8]) ||
-                    var.getNomePianeta().equals(Constants.Pianeti[9]) ) {
-                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n" ;
+        for (PianetaPosizTransito var : pianetiTransiti) {
+            if (var.getNomePianeta().equals(Constants.Pianeti.fromNumero(0).getNumero()) ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(4).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(5).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(6).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero() ) {
+                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n";
             }
         }
 
@@ -127,7 +195,7 @@ public class ServiziAstrologici {
         if(!aspetti.isEmpty()){
             descrizioneOggi += "\n" + "Aspetti: ";
             for(Aspetti var: aspetti) {
-                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName();
+                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
             }
         }
 
@@ -142,24 +210,24 @@ public class ServiziAstrologici {
     }
 
 
-    public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, String segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
 
         System.out.println("############################ TEXT IA ###################################");
 
+        /*
         StringBuilder domandaBuilder = new StringBuilder();
         domandaBuilder.append("Crea l'oroscopo del giorno basandoti sui seguenti dati per il segno del ").append(segno).append(". ").append("\n")
                 .append("Oggi è: ").append(giornoOraPosizioneDTO.getGiorno()).append("/").append(giornoOraPosizioneDTO.getMese()).append("/")
                 .append(giornoOraPosizioneDTO.getAnno()).append(" ore ").append(giornoOraPosizioneDTO.getOra()).append(":")
                 .append(giornoOraPosizioneDTO.getMinuti()).append("\n").append("Transiti: ");
 
-        ArrayList<PianetaPosizione> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-        for (PianetaPosizione var : pianetiTransiti) {
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
+        for (PianetaPosizTransito var : pianetiTransiti) {
             if (Arrays.asList(Constants.Pianeti).contains(var.getNomePianeta())) {
                 domandaBuilder.append(var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
                 //System.out.println( var.toString() );
             }
         }
-
 
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
         if(!aspetti.isEmpty()){
@@ -168,6 +236,8 @@ public class ServiziAstrologici {
                 domandaBuilder.append(var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+".");
             }
         }
+
+        */
 
 
         // TODO le case placide non le uso più per l'oroscopo giornaliero
@@ -178,7 +248,7 @@ public class ServiziAstrologici {
         //}
 
 
-        logger.info("DOMANDA: " + domandaBuilder.toString());
+
 
 
         /*
@@ -202,8 +272,11 @@ public class ServiziAstrologici {
 
          */
 
+        StringBuilder domanda = test_Oroscopo_Segni_Transiti_Aspetti(segno);
+        //logger.info("DOMANDA: " + domanda);
+
         OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
-        return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+        return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
                 appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
 
 

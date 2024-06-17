@@ -138,7 +138,7 @@ public class Util {
      */
     public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
         Map<Integer, String> segniZodiacali = new HashMap<>();
-        ArrayList<String> nomiSegni = Constants.segniZodiacali();
+        List<String> nomiSegni = Constants.SegniZodiacali.getAllNomi();
         if (grado >= 0 && grado < 30) {                 // Ariete
             segniZodiacali.put(0, nomiSegni.get(0));
         } else if (grado >= 30 && grado < 60) {         // Toro

@@ -68,8 +68,9 @@ public class IndexController {
     @GetMapping("/genera-video")
     public String gerneraVideo(Model model) {
 
-        //scheduledTasks.creaOroscopoGiornaliero();
-        scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        scheduledTasks.creaOroscopoGiornaliero();
+
 
         return "index";
     }
@@ -85,7 +86,7 @@ public class IndexController {
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
-        for (OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+        for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
             listOroscopoGiornoDTO.add(dto);
         }

@@ -15,6 +15,23 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Misuratore di tokens per domanda. Copia e incolla la domanda e ti dici quanti token vengono calcoltati https://platform.openai.com/tokenizer
+ *
+ * gpt-4o	New GPT-4o
+ * Our most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo. Currently points to gpt-4o-2024-05-13.	128,000 tokens
+ * PREZZO gpt-4o input: 5,00 USD/1M tokens. Output: 15,00 USD/1M tokens
+ *
+ * gpt-3.5-turbo-0125	The latest GPT-3.5 Turbo model with higher accuracy at responding in requested formats and a fix for a bug which caused a
+ * text encoding issue for non-English language function calls. Returns a maximum of 4,096 output tokens. Learn more.	16,385 tokens
+ * PREZZO gpt-3.5-turbo-0125 input: 0,50 USD/1M tokens. Output: 1,50 USD/1M tokens
+ *
+ * gpt-3.5-turbo-instruct Similar capabilities as GPT-3 era models. Compatible with legacy Completions endpoint and not Chat Completions.
+ * PREZZO gpt-3.5-turbo-instruct input: 1,50 USD/1M tokens. Output: 2,00 USD/1M tokens
+ */
+
+
 public class OpenAIGptAzure {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAIGptAzure.class);

@@ -1,5 +1,6 @@
 package com.lunasapiens.zodiac;
 
+import com.lunasapiens.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +99,10 @@ public class Aspetti {
         this.nomePianeta_2 = nomePianeta_2;
         this.tipoAspetto = tipoAspetto;
         this.significatoAspetto = significatoAspetto;
+    }
+
+    public String getTitoloAspetto() {
+        return  nomePianeta_1 +" e "+nomePianeta_2 +" sono in "+Constants.Aspetti.fromCode( tipoAspetto ).getName();
     }
 
 

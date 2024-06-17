@@ -109,14 +109,14 @@ public class CalcoloAspetti {
 
 
 
-    public static ArrayList<Aspetti> verificaAspetti(ArrayList<PianetaPosizione> pianeti, Properties AspettiPianeti) {
+    public static ArrayList<Aspetti> verificaAspetti(ArrayList<PianetaPosizTransito> pianeti, Properties aspettiPianeti) {
 
         ArrayList<Aspetti> aspettiArrayList = new ArrayList<>();
 
         for (int i = 0; i < pianeti.size(); i++) {
             for (int j = i + 1; j < pianeti.size(); j++) {
-                PianetaPosizione p1 = pianeti.get(i);
-                PianetaPosizione p2 = pianeti.get(j);
+                PianetaPosizTransito p1 = pianeti.get(i);
+                PianetaPosizTransito p2 = pianeti.get(j);
 
                 double angolo1 = p1.getGradi();
                 double angolo2 = p2.getGradi();
@@ -128,24 +128,23 @@ public class CalcoloAspetti {
 
                 if (isAspetto(differenzaAngolare, CONGIUNZIONE, ORB_CONGIUNZIONE)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.CONGIUNZIONE.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.CONGIUNZIONE.getCode()) )));
-
+                            Constants.Aspetti.fromCode(Constants.Aspetti.CONGIUNZIONE.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.CONGIUNZIONE.getCode()) )));
 
                 } else if (isAspetto(differenzaAngolare, SESTILE, ORB_SESTILE)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.SESTILE.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.SESTILE.getCode()) )));
+                            Constants.Aspetti.fromCode(Constants.Aspetti.SESTILE.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.SESTILE.getCode()) )));
 
                 } else if (isAspetto(differenzaAngolare, QUADRATO, ORB_QUADRATO)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.QUADRATO.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.QUADRATO.getCode()) )));
+                            Constants.Aspetti.fromCode(Constants.Aspetti.QUADRATO.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.QUADRATO.getCode()) )));
 
                 } else if (isAspetto(differenzaAngolare, TRIGONO, ORB_TRIGONO)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.TRIGONO.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.TRIGONO.getCode()) )));
+                            Constants.Aspetti.fromCode(Constants.Aspetti.TRIGONO.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.TRIGONO.getCode()) )));
 
                 } else if (isAspetto(differenzaAngolare, OPPOSIZIONE, ORB_OPPOSIZIONE)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.OPPOSIZIONE.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.OPPOSIZIONE.getCode()) )));
+                            Constants.Aspetti.fromCode(Constants.Aspetti.OPPOSIZIONE.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.OPPOSIZIONE.getCode()) )));
                 }
                 /* else if (isAspetto(differenzaAngolare, SEMISESTILE, ORB_MINORE)) {
                     aspetti.add(p1.getNomePianeta() + " e " + p2.getNomePianeta() + " sono in Semisestile");
@@ -155,7 +154,7 @@ public class CalcoloAspetti {
                     aspetti.add(p1.getNomePianeta() + " e " + p2.getNomePianeta() + " sono in Sesquiquadrato"); */
                 else if (isAspetto(differenzaAngolare, QUINCONCE, ORB_MINORE)) {
                     aspettiArrayList.add(new Aspetti(p1.getNumeroPianeta(), p1.getNomePianeta(), p2.getNumeroPianeta(), p2.getNomePianeta(),
-                            Constants.Aspetti.fromCode(Constants.Aspetti.QUINCUNX.getCode()).getCode(), AspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.QUINCUNX.getCode()) )));
+                            Constants.Aspetti.fromCode(Constants.Aspetti.QUINCUNX.getCode()).getCode(), aspettiPianeti.getProperty( String.valueOf(Constants.Aspetti.QUINCUNX.getCode()) )));
                 }
 
             }

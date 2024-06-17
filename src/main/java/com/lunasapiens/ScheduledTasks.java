@@ -4,8 +4,6 @@ import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
-import com.lunasapiens.zodiac.PianetaPosizione;
-import com.lunasapiens.zodiac.SegnoZodiacale;
 import com.lunasapiens.zodiac.ServiziAstrologici;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +96,7 @@ public class ScheduledTasks {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
-                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA(Constants.segniZodiacali().get(numeroSegno), giornoOraPosizioneDTO);
+                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA( numeroSegno, giornoOraPosizioneDTO);
                         if(sBTestoOroscopoIA == null) {
                             logger.info("sBTestoOroscopo null: salto iterazione del ciclo della creazione del video");
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.

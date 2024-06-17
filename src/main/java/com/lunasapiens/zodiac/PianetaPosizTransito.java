@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
 
-public class PianetaPosizione {
+public class PianetaPosizTransito {
 
     private int numeroPianeta;
     private String nomePianeta;
@@ -16,8 +16,8 @@ public class PianetaPosizione {
     private String significatoPianetaSegno;
 
 
-    public PianetaPosizione(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
-        String significatoPianetaSegno) {
+    public PianetaPosizTransito(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
+                                String significatoPianetaSegno) {
         this.numeroPianeta = numeroPianeta;
         this.nomePianeta = nomePianeta;
         this.gradi = gradi;
@@ -28,6 +28,8 @@ public class PianetaPosizione {
         this.retrogrado = retrogrado;
         this.significatoPianetaSegno = significatoPianetaSegno;
     }
+
+    public PianetaPosizTransito() { }
 
     public int getNumeroPianeta() { return numeroPianeta; }
 
