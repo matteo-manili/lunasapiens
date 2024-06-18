@@ -91,14 +91,13 @@ public class ScheduledTasks {
                     oroscopoGiornaliero.setNumSegno(numeroSegno);
                     oroscopoGiornaliero.setDataOroscopo( Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
                 }
-
                 try {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
                         sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA( numeroSegno, giornoOraPosizioneDTO);
-                        if(sBTestoOroscopoIA == null) {
-                            logger.info("sBTestoOroscopo null: salto iterazione del ciclo della creazione del video");
+                        if(sBTestoOroscopoIA == null || sBTestoOroscopoIA.length() == 0) {
+                            logger.error("sBTestoOroscopo null: Risposta nulla dalla IA. Salto iterazione del ciclo della creazione del video");
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
                             continue;
                         }
