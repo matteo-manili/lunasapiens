@@ -79,7 +79,7 @@ public class IndexController {
     @GetMapping("/invia-email")
     public String inviaEmail(Model model) {
 
-        emailService.sendEmail("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
+        emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
         return "index";
     }
 

@@ -183,6 +183,8 @@ public class AppConfig implements WebMvcConfigurer {
         props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable"));
         props.put("mail.debug", env.getProperty("mail.debug"));
 
+        // Set the default from address
+        mailSender.setJavaMailProperties(props);
         return mailSender;
     }
 
