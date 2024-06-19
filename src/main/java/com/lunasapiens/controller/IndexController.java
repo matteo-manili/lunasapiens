@@ -4,6 +4,7 @@ import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
+import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
 import org.slf4j.Logger;
@@ -35,6 +36,8 @@ public class IndexController {
     @Autowired
     ServiziAstrologici servAstrolog;
 
+    @Autowired
+    private EmailService emailService;
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
@@ -70,8 +73,13 @@ public class IndexController {
 
         //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
         scheduledTasks.creaOroscopoGiornaliero();
+        return "index";
+    }
 
+    @GetMapping("/invia-email")
+    public String inviaEmail(Model model) {
 
+        emailService.sendEmail("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
         return "index";
     }
 

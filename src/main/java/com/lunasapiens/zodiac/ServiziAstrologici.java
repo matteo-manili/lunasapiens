@@ -25,7 +25,7 @@ public class ServiziAstrologici {
     @Autowired
     private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
-    private Double temperature = 0.2; private Integer maxTokens = 2500;
+    private Double temperature = 0.4; private Integer maxTokens = 2500;
 
 
 
@@ -67,13 +67,10 @@ public class ServiziAstrologici {
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
         ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiProperties);
         List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
-        boolean presentePianetaRetrogrado = false;
-        boolean presentiAspetti = false;
-        int contaEventi = 1;
+        boolean presentePianetaRetrogrado = false; boolean presentiAspetti = false; int contaEventi = 1;
         domandaBuilder.append("- Eventi di oggi:\n" );
         for (int pianetaSig : pianetiSignori) {
             ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
-
             if(aspettiDelSegnoList.isEmpty()) {
                 PianetaPosizTransito pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianetaPosizTransito, pianetaSig);
                 domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
@@ -83,7 +80,6 @@ public class ServiziAstrologici {
                 }
                 domandaBuilder.append("\n");
                 presentePianetaRetrogrado = presentePianetaRetrogrado || pianetaSenzaAspetti.isRetrogrado() ? true : false;
-
             }else{
                 presentiAspetti = true;
                 for(Aspetti aspettodelSegno: aspettiDelSegnoList) {
@@ -170,21 +166,6 @@ public class ServiziAstrologici {
         return pianetaPosizTransito;
     }
 
-    private ArrayList<Aspetti> getAspettiPianetiSignoriList(ArrayList<Aspetti> aspetti, int[] pianetiSignor) {
-        ArrayList<Aspetti> aspettiSegnoList = new ArrayList<>();;
-        if(!aspetti.isEmpty()){
-            for(Aspetti var: aspetti) {
-                int numeroPianeta1 = var.getNumeroPianeta_1(); int numeroPianeta2 = var.getNumeroPianeta_2();
-                boolean pianeta1Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_1());
-                boolean pianeta2Presente = Arrays.stream(pianetiSignor).anyMatch(p -> p == var.getNumeroPianeta_2());
-                if (pianeta1Presente || pianeta2Presente) {
-                    aspettiSegnoList.add(var);
-                }
-            }
-        }
-        return aspettiSegnoList;
-    }
-
     private ArrayList<Aspetti> getAspettiPianetaList(ArrayList<Aspetti> aspetti, int pianeta) {
         ArrayList<Aspetti> aspettiSegnoList = new ArrayList<>();;
         if (!aspetti.isEmpty()) {
@@ -200,9 +181,11 @@ public class ServiziAstrologici {
     }
 
 
-
-
-
+    /**
+     * questo va sulla pagina front-end
+     * @param giornoOraPosizioneDTO
+     * @return
+     */
     public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
@@ -222,7 +205,6 @@ public class ServiziAstrologici {
                 descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n";
             }
         }
-
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
         if(!aspetti.isEmpty()){
             descrizioneOggi += "\n" + "Aspetti: ";
@@ -230,18 +212,11 @@ public class ServiziAstrologici {
                 descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
             }
         }
-
-        // TODO le case placide non le uso più per l'oroscopo giornaliero
-
         return descrizioneOggi;
     }
 
 
     public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
-
-        System.out.println("############################ TEXT IA ###################################");
-
-
 
         // TODO le case placide non le uso più per l'oroscopo giornaliero
         /*
@@ -251,9 +226,6 @@ public class ServiziAstrologici {
             System.out.println( var.toString() );
         }
          */
-
-
-
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
         /*
@@ -271,9 +243,6 @@ public class ServiziAstrologici {
         OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
         return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
                 appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
-
-
-        //########################################## FINE #########################
 
     }
 

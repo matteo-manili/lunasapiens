@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -96,6 +98,35 @@ public class AppConfig implements WebMvcConfigurer {
         return properties;
     }
 
+    @Bean
+    public FacebookConfig getfacebookConfig() {
+        FacebookConfig facebookConfig;
+        try{
+            facebookConfig = new FacebookConfig(
+                    env.getProperty("api.facebook.version"),
+                    env.getProperty("api.facebook.appid"),
+                    env.getProperty("api.facebook.appsecret"),
+                    env.getProperty("api.facebook.accesstoken"),
+                    env.getProperty("api.facebook.pageaccesstoken"));
+
+        } catch (IllegalArgumentException e) {
+            // In caso di eccezione, utilizza il file di configurazione esterno
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+                properties.load(fis);
+
+                facebookConfig = new FacebookConfig(
+                        properties.getProperty("api.facebook.version"),
+                        properties.getProperty("api.facebook.appid"),
+                        properties.getProperty("api.facebook.appsecret"),
+                        properties.getProperty("api.facebook.accesstoken"),
+                        properties.getProperty("api.facebook.pageaccesstoken"));
+            } catch (IOException ioException) {
+                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+            }
+        }
+        return facebookConfig;
+    }
 
     @Bean
     public OpenAiGptConfig getParamOpenAi() {
@@ -137,34 +168,22 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
+
     @Bean
-    public FacebookConfig getfacebookConfig() {
-        FacebookConfig facebookConfig;
-        try{
-            facebookConfig = new FacebookConfig(
-                    env.getProperty("api.facebook.version"),
-                    env.getProperty("api.facebook.appid"),
-                    env.getProperty("api.facebook.appsecret"),
-                    env.getProperty("api.facebook.accesstoken"),
-                    env.getProperty("api.facebook.pageaccesstoken"));
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("your-email@gmail.com");
+        mailSender.setPassword("your-password");
 
-        } catch (IllegalArgumentException e) {
-            // In caso di eccezione, utilizza il file di configurazione esterno
-            Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
-                properties.load(fis);
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
 
-                facebookConfig = new FacebookConfig(
-                        properties.getProperty("api.facebook.version"),
-                        properties.getProperty("api.facebook.appid"),
-                        properties.getProperty("api.facebook.appsecret"),
-                        properties.getProperty("api.facebook.accesstoken"),
-                        properties.getProperty("api.facebook.pageaccesstoken"));
-            } catch (IOException ioException) {
-                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
-            }
-        }
-        return facebookConfig;
+        return mailSender;
     }
 
     @Bean
