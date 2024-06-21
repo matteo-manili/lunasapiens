@@ -30,20 +30,58 @@ public class EmailService {
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
 
+    @Autowired
+    private TelegramBotClient telegramBotClient;
+
     private String defaultFrom = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
 
 
 
-    private static final String CAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
-    //private static final String SECRET_KEY = "6LeIif0pAAAAAPiK4zushl4ekl7mIBJgqM3-3QB1";
 
+    public String salvaEmail(String email) {
+        telegramBotClient.inviaMessaggio( "Email registrata: "+email);
+        try{
+            EmailUtenti emailUtenti = emailUtentiService.salvaEmailUtenti(email, new Date(), false);
+            return email + " salvata con successo.";
+        } catch (DataIntegrityViolationException e) {
+            System.out.println("Duplicate email detected: " + e.getMessage());
+            // Puoi aggiungere altre azioni come logging o ripristino
+            return email + " già registrata.";
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            return email + " errore salvataggio email.";
+        }
+    }
+
+
+
+
+    public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom( defaultFrom ); // Specifica il mittente desiderato
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        javaMailSender.send(message);
+    }
+
+
+
+
+
+
+
+
+    // -------- GOOGLE RECAPTCHA - NON LO USO ------------
+
+    private static final String CAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
     private static final String SECRET_KEY = "6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag";
 
-// CHIAVE SEGRETA: 6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag
-// CHIAVE PUBBLICA: 6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO
+    // CHIAVE SEGRETA: 6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag
+    // CHIAVE PUBBLICA: 6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO
 
-
-    /**
+    /** NON LO USO!!
+     * Name LunaSapiens4
      * DA QUI SCREANO LE CHIAVI: https://www.google.com/recaptcha/admin/create
      * DA QUI SI CONFIGURA: https://www.google.com/recaptcha/admin/site/704546608/setup
      * @param response
@@ -79,34 +117,6 @@ public class EmailService {
         }
         return false;
     }
-
-
-
-    public boolean salvaEmail(String email) {
-        try{
-            EmailUtenti emailUtenti = emailUtentiService.salvaEmailUtenti(email, new Date(), true);
-            return true;
-        } catch (DataIntegrityViolationException e) {
-            System.out.println("Duplicate email detected: " + e.getMessage());
-            // Puoi aggiungere altre azioni come logging o ripristino
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-        return false;
-    }
-
-
-    public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( defaultFrom ); // Specifica il mittente desiderato
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        javaMailSender.send(message);
-    }
-
-
-
 
 
 }

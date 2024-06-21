@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Constants {
 
+    public static final int TOO_MANY_REQUESTS_STATUS_CODE = 429; // Codice di stato HTTP per "Too Many Requests"
+
+
     public static final String VIDEO_CACHE = "videoCache";
     public static final String PATH_STATIC = "src/main/resources/static/";
 

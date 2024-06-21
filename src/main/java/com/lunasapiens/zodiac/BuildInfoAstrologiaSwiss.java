@@ -118,7 +118,7 @@ public class BuildInfoAstrologiaSwiss {
 
                 pianetaPosizTransitoArrayList.add(pianetaPosizTransito);
 
-                logger.info("Result: "+result +" "+ Constants.Pianeti.fromNumero(i).getNome() + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
+                //logger.info("Result: "+result +" "+ Constants.Pianeti.fromNumero(i).getNome() + ": " + position[0] + "° " + Util.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
             } else {
                 // Print error message if calculation failed
                 System.err.println("Calculation failed with error code: " + result);

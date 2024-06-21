@@ -10,7 +10,6 @@
         gtag('config', 'G-XGFTKCH8TD');
     </script>
 
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oroscopo</title>
@@ -59,27 +58,35 @@
             height: auto;
 
         }
+
+        .info-message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            border-radius: .25rem;
+        }
     </style>
-
-
-
-    <!-- Google reCAPTCHA script -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO" async defer></script>
-
 </head>
 <body>
 
 <div class="container">
 
-    <form id="subscribe-form" th:action="@{/subscribe}" method="post">
+
+    <h3>Ricevi aggiornamenti via Email da LunaSapiens</h3>
+    <p>Registrati per ricevere aggiornamenti direttamente nella tua casella di posta.</p>
+
+    <form id="subscribe-form" action="/subscribe" method="post">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <button type="submit" id="subscribe-button">Subscribe</button>
-        <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
-        <input type="text" name="action" value="validate_captcha">
     </form>
 
-
+    <!-- Mostra il messaggio di infoSubscription -->
+    <div th:if="${infoSubscription != null}" class="info-message">
+        <p th:text="${infoSubscription}" style="color: green;"></p>
+    </div>
 
 
 
@@ -107,36 +114,6 @@
         </div>
     </ul>
 </div>
-
-
-
-
-<script>
-    function onSubmit(event) {
-        event.preventDefault();
-        if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(function() {
-                grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action: 'validate_captcha'})
-                    .then(function(token) {
-                        document.getElementById('g-recaptcha-response').value = token;
-                        document.getElementById('subscribe-form').submit();
-                    });
-            });
-        } else {
-            console.error('reCAPTCHA is not defined');
-        }
-    }
-
-    window.onload = function() {
-        if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(function() {
-                document.getElementById('subscribe-form').addEventListener('submit', onSubmit);
-            });
-        } else {
-            console.error('reCAPTCHA is not defined on window load');
-        }
-    };
-</script>
 
 </body>
 </html>

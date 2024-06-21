@@ -7,6 +7,8 @@ import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -17,10 +19,9 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -58,31 +59,10 @@ public class IndexController {
     }
 
 
-    @GetMapping("/info-privacy")
-    public String infoPrivacy(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "info-privacy";
-    }
 
-    @GetMapping("/termini-di-servizio")
-    public String terminiDiServizio(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "termini-di-servizio";
-    }
-
-
-    @GetMapping("/genera-video")
-    public String gerneraVideo(Model model) {
-
-        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
-        scheduledTasks.creaOroscopoGiornaliero();
-        return "index";
-    }
 
     @GetMapping("/invia-email")
     public String inviaEmail(Model model) {
-
-        //emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
 
         emailService.salvaEmail("ciao_bello@gmail.com");
 
@@ -90,35 +70,34 @@ public class IndexController {
     }
 
     @PostMapping("/subscribe")
-    public String subscribe(@RequestParam("email") @Email @NotEmpty String email, @RequestParam("g-recaptcha-response") String recaptchaResponse, Model model) {
-        boolean captchaVerified = emailService.isCaptchaValid(recaptchaResponse);
-        if (!captchaVerified) {
-            model.addAttribute("message", "CAPTCHA verification failed. Please try again.");
-            logger.info("ERRORE CAPTCHA recaptchaResponse: "+recaptchaResponse);
-            return "oroscopo";
+    public String subscribe(@RequestParam("email") @Email @NotEmpty String email, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+
+        logger.info("email: "+email);
+
+        // Controlla se il flash attribute skipEmailSave è presente
+        Boolean skipEmailSave = (Boolean) request.getAttribute("skipEmailSave");
+        if (skipEmailSave != null && skipEmailSave) {
+            redirectAttributes.addFlashAttribute("infoSubscription", "Troppe richieste. Sottoscrizione via email negata.");
+        }else{
+            String messageSalvataggioEmail = emailService.salvaEmail( email );
+            redirectAttributes.addFlashAttribute("infoSubscription", messageSalvataggioEmail);
         }
 
-        logger.info("CAPTCHA SUPERTATO !!!");
 
-        boolean success = emailService.salvaEmail(email);
-        if (success) {
-            model.addAttribute("message", "Subscription successful!");
-        } else {
-            model.addAttribute("message", "This email is already subscribed.");
-        }
-        return "oroscopo";
+        // Esegui un redirect alla pagina oroscopo dopo aver gestito la sottoscrizione
+        return "redirect:/oroscopo";
+
     }
 
 
 
 
     @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model) {
+    public String mostraOroscopo(Model model, @ModelAttribute("infoSubscription") String infoSubscription) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
-
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
@@ -128,9 +107,12 @@ public class IndexController {
         }
         model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
         model.addAttribute("videos", listOroscopoGiornoDTO);
+
+        // Aggiungi infoSubscription al modello per essere visualizzato nella vista
+        model.addAttribute("infoSubscription", infoSubscription);
+
         return "oroscopo";
     }
-
 
 
 
@@ -146,6 +128,39 @@ public class IndexController {
         }
     }
 
+
+    /**
+     * lo uso solo per test
+     * @param model
+     * @return
+     */
+    @GetMapping("/genera-video")
+    public String gerneraVideo(Model model) {
+        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        scheduledTasks.creaOroscopoGiornaliero();
+        return "index";
+    }
+
+
+    @GetMapping("/info-privacy")
+    public String infoPrivacy(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
+        model.addAttribute("name", name);
+        return "info-privacy";
+    }
+
+    @GetMapping("/termini-di-servizio")
+    public String terminiDiServizio(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
+        model.addAttribute("name", name);
+        return "termini-di-servizio";
+    }
+
+
+    @GetMapping("/error")
+    public String handleError(HttpServletRequest request, Model model) {
+
+        model.addAttribute("infoError", "Errore generale.");
+        return "error";
+    }
 
 
 }

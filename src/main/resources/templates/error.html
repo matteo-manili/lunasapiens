@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Errore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #FF5733;
+        }
+    </style>
+</head>
+<body>
+<h1>Errore</h1>
+<p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
+
+<div th:if="${infoError != null}">
+    <p th:text="${infoError}"></p>
+</div>
+
+<!-- Aggiungi un link per tornare alla pagina index -->
+<a href="/">Torna alla pagina iniziale</a>
+
+</body>
+</html>
