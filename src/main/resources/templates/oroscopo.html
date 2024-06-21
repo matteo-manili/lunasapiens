@@ -62,35 +62,21 @@
     </style>
 
 
+
     <!-- Google reCAPTCHA script -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO"></script>
-
-    <script>
-        function onSubmit(event) {
-            event.preventDefault();
-            grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action: 'validate_captcha'})
-                .then(function(token) {
-                    document.getElementById('g-recaptcha-response').value = token;
-                    document.getElementById('subscribe-form').submit();
-                });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('subscribe-form').addEventListener('submit', onSubmit);
-        });
-    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO" async defer></script>
 
 </head>
 <body>
 
 <div class="container">
 
-    <form id="subscribe-form" action="/subscribe" method="post">
+    <form id="subscribe-form" th:action="@{/subscribe}" method="post">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <button type="submit" id="subscribe-button">Subscribe</button>
-        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
-        <input type="hidden" name="action" value="validate_captcha">
+        <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
+        <input type="text" name="action" value="validate_captcha">
     </form>
 
 
@@ -121,6 +107,36 @@
         </div>
     </ul>
 </div>
+
+
+
+
+<script>
+    function onSubmit(event) {
+        event.preventDefault();
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action: 'validate_captcha'})
+                    .then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('subscribe-form').submit();
+                    });
+            });
+        } else {
+            console.error('reCAPTCHA is not defined');
+        }
+    }
+
+    window.onload = function() {
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                document.getElementById('subscribe-form').addEventListener('submit', onSubmit);
+            });
+        } else {
+            console.error('reCAPTCHA is not defined on window load');
+        }
+    };
+</script>
 
 </body>
 </html>
