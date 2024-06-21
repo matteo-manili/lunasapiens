@@ -152,25 +152,10 @@ public class AppConfig implements WebMvcConfigurer {
         return openAiGptConfig;
     }
 
-    @Bean
-    public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-        cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterAccess(Duration.ofDays(1))
-                .maximumSize(30)); // massimo numero di elementi
-        return cacheManager;
-    }
 
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-
-
-    @Bean
-    public JavaMailSender javaMailSender() {
+    public JavaMailSender javaMailSenderLunaSapiens() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("mail.username"));
         mailSender.setPassword(env.getProperty("mail.password"));
@@ -188,12 +173,24 @@ public class AppConfig implements WebMvcConfigurer {
         return mailSender;
     }
 
+    @Bean
+    public CacheManager cacheManager() {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .expireAfterAccess(Duration.ofDays(1))
+                .maximumSize(30)); // massimo numero di elementi
+        return cacheManager;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
-
 
     @Bean
     public DataSource dataSource() {
@@ -236,7 +233,6 @@ public class AppConfig implements WebMvcConfigurer {
         return version;
     }
 
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
@@ -248,7 +244,6 @@ public class AppConfig implements WebMvcConfigurer {
                 .addResourceHandler("/static/oroscopo_giornaliero/**") // Percorso URL delle risorse statiche
                 .addResourceLocations("classpath:/static/oroscopo_giornaliero/", "file:src/main/resources/static/oroscopo_giornaliero/")
                 .setCachePeriod(0);
-
     }
 
 

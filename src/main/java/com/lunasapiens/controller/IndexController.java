@@ -4,9 +4,11 @@ import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import com.lunasapiens.service.EmailService;
+import com.lunasapiens.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.util.*;
@@ -79,9 +82,34 @@ public class IndexController {
     @GetMapping("/invia-email")
     public String inviaEmail(Model model) {
 
-        emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
+        //emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "LunaSapiens prova email", "questa è una provasaaaaaaaaaaaaaaa");
+
+        emailService.salvaEmail("ciao_bello@gmail.com");
+
         return "index";
     }
+
+    @PostMapping("/subscribe")
+    public String subscribe(@RequestParam("email") @Email @NotEmpty String email, @RequestParam("g-recaptcha-response") String recaptchaResponse, Model model) {
+        boolean captchaVerified = emailService.isCaptchaValid(recaptchaResponse);
+        if (!captchaVerified) {
+            model.addAttribute("message", "CAPTCHA verification failed. Please try again.");
+            logger.info("ERRORE CAPTCHA recaptchaResponse: "+recaptchaResponse);
+            return "oroscopo";
+        }
+
+        logger.info("CAPTCHA SUPERTATO !!!");
+
+        boolean success = emailService.salvaEmail(email);
+        if (success) {
+            model.addAttribute("message", "Subscription successful!");
+        } else {
+            model.addAttribute("message", "This email is already subscribed.");
+        }
+        return "oroscopo";
+    }
+
+
 
 
     @GetMapping("/oroscopo")

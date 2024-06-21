@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGFTKCH8TD"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-XGFTKCH8TD');
     </script>
+
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,10 +60,40 @@
 
         }
     </style>
+
+
+    <!-- Google reCAPTCHA script -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO"></script>
+    <script>
+        grecaptcha.ready(function() {
+            // do request for recaptcha token
+            // response is promise with passed token
+            grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action:'validate_captcha'})
+                .then(function(token) {
+                    // add token value to form
+                    document.getElementById('g-recaptcha-response').value = token;
+                });
+        });
+    </script>
+
 </head>
 <body>
 
 <div class="container">
+
+    <form id="subscribe-form" action="/subscribe" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit" id="subscribe-button">Subscribe</button>
+
+        <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
+        <input type="text" name="action" value="validate_captcha">
+    </form>
+
+
+
+
+
     <h2>Oroscopo del Giorno</h2> - <a href="/" class="button">Home page</a>
     <!-- Mostra la descrizione dell'oroscopo del giorno -->
     <h4 th:utext="${oroscopoDelGiornoDescrizioneOggi}" style="font-size: larger;"></h4>
