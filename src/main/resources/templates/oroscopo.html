@@ -64,15 +64,19 @@
 
     <!-- Google reCAPTCHA script -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO"></script>
+
     <script>
-        grecaptcha.ready(function() {
-            // do request for recaptcha token
-            // response is promise with passed token
-            grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action:'validate_captcha'})
+        function onSubmit(event) {
+            event.preventDefault();
+            grecaptcha.execute('6Lcwh_4pAAAAAPOqOANNuJV6qicy6iEAz641WXbO', {action: 'validate_captcha'})
                 .then(function(token) {
-                    // add token value to form
                     document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('subscribe-form').submit();
                 });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('subscribe-form').addEventListener('submit', onSubmit);
         });
     </script>
 
@@ -85,9 +89,8 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <button type="submit" id="subscribe-button">Subscribe</button>
-
-        <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
-        <input type="text" name="action" value="validate_captcha">
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+        <input type="hidden" name="action" value="validate_captcha">
     </form>
 
 
