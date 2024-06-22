@@ -11,11 +11,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/*
+Ordine del Filtro: L'annotazione @Order(1) indica l'ordine di esecuzione del filtro. Questo può essere utile se ci sono più filtri nella tua applicazione e vuoi controllare l'ordine in cui vengono applicati.
+ */
+
 @Component
 @Order(1) // Ordine di esecuzione del filtro, se necessario
-public class RequestLimitFilter extends OncePerRequestFilter {
+public class FilterRequestLimit extends OncePerRequestFilter {
 
-    private static final int MAX_REQUESTS = 4; // Limite massimo di richieste per IP
+
+    // TODO ricorda di rimettere MAX_REQUESTS a 4
+    private static final int MAX_REQUESTS = 40; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
@@ -29,7 +36,7 @@ public class RequestLimitFilter extends OncePerRequestFilter {
         }
 
         // Controllo per /saluti endpoint
-        if (request.getRequestURI().equals("/saluti") && request.getMethod().equals("GET")) {
+        if (request.getRequestURI().equals("/test") && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
 
@@ -45,12 +52,13 @@ public class RequestLimitFilter extends OncePerRequestFilter {
             int count = requestCounts.get(ipAddress);
             if (count >= MAX_REQUESTS) {
                 // Imposta un flash attribute per indicare al controller di non salvare l'email
-                request.setAttribute("skipEmailSave", true);
+                request.setAttribute(Constants.SKIP_EMAIL_SAVE, true);
                 response.setStatus(Constants.TOO_MANY_REQUESTS_STATUS_CODE);
                 response.getWriter().write("Too many requests from this IP");
                 response.getWriter().flush();
                 return; // Termina il filtro senza tentare il redirect
             }
+            // Incrementa il conteggio delle richieste per quell'indirizzo IP di 1
             requestCounts.put(ipAddress, count + 1);
         }
     }

@@ -13,6 +13,7 @@ public class EmailUtenti implements Serializable {
     private String email;
     private Date data;
     private boolean subscription;
+    private String confirmation_code;
 
 
     /**
@@ -59,12 +60,16 @@ public class EmailUtenti implements Serializable {
     public boolean isSubscription() { return subscription; }
     public void setSubscription(boolean subscription) { this.subscription = subscription; }
 
+    @Column
+    public String getConfirmation_code() { return confirmation_code; }
+    public void setConfirmation_code(String confirmation_code) { this.confirmation_code = confirmation_code; }
 
 
-    public EmailUtenti(String email, Date data, boolean subscription) {
+    public EmailUtenti(String email, Date data, boolean subscription, String confirmation_code) {
         this.email = email;
         this.data = data;
         this.subscription = subscription;
+        this.confirmation_code = confirmation_code;
     }
 
 

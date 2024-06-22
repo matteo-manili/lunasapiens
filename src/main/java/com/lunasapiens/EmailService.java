@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -38,22 +40,52 @@ public class EmailService {
 
 
 
-    public String salvaEmail(String email) {
-        telegramBotClient.inviaMessaggio( "Email registrata: "+email);
-        try{
-            EmailUtenti emailUtenti = emailUtentiService.salvaEmailUtenti(email, new Date(), false);
-            return email + " salvata con successo.";
-        } catch (DataIntegrityViolationException e) {
-            System.out.println("Duplicate email detected: " + e.getMessage());
-            // Puoi aggiungere altre azioni come logging o ripristino
-            return email + " già registrata.";
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-            return email + " errore salvataggio email.";
+    public void inviaConfermaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
+        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
+        if( emailUtentiSetRandomCode != null ) {
+            String confirmationCode = generateRandomCode();
+            emailUtenti.setConfirmation_code(confirmationCode);
+            emailUtentiRepository.save(emailUtenti);
+            String linkConfirm = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN + "?code="+confirmationCode;
+            String subject = "LunaSapiens - Conferma sottoscrizione Oroscopo del giorno";
+            String text = "Grazie per esserti iscritto! Per confermare la tua iscrizione, clicca sul seguente link: " + linkConfirm;
+            sendEmailFromInfoLunaSapiens(emailUtenti.getEmail(), subject, text);
         }
     }
 
 
+    public static String generateRandomCode() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[16];
+        secureRandom.nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
+
+    public Object[] salvaEmail(String email) {
+        telegramBotClient.inviaMessaggio( "Email registrata: "+email);
+        Object[] result = new Object[3];
+        try{
+            EmailUtenti emailUtenti = emailUtentiService.salvaEmailUtenti(email, new Date(), false);
+            result[0] = true; // Indica successo
+            result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +
+                    "Controlla la tua casella di posta per confermare la tua iscrizione.";
+            result[2] = emailUtenti;
+
+        } catch (DataIntegrityViolationException e) {
+            System.out.println("Duplicate email detected: " + e.getMessage());
+            result[0] = true; // Indica fallimento
+            result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se hai già confermato l'iscrizione, controlla la tua casella di posta.";
+            result[2] = emailUtentiService.findByEmailUtenti( email ).orElse(null);
+
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            result[0] = false; // Indica fallimento
+            result[1] = email + " errore salvataggio email.";
+            result[2] = null;
+        }
+        return result;
+    }
 
 
     public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
@@ -87,6 +119,7 @@ public class EmailService {
      * @param response
      * @return
      */
+    @Deprecated
     public synchronized boolean isCaptchaValid(String response) {
         try {
             String url = CAPTCHA_VERIFY_URL, params = "secret=" + SECRET_KEY + "&response=" + response;

@@ -45,7 +45,7 @@ public class EmailUtentiService {
 
     @Transactional
     public EmailUtenti salvaEmailUtenti(String email, Date data, boolean subscription) throws Exception {
-        EmailUtenti emailUtenti = new EmailUtenti(email, data, subscription);
+        EmailUtenti emailUtenti = new EmailUtenti(email, data, subscription, null);
         // Salvare l'oggetto nel database utilizzando il repository
         return emailUtentiRepository.save(emailUtenti);
     }

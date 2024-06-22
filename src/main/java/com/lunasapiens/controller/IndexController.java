@@ -3,8 +3,10 @@ package com.lunasapiens.controller;
 import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
+import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.EmailService;
+import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServiziAstrologici;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +44,13 @@ public class IndexController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private EmailUtentiRepository emailUtentiRepository;
+
     private OroscopoGiornalieroService oroscopoGiornalieroService;
+
+
+    public final String redirectAttributInfoSubscription = "infoSubscription";
 
 
     @Autowired
@@ -60,26 +68,52 @@ public class IndexController {
 
 
 
-    @GetMapping("/invia-email")
+    @GetMapping("/test-invia-email")
     public String inviaEmail(Model model) {
 
-        emailService.salvaEmail("ciao_bello@gmail.com");
+
+        emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "oggettociaooo", "tesoooooo");
 
         return "index";
     }
+
+
+
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
+    public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true, defaultValue = "") String code, RedirectAttributes redirectAttributes) {
+        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        if(emailUtenti != null && emailUtenti.getConfirmation_code().trim().equals(code.trim())) {
+            emailUtenti.setSubscription(true);
+            emailUtentiRepository.save(emailUtenti);
+            String message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo email "+emailUtenti.getEmail()+". " +
+                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
+            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+        }
+
+        return "redirect:/oroscopo";
+    }
+
+
+
 
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam("email") @Email @NotEmpty String email, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
         logger.info("email: "+email);
-
-        // Controlla se il flash attribute skipEmailSave è presente
-        Boolean skipEmailSave = (Boolean) request.getAttribute("skipEmailSave");
+        Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute("infoSubscription", "Troppe richieste. Sottoscrizione via email negata.");
+            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, "Troppe richieste. Sottoscrizione email negata.");
+
         }else{
-            String messageSalvataggioEmail = emailService.salvaEmail( email );
-            redirectAttributes.addFlashAttribute("infoSubscription", messageSalvataggioEmail);
+            Object[] result = emailService.salvaEmail( email );
+            Boolean success = (Boolean) result[0];
+            String message = (String) result[1];
+            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
+            if (success && emailUtenti != null) {
+                emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
+            }
+
+            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
         }
 
 
@@ -92,7 +126,7 @@ public class IndexController {
 
 
     @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model, @ModelAttribute("infoSubscription") String infoSubscription) {
+    public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
@@ -108,7 +142,7 @@ public class IndexController {
         model.addAttribute("videos", listOroscopoGiornoDTO);
 
         // Aggiungi infoSubscription al modello per essere visualizzato nella vista
-        model.addAttribute("infoSubscription", infoSubscription);
+        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
 
         return "oroscopo";
     }

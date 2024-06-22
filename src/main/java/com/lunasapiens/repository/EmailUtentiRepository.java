@@ -17,11 +17,11 @@ public interface EmailUtentiRepository extends JpaRepository<EmailUtenti, Long> 
 
     Optional<EmailUtenti> findFirstByOrderByIdDesc();
 
-
     @Query("SELECT o FROM EmailUtenti o WHERE o.email = :email")
     Optional<EmailUtenti> findByEmail(@Param("email") String email);
 
-
+    @Query("SELECT o FROM EmailUtenti o WHERE o.confirmation_code = :confirmation_code")
+    Optional<EmailUtenti> findByConfirmationCode(@Param("confirmation_code") String confirmation_code);
 
 
 
