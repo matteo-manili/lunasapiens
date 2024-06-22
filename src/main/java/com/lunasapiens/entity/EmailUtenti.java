@@ -15,8 +15,23 @@ public class EmailUtenti implements Serializable {
     private boolean subscription;
 
 
+    /**
+     * GenerationType.AUTO
+     * Classe persistente per la gestione delle iscrizioni email degli utenti.
+     * Utilizza GenerationType.AUTO per generare automaticamente ID univoci
+     * tramite il provider di persistenza, adattandosi alla configurazione del database PostgreSQL.
+     * La strategia esatta di generazione degli ID dipende dalla configurazione specifica del provider.
+     */
+
+    /**
+     * GenerationType.IDENTITY
+     * Classe persistente per la gestione delle iscrizioni email degli utenti.
+     * Utilizza GenerationType.IDENTITY per generare automaticamente ID univoci e sequenziali
+     * tramite una colonna auto-incrementale nel database PostgreSQL.
+     */
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
