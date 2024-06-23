@@ -43,7 +43,8 @@ public class EmailService {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
-    private final String defaultFrom = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
+    private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
+    private final String defaultFromGmailMatteoManili = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
 
 
 
@@ -98,7 +99,7 @@ public class EmailService {
 
     public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        //message.setFrom(defaultFrom); // Specifica il mittente desiderato
+        message.setFrom( appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
@@ -107,10 +108,7 @@ public class EmailService {
 
 
 
-
-
     // -------- GOOGLE RECAPTCHA - NON LO USO ------------
-
     private static final String CAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
     private static final String SECRET_KEY = "6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag6Lcwh_4pAAAAAA5rlg3jfOXe4qnDx1lPvdW2a7ag";
 
