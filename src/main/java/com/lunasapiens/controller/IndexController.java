@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -33,9 +34,6 @@ public class IndexController {
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
-    private AppConfig appConfig;
-
-    @Autowired
     private ScheduledTasks scheduledTasks;
 
     @Autowired
@@ -47,17 +45,15 @@ public class IndexController {
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
 
+
+
     private OroscopoGiornalieroService oroscopoGiornalieroService;
-
-
-    public final String redirectAttributInfoSubscription = "infoSubscription";
-
-
     @Autowired
     public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
         this.oroscopoGiornalieroService = oroscopoGiornalieroService;
     }
 
+    public final String redirectAttributInfoSubscription = "infoSubscription";
 
     @GetMapping("/")
     public String index(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
@@ -71,23 +67,36 @@ public class IndexController {
     @GetMapping("/test-invia-email")
     public String inviaEmail(Model model) {
 
-
         emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "oggettociaooo", "tesoooooo");
-
         return "index";
     }
 
 
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
-    public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true, defaultValue = "") String code, RedirectAttributes redirectAttributes) {
+    public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
+
+        System.out.println("confirmEmailOroscGiorn code: "+code);
+
         EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
-        if(emailUtenti != null && emailUtenti.getConfirmation_code().trim().equals(code.trim())) {
+        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
+
+            // TODO ritorna sempre la data null, non so perché
+            //System.out.println("attributo DATA: "+emailUtenti.getData());
+
+            if(emailUtenti.getDataRegistrazione()== null){
+                emailUtenti.setDataRegistrazione(new Date());
+            }
+
             emailUtenti.setSubscription(true);
             emailUtentiRepository.save(emailUtenti);
-            String message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo email "+emailUtenti.getEmail()+". " +
+
+            String message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
                     "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
             redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+        }else{
+            String message = "Conferma email non riuscitaGrazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
+                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
         }
 
         return "redirect:/oroscopo";

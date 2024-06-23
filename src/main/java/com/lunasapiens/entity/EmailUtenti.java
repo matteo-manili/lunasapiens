@@ -11,9 +11,11 @@ public class EmailUtenti implements Serializable {
 
     private Long id;
     private String email;
-    private Date data;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataRegistrazione;
     private boolean subscription;
-    private String confirmation_code;
+    private String confirmationCode;
 
 
     /**
@@ -48,29 +50,27 @@ public class EmailUtenti implements Serializable {
         this.email = email;
     }
 
-    @Column(name = "data", nullable = false)
-    public Date getData() {
-        return data;
-    }
-    public void setData(Date dataOroscopo) {
-        this.data = data;
-    }
+    @Column(nullable = false)
+    public Date getDataRegistrazione() { return dataRegistrazione; }
+    public void setDataRegistrazione(Date dataRegistrazione) { this.dataRegistrazione = dataRegistrazione; }
 
     @Column(nullable = false)
     public boolean isSubscription() { return subscription; }
     public void setSubscription(boolean subscription) { this.subscription = subscription; }
 
     @Column
-    public String getConfirmation_code() { return confirmation_code; }
-    public void setConfirmation_code(String confirmation_code) { this.confirmation_code = confirmation_code; }
+    public String getConfirmationCode() { return confirmationCode; }
+    public void setConfirmationCode(String confirmationCode) { this.confirmationCode = confirmationCode; }
 
 
-    public EmailUtenti(String email, Date data, boolean subscription, String confirmation_code) {
+
+
+    public EmailUtenti(String email, Date dataRegistrazione, boolean subscription, String confirmationCode) {
         this.email = email;
-        this.data = data;
+        this.dataRegistrazione = dataRegistrazione;
         this.subscription = subscription;
-        this.confirmation_code = confirmation_code;
+        this.confirmationCode = confirmationCode;
     }
 
-
+    public EmailUtenti() { }
 }

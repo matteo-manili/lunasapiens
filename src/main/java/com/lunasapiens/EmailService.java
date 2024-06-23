@@ -5,6 +5,8 @@ import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.EmailUtentiService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +26,12 @@ import java.util.Date;
 public class EmailService {
 
     @Autowired
+    private Environment env;
+
+    @Autowired
+    private AppConfig appConfig;
+
+    @Autowired
     private JavaMailSender javaMailSender;
 
     @Autowired
@@ -35,7 +43,7 @@ public class EmailService {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
-    private String defaultFrom = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
+    private final String defaultFrom = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
 
 
 
@@ -44,7 +52,7 @@ public class EmailService {
         EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
         if( emailUtentiSetRandomCode != null ) {
             String confirmationCode = generateRandomCode();
-            emailUtenti.setConfirmation_code(confirmationCode);
+            emailUtenti.setConfirmationCode(confirmationCode);
             emailUtentiRepository.save(emailUtenti);
             String linkConfirm = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN + "?code="+confirmationCode;
             String subject = "LunaSapiens - Conferma sottoscrizione Oroscopo del giorno";
@@ -75,7 +83,7 @@ public class EmailService {
         } catch (DataIntegrityViolationException e) {
             System.out.println("Duplicate email detected: " + e.getMessage());
             result[0] = true; // Indica fallimento
-            result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se hai già confermato l'iscrizione, controlla la tua casella di posta.";
+            result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
             result[2] = emailUtentiService.findByEmailUtenti( email ).orElse(null);
 
         } catch (Exception e) {
@@ -90,15 +98,12 @@ public class EmailService {
 
     public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( defaultFrom ); // Specifica il mittente desiderato
+        //message.setFrom(defaultFrom); // Specifica il mittente desiderato
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
         javaMailSender.send(message);
     }
-
-
-
 
 
 

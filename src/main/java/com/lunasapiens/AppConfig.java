@@ -8,6 +8,7 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -22,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -155,12 +158,23 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public JavaMailSender javaMailSenderLunaSapiens() {
+    public JavaMailSender javaMailSender() {
+        if (isLocalhost()) {
+            // Configurazione per ambiente di sviluppo (localhost)
+            return javaMailSenderGmailDev();
+        } else {
+            // Configurazione per ambiente di produzione
+            return javaMailSenderLunaSapiensProd();
+        }
+    }
+
+
+    private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setUsername(env.getProperty("mail.username"));
-        mailSender.setPassword(env.getProperty("mail.password"));
-        mailSender.setHost(env.getProperty("mail.smtp.host"));
-        mailSender.setPort( Integer.parseInt(env.getProperty("mail.smtp.port") ) );
+        mailSender.setUsername(env.getProperty("gmail.mail.username"));
+        mailSender.setPassword(env.getProperty("gmail.mail.password"));
+        mailSender.setHost(env.getProperty("gmail.mail.smtp.host"));
+        mailSender.setPort(Integer.parseInt(env.getProperty("mail.smtp.port")));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -168,10 +182,53 @@ public class AppConfig implements WebMvcConfigurer {
         props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable"));
         props.put("mail.debug", env.getProperty("mail.debug"));
 
-        // Set the default from address
+        // questa impoistazion evita errori di certificato.
+        // Questa impostazione configura il client JavaMail per fidarsi specificamente del certificato SSL fornito dal server smtp.gmail.comdurantesmtp.gmail.com
+        // senza ulteriori validazioni della catena di certificati.
+        // È una soluzione più sicura rispetto a disabilitare completamente la validazione: props.put("mail.smtp.ssl.trust", "*");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+
         mailSender.setJavaMailProperties(props);
         return mailSender;
     }
+
+
+    private JavaMailSender javaMailSenderLunaSapiensProd() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setUsername(env.getProperty("mail.username"));
+        mailSender.setPassword(env.getProperty("mail.password"));
+        mailSender.setHost(env.getProperty("mail.smtp.host"));
+        mailSender.setPort(Integer.parseInt(env.getProperty("mail.smtp.port")));
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
+        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable"));
+        props.put("mail.debug", env.getProperty("mail.debug"));
+
+        mailSender.setJavaMailProperties(props);
+        return mailSender;
+    }
+
+
+    public boolean isLocalhost() {
+        try {
+            InetAddress localhost = InetAddress.getLocalHost();
+            System.out.println("Nome host: " + localhost);
+
+            if( localhost.toString().contains("DESKTOP-MATTEO") ){
+                System.out.println("Ambiente rilevato: DEV");
+                return true;
+            }else{
+                System.out.println("Ambiente rilevato: PROD");
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return true; // Ritorna true se si verifica un'eccezione (es. per sicurezza in sviluppo)
+        }
+    }
+
 
     @Bean
     public CacheManager cacheManager() {

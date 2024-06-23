@@ -13,15 +13,19 @@ import java.util.Optional;
 @Repository
 public interface EmailUtentiRepository extends JpaRepository<EmailUtenti, Long> {
 
-    EmailUtenti findByData(Date data);
 
     Optional<EmailUtenti> findFirstByOrderByIdDesc();
 
     @Query("SELECT o FROM EmailUtenti o WHERE o.email = :email")
     Optional<EmailUtenti> findByEmail(@Param("email") String email);
 
-    @Query("SELECT o FROM EmailUtenti o WHERE o.confirmation_code = :confirmation_code")
-    Optional<EmailUtenti> findByConfirmationCode(@Param("confirmation_code") String confirmation_code);
+
+    @Query("SELECT o FROM EmailUtenti o WHERE o.confirmationCode = :confirmationCode")
+    Optional<EmailUtenti> findByConfirmationCode(@Param("confirmationCode") String confirmationCode);
+
+
+    //@Query(value = "SELECT * FROM email_utenti WHERE confirmation_code = :confirmation_code", nativeQuery = true)
+    //Optional<EmailUtenti> findByConfirmationCode(@Param("confirmation_code") String confirmation_code);
 
 
 

@@ -21,8 +21,8 @@ Ordine del Filtro: L'annotazione @Order(1) indica l'ordine di esecuzione del fil
 public class FilterRequestLimit extends OncePerRequestFilter {
 
 
-    // TODO ricorda di rimettere MAX_REQUESTS a 4
-    private static final int MAX_REQUESTS = 40; // Limite massimo di richieste per IP
+    // TODO ricorda di rimettere MAX_REQUESTS a 5
+    private static final int MAX_REQUESTS = 5; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
