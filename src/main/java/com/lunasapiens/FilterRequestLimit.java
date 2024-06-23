@@ -12,8 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/*
-Ordine del Filtro: L'annotazione @Order(1) indica l'ordine di esecuzione del filtro. Questo può essere utile se ci sono più filtri nella tua applicazione e vuoi controllare l'ordine in cui vengono applicati.
+/**
+    Ordine del Filtro: L'annotazione @Order(1) indica l'ordine di esecuzione del filtro. Questo può essere utile se ci sono più filtri nella tua applicazione e vuoi
+    controllare l'ordine in cui vengono applicati.
  */
 
 @Component
@@ -62,11 +63,6 @@ public class FilterRequestLimit extends OncePerRequestFilter {
             requestCounts.put(ipAddress, count + 1);
         }
     }
-
-
-
-
-
 
 }
 

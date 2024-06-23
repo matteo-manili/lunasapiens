@@ -75,30 +75,23 @@ public class IndexController {
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
     public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
-
-        System.out.println("confirmEmailOroscGiorn code: "+code);
-
+        logger.info("confirmEmailOroscGiorn code: "+code);
         EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        String message = "";
         if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
-
-            // TODO ritorna sempre la data null, non so perché
-            //System.out.println("attributo DATA: "+emailUtenti.getData());
-
             if(emailUtenti.getDataRegistrazione()== null){
                 emailUtenti.setDataRegistrazione(new Date());
             }
-
             emailUtenti.setSubscription(true);
             emailUtentiRepository.save(emailUtenti);
+            message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
+                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
 
-            String message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
-                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
-            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
         }else{
-            String message = "Conferma email non riuscitaGrazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
-                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
+            message = "Conferma email non riuscita. Registrati di nuovo";
         }
 
+        redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
         return "redirect:/oroscopo";
     }
 
