@@ -66,7 +66,7 @@ public class EmailService {
             String subject = "LunaSapiens - Conferma iscrizione Oroscopo del giorno";
             Context context = new Context();
             String linkConfirm = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN + "?code="+confirmationCode;
-            String contenuto = "Grazie per esserti iscritto all'Oroscopo del giorno! <br><br>" +
+            String contenuto = "<b>Grazie per esserti iscritto all'Oroscopo del giorno.</b><br><br>" +
                     "Per confermare la tua iscrizione, clicca sul seguente link <br>" +
                     linkConfirm + "<br><br>" +
                     "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
