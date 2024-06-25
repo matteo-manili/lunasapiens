@@ -218,7 +218,9 @@ public class AppConfig implements WebMvcConfigurer {
             InetAddress localhost = InetAddress.getLocalHost();
             System.out.println("Nome host: " + localhost);
 
+            // cambia a ogni deploy
             // in produzione viene Nome host: 0678b9f9-9ded-4ad1-967e-ac3663bd743a/172.18.13.50
+            //                                13d614cc-dcb5-4d8b-b33e-b60fa1cf12d0/172.18.117.170
 
             if( localhost.toString().contains("DESKTOP-MATTEO") ){
                 System.out.println("Ambiente rilevato: DEV");
