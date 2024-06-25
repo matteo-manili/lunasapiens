@@ -91,7 +91,9 @@ public class EmailService {
             contenuto += "<p><i>Se desideri cancellarti dall'Oroscopo del giorno, puoi farlo cliccando sul seguente link " + linkCencelIscrizione + "</i></p>";
 
             context.setVariable(contenutoEmail, contenuto);
-            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+            //sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+
+            sendHtmlEmail_OLD(emailUtenti.getEmail(), subject, templateEmailFragment, context);
         }
     }
 
