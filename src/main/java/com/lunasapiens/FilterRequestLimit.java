@@ -23,7 +23,7 @@ public class FilterRequestLimit extends OncePerRequestFilter {
 
 
     // TODO ricorda di rimettere MAX_REQUESTS a 5
-    private static final int MAX_REQUESTS = 50 // Limite massimo di richieste per IP
+    private static final int MAX_REQUESTS = 50; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
