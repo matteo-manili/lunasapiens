@@ -154,33 +154,6 @@ public class EmailService {
         }
     }
 
-    // da errore in produzione, manca anche il setFrom
-    @Deprecated
-    public void sendHtmlEmail_OLD(String to, String subject, String templateName, Context context) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
-
-        try {
-            // Process the Thymeleaf template to get the HTML content
-            String htmlContent = templateEngine.process(templateName, context);
-
-            // Set email properties
-            helper.setTo(to);
-            helper.setSubject(subject);
-
-            // Set the HTML content directly without additional encoding
-            helper.setText(htmlContent, true); // true indicates HTML content
-
-            // Send the email
-            javaMailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            e.printStackTrace(); // Handle exception properly
-        }
-    }
-
-
-
-
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom( appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
