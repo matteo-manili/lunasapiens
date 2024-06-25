@@ -93,7 +93,7 @@ public class EmailService {
             context.setVariable(contenutoEmail, contenuto);
             //sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
 
-            sendHtmlEmail_OLD(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
         }
     }
 
@@ -136,7 +136,7 @@ public class EmailService {
 
 
 
-    public void sendHtmlEmail_OLD(String to, String subject, String templateName, Context context) {
+    public void sendHtmlEmail(String to, String subject, String templateName, Context context) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -154,7 +154,9 @@ public class EmailService {
         }
     }
 
-    public void sendHtmlEmail(String to, String subject, String templateName, Context context) {
+    // da errore in produzione, manca anche il setFrom
+    @Deprecated
+    public void sendHtmlEmail_OLD(String to, String subject, String templateName, Context context) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
