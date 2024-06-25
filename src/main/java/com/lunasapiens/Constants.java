@@ -7,7 +7,10 @@ import java.util.List;
 public class Constants {
 
     public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com/";
+
+    public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";
+    public static final String DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN = "cancel-email-subscription-orosc-giorn";
 
 
 

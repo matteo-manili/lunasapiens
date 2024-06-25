@@ -27,12 +27,25 @@ public class FilterRequestLimit extends OncePerRequestFilter {
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
+    /**
+     * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip dal che richiama questi endpoint
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ipAddress = request.getRemoteAddr();
 
         // Controllo per /subscribe endpoint
-        if (request.getRequestURI().equals("/subscribe") && request.getMethod().equals("POST")) {
+        if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
+            handleRequest(request, response, ipAddress);
+        }
+
+        // Controllo per /saluti endpoint
+        if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN) && request.getMethod().equals("GET")) {
+            handleRequest(request, response, ipAddress);
+        }
+
+        // Controllo per /saluti endpoint
+        if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN) && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
 
@@ -40,6 +53,14 @@ public class FilterRequestLimit extends OncePerRequestFilter {
         if (request.getRequestURI().equals("/test") && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
+
+
+
+
+
+
+
+
 
         filterChain.doFilter(request, response);
     }

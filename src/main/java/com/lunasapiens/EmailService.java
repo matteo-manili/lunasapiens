@@ -3,19 +3,20 @@ package com.lunasapiens;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.EmailUtentiService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
@@ -35,6 +36,9 @@ public class EmailService {
     private JavaMailSender javaMailSender;
 
     @Autowired
+    private SpringTemplateEngine templateEngine;
+
+    @Autowired
     private EmailUtentiService emailUtentiService;
 
     @Autowired
@@ -46,6 +50,9 @@ public class EmailService {
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
     private final String defaultFromGmailMatteoManili = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
 
+    public static final String templateEmailFragment = "templateEmailFragment";
+    public static final String contenutoEmail = "contenutoEmail";
+
 
 
 
@@ -55,12 +62,39 @@ public class EmailService {
             String confirmationCode = generateRandomCode();
             emailUtenti.setConfirmationCode(confirmationCode);
             emailUtentiRepository.save(emailUtenti);
+
+            String subject = "LunaSapiens - Conferma iscrizione Oroscopo del giorno";
+            Context context = new Context();
             String linkConfirm = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN + "?code="+confirmationCode;
-            String subject = "LunaSapiens - Conferma sottoscrizione Oroscopo del giorno";
-            String text = "Grazie per esserti iscritto! Per confermare la tua iscrizione, clicca sul seguente link: " + linkConfirm;
-            sendEmailFromInfoLunaSapiens(emailUtenti.getEmail(), subject, text);
+            String contenuto = "Grazie per esserti iscritto all'Oroscopo del giorno! <br><br>" +
+                    "Per confermare la tua iscrizione, clicca sul seguente link <br>" +
+                    linkConfirm + "<br><br>" +
+                    "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
+
+            context.setVariable(contenutoEmail, contenuto);
+            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
         }
     }
+
+
+    public void inviaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
+        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
+        if( emailUtentiSetRandomCode != null ) {
+
+            String subject = "LunaSapiens - Orosocpo del giorno";
+            Context context = new Context();
+            String linkCencelIscrizione = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN + "?code="+emailUtentiSetRandomCode.getConfirmationCode();
+            String contenuto = "<h2>Oroscopo del Giorno</h2><p>Oggi è una giornata ideale per concentrarti sui tuoi obiettivi. <<br><strong>Lavoro:</strong> " +
+                    "Le stelle ti favoriscono nelle decisioni lavorative. <br><strong>Amore:</strong> Mostra il tuo lato più affettuoso. " +
+                    "<br><strong>Benessere:</strong> Ricorda di prenderti del tempo per te stesso. <br>Fortuna e serenità sono in arrivo!</p>";
+
+            contenuto += "<p><i>Se desideri cancellarti dall'Oroscopo del giorno, puoi farlo cliccando sul seguente link " + linkCencelIscrizione + "</i></p>";
+
+            context.setVariable(contenutoEmail, contenuto);
+            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+        }
+    }
+
 
 
     public static String generateRandomCode() {
@@ -97,7 +131,53 @@ public class EmailService {
     }
 
 
-    public void sendEmailFromInfoLunaSapiens(String to, String subject, String text) {
+
+
+
+    public void sendHtmlEmail_OLD(String to, String subject, String templateName, Context context) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom(appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            String htmlContent = templateEngine.process(templateName, context);
+            helper.setText(htmlContent, true);
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Gestisci l'eccezione in base alle tue necessità
+        }
+    }
+
+    public void sendHtmlEmail(String to, String subject, String templateName, Context context) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+        try {
+            // Process the Thymeleaf template to get the HTML content
+            String htmlContent = templateEngine.process(templateName, context);
+
+            // Set email properties
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            // Set the HTML content directly without additional encoding
+            helper.setText(htmlContent, true); // true indicates HTML content
+
+            // Send the email
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace(); // Handle exception properly
+        }
+    }
+
+
+
+
+    public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom( appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);

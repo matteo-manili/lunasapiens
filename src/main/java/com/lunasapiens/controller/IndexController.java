@@ -15,7 +15,6 @@ import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -67,7 +66,10 @@ public class IndexController {
     @GetMapping("/test-invia-email")
     public String inviaEmail(Model model) {
 
-        emailService.sendEmailFromInfoLunaSapiens("matteo.manili@gmail.com", "oggettociaooo", "tesoooooo");
+        EmailUtenti emailUtenti = new EmailUtenti();
+        emailUtenti.setEmail("matteo.manili@gmail.com");
+        emailService.inviaEmailOrosciopoGioraliero(emailUtenti);
+
         return "index";
     }
 
@@ -86,26 +88,43 @@ public class IndexController {
             emailUtentiRepository.save(emailUtenti);
             message = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
                     "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
-
         }else{
             message = "Conferma email non riuscita. Registrati di nuovo";
         }
+        redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+        return "redirect:/oroscopo";
+    }
 
+
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN)
+    public String cancelEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
+        logger.info("cancelEmailOroscGiorn code: "+code);
+        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        String message = "";
+        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
+            if(emailUtenti.getDataRegistrazione()== null){
+                emailUtenti.setDataRegistrazione(new Date());
+            }
+            emailUtenti.setSubscription(false);
+            emailUtentiRepository.save(emailUtenti);
+            message = "La tua cancellazione dall'Oroscopo del giorno è avvenuta con successo. Non riceverai più le nostre previsioni giornaliere. " +
+                    "Se desideri iscriverti nuovamente in futuro, visita il nostro sito.";
+        }else{
+            message = "L'indirizzo email non è presente nel sistema.";
+        }
         redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
         return "redirect:/oroscopo";
     }
 
 
 
-
-    @PostMapping("/subscribe")
+    @PostMapping("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN)
     public String subscribe(@RequestParam("email") @Email @NotEmpty String email, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
         logger.info("email: "+email);
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
             redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, "Troppe richieste. Sottoscrizione email negata.");
-
         }else{
             Object[] result = emailService.salvaEmail( email );
             Boolean success = (Boolean) result[0];
@@ -114,14 +133,9 @@ public class IndexController {
             if (success && emailUtenti != null) {
                 emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
             }
-
             redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
         }
-
-
-        // Esegui un redirect alla pagina oroscopo dopo aver gestito la sottoscrizione
         return "redirect:/oroscopo";
-
     }
 
 
