@@ -2,6 +2,7 @@ package com.lunasapiens;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -108,32 +109,36 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public FacebookConfig getfacebookConfig() {
+
         FacebookConfig facebookConfig;
-        try{
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.facebook.version", "api.facebook.appid",
+                    "api.facebook.appsecret", "api.facebook.accesstoken", "api.facebook.pageaccesstoken")) );
+            facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2), loadPorpoerty.get(3), loadPorpoerty.get(4));
+        }else{
             facebookConfig = new FacebookConfig(
-                    env.getProperty("api.facebook.version"),
-                    env.getProperty("api.facebook.appid"),
-                    env.getProperty("api.facebook.appsecret"),
-                    env.getProperty("api.facebook.accesstoken"),
-                    env.getProperty("api.facebook.pageaccesstoken"));
+                    env.getProperty("api.facebook.version"), env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"),
+                    env.getProperty("api.facebook.accesstoken"), env.getProperty("api.facebook.pageaccesstoken"));
 
-        } catch (IllegalArgumentException e) {
-            // In caso di eccezione, utilizza il file di configurazione esterno
-            Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
-                properties.load(fis);
-
-                facebookConfig = new FacebookConfig(
-                        properties.getProperty("api.facebook.version"),
-                        properties.getProperty("api.facebook.appid"),
-                        properties.getProperty("api.facebook.appsecret"),
-                        properties.getProperty("api.facebook.accesstoken"),
-                        properties.getProperty("api.facebook.pageaccesstoken"));
-            } catch (IOException ioException) {
-                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
-            }
         }
         return facebookConfig;
+    }
+
+    @Bean
+    public List<String> getParamTelegram() {
+        List<String> paramTelegram = new ArrayList<>();
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
+                    "api.telegram.bot.username")) );
+            paramTelegram.add( loadPorpoerty.get(0));
+            paramTelegram.add( loadPorpoerty.get(1));
+            paramTelegram.add( loadPorpoerty.get(2));
+        }else{
+            paramTelegram.add( env.getProperty("api.telegram.token") );
+            paramTelegram.add( env.getProperty("api.telegram.chatId") );
+            paramTelegram.add( env.getProperty("api.telegram.bot.username") );
+        }
+        return paramTelegram;
     }
 
     @Bean
@@ -162,7 +167,6 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-
     @Bean
     public JavaMailSender javaMailSender() {
         if (Util.isLocalhost()) {
@@ -173,7 +177,6 @@ public class AppConfig implements WebMvcConfigurer {
             return javaMailSenderLunaSapiensProd();
         }
     }
-
 
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

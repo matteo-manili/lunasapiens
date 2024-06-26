@@ -27,12 +27,6 @@ import java.util.Date;
 public class EmailService {
 
     @Autowired
-    private Environment env;
-
-    @Autowired
-    private AppConfig appConfig;
-
-    @Autowired
     private JavaMailSender javaMailSender;
 
     @Autowired

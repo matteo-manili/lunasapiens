@@ -33,9 +33,6 @@ public class ScheduledTasks {
     private OroscopoGiornalieroRepository oroscopoGiornalieroRepository;
 
     @Autowired
-    private AppConfig appConfig;
-
-    @Autowired
     private CacheManager cacheManager;
 
     @Autowired
