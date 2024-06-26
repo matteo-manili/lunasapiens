@@ -45,16 +45,22 @@ public class TelegramBotClient extends TelegramLongPollingBot {
     private String telegramChatId;
 
 
+
     @Autowired
-    public TelegramBotClient() {
-        if (Util.isLocalhost()) {
+    public TelegramBotClient(@Value("${api.telegram.token}") String telegramToken,
+                             @Value("${api.telegram.chatId}") String telegramChatId,
+                             Environment env) {
+        try{
+            this.telegramToken = telegramToken;
+            this.telegramChatId = telegramChatId;
+
+        } catch (IllegalArgumentException e) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId")) );
             this.telegramToken = loadPorpoerty.get(0);
             this.telegramChatId = loadPorpoerty.get(1);
-        }else{
-            this.telegramToken = env.getProperty("api.telegram.token");
-            this.telegramChatId = env.getProperty("api.telegram.chatId");
         }
+
+
     }
 
 
