@@ -10,6 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -74,41 +78,7 @@ public class Util {
     }
 
 
-    public static void createDirectory(String pathDirectory) {
-        File outputFolder = new File(pathDirectory);
-        if (!outputFolder.exists()) {
-            outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
-            //logger.info("La cartella o il file NON esistono!");
-        }else{
-            //logger.info("La cartella o il file esistono!");
-        }
-    }
 
-
-    public static void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
-        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
-        deleteDirectory(directoryImmagini);
-        File directoryVideo = new File(GeneratorVideo.pathOroscopoGiornalieroVideo);
-        deleteDirectory(directoryVideo);
-    }
-
-
-    public static void deleteDirectory(File directory) {
-        File[] contents = directory.listFiles();
-        if (contents != null) {
-            for (File file : contents) {
-                if (file.isDirectory()) {
-                    // Se è una cartella, elimina ricorsivamente i suoi contenuti
-                    deleteDirectory(file);
-                } else {
-                    // Se è un file, elimina il file
-                    file.delete();
-                }
-            }
-        }
-        // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
-        directory.delete();
-    }
 
 
     /**
@@ -180,6 +150,85 @@ public class Util {
     }
 
 
+
+
+
+
+
+    public static void createDirectory(String pathDirectory) {
+        File outputFolder = new File(pathDirectory);
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs(); // Crea la cartella e tutte le sue sottocartelle se non esiste
+            //logger.info("La cartella o il file NON esistono!");
+        }else{
+            //logger.info("La cartella o il file esistono!");
+        }
+    }
+
+
+    public static void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
+        File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
+        deleteDirectory(directoryImmagini);
+        File directoryVideo = new File(GeneratorVideo.pathOroscopoGiornalieroVideo);
+        deleteDirectory(directoryVideo);
+    }
+
+
+    public static void deleteDirectory(File directory) {
+        File[] contents = directory.listFiles();
+        if (contents != null) {
+            for (File file : contents) {
+                if (file.isDirectory()) {
+                    // Se è una cartella, elimina ricorsivamente i suoi contenuti
+                    deleteDirectory(file);
+                } else {
+                    // Se è un file, elimina il file
+                    file.delete();
+                }
+            }
+        }
+        // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
+        directory.delete();
+    }
+
+
+    public static List<String> loadPropertiesEsternoLunaSapiens(List<String> keysProperties ) {
+        List<String> keysPropertiesResult = new ArrayList<>();
+        Properties properties = new Properties();
+        try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+            properties.load(fis);
+            for (String str : keysProperties) {
+                System.out.println(str);
+                keysPropertiesResult.add( properties.getProperty( str ) );
+            }
+        } catch (IOException ioException) {
+            throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+        }
+        return keysPropertiesResult;
+    }
+
+
+    public static boolean isLocalhost() {
+        try {
+            InetAddress localhost = InetAddress.getLocalHost();
+            System.out.println("Nome host: " + localhost);
+
+            // cambia a ogni deploy
+            // in produzione viene Nome host: 0678b9f9-9ded-4ad1-967e-ac3663bd743a/172.18.13.50
+            //                                13d614cc-dcb5-4d8b-b33e-b60fa1cf12d0/172.18.117.170
+
+            if( localhost.toString().contains("DESKTOP-MATTEO") ){
+                System.out.println("Ambiente rilevato: DEV");
+                return true;
+            }else{
+                System.out.println("Ambiente rilevato: PROD");
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return true; // Ritorna true se si verifica un'eccezione (es. per sicurezza in sviluppo)
+        }
+    }
 
 
 }

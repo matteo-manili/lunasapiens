@@ -32,6 +32,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -140,7 +143,7 @@ public class AppConfig implements WebMvcConfigurer {
             apiKeyOpenAI = env.getProperty("api.key.openai");
             //System.out.println("111 api_openai: " + apiKeyOpenAI);
         } catch (IllegalArgumentException e) {
-            // In caso di eccezione, utilizza il file di configurazione esterno
+            // In caso di eccezione, utilizza il file di configurazione esterno. Prima che sviluppassio il metodo isLocalhost()
             Properties properties = new Properties();
             try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
                 properties.load(fis);
@@ -159,9 +162,10 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
+
     @Bean
     public JavaMailSender javaMailSender() {
-        if (isLocalhost()) {
+        if (Util.isLocalhost()) {
             // Configurazione per ambiente di sviluppo (localhost)
             return javaMailSenderGmailDev();
         } else {
@@ -174,10 +178,12 @@ public class AppConfig implements WebMvcConfigurer {
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("gmail.mail.username"));
-        mailSender.setPassword(env.getProperty("gmail.mail.password"));
         mailSender.setHost(env.getProperty("gmail.mail.smtp.host"));
         mailSender.setPort(Integer.parseInt(env.getProperty("gmail.mail.smtp.port")));
-
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
+            mailSender.setPassword( loadPorpoerty.get(0) );
+        }
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
@@ -198,10 +204,12 @@ public class AppConfig implements WebMvcConfigurer {
     private JavaMailSender javaMailSenderLunaSapiensProd() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("mail.username"));
-        mailSender.setPassword(env.getProperty("mail.password"));
         mailSender.setHost(env.getProperty("mail.smtp.host"));
         mailSender.setPort(Integer.parseInt(env.getProperty("mail.smtp.port")));
-
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("mail.password")) );
+            mailSender.setPassword( loadPorpoerty.get(0) );
+        }
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
@@ -213,27 +221,6 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
-    public boolean isLocalhost() {
-        try {
-            InetAddress localhost = InetAddress.getLocalHost();
-            System.out.println("Nome host: " + localhost);
-
-            // cambia a ogni deploy
-            // in produzione viene Nome host: 0678b9f9-9ded-4ad1-967e-ac3663bd743a/172.18.13.50
-            //                                13d614cc-dcb5-4d8b-b33e-b60fa1cf12d0/172.18.117.170
-
-            if( localhost.toString().contains("DESKTOP-MATTEO") ){
-                System.out.println("Ambiente rilevato: DEV");
-                return true;
-            }else{
-                System.out.println("Ambiente rilevato: PROD");
-                return false;
-            }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            return true; // Ritorna true se si verifica un'eccezione (es. per sicurezza in sviluppo)
-        }
-    }
 
 
     @Bean

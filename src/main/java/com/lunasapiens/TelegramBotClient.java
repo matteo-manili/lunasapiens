@@ -1,12 +1,18 @@
 package com.lunasapiens;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /*
 Questo passaggio è obbligatorio poiché creerà un chat_id in background per la tua comunicazione privata con il tuo bot in background.
@@ -26,19 +32,33 @@ risultato:
 @Component
 public class TelegramBotClient extends TelegramLongPollingBot {
 
+    @Autowired
+    private Environment env;
+
     // https://t.me/LunaSapiensUser_bot
 
     @Value("${api.telegram.bot.username}")
     private String telegramBotUsername;
 
-    @Value("${api.telegram.token}")
     private String telegramToken;
 
-    @Value("${api.telegram.chatId}")
     private String telegramChatId;
 
 
-    /*
+    @Autowired
+    public TelegramBotClient() {
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId")) );
+            this.telegramToken = loadPorpoerty.get(0);
+            this.telegramChatId = loadPorpoerty.get(1);
+        }else{
+            this.telegramToken = env.getProperty("api.telegram.token");
+            this.telegramChatId = env.getProperty("api.telegram.chatId");
+        }
+    }
+
+
+/*
     public TelegramBot()  {
         // Disabilita il webhook
         try {

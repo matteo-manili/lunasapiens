@@ -140,7 +140,7 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom(appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
+            helper.setFrom(Util.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
             helper.setTo(to);
             helper.setSubject(subject);
 
@@ -156,7 +156,7 @@ public class EmailService {
 
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( appConfig.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
+        message.setFrom( Util.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
