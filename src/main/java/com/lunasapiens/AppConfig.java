@@ -170,10 +170,8 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public JavaMailSender javaMailSender() {
         if (Util.isLocalhost()) {
-            // Configurazione per ambiente di sviluppo (localhost)
             return javaMailSenderGmailDev();
         } else {
-            // Configurazione per ambiente di produzione
             return javaMailSenderLunaSapiensProd();
         }
     }
@@ -181,12 +179,11 @@ public class AppConfig implements WebMvcConfigurer {
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("gmail.mail.username"));
+        List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
+        mailSender.setPassword( loadPorpoerty.get(0) );
         mailSender.setHost(env.getProperty("gmail.mail.smtp.host"));
         mailSender.setPort(Integer.parseInt(env.getProperty("gmail.mail.smtp.port")));
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
-            mailSender.setPassword( loadPorpoerty.get(0) );
-        }
+
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
@@ -207,12 +204,10 @@ public class AppConfig implements WebMvcConfigurer {
     private JavaMailSender javaMailSenderLunaSapiensProd() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("mail.username"));
+        mailSender.setPassword(env.getProperty("mail.password"));
         mailSender.setHost(env.getProperty("mail.smtp.host"));
         mailSender.setPort(Integer.parseInt(env.getProperty("mail.smtp.port")));
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("mail.password")) );
-            mailSender.setPassword( loadPorpoerty.get(0) );
-        }
+
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
