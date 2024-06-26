@@ -53,17 +53,15 @@ public class TikTokApiClient {
     private TikTokOperazioniDbService tikTokOperazioniDbService;
     private JdbcTemplate jdbcTemplate;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
-    private TelegramBotClient telegramBotClient;
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
     @Autowired
     public TikTokApiClient(ServletContext servletContext, JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
-                           GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBotClient telegramBotClient, OroscopoGiornalieroService oroscopoGiornalieroService) {
+                           GestioneApplicazioneRepository gestioneApplicazioneRepository, OroscopoGiornalieroService oroscopoGiornalieroService) {
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
         this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
-        this.telegramBotClient = telegramBotClient;
         this.oroscopoGiornalieroService = oroscopoGiornalieroService;
     }
 
@@ -72,6 +70,9 @@ public class TikTokApiClient {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private TelegramBotClient telegramBotClient;
 
     @Value("${api.tiktok.clientKey}")
     private String clientKey;
