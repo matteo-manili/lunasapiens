@@ -9,14 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Component
-public class ServiziAstrologici {
+public class ServizioOroscopoDelGiorno {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiziAstrologici.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServizioOroscopoDelGiorno.class);
 
     @Autowired
     private AppConfig appConfig;
@@ -24,7 +22,8 @@ public class ServiziAstrologici {
     @Autowired
     private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
-    private Double temperature = 0.5; private Integer maxTokens = 2500;
+    //private Double temperature = 0.5; private Integer maxTokens = 2500;
+    private Double temperature = 0.8; private Integer maxTokens = 2500;
 
 
 
@@ -44,15 +43,22 @@ public class ServiziAstrologici {
         Properties segniZodDecrizProperties = appConfig.segniZodiacali();
         Properties aspettiPianetiProperties = appConfig.AspettiPianeti();
         Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
+        Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
         ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-
 
         System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
         SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
         StringBuilder domandaBuilder = new StringBuilder();
+
+
+        String inizioDomanda = "Tu sei un astrologo che risponde in base ai dati forniti, senza inventare e aggiungere nulla.\n" +
+                "Scrivi l'oroscopo del giorno per il segno del " +Constants.SegniZodiacali.fromNumero(numeroSegno).getNome()+".\n" +
+                "L'oroscopo deve argomentare gli eventi di oggi declinandoli agli aspetti." + "\n\n";
+        domandaBuilder.append(inizioDomanda);
+
 
 
         domandaBuilder.append("- Descrizione segno zodiacale:\n" );
@@ -63,10 +69,15 @@ public class ServiziAstrologici {
 
 
 
+
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
         ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiProperties);
         List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
         boolean presentePianetaRetrogrado = false; boolean presentiAspetti = false; int contaEventi = 1;
+
+        // TreeSet: mantiene gli elementi unici e ordinati in ordine crescente
+        TreeSet<Integer> pianetiCoinvoltiSet = new TreeSet<>();
+
         domandaBuilder.append("- Eventi di oggi:\n" );
         for (int pianetaSig : pianetiSignori) {
             ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
@@ -74,6 +85,7 @@ public class ServiziAstrologici {
                 PianetaPosizTransito pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianetaPosizTransito, pianetaSig);
                 domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                 domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta() + ": " + pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n");
+                pianetiCoinvoltiSet.add(pianetaSenzaAspetti.getNumeroPianeta());
                 if(pianetaSenzaAspetti.isRetrogrado()){
                     domandaBuilder.append( "Tipo di Aspetto: "+pianetaRetrogradoString(pianetaSenzaAspetti.getNomePianeta())+"\n");
                 }
@@ -86,6 +98,8 @@ public class ServiziAstrologici {
                     PianetaPosizTransito pianetaTransito_1 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_1());
                     PianetaPosizTransito pianetaTransito_2 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_2());
                     domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
+                    pianetiCoinvoltiSet.add(pianetaTransito_1.getNumeroPianeta());
+                    pianetiCoinvoltiSet.add(pianetaTransito_2.getNumeroPianeta());
                     if( pianetaTransito_1.getNumeroPianeta() == pianetaSig  ){
                         domandaBuilder.append(pianetaTransito_1.getNomePianeta() + ": " + pianetaTransito_1.getSignificatoPianetaSegno()+"\n");
                         domandaBuilder.append(pianetaTransito_2.getNomePianeta() + ": " + pianetaTransito_2.getSignificatoPianetaSegno()+"\n");
@@ -103,10 +117,18 @@ public class ServiziAstrologici {
                     if(pianetaTransito_2.isRetrogrado()){
                         domandaBuilder.append( "Tipo di Aspetto: "+pianetaRetrogradoString(pianetaTransito_2.getNomePianeta())+"\n");
                     }
-                    domandaBuilder.append("\n");
                 }
             }
         }
+
+
+        // significato dei puianeti......
+        domandaBuilder.append("\n");
+        domandaBuilder.append("- Significato dei Pianeti:\n");
+        for (Integer numeroPianetq : pianetiCoinvoltiSet) {
+            domandaBuilder.append(pianetiOroscopoSignificatoProperties.getProperty( String.valueOf(numeroPianetq)+"_min")+"\n" );
+        }
+
 
 
         if(presentiAspetti){
@@ -114,24 +136,17 @@ public class ServiziAstrologici {
             domandaBuilder.append("- Significato degli Aspetti:\n");
             for (Constants.Aspetti aspetti : Constants.Aspetti.values()) {
                 if(aspettiPresentiNelSegno.contains(aspetti.getCode())) {
-                    domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspetti.getCode())+"_min")+"\n\n" );
+                    domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspetti.getCode())+"_min")+"\n" );
                 }
             }
         }
 
-
+        // Nella IA lo tratto come se fosse un aspetto.
         if(presentePianetaRetrogrado){
-            domandaBuilder.append(pianetaRetrogradoProperties.getProperty(  String.valueOf(0) ));
+            domandaBuilder.append(pianetaRetrogradoProperties.getProperty( String.valueOf(0) ));
         }
 
-        String inizioDomanda = "Tu sei un astrologo che risponde in base ai dati forniti, senza inventare e aggiungere nulla.\n" +
-                "Scrivi l'oroscopo del giorno per l'utente del segno del " +Constants.SegniZodiacali.fromNumero(numeroSegno).getNome()+".\n" +
-                "L'oroscopo deve argomentare gli eventi di oggi declinandoli agli aspetti."
 
-                //(presentePianetaRetrogrado ? " L'evento del (Pianeta Retrogrado) declinalo al suo significato." : "")
-
-                + "\n\n";
-        domandaBuilder.insert(0, inizioDomanda);
 
         System.out.println( domandaBuilder.toString() );
         System.out.println( "---------- fine segno "+numeroSegno +" ----------" );

@@ -8,7 +8,7 @@ import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.EmailService;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
-import com.lunasapiens.zodiac.ServiziAstrologici;
+import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -36,7 +36,7 @@ public class IndexController {
     private ScheduledTasks scheduledTasks;
 
     @Autowired
-    ServiziAstrologici servAstrolog;
+    ServizioOroscopoDelGiorno servAstrolog;
 
     @Autowired
     private EmailService emailService;
@@ -63,16 +63,37 @@ public class IndexController {
 
 
 
+
+    @GetMapping("/oroscopo")
+    public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+
+        String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
+
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+        List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+        for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+            OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
+            listOroscopoGiornoDTO.add(dto);
+        }
+        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
+        model.addAttribute("videos", listOroscopoGiornoDTO);
+
+        // Aggiungi infoSubscription al modello per essere visualizzato nella vista
+        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
+
+        return "oroscopo";
+    }
+
+
     @GetMapping("/test-invia-email")
     public String inviaEmail(Model model) {
-
         EmailUtenti emailUtenti = new EmailUtenti();
         emailUtenti.setEmail("matteo.manili@gmail.com");
         emailService.inviaEmailOrosciopoGioraliero(emailUtenti);
-
         return "index";
     }
-
 
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
@@ -138,30 +159,6 @@ public class IndexController {
         return "redirect:/oroscopo";
     }
 
-
-
-
-    @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-
-        String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
-
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
-        List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
-        for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
-            OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
-            listOroscopoGiornoDTO.add(dto);
-        }
-        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
-        model.addAttribute("videos", listOroscopoGiornoDTO);
-
-        // Aggiungi infoSubscription al modello per essere visualizzato nella vista
-        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
-
-        return "oroscopo";
-    }
 
 
 

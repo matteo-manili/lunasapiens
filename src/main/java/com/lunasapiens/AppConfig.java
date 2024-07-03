@@ -47,65 +47,49 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private Environment env;
 
+
+
+    @Bean
+    public Properties pianetiOroscopoSignificato() {
+        return getProperties("pianeti-oroscopo-significato.properties");
+    }
+
     @Bean
     public Properties pianetaRetrogrado() {
-        Properties properties = new Properties();
-        try (InputStream is = getClass().getResourceAsStream("/pianeta-retrogrado.properties")) {
-            if (is != null) {
-                properties.load(is);
-            } else {
-                throw new FileNotFoundException("File properties non trovato");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del file properties", e);
-        }
-        return properties;
+        return getProperties("pianeta-retrogrado.properties");
     }
 
     @Bean
     public Properties AspettiPianeti() {
-        Properties properties = new Properties();
-        try (InputStream is = getClass().getResourceAsStream("/aspetti-pianeti.properties")) {
-            if (is != null) {
-                properties.load(is);
-            } else {
-                throw new FileNotFoundException("File properties non trovato");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del file properties", e);
-        }
-        return properties;
+        return getProperties("aspetti-pianeti.properties");
     }
 
     @Bean
     public Properties segniZodiacali() {
-        Properties properties = new Properties();
-        try (InputStream is = getClass().getResourceAsStream("/segni-zodiacali.properties")) {
-            if (is != null) {
-                properties.load(is);
-            } else {
-                throw new FileNotFoundException("File properties non trovato");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del file properties", e);
-        }
-        return properties;
+        return getProperties("segni-zodiacali.properties");
     }
 
     @Bean
     public Properties transitiPianetiSegni() {
+        return getProperties("transiti-pianeti-segni.properties");
+    }
+
+
+    private Properties getProperties(String fileNameProperties){
         Properties properties = new Properties();
-        try (InputStream is = getClass().getResourceAsStream("/transiti-pianeti-segni.properties")) {
+        try (InputStream is = getClass().getResourceAsStream("/"+fileNameProperties)) {
             if (is != null) {
                 properties.load(is);
             } else {
                 throw new FileNotFoundException("File properties non trovato");
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del file properties", e);
+            throw new RuntimeException("Errore nel caricamento del file properties: "+fileNameProperties, e);
         }
         return properties;
     }
+
+
 
     @Bean
     public FacebookConfig getfacebookConfig() {

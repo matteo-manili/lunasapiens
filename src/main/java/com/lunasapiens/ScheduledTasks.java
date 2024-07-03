@@ -4,7 +4,7 @@ import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
-import com.lunasapiens.zodiac.ServiziAstrologici;
+import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Autowired
-    private ServiziAstrologici serviziAstrologici;
+    private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     private OroscopoGiornalieroService oroscopoGiornalieroService;
@@ -61,7 +61,7 @@ public class ScheduledTasks {
 
     public void test_Oroscopo_Segni_Transiti_Aspetti(){
 
-        serviziAstrologici.test_Oroscopo_Segni_Transiti_Aspetti();
+        servizioOroscopoDelGiorno.test_Oroscopo_Segni_Transiti_Aspetti();
     }
 
 
@@ -92,7 +92,7 @@ public class ScheduledTasks {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     StringBuilder sBTestoOroscopoIA = null;
                     if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
-                        sBTestoOroscopoIA = serviziAstrologici.oroscopoDelGiornoIA( numeroSegno, giornoOraPosizioneDTO);
+                        sBTestoOroscopoIA = servizioOroscopoDelGiorno.oroscopoDelGiornoIA( numeroSegno, giornoOraPosizioneDTO);
                         if(sBTestoOroscopoIA == null || sBTestoOroscopoIA.length() == 0) {
                             logger.error("sBTestoOroscopo null: Risposta nulla dalla IA. Salto iterazione del ciclo della creazione del video");
                             // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
@@ -103,7 +103,7 @@ public class ScheduledTasks {
                     }
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    ArrayList<String> paragrafiTestoOroscopoIA = ServiziAstrologici.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
+                    ArrayList<String> paragrafiTestoOroscopoIA = ServizioOroscopoDelGiorno.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
 
 
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
