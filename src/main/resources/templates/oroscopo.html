@@ -1,28 +1,15 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGFTKCH8TD"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XGFTKCH8TD');
-    </script>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oroscopo</title>
+<head th:replace="~{ templateBase :: common_head_title( 'Oroscopo del Giorno') }">
 
-    <link rel="stylesheet" href="styleOroscopo.css">
 </head>
+
 <body>
+<header th:replace="~{templateBase :: header}"></header>
 
 <div class="container">
 
-    <h3><a href="/" class="button">Home page</a></h3>
-
-    <!-- Sezione Iscrizione -->
     <div class="subscribe-section" style="background-color: #f0f0f0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px;">
         <h3 style="margin-bottom: 10px;">Iscriviti per Ricevere l'Oroscopo del Giorno via email da LunaSapiens</h3>
         <p style="font-size: 14px; margin-bottom: 15px;">Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
@@ -62,11 +49,13 @@
                     Your browser does not support the video tag.
                 </video>
 
-
             </li>
         </div>
     </ul>
 </div>
 
+
+<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
+<footer th:replace="~{templateBase :: footer}"></footer>
 </body>
 </html>

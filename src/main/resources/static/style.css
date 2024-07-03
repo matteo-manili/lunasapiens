@@ -1,0 +1,42 @@
+
+html, body {
+    height: 100%;
+}
+
+.content {
+    padding: 20px; /* Spazio interno per il contenuto principale */
+}
+.navbar {
+    background-color: #343a40; /* Colore di sfondo del menu */
+}
+.navbar-brand {
+    color: #ffffff; /* Colore del testo del titolo */
+    font-size: 1.5rem; /* Dimensione del testo del titolo */
+}
+.navbar-nav .nav-link {
+    color: #ffffff; /* Colore del testo dei link */
+    font-size: 1.2rem; /* Dimensione del testo dei link */
+}
+.intro-divider {
+    width: 100%;
+    height: 2px;
+    background-color: #343a40;
+    margin: 20px 0;
+}
+.service {
+    padding-bottom: 20px;
+}
+
+.service .btn {
+    margin-top: auto; /* Per allineare i bottoni in basso */
+}
+
+
+
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px; /* Altezza ridotta */
+}

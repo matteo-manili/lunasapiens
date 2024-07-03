@@ -1,55 +1,41 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGFTKCH8TD"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-        gtag('config', 'G-XGFTKCH8TD');
-    </script>
+<head th:replace="~{ templateBase :: common_head_title( 'LunaSapiens - Home Page') }">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astrologia Celeste</title>
-
-    <link rel="stylesheet" href="styleIndex.css">
 </head>
+
 <body>
+<header th:replace="~{templateBase :: header}"></header>
 
-<header>
-    <h1>Benvenuti in Luna Sapiens</h1>
-    <p style="font-weight: bold;">Esplora l'influenza delle stelle sulla tua vita e il tuo destino.</p>
-</header>
+<div class="content">
+    <div class="intro text-center">
+        <h1 class="display-4">Benvenuti in Luna Sapiens</h1>
+        <p class="lead">Esplora l'influenza delle stelle sulla tua vita e il tuo destino.</p>
+    </div>
+    <div class="intro-divider"></div>
 
-<main>
+    <div class="row align-items-stretch">
+        <div class="col-md-6 d-flex flex-column">
+            <h2 class="text-center">Consulta l'Oroscopo del Giorno</h2>
+            <p>Oroscopo a schedulazione giornaliera generato con intelligenza artificiale. La IA riceve in input le reali
+                posizioni dei corpi celesti più altri dettagli di tipo astronomico e astrologico. Le posizioni dei corpi
+                celesti sono orientate verso l'Italia alle ore 12 del giorno odierno.</p>
+            <a href="/oroscopo" class="btn btn-primary btn-lg mx-auto mt-auto">Vai all'Oroscopo!</a>
+        </div>
 
-    <section class="horoscope-section">
-        <h2 style="font-weight: bold;">Consulta l'Oroscopo del Giorno</h2>
-        <p style="font-weight: bold;">Oroscopo a schedulazione giornaliera generato con intelligenza artificiale. La IA riceve in input le reali posizioni dei
-            corpi celesti più altri dettagli di tipo astronomico e astrologico.
-            Le posizione dei corpi celesti sono orientate verso l'Italia alle ore 12 del giorno odierno.</p>
-        <a href="/oroscopo" style="font-weight: bold;" class="button">vai all'orosocpo!</a>
-    </section>
+        <div class="col-md-6 d-flex flex-column">
+            <h2 class="text-center">Creazione del Tema Natale (in progress...)</h2>
+            <p>Esplora il mondo dell'astrologia e scopri come le stelle influenzano la tua personalità, il tuo amore e il tuo futuro.</p>
+            <a href="/tema-natale" class="btn btn-primary btn-lg mx-auto mt-auto">Vai al Tema Natale</a>
+        </div>
+    </div>
 
-    <section class="horoscope-section">
-        <h2>Creazione del Tema Natale (in progress...)</h2>
-        <p>Esplora il mondo dell'astrologia e scopri come le stelle influenzano la tua personalità, il tuo amore e il tuo futuro.</p>
-    </section>
-
-
-    <section class="center-image">
-        <img src="/static/logo_1024x1024.png" alt="Luna Sapiens Logo" width="30%" height="30%">
-    </section>
-</main>
+</div>
 
 
-<footer>
-    <p>&copy; 2024 LunaSapiens | <a href="info-privacy">Informativa sulla Privacy</a> | <a href="termini-di-servizio">Termini di Servizio</a> | <a href="/genera-video">genera-video</a></p>
-    <p>Email: <a href="mailto:info@lunasapiens.com">info@lunasapiens.com</a></p>
-</footer>
 
+<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
+<footer th:replace="~{templateBase :: footer}"></footer>
 </body>
 </html>

@@ -64,6 +64,14 @@ public class IndexController {
 
 
 
+    @GetMapping("/tema-natale")
+    public String temaNatale(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
+
+        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
+        return "tema-natale";
+    }
+
+
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
