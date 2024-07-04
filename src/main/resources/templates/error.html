@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Errore</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #FF5733;
-        }
-    </style>
-</head>
-<body>
-<h1>Errore</h1>
-<p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<div th:if="${infoError != null}">
-    <p th:text="${infoError}"></p>
+<head th:replace="~{ templateBase :: common_head_title(~{::title}) }">
+    <title>Pagina di errore</title>
+</head>
+
+<body>
+<header th:replace="~{templateBase :: header}"></header>
+
+<div class="container mt-5">
+
+
+    <h1>Errore</h1>
+    <p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
+
+    <div th:if="${infoError != null}">
+        <p th:text="${infoError}"></p>
+    </div>
+
+    <!-- Aggiungi un link per tornare alla pagina index -->
+    <a href="/">Torna alla pagina iniziale</a>
+
 </div>
 
-<!-- Aggiungi un link per tornare alla pagina index -->
-<a href="/">Torna alla pagina iniziale</a>
-
+<footer th:replace="~{templateBase :: footer}"></footer>
+<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
 </body>
 </html>

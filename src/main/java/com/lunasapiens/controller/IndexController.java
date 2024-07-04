@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -61,13 +63,64 @@ public class IndexController {
     }
 
 
+    @GetMapping("/temaNataleSubmitDataOra")
+    public String temaNataleSubmitDataOra(@RequestParam("datetime") String datetime, Model model) {
+
+
+        // Esempio di datetime: "2024-07-05T13:45"
+        // Effettua il parsing della stringa datetime
+        String[] dateTimeParts = datetime.split("T");
+        String datePart = dateTimeParts[0]; // "2024-07-05"
+        String timePart = dateTimeParts[1]; // "13:45"
+
+        // Estrai anno, mese e giorno dalla parte della data
+        String[] dateParts = datePart.split("-");
+        int year = Integer.parseInt(dateParts[0]);   // Anno
+        int month = Integer.parseInt(dateParts[1]);  // Mese
+        int day = Integer.parseInt(dateParts[2]);    // Giorno
+
+        // Estrai ora e minuti dalla parte dell'ora
+        String[] timeParts = timePart.split(":");
+        int hour = Integer.parseInt(timeParts[0]);   // Ora
+        int minute = Integer.parseInt(timeParts[1]); // Minuti
+
+        // Ora puoi fare quello che vuoi con questi valori
+        System.out.println("Giorno: " + day);
+        System.out.println("Mese: " + month);
+        System.out.println("Anno: " + year);
+
+        System.out.println("Ora: " + hour);
+        System.out.println("Minuti: " + minute);
+
+        // Puoi anche passarli a un servizio, salvarli nel database, ecc.
+
+
+
+        LocalDateTime dataOra = LocalDateTime.now();
+        // Formatta la data per il formato datetime-local
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        String formattedDateTime = dataOra.format(formatter);
+        model.addAttribute("dataOra", formattedDateTime);
+
+
+        return "tema-natale";
+    }
+
+
+
 
 
 
     @GetMapping("/tema-natale")
-    public String temaNatale(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
+    public String temaNatale(Model model) {
 
-        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
+        LocalDateTime dataOra = LocalDateTime.now();
+        // Formatta la data per il formato datetime-local
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        String formattedDateTime = dataOra.format(formatter);
+        model.addAttribute("dataOra", formattedDateTime);
+
+
         return "tema-natale";
     }
 

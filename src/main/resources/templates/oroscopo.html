@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{ templateBase :: common_head_title( 'Oroscopo del Giorno') }">
-
+<head th:replace="~{ templateBase :: common_head_title(~{::title}) }">
+    <title>Oroscopo del Giorno</title>
 </head>
 
 <body>

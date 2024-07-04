@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{ templateBase :: common_head_title( 'Tema Natale') }">
-
+<head th:replace="~{ templateBase :: common_head_title_links(~{::title},~{::link}) }">
+    <title>Tema Natale</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 <header th:replace="~{templateBase :: header}"></header>
 
-<!-- Contenuto principale -->
-<div class="container px-4 px-lg-5">
+<div class="container mt-5">
 
 
-    <h2>Tema natale - working in progress.......</h2>
-
+    <form action="/temaNataleSubmitDataOra" method="GET">
+        <div class="mb-3">
+            <label for="datetime" class="form-label">Select date and time:</label>
+            <input type="datetime-local" id="datetime" name="datetime" class="form-control" th:value="${dataOra}"> <!-- Utilizzo di th:value per valorizzare il campo -->
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
 
 </div>
