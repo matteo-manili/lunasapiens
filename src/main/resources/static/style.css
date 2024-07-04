@@ -4,7 +4,9 @@ html, body {
 }
 
 .content {
-    padding: 20px; /* Spazio interno per il contenuto principale */
+    min-height: calc(100vh - 162px); /* Altezza della viewport meno l'altezza del footer */
+    padding-bottom: 50px; /* Altezza del footer */
+    position: relative; /* Posizione relativa per contenere i figli assoluti */
 }
 .navbar {
     background-color: #343a40; /* Colore di sfondo del menu */
@@ -17,6 +19,10 @@ html, body {
     color: #ffffff; /* Colore del testo dei link */
     font-size: 1.2rem; /* Dimensione del testo dei link */
 }
+.intro {
+    padding: 60px 0;
+}
+
 .intro-divider {
     width: 100%;
     height: 2px;
@@ -32,11 +38,23 @@ html, body {
 }
 
 
-
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
 .footer {
-    position: fixed;
-    bottom: 0;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 10px 0;
     width: 100%;
-    height: 40px; /* Altezza ridotta */
+    position: absolute; /* Posizione assoluta */
+    bottom: 0; /* Fissa il footer in basso */
+}
+
+@media (max-width: 768px) {
+    .footer {
+        position: static; /* Posizione normale per dispositivi mobili */
+    }
 }

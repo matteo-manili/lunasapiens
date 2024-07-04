@@ -122,7 +122,7 @@ public class ServizioOroscopoDelGiorno {
         }
 
 
-        // significato dei puianeti......
+        // significato dei pianeti......
         domandaBuilder.append("\n");
         domandaBuilder.append("- Significato dei Pianeti:\n");
         for (Integer numeroPianetq : pianetiCoinvoltiSet) {
@@ -202,7 +202,7 @@ public class ServizioOroscopoDelGiorno {
      */
     public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n" +
+                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
                 "Transiti: ";
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
         for (PianetaPosizTransito var : pianetiTransiti) {
@@ -254,10 +254,14 @@ public class ServizioOroscopoDelGiorno {
         StringBuilder domanda = test_Oroscopo_Segni_Transiti_Aspetti(segno);
         //logger.info("DOMANDA: " + domanda);
 
-        OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
-        return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-                appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
+        //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
+        //return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
+          //      appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
 
+
+        OpenAIGptTheokanning we = new OpenAIGptTheokanning();
+        return we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
+                appConfig.getParamOpenAi().getModelGpt4() );
     }
 
 
