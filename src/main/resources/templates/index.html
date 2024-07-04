@@ -8,30 +8,66 @@
 <body>
 <header th:replace="~{templateBase :: header}"></header>
 
-<div class="content">
-    <div class="intro text-center">
-        <h1 class="display-4">Benvenuti in Luna Sapiens</h1>
-        <p class="lead">Esplora l'influenza delle stelle sulla tua vita e il tuo destino.</p>
-    </div>
-    <div class="intro-divider"></div>
 
-    <div class="row align-items-stretch">
-        <div class="col-md-6 d-flex flex-column">
-            <h2 class="text-center">Consulta l'Oroscopo del Giorno</h2>
-            <p>Oroscopo a schedulazione giornaliera generato con intelligenza artificiale. La IA riceve in input le reali
-                posizioni dei corpi celesti più altri dettagli di tipo astronomico e astrologico. Le posizioni dei corpi
-                celesti sono orientate verso l'Italia alle ore 12 del giorno odierno.</p>
-            <a href="/oroscopo" class="btn btn-primary btn-lg mx-auto mt-auto">Vai all'Oroscopo!</a>
-        </div>
 
-        <div class="col-md-6 d-flex flex-column">
-            <h2 class="text-center">Creazione del Tema Natale (in progress...)</h2>
-            <p>Esplora il mondo dell'astrologia e scopri come le stelle influenzano la tua personalità, il tuo amore e il tuo futuro.</p>
-            <a href="/tema-natale" class="btn btn-primary btn-lg mx-auto mt-auto">Vai al Tema Natale</a>
+<!-- Page Content-->
+<div class="container px-4 px-lg-5">
+
+    <!-- Heading Row-->
+    <div class="row gx-4 gx-lg-5 align-items-center my-5">
+        <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="logo_900x400.png" alt="LunaSapiens.com" /></div>
+        <div class="col-lg-5">
+            <h1 class="font-weight-light">Luna Sapiens</h1>
+            <p>Scopri un nuovo modo di esplorare l'astrologia basato su reali fattori astronomici e astrologici. Utilizziamo tecniche di
+                intelligenza artificiale per offrirti un'esperienza unica nel comprendere le influenze celesti sulla tua vita.</p>
         </div>
     </div>
+
+
+    <!-- Call to Action
+    <div class="card text-white bg-secondary my-5 py-4 text-center">
+        <div class="card-body"><p class="text-white m-0">This call to action card is a great place to showcase some important information or display a clever tagline!</p></div>
+    </div> -->
+
+
+    <!-- Content Row-->
+    <div class="row gx-4 gx-lg-5">
+        <div class="col-md-6 mb-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Il Tuo Oroscopo Giornaliero</h2>
+                    <p class="card-text">Scopri il tuo oroscopo giornaliero, generato con intelligenza artificiale! La nostra IA analizza le reali posizioni dei corpi celesti,
+                        inclusi pianeti, transiti e aspetti astrologici, insieme ad altri dettagli astronomici. Questi dati sono orientati verso l'Italia alle ore 12 di oggi.
+                        Ricevi previsioni accurate ogni giorno, direttamente dalle stelle.</p>
+                </div>
+                <div class="card-footer"><a class="btn btn-primary btn-sm" href="/oroscopo">Leggi l'oroscopo del giorno</a></div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Scopri il Tuo Tema Natale (in progress...)</h2>
+                    <p class="card-text">Inserisci la tua data e luogo di nascita per generare il tuo tema natale personalizzato. La nostra IA utilizzerà queste
+                        informazioni per rispondere alle tue domande e guidarti nella scoperta del tuo percorso astrologico.
+                        Esplora i misteri delle stelle e scopri cosa ti riservano!</p>
+                </div>
+                <div class="card-footer"><a class="btn btn-primary btn-sm" href="/tema-natale">Scopri il tuo tema natale astrologico</a></div>
+            </div>
+        </div>
+    </div>
+
+
+
 
 </div>
+
+
+
+
+
+
+
+
 
 
 

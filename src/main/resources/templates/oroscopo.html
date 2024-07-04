@@ -8,54 +8,60 @@
 <body>
 <header th:replace="~{templateBase :: header}"></header>
 
-<div class="container">
+<div class="container px-4 px-lg-5">
 
-    <div class="subscribe-section" style="background-color: #f0f0f0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin-bottom: 10px;">Iscriviti per Ricevere l'Oroscopo del Giorno via email da LunaSapiens</h3>
-        <p style="font-size: 14px; margin-bottom: 15px;">Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
 
-        <form id="subscribe-form" action="/subscribe" method="post" style="margin-bottom: 0;">
-            <input type="email" id="email" name="email" required style="width: 200px; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 10px;">
-            <button type="submit" id="subscribe-button" style="background-color: #4CAF50; color: white; cursor: pointer; transition: background-color 0.3s ease; padding: 8px; font-size: 14px; border: none; border-radius: 3px;">Registra Email</button>
+
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <h3 class="mb-4">Iscriviti per Ricevere l'Oroscopo del Giorno via email</h3>
+        <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
+
+        <form id="subscribe-form" action="/subscribe" method="post" class="row g-2 align-items-center">
+            <div class="col-sm">
+                <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
+            </div>
+            <div class="col-auto">
+                <button type="submit" id="subscribe-button" class="btn btn-primary">Registra Email</button>
+            </div>
         </form>
 
         <!-- Mostra il messaggio di infoSubscription -->
-        <div th:if="${infoSubscription != null and infoSubscription != ''}" class="info-message" style="color: green; font-weight: bold; margin-top: 10px;">
+        <div th:if="${infoSubscription != null and infoSubscription != ''}" class="alert alert-success mt-3" role="alert">
             <p th:text="${infoSubscription}"></p>
         </div>
     </div>
 
 
 
-    <h2>Oroscopo del Giorno</h2>
+    <!-- Titolo principale -->
+    <h1 class="mb-4">Oroscopo del Giorno</h1>
 
     <!-- Mostra la descrizione dell'oroscopo del giorno -->
-    <h4 th:utext="${oroscopoDelGiornoDescrizioneOggi}" style="font-size: larger;"></h4>
+    <p th:utext="${oroscopoDelGiornoDescrizioneOggi}"></p>
 
-    <!-- Utilizza un elenco per visualizzare i video -->
-    <hr>
+    <!-- Iterazione attraverso i video degli oroscopi -->
+    <div th:each="video : ${videos}" class="mb-5">
+        <!-- Titolo del segno zodiacale -->
+        <h2 class="mb-3"><strong th:text="${video.nomeSegnoZodiacale}"></strong></h2>
 
-    <!-- Itera attraverso la lista dei video e visualizzali -->
-    <div th:each="video : ${videos}">
+        <!-- Descrizione dell'oroscopo -->
+        <p th:utext="${video.testoOroscopoRifinito}"></p>
 
-        <!-- Visualizza il nome del segno zodiacale in grassetto -->
-        <h2 th:text="${video.nomeSegnoZodiacale}" style="font-weight: bold;"></h2>
-
-        <!-- Visualizza la descrizione del testo dell'oroscopo -->
-        <p th:utext="${video.testoOroscopoRifinito}" style="font-size: larger;"></p>
-
-        <!-- Visualizza il video -->
-        <video width="100%" height="auto" controls>
-            <source th:src="@{'/oroscopo-giornaliero/' + ${video.nomeFileVideo}}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-
+        <!-- Video -->
+        <div class="video-container mb-3">
+            <video controls>
+                <source th:src="@{'/oroscopo-giornaliero/' + ${video.nomeFileVideo}}" type="video/mp4">
+                Il tuo browser non supporta il tag video.
+            </video>
+        </div>
     </div>
+
 
 </div>
 
 
-<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
+
 <footer th:replace="~{templateBase :: footer}"></footer>
+<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
 </body>
 </html>

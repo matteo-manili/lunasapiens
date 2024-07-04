@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informativa sulla Privacy</title>
-</head>
-<body>
-<header>
-    <h1 class="privacy-policy-h1">Informativa sulla Privacy
-        <br><span>Ultimo aggiornamento il 07-ott-2023</span>
-        <br><span>Data di efficacia 07-ott-2023</span>
-    </h1>
-</header>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<main>
+<head th:replace="~{ templateBase :: common_head_title( 'Informativa sulla Privacy') }">
+
+</head>
+
+<body>
+<header th:replace="~{templateBase :: header}"></header>
+
+<div class="container px-4 px-lg-5">
+
+
     <section>
         <h2>Raccolta delle informazioni personali</h2>
         <p>Raccogliamo informazioni personali quando ci fornisci volontariamente tali informazioni tramite il nostro sito web (https://www.lunasapiens.com). Queste informazioni saranno utilizzate solo per gli scopi specificati durante la raccolta dei dati. Accedendo o utilizzando il servizio, acconsenti alla raccolta, all'uso e alla divulgazione delle tue informazioni in conformità con questa Informativa sulla Privacy. Se non acconsenti, ti preghiamo di non accedere o utilizzare il servizio.</p>
@@ -43,12 +40,12 @@
             <p>Se hai domande o preoccupazioni sul trattamento delle tue informazioni disponibili presso di noi, puoi inviare un'email al nostro Responsabile dei Reclami email: matteo.manili@gmail.com. Affronteremo le tue preoccupazioni in conformità alla legge applicabile.</p>
         </li>
     </ol>
-</main>
-
-<footer>
-    <p>&copy; 2023 Astrologia Celeste | <a href="/">Home</a></p>
-</footer>
+</div>
 
 
+
+
+<footer th:replace="~{templateBase :: footer}"></footer>
+<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
 </body>
 </html>
