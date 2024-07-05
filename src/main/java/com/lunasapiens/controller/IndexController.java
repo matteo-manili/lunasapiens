@@ -124,20 +124,21 @@ public class IndexController {
                                    @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, Model model) {
 
         // Estrai le singole componenti della data e ora
+        int hour = datetime.getHour();
+        int minute = datetime.getMinute();
         int day = datetime.getDayOfMonth();
         int month = datetime.getMonthValue();
         int year = datetime.getYear();
-        int hour = datetime.getHour();
-        int minute = datetime.getMinute();
 
+
+        System.out.println("Ora: " + hour);
+        System.out.println("Minuti: " + minute);
         System.out.println("Giorno: " + day);
         System.out.println("Mese: " + month);
         System.out.println("Anno: " + year);
-        System.out.println("Ora: " + hour);
-        System.out.println("Minuti: " + minute);
+
 
         String formattedDateTime = datetime.format( Constants.DATE_TIME_FORMATTER );
-
 
         System.out.println("cityName: " + cityName);
         System.out.println("regioneName: " + regioneName);
@@ -145,16 +146,19 @@ public class IndexController {
         System.out.println("Latitude: " + cityLat);
         System.out.println("Longitude: " + cityLng);
 
-
-
         model.addAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
         model.addAttribute("cityName", cityName);
         model.addAttribute("regioneName", regioneName);
         model.addAttribute("statoName", statoName);
         model.addAttribute("cityLat", cityLat);
         model.addAttribute("cityLng", cityLng);
-
         model.addAttribute("dataOra", formattedDateTime);
+
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
+        String temaNataleDescrizione = servAstrolog.temaNataleDescrizione(giornoOraPosizioneDTO);
+        temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
+        model.addAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
         return "tema-natale";
     }
@@ -162,19 +166,13 @@ public class IndexController {
 
 
 
-
-
-
     @GetMapping("/tema-natale")
     public String temaNatale(Model model) {
-
         LocalDateTime dataOra = LocalDateTime.now();
         // Formatta la data per il formato datetime-local
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         String formattedDateTime = dataOra.format(formatter);
         model.addAttribute("dataOra", formattedDateTime);
-
-
         return "tema-natale";
     }
 

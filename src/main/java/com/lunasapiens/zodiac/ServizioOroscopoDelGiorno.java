@@ -230,6 +230,47 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
+    public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+
+        String descrizioneOggi = "<b>Datra di nascita:</b> " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
+                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
+                "<b>Transiti:</b>\n";
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
+        for (PianetaPosizTransito var : pianetiTransiti) {
+            if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(4).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(5).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(6).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero() ) {
+                descrizioneOggi += var.descrizionePianetaGradiRetrogrado() + "\n";
+            }
+        }
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
+        if(!aspetti.isEmpty()){
+            descrizioneOggi += "\n" + "<b>Aspetti:</b>\n";
+            for(Aspetti var: aspetti) {
+                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
+            }
+        }
+
+
+        descrizioneOggi += "\n" + "<b>Case Placide:</b>\n";
+        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
+            descrizioneOggi +=  var.descrizioneCasaGradi()+"\n";
+            System.out.println( var.toString() );
+        }
+
+        return descrizioneOggi;
+    }
+
+
+
+
     public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
 
         // TODO le case placide non le uso più per l'oroscopo giornaliero

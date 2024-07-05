@@ -1,0 +1,9 @@
+.ui-autocomplete {
+    background-color: #ffffff; /* Cambia il colore di sfondo a tuo piacimento */
+    border: 1px solid #ccc; /* Aggiungi un bordo */
+    padding: 5px 10px; /* Aggiungi spazio interno per una migliore leggibilità */
+    z-index: 1000; /* Assicurati che la tendina sia sopra gli altri elementi */
+}
+.ui-helper-hidden-accessible {
+    display: none; /* Nascondi il messaggio dei risultati disponibili */
+}
