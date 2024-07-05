@@ -29,7 +29,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -48,14 +47,13 @@ public class IndexController {
     private RestTemplate restTemplate;
 
     @Autowired
-    ServizioOroscopoDelGiorno servAstrolog;
+    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     private EmailService emailService;
 
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
-
 
 
 
@@ -130,15 +128,11 @@ public class IndexController {
         int month = datetime.getMonthValue();
         int year = datetime.getYear();
 
-
         System.out.println("Ora: " + hour);
         System.out.println("Minuti: " + minute);
         System.out.println("Giorno: " + day);
         System.out.println("Mese: " + month);
         System.out.println("Anno: " + year);
-
-
-        String formattedDateTime = datetime.format( Constants.DATE_TIME_FORMATTER );
 
         System.out.println("cityName: " + cityName);
         System.out.println("regioneName: " + regioneName);
@@ -152,11 +146,11 @@ public class IndexController {
         model.addAttribute("statoName", statoName);
         model.addAttribute("cityLat", cityLat);
         model.addAttribute("cityLng", cityLng);
-        model.addAttribute("dataOra", formattedDateTime);
-
+        model.addAttribute("datetime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
+        model.addAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
-        String temaNataleDescrizione = servAstrolog.temaNataleDescrizione(giornoOraPosizioneDTO);
+        String temaNataleDescrizione = servizioOroscopoDelGiorno.temaNataleDescrizione(giornoOraPosizioneDTO);
         temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
         model.addAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
@@ -168,11 +162,8 @@ public class IndexController {
 
     @GetMapping("/tema-natale")
     public String temaNatale(Model model) {
-        LocalDateTime dataOra = LocalDateTime.now();
-        // Formatta la data per il formato datetime-local
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        String formattedDateTime = dataOra.format(formatter);
-        model.addAttribute("dataOra", formattedDateTime);
+        LocalDateTime dataOra = LocalDateTime.of(1970, 1, 1, 0, 0);
+        model.addAttribute("datetime", dataOra.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
         return "tema-natale";
     }
 
@@ -181,7 +172,7 @@ public class IndexController {
     public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
-        String oroscopoDelGiornoDescrizioneOggi = servAstrolog.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
 
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());

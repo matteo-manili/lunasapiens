@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{ templateBase :: common_head_title_links(~{::title},~{::link}) }">
-    <title>Tema Natale</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tema Natale</title><link rel="stylesheet" href="style.css">
 </head>
-
-
-
 
 <body>
 <header th:replace="~{templateBase :: header}"></header>
 
 <div class="container mt-5">
-
-    <h1 class="mb-4">Tema natale</h1>
+    <h1 class="mb-4">Tema Natale</h1>
 
     <form action="/temaNataleSubmit" method="GET">
         <div class="mb-3">
             <label for="datetime" class="form-label">Data e ora di nascita:</label>
-            <input type="datetime-local" id="datetime" name="datetime" class="form-control" th:value="${dataOra}"> <!-- Utilizzo di th:value per valorizzare il campo -->
+            <input type="datetime-local" id="datetime" name="datetime" class="form-control" th:value="${datetime}">
+            <div id="datetimeError" class="text-danger" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
         </div>
         <div class="mb-3">
             <label for="cityInput" class="form-label">Località di nascita:</label>
@@ -38,9 +34,9 @@
     <!-- Titolo principale e descrizione del tema natale -->
     <div th:if="${temaNataleDescrizione}">
         <h2 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h2>
+        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span></p>
         <p th:utext="${temaNataleDescrizione}"></p>
     </div>
-
 
 </div>
 
@@ -49,7 +45,6 @@
 <div th:replace="~{templateBase :: links-bootstrap-js}"></div>
 
 <script>
-
     $(document).ready(function() {
         $("#cityInput").autocomplete({
             source: function(request, response) {
@@ -100,8 +95,32 @@
                 $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
             }
         });
-    });
 
+        // Validazione dell'invio del modulo
+        $("form").submit(function(event) {
+            var isValid = true;
+            if ($("#cityInput").val().trim() === "") {
+                $("#cityError").show(); // Mostra il messaggio di errore
+                $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+                isValid = false;
+            } else {
+                $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+                $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+            }
+            if ($("#datetime").val().trim() === "") {
+                $("#datetimeError").show(); // Mostra il messaggio di errore
+                $("#datetime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+                isValid = false;
+            } else {
+                $("#datetimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+                $("#datetime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+            }
+            if (!isValid) {
+                event.preventDefault(); // Previeni l'invio del modulo
+            }
+        });
+    });
 </script>
+
 </body>
 </html>
