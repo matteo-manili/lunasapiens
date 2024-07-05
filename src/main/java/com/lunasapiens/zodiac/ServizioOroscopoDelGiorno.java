@@ -23,7 +23,7 @@ public class ServizioOroscopoDelGiorno {
     private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
-    private Double temperature = 0.8; private Integer maxTokens = 2500;
+    private Double temperature = 0.5; private Integer maxTokens = 2500;
 
 
 
