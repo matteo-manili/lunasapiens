@@ -96,10 +96,19 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
+    @Bean
+    public String getGeonamesUsername() {
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
+            return loadPorpoerty.get(0);
+        }else{
+            return env.getProperty("api.geonames.username");
+        }
+    }
+
 
     @Bean
     public FacebookConfig getfacebookConfig() {
-
         FacebookConfig facebookConfig;
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.facebook.version", "api.facebook.appid",
@@ -109,7 +118,6 @@ public class AppConfig implements WebMvcConfigurer {
             facebookConfig = new FacebookConfig(
                     env.getProperty("api.facebook.version"), env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"),
                     env.getProperty("api.facebook.accesstoken"), env.getProperty("api.facebook.pageaccesstoken"));
-
         }
         return facebookConfig;
     }
@@ -210,7 +218,6 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
@@ -229,11 +236,6 @@ public class AppConfig implements WebMvcConfigurer {
         return new RestTemplate();
     }
 
-    // ----------- Thymleaf --------------------
-
-
-
-    // ---------------
 
     @Bean
     public SpringTemplateEngine templateEngine() {

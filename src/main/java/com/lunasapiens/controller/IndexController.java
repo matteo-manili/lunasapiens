@@ -1,5 +1,7 @@
 package com.lunasapiens.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
@@ -17,10 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -35,7 +39,13 @@ public class IndexController {
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
+    private String getGeonamesUsername;
+
+    @Autowired
     private ScheduledTasks scheduledTasks;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     ServizioOroscopoDelGiorno servAstrolog;
@@ -45,6 +55,7 @@ public class IndexController {
 
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
+
 
 
 
@@ -63,48 +74,91 @@ public class IndexController {
     }
 
 
-    @GetMapping("/temaNataleSubmitDataOra")
-    public String temaNataleSubmitDataOra(@RequestParam("datetime") String datetime, Model model) {
 
 
-        // Esempio di datetime: "2024-07-05T13:45"
-        // Effettua il parsing della stringa datetime
-        String[] dateTimeParts = datetime.split("T");
-        String datePart = dateTimeParts[0]; // "2024-07-05"
-        String timePart = dateTimeParts[1]; // "13:45"
 
-        // Estrai anno, mese e giorno dalla parte della data
-        String[] dateParts = datePart.split("-");
-        int year = Integer.parseInt(dateParts[0]);   // Anno
-        int month = Integer.parseInt(dateParts[1]);  // Mese
-        int day = Integer.parseInt(dateParts[2]);    // Giorno
+    @GetMapping("/coordinate")
+    @ResponseBody
+    public List<Map<String, Object>> getCoordinates(@RequestParam String cityName) {
 
-        // Estrai ora e minuti dalla parte dell'ora
-        String[] timeParts = timePart.split(":");
-        int hour = Integer.parseInt(timeParts[0]);   // Ora
-        int minute = Integer.parseInt(timeParts[1]); // Minuti
+        // style = SHORT,MEDIUM,LONG,FULL. Si ottengono più dettaglio geografioci
+        // paramentro di ricerca: name_startsWith = si può scriverew anche parzialmente il nome della localitò . Se si usa il paramentro
+        // paramentro di ricerca: q = bisogna scrivere il nome completo
 
-        // Ora puoi fare quello che vuoi con questi valori
+        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
+        String response = restTemplate.getForObject(url, String.class);
+
+        System.out.println("geonames.org Response JSON: " + response);
+
+        List<Map<String, Object>> locations = new ArrayList<>();
+
+        // visualizzare:
+        // name : "Ostia" | adminName1 ("Lazio") | countryName | countryCode | lat | lng
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response);
+            JsonNode geonames = root.path("geonames");
+            for (JsonNode node : geonames) {
+                Map<String, Object> location = new HashMap<>();
+                location.put("name", node.path("name").asText());
+                location.put("adminName1", node.path("adminName1").asText());
+                location.put("countryName", node.path("countryName").asText());
+                location.put("countryCode", node.path("countryCode").asText());
+                location.put("lat", node.path("lat").asText());
+                location.put("lng", node.path("lng").asText());
+                locations.add(location);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return locations;
+    }
+
+
+
+    @GetMapping("/temaNataleSubmit")
+    public String temaNataleSubmit(@RequestParam("datetime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+            @RequestParam("cityLat") String cityLat, @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName,
+                                   @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, Model model) {
+
+        // Estrai le singole componenti della data e ora
+        int day = datetime.getDayOfMonth();
+        int month = datetime.getMonthValue();
+        int year = datetime.getYear();
+        int hour = datetime.getHour();
+        int minute = datetime.getMinute();
+
         System.out.println("Giorno: " + day);
         System.out.println("Mese: " + month);
         System.out.println("Anno: " + year);
-
         System.out.println("Ora: " + hour);
         System.out.println("Minuti: " + minute);
 
-        // Puoi anche passarli a un servizio, salvarli nel database, ecc.
+        String formattedDateTime = datetime.format( Constants.DATE_TIME_FORMATTER );
+
+
+        System.out.println("cityName: " + cityName);
+        System.out.println("regioneName: " + regioneName);
+        System.out.println("statoName: " + statoName);
+        System.out.println("Latitude: " + cityLat);
+        System.out.println("Longitude: " + cityLng);
 
 
 
-        LocalDateTime dataOra = LocalDateTime.now();
-        // Formatta la data per il formato datetime-local
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        String formattedDateTime = dataOra.format(formatter);
+        model.addAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
+        model.addAttribute("cityName", cityName);
+        model.addAttribute("regioneName", regioneName);
+        model.addAttribute("statoName", statoName);
+        model.addAttribute("cityLat", cityLat);
+        model.addAttribute("cityLng", cityLng);
+
         model.addAttribute("dataOra", formattedDateTime);
-
 
         return "tema-natale";
     }
+
 
 
 
