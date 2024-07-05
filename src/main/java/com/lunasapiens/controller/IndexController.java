@@ -162,7 +162,7 @@ public class IndexController {
 
     @GetMapping("/tema-natale")
     public String temaNatale(Model model) {
-        LocalDateTime dataOra = LocalDateTime.of(1970, 1, 1, 0, 0);
+        LocalDateTime dataOra = LocalDateTime.of(1980, 1, 1, 0, 0);
         model.addAttribute("datetime", dataOra.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
         return "tema-natale";
     }
