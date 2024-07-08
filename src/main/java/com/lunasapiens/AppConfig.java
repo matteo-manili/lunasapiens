@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import javax.sql.DataSource;
@@ -45,7 +46,9 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private Environment env;
 
+    @Autowired
     private ApplicationContext applicationContext;
+
 
     @Bean
     public Properties pianetiOroscopoSignificato() {
@@ -67,10 +70,19 @@ public class AppConfig implements WebMvcConfigurer {
         return getProperties("segni-zodiacali.properties");
     }
 
+    // per tema natale
+    @Bean
+    public Properties transitiSegniPianeti() {
+        return getProperties("transiti-segni-pianeti.properties");
+    }
+
+    // per oroscopo giornaliero
     @Bean
     public Properties transitiPianetiSegni() {
         return getProperties("transiti-pianeti-segni.properties");
     }
+
+
 
 
     private Properties getProperties(String fileNameProperties){
@@ -229,23 +241,45 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
-    @Bean
-    public SpringTemplateEngine templateEngine() {
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver());
-        return templateEngine;
-    }
-
 
     @Bean
-    public SpringResourceTemplateResolver templateResolver() {
+    public SpringResourceTemplateResolver templateResolver(){
+        // SpringResourceTemplateResolver si integra automaticamente con l'infrastruttura di risoluzione delle risorse di Spring stessa,
+        // il che è altamente raccomandato.
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setApplicationContext(this.applicationContext);
         templateResolver.setPrefix("classpath:/templates/");
         templateResolver.setSuffix(".html");
+        // HTML è il valore predefinito, aggiunto qui per chiarezza.
         templateResolver.setTemplateMode(TemplateMode.HTML);
+        // La cache dei template è abilitata per impostazione predefinita. Impostare su false se si desidera
+        // che i template vengano aggiornati automaticamente quando vengono modificati.
         templateResolver.setCacheable(false);
         return templateResolver;
     }
+
+    @Bean
+    public SpringTemplateEngine templateEngine(){
+        // SpringTemplateEngine applica automaticamente SpringStandardDialect e
+        // abilita i meccanismi di risoluzione dei messaggi di Spring attraverso MessageSource.
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+        // Abilitare il compilatore SpringEL con Spring 4.2.4 o successivo può
+        // accelerare l'esecuzione nella maggior parte dei casi, ma potrebbe essere incompatibile
+        // con casi specifici in cui le espressioni in un template vengono riutilizzate
+        // tra diversi tipi di dati, quindi questo flag è "false" per compatibilità all'indietro più sicura.
+        templateEngine.setEnableSpringELCompiler(false);
+        return templateEngine;
+    }
+
+    @Bean
+    public ThymeleafViewResolver viewResolver(){
+        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+        viewResolver.setTemplateEngine(templateEngine());
+        return viewResolver;
+    }
+
+
 
 
     // ----------------------------------------------------

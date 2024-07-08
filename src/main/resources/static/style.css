@@ -4,6 +4,9 @@
     padding: 5px 10px; /* Aggiungi spazio interno per una migliore leggibilità */
     z-index: 1000; /* Assicurati che la tendina sia sopra gli altri elementi */
 }
+.ui-autocomplete li {
+    list-style-type: none;
+}
 .ui-helper-hidden-accessible {
     display: none; /* Nascondi il messaggio dei risultati disponibili */
 }

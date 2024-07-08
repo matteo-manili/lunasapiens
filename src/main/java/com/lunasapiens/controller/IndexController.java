@@ -79,33 +79,39 @@ public class IndexController {
     @ResponseBody
     public List<Map<String, Object>> getCoordinates(@RequestParam String cityName) {
 
-        // style = SHORT,MEDIUM,LONG,FULL. Si ottengono più dettaglio geografioci
-        // paramentro di ricerca: name_startsWith = si può scriverew anche parzialmente il nome della localitò . Se si usa il paramentro
-        // paramentro di ricerca: q = bisogna scrivere il nome completo
-
         String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
         String response = restTemplate.getForObject(url, String.class);
 
         System.out.println("geonames.org Response JSON: " + response);
 
         List<Map<String, Object>> locations = new ArrayList<>();
-
-        // visualizzare:
-        // name : "Ostia" | adminName1 ("Lazio") | countryName | countryCode | lat | lng
+        Set<String> seen = new HashSet<>();
 
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response);
             JsonNode geonames = root.path("geonames");
             for (JsonNode node : geonames) {
-                Map<String, Object> location = new HashMap<>();
-                location.put("name", node.path("name").asText());
-                location.put("adminName1", node.path("adminName1").asText());
-                location.put("countryName", node.path("countryName").asText());
-                location.put("countryCode", node.path("countryCode").asText());
-                location.put("lat", node.path("lat").asText());
-                location.put("lng", node.path("lng").asText());
-                locations.add(location);
+                // Controlla se il fcl è uguale a "P"
+                if ("P".equals(node.path("fcl").asText())) {
+                    String name = node.path("name").asText();
+                    String adminName1 = node.path("adminName1").asText();
+                    String countryCode = node.path("countryCode").asText();
+                    String uniqueKey = name + "|" + adminName1 + "|" + countryCode;
+
+                    // Aggiungi solo se non è già stato visto
+                    if (!seen.contains(uniqueKey)) {
+                        seen.add(uniqueKey);
+                        Map<String, Object> location = new HashMap<>();
+                        location.put("name", name);
+                        location.put("adminName1", adminName1);
+                        location.put("countryName", node.path("countryName").asText());
+                        location.put("countryCode", countryCode);
+                        location.put("lat", node.path("lat").asText());
+                        location.put("lng", node.path("lng").asText());
+                        locations.add(location);
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,6 +119,7 @@ public class IndexController {
         }
         return locations;
     }
+
 
 
 
@@ -148,6 +155,7 @@ public class IndexController {
         model.addAttribute("cityLng", cityLng);
         model.addAttribute("datetime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
         model.addAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
+        model.addAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         String temaNataleDescrizione = servizioOroscopoDelGiorno.temaNataleDescrizione(giornoOraPosizioneDTO);

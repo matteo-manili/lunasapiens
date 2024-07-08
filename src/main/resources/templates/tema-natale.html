@@ -26,7 +26,7 @@
             <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
             <div id="cityError" class="text-danger" style="display: none;">Per favore inserisci il nome di una località.</div>
         </div>
-        <button type="submit" class="btn btn-primary">genera tema natale</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary">genera tema natale</button>
     </form>
 
     <hr>
@@ -34,7 +34,7 @@
     <!-- Titolo principale e descrizione del tema natale -->
     <div th:if="${temaNataleDescrizione}">
         <h2 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h2>
-        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span></p>
+        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> | <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
         <p th:utext="${temaNataleDescrizione}"></p>
     </div>
 
@@ -46,6 +46,18 @@
 
 <script>
     $(document).ready(function() {
+        // Funzione per controllare lo stato del pulsante di submit
+        function checkFormValidity() {
+            if ($("#cityName").val().trim() !== "" && $("#datetime").val().trim() !== "") {
+                $("#submitBtn").prop("disabled", false);
+            } else {
+                $("#submitBtn").prop("disabled", true);
+            }
+        }
+
+        // Abilita/disabilita il pulsante di submit all'inizio
+        checkFormValidity();
+
         $("#cityInput").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -71,28 +83,15 @@
             },
             minLength: 3,
             select: function(event, ui) {
-
                 $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
                 $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
                 $("#regioneName").val(ui.item.regioneName);
                 $("#statoName").val(ui.item.statoName);
                 $("#cityLat").val(ui.item.lat);
                 $("#cityLng").val(ui.item.lng);
-                $("#submitBtn").prop("disabled", false);
+                checkFormValidity(); // Controlla la validità del modulo
                 // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
                 event.preventDefault();
-            }
-        });
-
-        // Validazione dell'invio del modulo
-        $("form").submit(function(event) {
-            if ($("#cityInput").val().trim() === "") {
-                event.preventDefault(); // Previeni l'invio del modulo
-                $("#cityError").show(); // Mostra il messaggio di errore
-                $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
-            } else {
-                $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-                $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
             }
         });
 
@@ -119,6 +118,9 @@
                 event.preventDefault(); // Previeni l'invio del modulo
             }
         });
+
+        // Controlla la validità del modulo quando l'input cityInput o datetime cambia
+        $("#cityInput, #datetime").on("input", checkFormValidity);
     });
 </script>
 
