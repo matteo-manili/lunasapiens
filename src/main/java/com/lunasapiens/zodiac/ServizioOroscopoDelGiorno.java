@@ -39,6 +39,67 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
+
+    public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+
+        //String descrizioneOggi = "<b>Datra di nascita:</b> " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
+        //        + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
+
+        Properties caseSignificato = appConfig.caseSignificato();
+
+
+
+
+        String descrizioneTemaNatale = "<p>"+"<h3>Case:</h3>";
+        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
+
+            descrizioneTemaNatale +=  "<br><b>"+var.descrizioneCasaGradi()+"</b>";
+
+            descrizioneTemaNatale += "<br>"+ caseSignificato.getProperty( var.getNomeCasa() );;
+
+            System.out.println( var.toString() );
+        }
+        descrizioneTemaNatale += "</p>";
+
+
+        descrizioneTemaNatale += "<p>" +"<h3>Transiti:</h3>";
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
+        for (PianetaPosizTransito var : pianetiTransiti) {
+            if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(4).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(5).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(6).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero() ) {
+                descrizioneTemaNatale += "<br>"+var.descrizionePianetaGradiRetrogrado() ;
+            }
+        }
+        descrizioneTemaNatale += "</p>";
+
+
+
+        // ASPETTI
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
+        if(!aspetti.isEmpty()){
+            descrizioneTemaNatale += "<p>" + "<h3>Aspetti:</h3>";
+            for(Aspetti var: aspetti) {
+                descrizioneTemaNatale += "<br>"+var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"";
+            }
+        }
+        descrizioneTemaNatale += "</p>";
+
+
+        return descrizioneTemaNatale;
+    }
+
+
+
+
+
     public StringBuilder test_Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
         Properties segniZodDecrizProperties = appConfig.segniZodiacali();
         Properties aspettiPianetiProperties = appConfig.AspettiPianeti();
@@ -60,14 +121,11 @@ public class ServizioOroscopoDelGiorno {
         domandaBuilder.append(inizioDomanda);
 
 
-
         domandaBuilder.append("- Descrizione segno zodiacale:\n" );
         SegnoZodiacale segnoZod = segnoZodiacale.getSegnoZodiacale( numeroSegno, segniZodDecrizProperties );
         domandaBuilder.append( segnoZod.getDescrizioneMin() + "\n \n");
         //String segnoDescrizione100Caratteri = segnoZod.getDescrizione().substring(0, Math.min(segnoZod.getDescrizione().length(), 300));
         //domandaBuilder.append( segnoDescrizione100Caratteri + "\n\n");
-
-
 
 
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
@@ -228,46 +286,6 @@ public class ServizioOroscopoDelGiorno {
         }
         return descrizioneOggi;
     }
-
-
-    public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-
-
-        //String descrizioneOggi = "<b>Datra di nascita:</b> " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-        //        + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
-
-        String descrizioneTemaNatale = "<b>Transiti:</b>\n";
-
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO);
-        for (PianetaPosizTransito var : pianetiTransiti) {
-            if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(4).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(5).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(6).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
-                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero() ) {
-                descrizioneTemaNatale += var.descrizionePianetaGradiRetrogrado() + "\n";
-            }
-        }
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
-        if(!aspetti.isEmpty()){
-            descrizioneTemaNatale += "\n" + "<b>Aspetti:</b>\n";
-            for(Aspetti var: aspetti) {
-                descrizioneTemaNatale += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
-            }
-        }
-        descrizioneTemaNatale += "\n" + "<b>Case Placide:</b>\n";
-        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            descrizioneTemaNatale +=  var.descrizioneCasaGradi()+"\n";
-            System.out.println( var.toString() );
-        }
-        return descrizioneTemaNatale;
-    }
-
 
 
 

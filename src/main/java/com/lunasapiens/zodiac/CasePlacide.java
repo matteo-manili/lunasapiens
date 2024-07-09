@@ -53,8 +53,9 @@ public class CasePlacide {
         return "Casa " + nomeCasa + " in "+ nomeSegnoZodiacale + ". ";
     }
 
+
     public String descrizioneCasaGradi(){
-        return "Casa " + nomeCasa + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°. ";
+        return "Casa " + nomeCasa + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°";
     }
 
     @Override

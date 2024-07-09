@@ -49,6 +49,10 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Bean
+    public Properties caseSignificato() {
+        return getProperties("case-significato.properties");
+    }
 
     @Bean
     public Properties pianetiOroscopoSignificato() {
