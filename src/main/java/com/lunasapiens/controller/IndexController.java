@@ -11,6 +11,7 @@ import com.lunasapiens.EmailService;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
+import com.lunasapiens.zodiac.ServizioTemaNatale;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -48,6 +49,9 @@ public class IndexController {
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
+
+    @Autowired
+    ServizioTemaNatale servizioTemaNatale;
 
     @Autowired
     private EmailService emailService;
@@ -158,7 +162,7 @@ public class IndexController {
         model.addAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
-        String temaNataleDescrizione = servizioOroscopoDelGiorno.temaNataleDescrizione(giornoOraPosizioneDTO);
+        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
         temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
         model.addAttribute("temaNataleDescrizione", temaNataleDescrizione);
 

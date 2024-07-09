@@ -74,16 +74,16 @@ public class AppConfig implements WebMvcConfigurer {
         return getProperties("segni-zodiacali.properties");
     }
 
-    // per tema natale
+    // per oroscopo dell giorno
     @Bean
-    public Properties transitiSegniPianeti() {
-        return getProperties("transiti-segni-pianeti.properties");
+    public Properties transitiSegniPianeti_OroscopoDelGiorno() {
+        return getProperties("transiti-segni-pianeti_OG.properties");
     }
 
-    // per oroscopo giornaliero
+    // per Tema Natale
     @Bean
-    public Properties transitiPianetiSegni() {
-        return getProperties("transiti-pianeti-segni.properties");
+    public Properties transitiPianetiSegni_TemaNatale() {
+        return getProperties("transiti-pianeti-segni_TN.properties");
     }
 
 

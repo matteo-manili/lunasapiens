@@ -61,7 +61,7 @@ public class ScheduledTasks {
 
     public void test_Oroscopo_Segni_Transiti_Aspetti(){
 
-        servizioOroscopoDelGiorno.test_Oroscopo_Segni_Transiti_Aspetti();
+        servizioOroscopoDelGiorno.Oroscopo_Segni_Transiti_Aspetti();
     }
 
 

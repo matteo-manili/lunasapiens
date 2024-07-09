@@ -8,7 +8,6 @@ import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SwissEph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,10 +18,6 @@ import java.util.Properties;
 public class BuildInfoAstrologiaSwiss {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);
-
-
-    @Autowired
-    private AppConfig appConfig;
 
 
     /**
@@ -64,7 +59,7 @@ public class BuildInfoAstrologiaSwiss {
      * @param giornOraPosDTO
      * @return
      */
-    public ArrayList<PianetaPosizTransito> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO) {
+    public ArrayList<PianetaPosizTransito> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO, Properties transitiPianetiSegniProperties) {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());
@@ -83,7 +78,7 @@ public class BuildInfoAstrologiaSwiss {
                 SweConst.SE_URANUS, SweConst.SE_NEPTUNE, SweConst.SE_PLUTO };
 
 
-        Properties transitiPianetiSegniProperties = appConfig.transitiPianetiSegni();
+        //Properties transitiPianetiSegniProperties = appConfig.transitiSegniPianeti_OroscopoDelGiorno();
 
         for (int i = 0; i < planetIds.length; i++) {
             //iflag - Un flag che contiene specifiche dettagliate su come deve essere calcolato il corpo. Vedere SweConst per un elenco di flag validi (SEFLG_*).
