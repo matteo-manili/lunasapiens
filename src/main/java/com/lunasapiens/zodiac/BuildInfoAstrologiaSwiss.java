@@ -16,7 +16,6 @@ import java.util.Properties;
 public class BuildInfoAstrologiaSwiss {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);
-
     /**
      * vedere http://th-mack.de/download/swisseph-doc/
      *
@@ -153,8 +152,20 @@ public class BuildInfoAstrologiaSwiss {
         double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
         System.out.println("julianDate case placide: " + julianDate);
 
-        // SweConst.SEFLG_SIDEREAL con SweConst.SEFLG_SWIEPH
-        int result = swissEph.swe_houses(julianDate, SweConst.SEFLG_SIDEREAL, giornOraPosDTO.getLat(), giornOraPosDTO.getLon(), 'P', cusps, ascmc);
+
+
+        // SISTEMI DI DIVISIONE DELLE CASE: sono di tipo Mobile, fisso e altri tipi.
+        // vedere la classe: class de.thmac.swisseph.SweHouse, ci sono le lettere dei sistemi di divisione di Case
+        // Le case a divisione fissa sono chiamate anche 'Sistema di case uguali' e sono la lettera: A oppure E.
+        // Le case a divisione mobili sono le più usate: Placidus 'P', Koch 'K', Regiomontano/Regiomontanus 'R' e Alcabitius 'B'
+        // su astro-seek.com e su simonandthestars.it usano il Placidus 'P' o il Koch 'K', ma i risultati non sono uguali.
+        // i confronti con astro-seek.com danno quasi sempre l'ascendente è uguale. E solo 5 volte su 10 le altre case sono uguali.
+        // il flag SweConst.SEFLG_SIDEREAL è necessario, lo usa anche astro-seek.com
+
+
+        int houseSys = (int)'P';
+        // SweConst.SEFLG_SIDEREAL con SweConst.SEFLG_SWIEPH | se metto 0 i risultati sono più esatti
+        int result = swissEph.swe_houses(julianDate, SweConst.SEFLG_SIDEREAL, giornOraPosDTO.getLat(), giornOraPosDTO.getLon(), houseSys, cusps, ascmc);
 
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
