@@ -2,7 +2,6 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
-import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.TreeSet;
 
 @Component
 public class ServizioTemaNatale {
@@ -22,8 +20,7 @@ public class ServizioTemaNatale {
     @Autowired
     private AppConfig appConfig;
 
-    @Autowired
-    private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
+
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
 
@@ -34,7 +31,8 @@ public class ServizioTemaNatale {
         //        + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
 
         Properties caseSignificato = appConfig.caseSignificato();
-
+        Properties aspettiPianetiProperties = appConfig.AspettiPianeti();
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
         String descrizioneTemaNatale = "<p>" + "<h3>Case:</h3>";
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
@@ -69,13 +67,26 @@ public class ServizioTemaNatale {
 
         // ASPETTI
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
+        List<Integer> aspettiPresenti = new ArrayList<>();
         if (!aspetti.isEmpty()) {
             descrizioneTemaNatale += "<p>" + "<h3>Aspetti:</h3>";
             for (Aspetti var : aspetti) {
-                descrizioneTemaNatale += "<br>" + var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName() + "";
+                descrizioneTemaNatale += "<br>" + var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName();
+                aspettiPresenti.add(var.getTipoAspetto());
             }
         }
         descrizioneTemaNatale += "</p>";
+
+
+        if(aspetti != null && !aspetti.isEmpty()){
+            descrizioneTemaNatale += "<p>" + "<h3>Significato Aspetti:</h3>";
+            for (Constants.Aspetti aspettiConstants : Constants.Aspetti.values()) {
+                if(aspettiPresenti.contains(aspettiConstants.getCode())) {
+                    descrizioneTemaNatale += "<br>" + aspettiConstants.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspettiConstants.getCode())+"_min");
+                }
+            }
+            descrizioneTemaNatale += "</p>";
+        }
 
 
         return descrizioneTemaNatale;

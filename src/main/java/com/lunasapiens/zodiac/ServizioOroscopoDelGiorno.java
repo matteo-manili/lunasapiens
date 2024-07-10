@@ -19,8 +19,6 @@ public class ServizioOroscopoDelGiorno {
     @Autowired
     private AppConfig appConfig;
 
-    @Autowired
-    private BuildInfoAstrologiaSwiss buildInfoAstroSwiss;
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
     private Double temperature = 0.5; private Integer maxTokens = 2500;
@@ -45,6 +43,7 @@ public class ServizioOroscopoDelGiorno {
         String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
                 + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
                 "Transiti: ";
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
         for (PianetaPosizTransito var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
@@ -78,6 +77,7 @@ public class ServizioOroscopoDelGiorno {
         Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
         System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );

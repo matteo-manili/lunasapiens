@@ -1,6 +1,5 @@
 package com.lunasapiens.zodiac;
 
-import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -8,17 +7,15 @@ import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SwissEph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
-@Component
+
 public class BuildInfoAstrologiaSwiss {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);
-
 
     /**
      * vedere http://th-mack.de/download/swisseph-doc/
