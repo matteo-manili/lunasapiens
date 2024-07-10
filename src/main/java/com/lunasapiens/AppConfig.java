@@ -49,6 +49,11 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
+
+
+    @Bean
+    public Properties pianetiCaseSignificato() { return getProperties("pianeti-case-significato.properties"); }
+
     @Bean
     public Properties caseSignificato() {
         return getProperties("case-significato.properties");
@@ -65,9 +70,7 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Properties AspettiPianeti() {
-        return getProperties("aspetti-pianeti.properties");
-    }
+    public Properties aspettiPianeti() { return getProperties("aspetti-pianeti.properties"); }
 
     @Bean
     public Properties segniZodiacali() {
@@ -76,15 +79,11 @@ public class AppConfig implements WebMvcConfigurer {
 
     // per oroscopo dell giorno
     @Bean
-    public Properties transitiSegniPianeti_OroscopoDelGiorno() {
-        return getProperties("transiti-segni-pianeti_OG.properties");
-    }
+    public Properties transitiSegniPianeti_OroscopoDelGiorno() { return getProperties("transiti-segni-pianeti_OG.properties"); }
 
     // per Tema Natale
     @Bean
-    public Properties transitiPianetiSegni_TemaNatale() {
-        return getProperties("transiti-pianeti-segni_TN.properties");
-    }
+    public Properties transitiPianetiSegni_TemaNatale() { return getProperties("transiti-pianeti-segni_TN.properties"); }
 
 
 

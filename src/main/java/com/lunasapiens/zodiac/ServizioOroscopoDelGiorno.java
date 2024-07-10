@@ -59,7 +59,7 @@ public class ServizioOroscopoDelGiorno {
                 descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n";
             }
         }
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.AspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
         if(!aspetti.isEmpty()){
             descrizioneOggi += "\n" + "Aspetti: ";
             for(Aspetti var: aspetti) {
@@ -72,7 +72,7 @@ public class ServizioOroscopoDelGiorno {
 
     public StringBuilder Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
         Properties segniZodDecrizProperties = appConfig.segniZodiacali();
-        Properties aspettiPianetiProperties = appConfig.AspettiPianeti();
+        Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
         Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
 

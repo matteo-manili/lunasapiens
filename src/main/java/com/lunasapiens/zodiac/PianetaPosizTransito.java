@@ -13,6 +13,8 @@ public class PianetaPosizTransito {
     private String nomeSegnoZodiacale;
     private boolean retrogrado;
 
+    private String nomeCasa;
+
     private String significatoPianetaSegno;
 
 
@@ -57,15 +59,25 @@ public class PianetaPosizTransito {
 
     public String getSignificatoPianetaSegno() { return significatoPianetaSegno; }
 
+    public String getNomeCasa() { return nomeCasa; }
 
+    public void setNomeCasa(String nomeCasa) { this.nomeCasa = nomeCasa; }
+
+
+    // ---- descrizioni ----
 
     public String descrizionePianeta() {
         return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
     }
 
-    public String descrizionePianetaGradiRetrogrado() {
+    public String descrizione_Pianeta_Segno_Gradi_Retrogrado() {
         // Usa String.format per rimuovere i decimali
         return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + ". ";
+    }
+
+    public String descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() {
+        // Usa String.format per rimuovere i decimali
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " Casa "+nomeCasa;
     }
 
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() {
@@ -73,7 +85,11 @@ public class PianetaPosizTransito {
         return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno+" ";
     }
 
-
+    public String descrizione_Pianeta_Gradi_Retrogrado_Casa_SignificatoPianetaSegno() {
+        // Usa String.format per rimuovere i decimali
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") +" Casa "+nomeCasa
+                + " "+significatoPianetaSegno;
+    }
 
 
     @Override
