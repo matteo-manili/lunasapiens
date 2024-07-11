@@ -22,37 +22,43 @@ import java.util.Map;
 public class FilterRequestLimit extends OncePerRequestFilter {
 
 
-    // TODO ricorda di rimettere MAX_REQUESTS a 5
+    // TODO ricorda di rimettere MAX_REQUESTS a 10
     private static final int MAX_REQUESTS = 30; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
     /**
-     * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip dal che richiama questi endpoint
+     * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip che richiama questi endpoint
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ipAddress = request.getRemoteAddr();
 
-        // Controllo per /subscribe endpoint
+        // Controllo endpoint....
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
             handleRequest(request, response, ipAddress);
         }
 
-        // Controllo per /saluti endpoint
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN) && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
 
-        // Controllo per /saluti endpoint
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN) && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
 
-        // Controllo per /saluti endpoint
+        if (request.getRequestURI().equals("/contattiSubmit") && request.getMethod().equals("POST")) {
+            handleRequest(request, response, ipAddress);
+        }
+
         if (request.getRequestURI().equals("/test") && request.getMethod().equals("GET")) {
             handleRequest(request, response, ipAddress);
         }
+
+        if (request.getRequestURI().equals("/genera-video") && request.getMethod().equals("GET")) {
+            handleRequest(request, response, ipAddress);
+        }
+
 
 
 

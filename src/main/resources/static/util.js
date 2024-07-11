@@ -22,3 +22,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+/**
+ * funzione che serve a visualizzare la finestra di attesa quando si fa submit
+ */
+function showLoadingOverlay() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
