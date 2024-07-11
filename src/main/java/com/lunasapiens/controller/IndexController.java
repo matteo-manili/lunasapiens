@@ -70,11 +70,13 @@ public class IndexController {
         this.oroscopoGiornalieroService = oroscopoGiornalieroService;
     }
 
-    public final String redirectAttributInfoSubscription = "infoSubscription";
+    public final String infoMessage = "infoMessage";
+    public final String infoError = "infoError";
+
 
     @GetMapping("/")
     public String index(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("message", "Welcome to our dynamic landing page!");
+        model.addAttribute(infoMessage, "Welcome to our dynamic landing page!");
         return "index";
     }
 
@@ -184,7 +186,7 @@ public class IndexController {
 
 
     @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model, @ModelAttribute(redirectAttributInfoSubscription) String infoSubscription) {
+    public String mostraOroscopo(Model model, @ModelAttribute(infoMessage) String infoSubscription) {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
@@ -199,8 +201,8 @@ public class IndexController {
         model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
         model.addAttribute("videos", listOroscopoGiornoDTO);
 
-        // Aggiungi infoSubscription al modello per essere visualizzato nella vista
-        model.addAttribute(redirectAttributInfoSubscription, infoSubscription);
+        // Aggiungi infoMessage al modello per essere visualizzato nella vista
+        model.addAttribute(infoMessage, infoSubscription);
 
         return "oroscopo";
     }
@@ -225,7 +227,7 @@ public class IndexController {
         }else{
             message = "Conferma email non riuscita. Registrati di nuovo";
         }
-        redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+        redirectAttributes.addFlashAttribute(infoMessage, message);
         return "redirect:/oroscopo";
     }
 
@@ -246,7 +248,7 @@ public class IndexController {
         }else{
             message = "L'indirizzo email non è presente nel sistema.";
         }
-        redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+        redirectAttributes.addFlashAttribute(infoMessage, message);
         return "redirect:/oroscopo";
     }
 
@@ -258,7 +260,7 @@ public class IndexController {
         logger.info("email: "+email);
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, "Troppe richieste. Sottoscrizione email negata.");
+            redirectAttributes.addFlashAttribute(infoMessage, "Troppe richieste. Sottoscrizione email negata.");
         }else{
             Object[] result = emailService.salvaEmail( email );
             Boolean success = (Boolean) result[0];
@@ -267,7 +269,7 @@ public class IndexController {
             if (success && emailUtenti != null) {
                 emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
             }
-            redirectAttributes.addFlashAttribute(redirectAttributInfoSubscription, message);
+            redirectAttributes.addFlashAttribute(infoMessage, message);
         }
         return "redirect:/oroscopo";
     }
@@ -312,10 +314,11 @@ public class IndexController {
     @PostMapping("/contattiSubmit")
     public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/contatti";
+            redirectAttributes.addFlashAttribute(infoError, "Errore invio messaggio!");
+            return "redirect:/error";
         }
         emailService.inviaEmailContatti(contactForm);
-        redirectAttributes.addFlashAttribute("message", "Messaggio inviato con successo!");
+        redirectAttributes.addFlashAttribute(infoMessage, "Messaggio inviato con successo!");
         return "redirect:/contatti";
     }
 
@@ -330,7 +333,7 @@ public class IndexController {
 
     @GetMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
-        model.addAttribute("infoError", "Errore generale.");
+        model.addAttribute(infoError, "Errore generale.");
         return "error";
     }
 

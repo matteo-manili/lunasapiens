@@ -49,8 +49,6 @@ public class EmailService {
     public static final String contenutoEmail = "contenutoEmail";
 
 
-
-
     public void inviaConfermaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
         EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
         if( emailUtentiSetRandomCode != null ) {
@@ -75,7 +73,6 @@ public class EmailService {
     public void inviaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
         EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
         if( emailUtentiSetRandomCode != null ) {
-
             String subject = "LunaSapiens - Orosocpo del giorno";
             Context context = new Context();
             String linkCencelIscrizione = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN + "?code="+emailUtentiSetRandomCode.getConfirmationCode();
