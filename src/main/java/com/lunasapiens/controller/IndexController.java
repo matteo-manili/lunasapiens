@@ -3,6 +3,7 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
+import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
@@ -13,6 +14,7 @@ import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -203,13 +206,7 @@ public class IndexController {
     }
 
 
-    @GetMapping("/test-invia-email")
-    public String inviaEmail(Model model) {
-        EmailUtenti emailUtenti = new EmailUtenti();
-        emailUtenti.setEmail("matteo.manili@gmail.com");
-        emailService.inviaEmailOrosciopoGioraliero(emailUtenti);
-        return "index";
-    }
+
 
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
@@ -290,11 +287,19 @@ public class IndexController {
         }
     }
 
+    /**
+     * lo uso solo per test
+     */
+    @GetMapping("/test-invia-email")
+    public String inviaEmail(Model model) {
+        EmailUtenti emailUtenti = new EmailUtenti();
+        emailUtenti.setEmail("matteo.manili@gmail.com");
+        emailService.inviaEmailOrosciopoGioraliero(emailUtenti);
+        return "index";
+    }
 
     /**
      * lo uso solo per test
-     * @param model
-     * @return
      */
     @GetMapping("/genera-video")
     public String gerneraVideo(Model model) {
@@ -304,25 +309,37 @@ public class IndexController {
     }
 
 
-    @GetMapping("/info-privacy")
-    public String infoPrivacy(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "info-privacy";
+    @PostMapping("/contattiSubmit")
+    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "redirect:/contatti";
+        }
+        emailService.inviaEmailContatti(contactForm);
+        redirectAttributes.addFlashAttribute("message", "Messaggio inviato con successo!");
+        return "redirect:/contatti";
     }
 
-    @GetMapping("/termini-di-servizio")
-    public String terminiDiServizio(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "termini-di-servizio";
+
+    @GetMapping("/contatti")
+    public String contatti(Model model) {
+        model.addAttribute("contactForm", new ContactFormDTO());
+        return "contatti";
+
     }
 
 
     @GetMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
-
         model.addAttribute("infoError", "Errore generale.");
         return "error";
     }
 
+
+    @GetMapping("/info-privacy")
+    public String infoPrivacy(Model model) { return "info-privacy"; }
+
+
+    @GetMapping("/termini-di-servizio")
+    public String terminiDiServizio(Model model) { return "termini-di-servizio"; }
 
 }

@@ -1,3 +1,23 @@
+
+/* Stile per la finestra di attesa, la uso nella pagina contatti */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Stile autocompleti per pagina tema natale */
 .ui-autocomplete {
     background-color: #ffffff; /* Cambia il colore di sfondo a tuo piacimento */
     border: 1px solid #ccc; /* Aggiungi un bordo */

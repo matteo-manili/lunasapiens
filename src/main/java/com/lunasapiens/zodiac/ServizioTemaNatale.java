@@ -83,6 +83,8 @@ public class ServizioTemaNatale {
         //Ascendente: È il segno che sorge all'orizzonte orientale al momento della nascita. Rappresenta l'immagine esterna, la prima impressione che si dà agli altri e il modo in cui si affronta la vita.
 
 
+        // TODO: Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
+        // Quindi nel prompt mostrare i segni coi suoi pianeti domiciliati
 
 
         String descrizioneTemaNatale = "<p>" + "<h3>Case:</h3>";

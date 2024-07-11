@@ -1,5 +1,6 @@
 package com.lunasapiens;
 
+import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.EmailUtentiService;
@@ -44,7 +45,7 @@ public class EmailService {
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
     private final String defaultFromGmailMatteoManili = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
 
-    public static final String templateEmailFragment = "templateEmailFragment";
+    public static final String templateEmailFragment = "fragments/templateEmailFragment";
     public static final String contenutoEmail = "contenutoEmail";
 
 
@@ -126,6 +127,15 @@ public class EmailService {
         return result;
     }
 
+
+
+    public void inviaEmailContatti(ContactFormDTO contactForm) {
+        String subject = "LunaSapiens | messaggio inviato da: "+contactForm.getName() +" - "+contactForm.getEmail();
+        Context context = new Context();
+        String contenuto = "<p>"+subject+"</p>" + "<p>"+contactForm.getMessage()+"</p>";
+        context.setVariable(contenutoEmail, contenuto);
+        sendHtmlEmail(defaultFromGmailMatteoManili, subject, templateEmailFragment, context);
+    }
 
 
 

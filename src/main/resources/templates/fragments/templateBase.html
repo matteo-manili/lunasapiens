@@ -19,22 +19,22 @@
 <!--
 https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html
 IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
-<head th:replace="~{ templateBase :: common_head_title_links(~{::title},~{::link}) }">
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
     <title>Tema Natale Esempio</title>
     <link rel="stylesheet" href="style_111.css">
     <link rel="stylesheet" href="style_222.css">
 </head> -->
 
 <head th:fragment="common_head_title_links(title,links)">
-    <th:block th:insert="~{templateBase :: info-head}" />
+    <th:block th:insert="~{fragments/templateBase :: info-head}" />
 
     <title th:replace="${title}">LunaSapiens</title>
     <th:block th:replace="${links}" />
 </head>
-
+t
 
 <head th:fragment="common_head_title(title)">
-    <th:block th:insert="~{templateBase :: info-head}" />
+    <th:block th:insert="~{fragments/templateBase :: info-head}" />
     <title th:replace="${title}">LunaSapiens</title>
 </head>
 <body>
@@ -50,7 +50,7 @@ IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
                     <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="/oroscopo">Oroscopo</a></li>
                     <li class="nav-item"><a class="nav-link" href="/tema-natale">Tema Natale</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#!">Contatti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contatti">Contatti</a></li>
                 </ul>
             </div>
         </div>

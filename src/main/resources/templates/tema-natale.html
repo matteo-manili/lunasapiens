@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{ templateBase :: common_head_title_links(~{::title},~{::link}) }">
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
     <title>Tema Natale</title><link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-<header th:replace="~{templateBase :: header}"></header>
+<header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-5">
     <h1 class="mb-4">Tema Natale</h1>
@@ -41,8 +41,8 @@
 </div>
 
 
-<footer th:replace="~{templateBase :: footer}"></footer>
-<div th:replace="~{templateBase :: links-bootstrap-js}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: links-bootstrap-js}"></div>
 
 <script>
     $(document).ready(function() {
