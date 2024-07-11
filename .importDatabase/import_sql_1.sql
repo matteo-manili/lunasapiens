@@ -94,9 +94,9 @@ CREATE TABLE IF NOT EXISTS "tutorials" (
 -- Dumping data for table public.tutorials: 3 rows
 /*!40000 ALTER TABLE "tutorials" DISABLE KEYS */;
 INSERT INTO "tutorials" ("id", "description", "published", "title") VALUES
-	(1, 'mdma', 'false', 'ok'),
-	(2, 'cocaina', 'false', 'no'),
-	(3, 'fumo', 'false', 'ok');
+	(1, 'se vis pacem', 'false', 'ok'),
+	(2, 'para', 'false', 'no'),
+	(3, 'bellum', 'false', 'ok');
 /*!40000 ALTER TABLE "tutorials" ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
