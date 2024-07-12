@@ -83,14 +83,23 @@ public class IndexController {
      * servizio tema natale
      */
     @GetMapping("/tema-natale")
-    public String temaNatale(Model model) {
-        LocalDateTime dataOra = LocalDateTime.of(1980, 1, 1, 0, 0);
-        model.addAttribute("datetime", dataOra.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
+    public String temaNatale(Model model, @ModelAttribute("dateTime") String datetime) {
+
+        logger.info("AAA datetime="+datetime);
+        LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
+        Optional<String> optionalDateTime = Optional.ofNullable(datetime);
+        optionalDateTime
+                .filter(dateTimeString -> !dateTimeString.isEmpty())
+                .ifPresentOrElse(
+                        presentDateTime -> model.addAttribute("dateTime", presentDateTime),
+                        () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER))
+                );
+
         return "tema-natale";
     }
 
     @GetMapping("/temaNataleSubmit")
-    public String temaNataleSubmit(@RequestParam("datetime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
             @RequestParam("cityLat") String cityLat, @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName,
                                    @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, RedirectAttributes redirectAttributes) {
         // Estrai le singole componenti della data e ora
@@ -100,17 +109,16 @@ public class IndexController {
         int month = datetime.getMonthValue();
         int year = datetime.getYear();
 
-        System.out.println("Ora: " + hour);
-        System.out.println("Minuti: " + minute);
-        System.out.println("Giorno: " + day);
-        System.out.println("Mese: " + month);
-        System.out.println("Anno: " + year);
-
-        System.out.println("cityName: " + cityName);
-        System.out.println("regioneName: " + regioneName);
-        System.out.println("statoName: " + statoName);
-        System.out.println("Latitude: " + cityLat);
-        System.out.println("Longitude: " + cityLng);
+        logger.info("Ora: " + hour);
+        logger.info("Minuti: " + minute);
+        logger.info("Giorno: " + day);
+        logger.info("Mese: " + month);
+        logger.info("Anno: " + year);
+        logger.info("cityName: " + cityName);
+        logger.info("regioneName: " + regioneName);
+        logger.info("statoName: " + statoName);
+        logger.info("Latitude: " + cityLat);
+        logger.info("Longitude: " + cityLng);
 
         redirectAttributes.addFlashAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
         redirectAttributes.addFlashAttribute("cityName", cityName);
@@ -118,14 +126,11 @@ public class IndexController {
         redirectAttributes.addFlashAttribute("statoName", statoName);
         redirectAttributes.addFlashAttribute("cityLat", cityLat);
         redirectAttributes.addFlashAttribute("cityLng", cityLng);
-        redirectAttributes.addFlashAttribute("datetime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
+        redirectAttributes.addFlashAttribute("dateTime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
         redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
-
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
-        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
-        temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
-        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
+        redirectAttributes.addFlashAttribute("temaNataleDescrizione", servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO));
         return "redirect:/tema-natale";
     }
 
@@ -133,6 +138,8 @@ public class IndexController {
     @ResponseBody
     public List<Map<String, Object>> getCoordinates(@RequestParam String cityName) {
         String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
+
+        logger.info(url);
         String response = restTemplate.getForObject(url, String.class);
         List<Map<String, Object>> locations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
