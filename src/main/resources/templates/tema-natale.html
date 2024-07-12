@@ -14,7 +14,7 @@
         <div class="mb-3">
             <label for="dateTime" class="form-label">Data e ora di nascita:</label>
             <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
-            <div id="datetimeError" class="text-danger" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
+            <div id="dateTimeError" class="text-danger" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
         </div>
         <div class="mb-3">
             <label for="cityInput" class="form-label">Località di nascita:</label>
@@ -48,7 +48,7 @@
     $(document).ready(function() {
         // Funzione per controllare lo stato del pulsante di submit
         function checkFormValidity() {
-            if ($("#cityName").val().trim() !== "" && $("#datetime").val().trim() !== "") {
+            if ($("#cityName").val().trim() !== "" && $("#dateTime").val().trim() !== "") {
                 $("#submitBtn").prop("disabled", false);
             } else {
                 $("#submitBtn").prop("disabled", true);
@@ -106,21 +106,21 @@
                 $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
                 $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
             }
-            if ($("#datetime").val().trim() === "") {
-                $("#datetimeError").show(); // Mostra il messaggio di errore
-                $("#datetime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            if ($("#dateTime").val().trim() === "") {
+                $("#dateTimeError").show(); // Mostra il messaggio di errore
+                $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
                 isValid = false;
             } else {
-                $("#datetimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-                $("#datetime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+                $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+                $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
             }
             if (!isValid) {
                 event.preventDefault(); // Previeni l'invio del modulo
             }
         });
 
-        // Controlla la validità del modulo quando l'input cityInput o datetime cambia
-        $("#cityInput, #datetime").on("input", checkFormValidity);
+        // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
+        $("#cityInput, #dateTime").on("input", checkFormValidity);
     });
 </script>
 
