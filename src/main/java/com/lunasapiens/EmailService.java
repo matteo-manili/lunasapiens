@@ -91,7 +91,7 @@ public class EmailService {
 
 
 
-    public static String generateRandomCode() {
+    public String generateRandomCode() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[16];
         secureRandom.nextBytes(randomBytes);

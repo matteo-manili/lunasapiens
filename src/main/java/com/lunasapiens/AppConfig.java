@@ -104,7 +104,7 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public String getGeonamesUsername() {
+    public String getApiGeonamesUsername() {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
             return loadPorpoerty.get(0);

@@ -42,7 +42,7 @@ public class IndexController {
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
-    private String getGeonamesUsername;
+    private String getApiGeonamesUsername;
 
     @Autowired
     private ScheduledTasks scheduledTasks;
@@ -62,8 +62,6 @@ public class IndexController {
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
 
-
-
     private OroscopoGiornalieroService oroscopoGiornalieroService;
     @Autowired
     public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
@@ -81,21 +79,63 @@ public class IndexController {
     }
 
 
+    /**
+     * servizio tema natale
+     */
+    @GetMapping("/tema-natale")
+    public String temaNatale(Model model) {
+        LocalDateTime dataOra = LocalDateTime.of(1980, 1, 1, 0, 0);
+        model.addAttribute("datetime", dataOra.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
+        return "tema-natale";
+    }
 
+    @GetMapping("/temaNataleSubmit")
+    public String temaNataleSubmit(@RequestParam("datetime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+            @RequestParam("cityLat") String cityLat, @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName,
+                                   @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, RedirectAttributes redirectAttributes) {
+        // Estrai le singole componenti della data e ora
+        int hour = datetime.getHour();
+        int minute = datetime.getMinute();
+        int day = datetime.getDayOfMonth();
+        int month = datetime.getMonthValue();
+        int year = datetime.getYear();
 
+        System.out.println("Ora: " + hour);
+        System.out.println("Minuti: " + minute);
+        System.out.println("Giorno: " + day);
+        System.out.println("Mese: " + month);
+        System.out.println("Anno: " + year);
+
+        System.out.println("cityName: " + cityName);
+        System.out.println("regioneName: " + regioneName);
+        System.out.println("statoName: " + statoName);
+        System.out.println("Latitude: " + cityLat);
+        System.out.println("Longitude: " + cityLng);
+
+        redirectAttributes.addFlashAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
+        redirectAttributes.addFlashAttribute("cityName", cityName);
+        redirectAttributes.addFlashAttribute("regioneName", regioneName);
+        redirectAttributes.addFlashAttribute("statoName", statoName);
+        redirectAttributes.addFlashAttribute("cityLat", cityLat);
+        redirectAttributes.addFlashAttribute("cityLng", cityLng);
+        redirectAttributes.addFlashAttribute("datetime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
+        redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
+        redirectAttributes.addFlashAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
+        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
+        temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
+        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
+        return "redirect:/tema-natale";
+    }
 
     @GetMapping("/coordinate")
     @ResponseBody
     public List<Map<String, Object>> getCoordinates(@RequestParam String cityName) {
-
-        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
+        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
         String response = restTemplate.getForObject(url, String.class);
-
-        System.out.println("geonames.org Response JSON: " + response);
-
         List<Map<String, Object>> locations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response);
@@ -107,7 +147,6 @@ public class IndexController {
                     String adminName1 = node.path("adminName1").asText();
                     String countryCode = node.path("countryCode").asText();
                     String uniqueKey = name + "|" + adminName1 + "|" + countryCode;
-
                     // Aggiungi solo se non è già stato visto
                     if (!seen.contains(uniqueKey)) {
                         seen.add(uniqueKey);
@@ -130,63 +169,14 @@ public class IndexController {
     }
 
 
-
-
-    @GetMapping("/temaNataleSubmit")
-    public String temaNataleSubmit(@RequestParam("datetime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
-            @RequestParam("cityLat") String cityLat, @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName,
-                                   @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, Model model) {
-
-        // Estrai le singole componenti della data e ora
-        int hour = datetime.getHour();
-        int minute = datetime.getMinute();
-        int day = datetime.getDayOfMonth();
-        int month = datetime.getMonthValue();
-        int year = datetime.getYear();
-
-        System.out.println("Ora: " + hour);
-        System.out.println("Minuti: " + minute);
-        System.out.println("Giorno: " + day);
-        System.out.println("Mese: " + month);
-        System.out.println("Anno: " + year);
-
-        System.out.println("cityName: " + cityName);
-        System.out.println("regioneName: " + regioneName);
-        System.out.println("statoName: " + statoName);
-        System.out.println("Latitude: " + cityLat);
-        System.out.println("Longitude: " + cityLng);
-
-        model.addAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
-        model.addAttribute("cityName", cityName);
-        model.addAttribute("regioneName", regioneName);
-        model.addAttribute("statoName", statoName);
-        model.addAttribute("cityLat", cityLat);
-        model.addAttribute("cityLng", cityLng);
-        model.addAttribute("datetime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
-        model.addAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
-        model.addAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
-
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
-        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
-        temaNataleDescrizione = temaNataleDescrizione.replace("\n", "<br>");
-        model.addAttribute("temaNataleDescrizione", temaNataleDescrizione);
-
-        return "tema-natale";
-    }
-
-
-
-
-    @GetMapping("/tema-natale")
-    public String temaNatale(Model model) {
-        LocalDateTime dataOra = LocalDateTime.of(1980, 1, 1, 0, 0);
-        model.addAttribute("datetime", dataOra.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
-        return "tema-natale";
-    }
-
-
+    /**
+     * servizio oroscopo giornaliero
+     */
     @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model, @ModelAttribute(infoMessage) String infoSubscription) {
+
+        logger.info("oroscopo endpoint");
+
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
 
         String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
@@ -203,17 +193,32 @@ public class IndexController {
 
         // Aggiungi infoMessage al modello per essere visualizzato nella vista
         model.addAttribute(infoMessage, infoSubscription);
-
         return "oroscopo";
     }
 
-
-
-
+    @PostMapping("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN)
+    public String subscribe(@RequestParam("email") @Email @NotEmpty String email, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        logger.info(Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN+" endpoint");
+        logger.info("email: "+email);
+        Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
+        if (skipEmailSave != null && skipEmailSave) {
+            redirectAttributes.addFlashAttribute(infoMessage, "Troppe richieste. Sottoscrizione email negata.");
+        }else{
+            Object[] result = emailService.salvaEmail( email );
+            Boolean success = (Boolean) result[0];
+            String message = (String) result[1];
+            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
+            if (success && emailUtenti != null) {
+                emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
+            }
+            redirectAttributes.addFlashAttribute(infoMessage, message);
+        }
+        return "redirect:/oroscopo";
+    }
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
     public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
-        logger.info("confirmEmailOroscGiorn code: "+code);
+        logger.info("confirmEmailOroscGiorn endpoint");
         EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
         String message = "";
         if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
@@ -230,7 +235,6 @@ public class IndexController {
         redirectAttributes.addFlashAttribute(infoMessage, message);
         return "redirect:/oroscopo";
     }
-
 
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN)
     public String cancelEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
@@ -253,30 +257,9 @@ public class IndexController {
     }
 
 
-
-    @PostMapping("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN)
-    public String subscribe(@RequestParam("email") @Email @NotEmpty String email, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-
-        logger.info("email: "+email);
-        Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
-        if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute(infoMessage, "Troppe richieste. Sottoscrizione email negata.");
-        }else{
-            Object[] result = emailService.salvaEmail( email );
-            Boolean success = (Boolean) result[0];
-            String message = (String) result[1];
-            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
-            if (success && emailUtenti != null) {
-                emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
-            }
-            redirectAttributes.addFlashAttribute(infoMessage, message);
-        }
-        return "redirect:/oroscopo";
-    }
-
-
-
-
+    /**
+     * trasmissione del video
+     */
     @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
     @GetMapping("/oroscopo-giornaliero/{videoName}")
     public ResponseEntity<ByteArrayResource> streamVideo(@PathVariable String videoName) throws IOException {
@@ -288,6 +271,42 @@ public class IndexController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * pagina contatti
+     */
+    @GetMapping("/contatti")
+    public String contatti(Model model) {
+        model.addAttribute("contactForm", new ContactFormDTO());
+        return "contatti";
+    }
+
+
+    @PostMapping("/contattiSubmit")
+    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute(infoError, "Errore invio messaggio!");
+            return "redirect:/error";
+        }
+        emailService.inviaEmailContatti(contactForm);
+        redirectAttributes.addFlashAttribute(infoMessage, "Messaggio inviato con successo!");
+        return "redirect:/contatti";
+    }
+
+
+
+
+    @GetMapping("/error")
+    public String handleError(HttpServletRequest request, Model model) {
+        model.addAttribute(infoError, "Errore generale.");
+        return "error";
+    }
+
+    @GetMapping("/info-privacy")
+    public String infoPrivacy(Model model) { return "info-privacy"; }
+
+    @GetMapping("/termini-di-servizio")
+    public String terminiDiServizio(Model model) { return "termini-di-servizio"; }
 
     /**
      * lo uso solo per test
@@ -309,40 +328,5 @@ public class IndexController {
         scheduledTasks.creaOroscopoGiornaliero();
         return "index";
     }
-
-
-    @PostMapping("/contattiSubmit")
-    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute(infoError, "Errore invio messaggio!");
-            return "redirect:/error";
-        }
-        emailService.inviaEmailContatti(contactForm);
-        redirectAttributes.addFlashAttribute(infoMessage, "Messaggio inviato con successo!");
-        return "redirect:/contatti";
-    }
-
-
-    @GetMapping("/contatti")
-    public String contatti(Model model) {
-        model.addAttribute("contactForm", new ContactFormDTO());
-        return "contatti";
-
-    }
-
-
-    @GetMapping("/error")
-    public String handleError(HttpServletRequest request, Model model) {
-        model.addAttribute(infoError, "Errore generale.");
-        return "error";
-    }
-
-
-    @GetMapping("/info-privacy")
-    public String infoPrivacy(Model model) { return "info-privacy"; }
-
-
-    @GetMapping("/termini-di-servizio")
-    public String terminiDiServizio(Model model) { return "termini-di-servizio"; }
 
 }
