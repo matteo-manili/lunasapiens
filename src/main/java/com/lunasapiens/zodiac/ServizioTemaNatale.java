@@ -92,7 +92,7 @@ public class ServizioTemaNatale {
 
         descrizioneTemaNatale += "<p>" + "<h4>Case:</h4>";
         for (CasePlacide varCasa : casePlacideArrayList) {
-            descrizioneTemaNatale += "<br><b>" + varCasa.descrizioneCasaGradi() + "</b>";
+            descrizioneTemaNatale += "<br><b>" + varCasa.descrizioneCasaGradi() + (varCasa.getNomeCasa().equals("1") ? " (Ascendente)" : "") +"</b>";
             descrizioneTemaNatale += "<ul>";
             descrizioneTemaNatale += "<li>" + caseSignificato.getProperty(varCasa.getNomeCasa()) + "</li>";
             boolean pianetaPresete = false;
