@@ -60,10 +60,7 @@ public class ServizioTemaNatale {
 
 
 
-        public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-
-        //String descrizioneOggi = "<b>Datra di nascita:</b> " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-        //        + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
+    public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         Properties caseSignificato = appConfig.caseSignificato();
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
@@ -77,30 +74,28 @@ public class ServizioTemaNatale {
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
         List<Integer> aspettiPresenti = new ArrayList<>();
 
-
-        // TODO nella pagina fare vedere la descerizione dei segni ripettivi al Sole, la luna e ascendete
         //Sole: Indica l'ego, l'identità e il percorso di vita. Il segno zodiacale in cui si trova il Sole è quello comunemente noto come "segno zodiacale" di una persona.
         //Luna: Rappresenta le emozioni, i bisogni emotivi e l'inconscio. Il segno in cui si trova la Luna riflette come una persona vive e esprime le proprie emozioni.
         //Ascendente: È il segno che sorge all'orizzonte orientale al momento della nascita. Rappresenta l'immagine esterna, la prima impressione che si dà agli altri e il modo in cui si affronta la vita.
 
-
-        // TODO: Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
+        // Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
         // Quindi nel prompt mostrare i segni coi suoi pianeti domiciliati
 
-            String descrizioneTemaNatale = "<p><big><b>"+pianetiTransiti.get(0).descrizionePianeta()+"<br>";
-            descrizioneTemaNatale += pianetiTransiti.get(1).descrizionePianeta()+"</br>";
-            descrizioneTemaNatale += "Ascendente in "+casePlacideArrayList.get(0).getNomeSegnoZodiacale()+".</b></big></p>";
+        String descrizioneTemaNatale = "<big><p><b>"+pianetiTransiti.get(0).descrizionePianeta()+"</b><br>";
+        descrizioneTemaNatale += segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(0).getNumeroSegnoZodiacale() ).getDescrizioneMin()+"</p>";
 
+        descrizioneTemaNatale += "<p><b>"+pianetiTransiti.get(1).descrizionePianeta()+"</b></br>";
+        descrizioneTemaNatale += segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(1).getNumeroSegnoZodiacale() ).getDescrizioneMin()+"</p>";
 
-            descrizioneTemaNatale += "<p>" + "<h4>Case:</h4>";
+        descrizioneTemaNatale += "<p><b>Ascendente in "+casePlacideArrayList.get(0).getNomeSegnoZodiacale()+".</b><br>";
+        descrizioneTemaNatale += segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() ).getDescrizioneMin()+"</p></big>";
+
+        descrizioneTemaNatale += "<p>" + "<h4>Case:</h4>";
         for (CasePlacide varCasa : casePlacideArrayList) {
-
             descrizioneTemaNatale += "<br><b>" + varCasa.descrizioneCasaGradi() + "</b>";
             descrizioneTemaNatale += "<ul>";
             descrizioneTemaNatale += "<li>" + caseSignificato.getProperty(varCasa.getNomeCasa()) + "</li>";
-
             boolean pianetaPresete = false;
-
             for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa()) ){
                     pianetaPresete = true;
@@ -108,7 +103,6 @@ public class ServizioTemaNatale {
                             pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNomeCasa()) + "</li>";
                 }
             }
-
             if( !pianetaPresete ){
                 int[] pianetiSignori = segnoZodiacale.getSegnoZodiacale( varCasa.getNumeroSegnoZodiacale() ).getPianetiSignoreDelSegno();
                 for (int pianetaSign : pianetiSignori) {
@@ -120,8 +114,6 @@ public class ServizioTemaNatale {
                     }
                 }
             }
-
-            System.out.println(varCasa.toString());
             descrizioneTemaNatale += "</ul>";
         }
         descrizioneTemaNatale += "</p>";
@@ -144,7 +136,6 @@ public class ServizioTemaNatale {
         }
         descrizioneTemaNatale += "</p>";
 
-
         // ASPETTI
         if (!aspetti.isEmpty()) {
             descrizioneTemaNatale += "<p>" + "<h4>Aspetti:</h4>";
@@ -155,7 +146,6 @@ public class ServizioTemaNatale {
         }
         descrizioneTemaNatale += "</p>";
 
-
         if(aspetti != null && !aspetti.isEmpty()){
             descrizioneTemaNatale += "<p>" + "<h4>Significato Aspetti:</h4>";
             for (Constants.Aspetti aspettiConstants : Constants.Aspetti.values()) {
@@ -165,7 +155,6 @@ public class ServizioTemaNatale {
             }
             descrizioneTemaNatale += "</p>";
         }
-
 
         return descrizioneTemaNatale;
     }
