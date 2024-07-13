@@ -9,9 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZoneId;
@@ -151,10 +149,6 @@ public class Util {
 
 
 
-
-
-
-
     public static void createDirectory(String pathDirectory) {
         File outputFolder = new File(pathDirectory);
         if (!outputFolder.exists()) {
@@ -190,6 +184,24 @@ public class Util {
         // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
         directory.delete();
     }
+
+
+/*
+    // Metodo statico per caricare le proprietà
+    public static Properties getProperties(String fileName) {
+        Properties properties = new Properties();
+        try (InputStream is = AppConfig.class.getClassLoader().getResourceAsStream(fileName)) {
+            if (is != null) {
+                properties.load(is);
+            } else {
+                throw new FileNotFoundException("File properties non trovato: " + fileName);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nel caricamento del file properties: " + fileName, e);
+        }
+        return properties;
+    }
+*/
 
 
     public static List<String> loadPropertiesEsternoLunaSapiens(List<String> keysProperties ) {

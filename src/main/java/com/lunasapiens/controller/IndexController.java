@@ -185,9 +185,7 @@ public class IndexController {
     public String mostraOroscopo(Model model, @ModelAttribute(INFO_MESSAGE) String infoMessage) {
 
         logger.info("oroscopo endpoint");
-
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-
         String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         oroscopoDelGiornoDescrizioneOggi = oroscopoDelGiornoDescrizioneOggi.replace("\n", "<br>");
 
@@ -201,7 +199,7 @@ public class IndexController {
         model.addAttribute("videos", listOroscopoGiornoDTO);
 
         // Aggiungi infoMessage al modello per essere visualizzato nella vista
-        model.addAttribute(infoMessage, infoMessage);
+        model.addAttribute(INFO_MESSAGE, infoMessage);
         return "oroscopo";
     }
 
@@ -220,7 +218,7 @@ public class IndexController {
             if (success && emailUtenti != null) {
                 emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
             }
-            redirectAttributes.addFlashAttribute(infoMessage, infoMessage);
+            redirectAttributes.addFlashAttribute(INFO_MESSAGE, infoMessage);
         }
         return "redirect:/oroscopo";
     }
@@ -241,7 +239,7 @@ public class IndexController {
         }else{
             infoMessage = "Conferma email non riuscita. Registrati di nuovo";
         }
-        redirectAttributes.addFlashAttribute(infoMessage, infoMessage);
+        redirectAttributes.addFlashAttribute(INFO_MESSAGE, infoMessage);
         return "redirect:/oroscopo";
     }
 
@@ -261,7 +259,7 @@ public class IndexController {
         }else{
             infoMessage = "L'indirizzo email non è presente nel sistema.";
         }
-        redirectAttributes.addFlashAttribute(infoMessage, infoMessage);
+        redirectAttributes.addFlashAttribute(INFO_MESSAGE, infoMessage);
         return "redirect:/oroscopo";
     }
 

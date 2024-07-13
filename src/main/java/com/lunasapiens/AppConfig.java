@@ -60,9 +60,7 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Properties pianetiOroscopoSignificato() {
-        return getProperties("pianeti-oroscopo-significato.properties");
-    }
+    public Properties pianetiOroscopoSignificato() { return getProperties("pianeti-oroscopo-significato.properties"); }
 
     @Bean
     public Properties pianetaRetrogrado() {
@@ -73,9 +71,7 @@ public class AppConfig implements WebMvcConfigurer {
     public Properties aspettiPianeti() { return getProperties("aspetti-pianeti.properties"); }
 
     @Bean
-    public Properties segniZodiacali() {
-        return getProperties("segni-zodiacali.properties");
-    }
+    public Properties segniZodiacali() { return getProperties("segni-zodiacali.properties"); }
 
     // per oroscopo dell giorno
     @Bean
@@ -87,8 +83,7 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-
-    private Properties getProperties(String fileNameProperties){
+    public Properties getProperties(String fileNameProperties) {
         Properties properties = new Properties();
         try (InputStream is = getClass().getResourceAsStream("/"+fileNameProperties)) {
             if (is != null) {

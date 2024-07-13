@@ -1,11 +1,14 @@
 package com.lunasapiens.zodiac;
 
+import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 import java.util.Properties;
 
-
+@Component
 public class SegnoZodiacale {
 
     private int numeroSegnoZodiacale;
@@ -24,16 +27,20 @@ public class SegnoZodiacale {
     private int[] pianetainCaduta;
 
 
-    public SegnoZodiacale getSegnoZodiacale(int numeroSegno, Properties segniZodiacaliProperties) {
+    @Autowired
+    private AppConfig appConfig;
 
+
+    public SegnoZodiacale getSegnoZodiacale(int numeroSegno) {
         SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
+        Properties segniZodiacali = appConfig.segniZodiacali();
 
         switch (numeroSegno) {
             case 0: // ariete
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
@@ -48,8 +55,8 @@ public class SegnoZodiacale {
             case 1: // toro
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
@@ -64,8 +71,8 @@ public class SegnoZodiacale {
             case 2: // gemelli
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
@@ -80,8 +87,8 @@ public class SegnoZodiacale {
             case 3: // cancro
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
@@ -96,8 +103,8 @@ public class SegnoZodiacale {
             case 4: // leone
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
@@ -112,8 +119,8 @@ public class SegnoZodiacale {
             case 5: // vergine
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
@@ -128,8 +135,8 @@ public class SegnoZodiacale {
             case 6: // bilancia
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
@@ -144,15 +151,15 @@ public class SegnoZodiacale {
             case 7: // scorpione
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
                 segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(3);
                 segnoZodiacale.caratteristica = "Trasformazione";
 
-                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 4 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 9, 4 };;
                 segnoZodiacale.pianetainEsaltazione = new int[]{ 7 };;
                 segnoZodiacale.pianetainEsilio = new int[]{ 3 };;
                 segnoZodiacale.pianetainCaduta = new int[]{ 1 };;
@@ -160,8 +167,8 @@ public class SegnoZodiacale {
             case 8: // sagittario
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
@@ -176,8 +183,8 @@ public class SegnoZodiacale {
             case 9: // capricorno
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(0);
@@ -192,15 +199,15 @@ public class SegnoZodiacale {
             case 10: // acquario
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(0);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(1);
                 segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(2);
                 segnoZodiacale.caratteristica = "Passaggio a stati superiori";
 
-                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 6, 7 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 7, 6 };;
                 segnoZodiacale.pianetainEsaltazione = null;;
                 segnoZodiacale.pianetainEsilio = new int[]{ 0 };;
                 segnoZodiacale.pianetainCaduta = new int[]{ 8 };;
@@ -208,15 +215,15 @@ public class SegnoZodiacale {
             case 11: // pesci
                 segnoZodiacale.numeroSegnoZodiacale = numeroSegno;
                 segnoZodiacale.nomeSegnoZodiacale = Constants.SegniZodiacali.fromNumero(numeroSegno).getNome();
-                segnoZodiacale.descrizione = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno));;
-                segnoZodiacale.descrizioneMin = segniZodiacaliProperties.getProperty(String.valueOf(numeroSegno)+"_min");;
+                segnoZodiacale.descrizione = segniZodiacali.getProperty(String.valueOf(numeroSegno));;
+                segnoZodiacale.descrizioneMin = segniZodiacali.getProperty(String.valueOf(numeroSegno)+"_min");;
 
                 segnoZodiacale.genere = Constants.segnoZodiacaleGenere.get(1);
                 segnoZodiacale.natura = Constants.segnoZodiacaleNatura.get(2);
                 segnoZodiacale.elemento = Constants.segnoZodiacaleElemento.get(3);
                 segnoZodiacale.caratteristica = "Mondo interiore";
 
-                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 5, 8 };;
+                segnoZodiacale.pianetiSignoreDelSegno = new int[]{ 8, 5 };;
                 segnoZodiacale.pianetainEsaltazione = new int[]{ 3 };;
                 segnoZodiacale.pianetainEsilio = new int[]{ 2 };;
                 segnoZodiacale.pianetainCaduta = new int[]{ 2 };;

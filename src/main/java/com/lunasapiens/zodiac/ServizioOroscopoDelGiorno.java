@@ -19,6 +19,8 @@ public class ServizioOroscopoDelGiorno {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    SegnoZodiacale segnoZodiacale;
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
     private Double temperature = 0.5; private Integer maxTokens = 2500;
@@ -71,7 +73,6 @@ public class ServizioOroscopoDelGiorno {
 
 
     public StringBuilder Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
-        Properties segniZodDecrizProperties = appConfig.segniZodiacali();
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
         Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
@@ -82,7 +83,6 @@ public class ServizioOroscopoDelGiorno {
 
         System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
-        SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
         StringBuilder domandaBuilder = new StringBuilder();
 
         String inizioDomanda = "Tu sei un astrologo che risponde in base ai dati forniti, senza inventare e aggiungere nulla.\n" +
@@ -91,7 +91,7 @@ public class ServizioOroscopoDelGiorno {
         domandaBuilder.append(inizioDomanda);
 
         domandaBuilder.append("- Descrizione segno zodiacale:\n" );
-        SegnoZodiacale segnoZod = segnoZodiacale.getSegnoZodiacale( numeroSegno, segniZodDecrizProperties );
+        SegnoZodiacale segnoZod = segnoZodiacale.getSegnoZodiacale( numeroSegno );
         domandaBuilder.append( segnoZod.getDescrizioneMin() + "\n \n");
         //String segnoDescrizione100Caratteri = segnoZod.getDescrizione().substring(0, Math.min(segnoZod.getDescrizione().length(), 300));
         //domandaBuilder.append( segnoDescrizione100Caratteri + "\n\n");

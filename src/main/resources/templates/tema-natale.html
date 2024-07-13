@@ -34,7 +34,7 @@
     <!-- Titolo principale e descrizione del tema natale -->
     <div th:if="${temaNataleDescrizione}">
         <h2 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h2>
-        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> | <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
+        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
         <p th:utext="${temaNataleDescrizione}"></p>
     </div>
 

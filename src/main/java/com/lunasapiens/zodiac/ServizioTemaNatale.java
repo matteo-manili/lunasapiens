@@ -21,6 +21,9 @@ public class ServizioTemaNatale {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    SegnoZodiacale segnoZodiacale;
+
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
 
@@ -66,8 +69,6 @@ public class ServizioTemaNatale {
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetiCaseSignificatoProperties = appConfig.pianetiCaseSignificato();
 
-
-
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
 
         ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
@@ -86,31 +87,47 @@ public class ServizioTemaNatale {
         // TODO: Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
         // Quindi nel prompt mostrare i segni coi suoi pianeti domiciliati
 
+            String descrizioneTemaNatale = "<p><big><b>"+pianetiTransiti.get(0).descrizionePianeta()+"<br>";
+            descrizioneTemaNatale += pianetiTransiti.get(1).descrizionePianeta()+"</br>";
+            descrizioneTemaNatale += "Ascendente in "+casePlacideArrayList.get(0).getNomeSegnoZodiacale()+".</b></big></p>";
 
-        String descrizioneTemaNatale = "<p>" + "<h3>Case:</h3>";
+
+            descrizioneTemaNatale += "<p>" + "<h4>Case:</h4>";
         for (CasePlacide varCasa : casePlacideArrayList) {
 
             descrizioneTemaNatale += "<br><b>" + varCasa.descrizioneCasaGradi() + "</b>";
             descrizioneTemaNatale += "<ul>";
             descrizioneTemaNatale += "<li>" + caseSignificato.getProperty(varCasa.getNomeCasa()) + "</li>";
 
+            boolean pianetaPresete = false;
+
             for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa()) ){
+                    pianetaPresete = true;
                     descrizioneTemaNatale += "<li>" + varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
                             pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNomeCasa()) + "</li>";
                 }
-
             }
 
+            if( !pianetaPresete ){
+                int[] pianetiSignori = segnoZodiacale.getSegnoZodiacale( varCasa.getNumeroSegnoZodiacale() ).getPianetiSignoreDelSegno();
+                for (int pianetaSign : pianetiSignori) {
+                    for (PianetaPosizTransito varPianeta : pianetiTransiti) {
+                        if(varPianeta.getNumeroPianeta() == pianetaSign ){
+                            descrizioneTemaNatale += "<li>"+varPianeta.descrizione_Pianeta_Retrogrado()+"<i> (Pianeta domicilio del segno della Casa) </i>" +
+                                    pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNomeCasa()) + "</li>";
+                        }
+                    }
+                }
+            }
 
             System.out.println(varCasa.toString());
-
             descrizioneTemaNatale += "</ul>";
         }
         descrizioneTemaNatale += "</p>";
 
 
-        descrizioneTemaNatale += "<p>" + "<h3>Transiti:</h3>";
+        descrizioneTemaNatale += "<p>" + "<h4>Transiti:</h4>";
         for (PianetaPosizTransito var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
@@ -130,7 +147,7 @@ public class ServizioTemaNatale {
 
         // ASPETTI
         if (!aspetti.isEmpty()) {
-            descrizioneTemaNatale += "<p>" + "<h3>Aspetti:</h3>";
+            descrizioneTemaNatale += "<p>" + "<h4>Aspetti:</h4>";
             for (Aspetti var : aspetti) {
                 descrizioneTemaNatale += "<br>" + var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName();
                 aspettiPresenti.add(var.getTipoAspetto());
@@ -140,7 +157,7 @@ public class ServizioTemaNatale {
 
 
         if(aspetti != null && !aspetti.isEmpty()){
-            descrizioneTemaNatale += "<p>" + "<h3>Significato Aspetti:</h3>";
+            descrizioneTemaNatale += "<p>" + "<h4>Significato Aspetti:</h4>";
             for (Constants.Aspetti aspettiConstants : Constants.Aspetti.values()) {
                 if(aspettiPresenti.contains(aspettiConstants.getCode())) {
                     descrizioneTemaNatale += "<br>" + aspettiConstants.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspettiConstants.getCode())+"_min");
