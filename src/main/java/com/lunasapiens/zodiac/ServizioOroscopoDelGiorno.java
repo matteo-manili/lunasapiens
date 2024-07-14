@@ -42,9 +42,10 @@ public class ServizioOroscopoDelGiorno {
      * @return
      */
     public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        String descrizioneOggi = "Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "\n\n" +
-                "Transiti: ";
+        String descrizioneOggi = "<p><b>Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
+                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "</b></p>";
+
+        descrizioneOggi += "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
         for (PianetaPosizTransito var : pianetiTransiti) {
@@ -58,15 +59,17 @@ public class ServizioOroscopoDelGiorno {
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero() ) {
-                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "\n";
+                descrizioneOggi += var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() + "<br>";
             }
         }
+        descrizioneOggi += "</p>";
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
         if(!aspetti.isEmpty()){
-            descrizioneOggi += "\n" + "Aspetti: ";
+            descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
                 descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
             }
+            descrizioneOggi += "</p>";
         }
         return descrizioneOggi;
     }
@@ -81,7 +84,7 @@ public class ServizioOroscopoDelGiorno {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
-        System.out.println( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
+        logger.info( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
         StringBuilder domandaBuilder = new StringBuilder();
 
@@ -175,8 +178,8 @@ public class ServizioOroscopoDelGiorno {
 
 
 
-        System.out.println( domandaBuilder.toString() );
-        System.out.println( "---------- fine segno "+numeroSegno +" ----------" );
+        logger.info( domandaBuilder.toString() );
+        logger.info( "---------- fine segno "+numeroSegno +" ----------" );
 
         return domandaBuilder;
     }

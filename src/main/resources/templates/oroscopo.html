@@ -9,7 +9,7 @@
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
-<div class="container px-4 px-lg-5">
+<div class="container mt-5">
 
 
 
@@ -18,11 +18,11 @@
         <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
 
         <form id="subscribe-form" action="/subscribe" method="post" class="row g-2 align-items-center" onsubmit="showLoadingOverlay()">
-            <div class="col-sm">
+            <div class="col-12 col-sm-8">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
-            <div class="col-auto">
-                <button type="submit" id="subscribe-button" class="btn btn-primary">Registra Email</button>
+            <div class="col-12 col-sm-4">
+                <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Email</button>
             </div>
         </form>
 
@@ -32,9 +32,13 @@
         </div>
     </div>
 
-
-    <!-- Titolo principale -->
     <h1 class="mb-4">Oroscopo del Giorno</h1>
+
+    <div class="alert alert-info" role="alert">
+        La nostra IA viene istruita con dati di carattere astronomico e regole astrologiche per generare l'oroscopo del giorno.<br>
+        I corpi celesti sono orientati verso l'Italia alle ore 12 di oggi.<br>
+    </div>
+
 
     <!-- Mostra la descrizione dell'oroscopo del giorno -->
     <p th:utext="${oroscopoDelGiornoDescrizioneOggi}"></p>
