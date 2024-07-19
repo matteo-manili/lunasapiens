@@ -3,16 +3,11 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import cz.kibo.api.astrology.builder.CuspBuilder;
-import cz.kibo.api.astrology.domain.Cusp;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SwissEph;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
