@@ -32,7 +32,7 @@ public class ServizioOroscopoDelGiorno {
 
     public void Oroscopo_Segni_Transiti_Aspetti() {
         for(int numeroSegno = 0; numeroSegno <= 0; numeroSegno++) {
-            Oroscopo_Segni_Transiti_Aspetti(numeroSegno);
+            domanda_prompt(numeroSegno);
         }
     }
 
@@ -67,7 +67,7 @@ public class ServizioOroscopoDelGiorno {
         if(!aspetti.isEmpty()){
             descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
-                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"\n";
+                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"<br>";
             }
             descrizioneOggi += "</p>";
         }
@@ -75,7 +75,7 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
-    public StringBuilder Oroscopo_Segni_Transiti_Aspetti(int numeroSegno) {
+    public StringBuilder domanda_prompt(int numeroSegno) {
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
         Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
@@ -88,9 +88,15 @@ public class ServizioOroscopoDelGiorno {
 
         StringBuilder domandaBuilder = new StringBuilder();
 
-        String inizioDomanda = "Tu sei un astrologo che risponde in base ai dati forniti, senza inventare e aggiungere nulla.\n" +
+        String inizioDomanda = "Tu sei un astrologo che genera l'oroscopo del giono in base ai dati forniti, senza inventare e aggiungere nulla. \n" +
                 "Scrivi l'oroscopo del giorno per il segno del " +Constants.SegniZodiacali.fromNumero(numeroSegno).getNome()+".\n" +
-                "L'oroscopo deve argomentare gli eventi di oggi declinandoli agli aspetti." + "\n\n";
+                "L'oroscopo deve argomentare gli eventi di oggi declinandoli agli aspetti. \n" +
+                "Se è possibile oroganizza l'orosocpo dividendo il testo con questi argomenti: " +
+                "Amore e Relazioni, " +
+                "Famiglia e Amicizie, " +
+                "Salute e Benessere, " +
+                "Carriera e Lavoro, " +
+                "Finanze e Denaro." + "\n\n";
         domandaBuilder.append(inizioDomanda);
 
         domandaBuilder.append("- Descrizione segno zodiacale:\n" );
@@ -246,17 +252,23 @@ public class ServizioOroscopoDelGiorno {
                 appConfig.getParamOpenAi().getModelGpt3_5());
          */
 
-        StringBuilder domanda = Oroscopo_Segni_Transiti_Aspetti(segno);
+        StringBuilder domanda = domanda_prompt(segno);
         //logger.info("DOMANDA: " + domanda);
 
         //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
         //return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
           //      appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
 
+        // return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
+        //                appConfig.getParamOpenAi().getModelGpt4() );
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-                appConfig.getParamOpenAi().getModelGpt4() );
+                appConfig.getParamOpenAi().getModelGpt4_Mini() );
+
+
+
+
     }
 
 

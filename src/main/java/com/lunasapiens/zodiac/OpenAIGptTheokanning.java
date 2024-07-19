@@ -47,8 +47,8 @@ public class OpenAIGptTheokanning {
 
         // Inizializza la lista dei messaggi
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("system", "Sei un astrologo esperto."));
-        messages.add(new ChatMessage("user", domanda));
+        messages.add(new ChatMessage("system", domanda /*"Sei un astrologo che genera."*/ ));
+        //messages.add(new ChatMessage("user", domanda));
 
         // Costruisci la richiesta di completamento
         ChatCompletionRequest request = ChatCompletionRequest.builder()

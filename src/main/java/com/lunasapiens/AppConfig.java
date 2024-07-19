@@ -160,6 +160,7 @@ public class AppConfig implements WebMvcConfigurer {
         }
         OpenAiGptConfig openAiGptConfig = new OpenAiGptConfig(apiKeyOpenAI,
                 env.getProperty("api.openai.model.gpt.4"),
+                env.getProperty("api.openai.model.gpt.4.mini"),
                 env.getProperty("api.openai.model.gpt.3.5"),
                 env.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
         return openAiGptConfig;

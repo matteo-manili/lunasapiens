@@ -3,11 +3,16 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import cz.kibo.api.astrology.builder.CuspBuilder;
+import cz.kibo.api.astrology.domain.Cusp;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SwissEph;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -134,25 +139,16 @@ public class BuildInfoAstrologiaSwiss {
      */
     public ArrayList<CasePlacide> getCasePlacide(GiornoOraPosizioneDTO giornOraPosDTO) {
 
+
         SwissEph swissEph = new SwissEph();
-
         ArrayList<CasePlacide> casePlacides = new ArrayList<CasePlacide>();
-
-        // Calcolo delle case astrologiche
-        double[] cusps = new double[13]; // Array per memorizzare le posizioni delle case
-        double[] ascmc = new double[10]; // Array per memorizzare altri punti vitali
-
 
         // Se aggiungi la costante SweConst.SEFLG_SIDEREAL al metodo swe_houses (secondo parametro), il calcolo delle posizioni delle case astrologiche
         // verrà effettuato nel sistema siderale anziché nel sistema tropicale. Il sistema siderale è quello usato nei siti web più famosi.
         // Per il sistema tropicale usare invece SweConst.SEFLG_SWIEPH
 
-
-
         double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
         System.out.println("julianDate case placide: " + julianDate);
-
-
 
         // SISTEMI DI DIVISIONE DELLE CASE: sono di tipo Mobile, fisso e altri tipi.
         // vedere la classe: class de.thmac.swisseph.SweHouse, ci sono le lettere dei sistemi di divisione di Case.
@@ -163,9 +159,59 @@ public class BuildInfoAstrologiaSwiss {
         // il flag SweConst.SEFLG_SIDEREAL è necessario, lo usa anche astro-seek.com
 
 
+        // 'C':return "Campanus";
+
+        // Calcolo delle case astrologiche
+        double[] cusps = new double[13]; // Array per memorizzare le posizioni delle case
+        double[] ascmc = new double[10]; // Array per memorizzare altri punti vitali
         int houseSys = (int)'P';
         // SweConst.SEFLG_SIDEREAL con SweConst.SEFLG_SWIEPH | se metto 0 i risultati sono più esatti
         int result = swissEph.swe_houses(julianDate, SweConst.SEFLG_SIDEREAL, giornOraPosDTO.getLat(), giornOraPosDTO.getLon(), houseSys, cusps, ascmc);
+
+
+        for (int i = 0; i < cusps.length; i++) {
+            System.out.println("Elemento " + i + ": " + cusps[i]);
+        }
+
+
+        double[] newCusps = new double[cusps.length - 1];
+        for (int i = 1; i < cusps.length; i++) {
+            newCusps[i - 1] = cusps[i];
+        }
+
+
+        double[] data2 = convertToZodiacDegrees(newCusps);
+
+
+        // System.out.println("Casa " + i + " nel segno di: " + getZodiacSign(data2[i]));
+        for (int i = 1; i < data2.length; i++) {
+            //System.out.println("Casa " + i + " nel segno di: " + data2[i]);
+            //System.out.println("Casa " + i + " nel segno di: " + getZodiacSign(data2[i]));
+
+            Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale( data2[i] ).entrySet().iterator().next();
+
+            System.out.println(entry.getValue());
+
+        }
+
+                /*
+        for (int i = 1; i < cusps.length; i++) {
+
+            System.out.println("Casa " + i + " inizia nel segno di: " + getZodiacSign(
+
+                    adjustValue(cusps[i], 0)
+
+                    ));
+        }
+*/
+
+/*
+        String[] houseSigns = new String[12];
+        for (int i = 1; i <= 12; i++) {
+            houseSigns[i-1] = getZodiacSign(cusps[i]);
+            System.out.println("Casa " + i + " inizia nel segno di: " + houseSigns[i-1]);
+        }
+*/
 
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
@@ -173,17 +219,83 @@ public class BuildInfoAstrologiaSwiss {
                 Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
                 CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);
-                logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
+                //logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
             }
         } else {
             logger.info("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
         }
 
         swissEph.swe_close();
+
+
         return casePlacides;
     }
 
 
+    public static double[] convertToZodiacDegrees(double[] data) {
+        double min = findMin(data);
+        double max = findMax(data);
+
+        double[] result = new double[data.length];
+        for (int i = 0; i < data.length; i++) {
+            result[i] = ((data[i] - min) / (max - min)) * 360.0;
+        }
+        return result;
+    }
+
+    public static double findMin(double[] data) {
+        double min = data[0];
+        for (double val : data) {
+            if (val < min) {
+                min = val;
+            }
+        }
+        return min;
+    }
+
+    public static double findMax(double[] data) {
+        double max = data[0];
+        for (double val : data) {
+            if (val > max) {
+                max = val;
+            }
+        }
+        return max;
+    }
+
+
+
+
+
+
+    public  double adjustValue(double value, double subtract) {
+        value -= subtract;
+        // Normalizza il valore tra 0 e 360
+        if (value < 0) {
+            value = (value + 360) % 360;
+        }
+        return value;
+    }
+
+
+    public static double calculateCentralAngle(double angle1, double angle2) {
+        double average = (angle1 + angle2) / 2;
+
+        // Normalize to 0-360
+        /*
+        if (average >= 360) {
+            average -= 360;
+        }
+*/
+        return average;
+    }
+
+    public static String getZodiacSign(double degree) {
+        //degree = degree + 15.0;
+        String[] signs = {"Ariete", "Toro", "Gemelli", "Cancro", "Leone", "Vergine", "Bilancia", "Scorpione", "Sagittario", "Capricorno", "Acquario", "Pesci"};
+        int signIndex = (int) (degree / 30);
+        return signs[signIndex];
+    }
 
 
 }
