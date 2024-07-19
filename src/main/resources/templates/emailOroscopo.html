@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/templateBaseEmail :: common_head_title(~{::title})}">
+    <title>Oroscopo del Giorno - LunaSapiens</title>
+</head>
+
+
+<body>
+<div class="email-container">
+
+    <!-- Header -->
+    <div th:replace="~{fragments/templateBaseEmail :: header}"></div>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+        <div class="mb-4">
+            <h1 class="main-title">Oroscopo del Giorno</h1>
+        </div>
+
+        <!-- Descrizione dell'oroscopo del giorno -->
+        <div class="mb-4">
+            <p th:utext="${oroscopoDelGiornoDescrizioneOggi}" class="lead"></p>
+        </div>
+
+        <!-- Oroscopi per ogni segno -->
+        <div th:each="listOroscGiorno : ${listOroscopoGiornoDTO}" class="mb-5">
+            <h2 class="mb-3 text-primary"><strong th:text="${listOroscGiorno.nomeSegnoZodiacale}"></strong></h2>
+            <p th:utext="${listOroscGiorno.testoOroscopoRifinito}"></p>
+        </div>
+    </main>
+
+
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/templateBaseEmail :: footer_cancel-email-subscription(${confirmationCode})}"></div>
+
+
+</div>
+
+</body>
+</html>

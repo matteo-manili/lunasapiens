@@ -1,7 +1,9 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
+import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
@@ -38,31 +40,39 @@ public class ScheduledTasks {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
+    @Autowired
+    private EmailService emailService;
+
 
     // (* secondi * minuti * ore * giorno del mese * mese * giorno della settimana)
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
     // settato per le 00:05 ogni giorno: "0 5 0 * * *"
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
-    public void executeTask() {
+    public void executeTask_CreaOroscopoGiornaliero() {
         creaOroscopoGiornaliero();
         telegramBotClient.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
-        logger.info("executeTask eseguito alle " + Util.getNowRomeEurope());
+        logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Util.getNowRomeEurope());
     }
 
-    // eseguo 2 volte il task, perché lascia sempre qualche video a null
-    //@Scheduled(cron = "0 6 0 * * *", zone = "Europe/Rome")
-    public void executeTask_2() {
-        creaOroscopoGiornaliero();
-        telegramBotClient.inviaMessaggio("executeTask_2 Eseguito! ScheduledTasks.executeTask() "+ Util.getNowRomeEurope());
-        logger.info("executeTask_2 eseguito alle " + Util.getNowRomeEurope());
+    @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")
+    public void executeTask_InvioEmailUtentiOroscopoGiornaliero() {
+        invioEmailUtentiOroscopoGiornaliero();
+        logger.info("executeTask_InvioEmailUtentiOroscopoGiornaliero eseguito alle " + Util.getNowRomeEurope());
     }
-
 
 
     public void test_Oroscopo_Segni_Transiti_Aspetti(){
-
         servizioOroscopoDelGiorno.Oroscopo_Segni_Transiti_Aspetti();
     }
+
+
+    public void invioEmailUtentiOroscopoGiornaliero(){
+
+
+        emailService.inviaEmailOrosciopoGioraliero();
+
+    }
+
 
 
 

@@ -31,7 +31,6 @@ IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
     <title th:replace="${title}">LunaSapiens</title>
     <th:block th:replace="${links}" />
 </head>
-t
 
 <head th:fragment="common_head_title(title)">
     <th:block th:insert="~{fragments/templateBase :: info-head}" />

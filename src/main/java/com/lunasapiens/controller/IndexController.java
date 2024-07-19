@@ -195,7 +195,7 @@ public class IndexController {
             listOroscopoGiornoDTO.add(dto);
         }
         model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
-        model.addAttribute("videos", listOroscopoGiornoDTO);
+        model.addAttribute("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
 
         // Aggiungi infoMessage al modello per essere visualizzato nella vista
         model.addAttribute(INFO_MESSAGE, infoMessage);
@@ -323,7 +323,8 @@ public class IndexController {
     public String inviaEmail(Model model) {
         EmailUtenti emailUtenti = new EmailUtenti();
         emailUtenti.setEmail("matteo.manili@gmail.com");
-        emailService.inviaEmailOrosciopoGioraliero(emailUtenti);
+        emailService.inviaEmailOrosciopoGioraliero();
+
         return "index";
     }
 

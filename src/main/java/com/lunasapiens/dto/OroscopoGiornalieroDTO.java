@@ -77,19 +77,15 @@ public class OroscopoGiornalieroDTO {
         this.nomeFileVideo = nomeFileVideo;
     }
 
-    public String getNomeSegnoZodiacale() {
-        return nomeSegnoZodiacale;
-    }
+    public String getNomeSegnoZodiacale() { return nomeSegnoZodiacale; }
 
     public void setNomeSegnoZodiacale(String nomeSegnoZodiacale) {
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
     }
 
-    public String getTestoOroscopoRifinito() {
-        return testoOroscopoRifinito;
-    }
+    public String getTestoOroscopoRifinito() { return testoOroscopoRifinito; }
 
-    public void setTestoOroscopoRifinito(String testoOroscopoRifinito) {
-        this.testoOroscopoRifinito = testoOroscopoRifinito;
-    }
+    public void setTestoOroscopoRifinito(String testoOroscopoRifinito) { this.testoOroscopoRifinito = testoOroscopoRifinito; }
+
+
 }

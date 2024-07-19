@@ -1,9 +1,14 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.ContactFormDTO;
+import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
+import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.EmailUtentiService;
+import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.json.JSONObject;
@@ -21,8 +26,10 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -42,10 +49,17 @@ public class EmailService {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
+    @Autowired
+    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
+
+    @Autowired
+    OroscopoGiornalieroService oroscopoGiornalieroService;
+
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
     private final String defaultFromGmailMatteoManili = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
 
-    public static final String templateEmailFragment = "fragments/templateEmailFragment";
+    public static final String emailSubscription = "emailSubscription";
+    public static final String emailOroscopo = "emailOroscopo";
     public static final String contenutoEmail = "contenutoEmail";
 
 
@@ -65,29 +79,38 @@ public class EmailService {
                     "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
 
             context.setVariable(contenutoEmail, contenuto);
-            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+            sendHtmlEmail(emailUtenti.getEmail(), subject, emailSubscription, context);
         }
     }
 
 
-    public void inviaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
-        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
-        if( emailUtentiSetRandomCode != null ) {
-            String subject = "LunaSapiens - Orosocpo del giorno";
-            Context context = new Context();
-            String linkCencelIscrizione = Constants.DOM_LUNA_SAPIENS + Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN + "?code="+emailUtentiSetRandomCode.getConfirmationCode();
-            String contenuto = "<h2>Oroscopo del Giorno</h2><p>Oggi è una giornata ideale per concentrarti sui tuoi obiettivi. <<br><strong>Lavoro:</strong> " +
-                    "Le stelle ti favoriscono nelle decisioni lavorative. <br><strong>Amore:</strong> Mostra il tuo lato più affettuoso. " +
-                    "<br><strong>Benessere:</strong> Ricorda di prenderti del tempo per te stesso. <br>Fortuna e serenità sono in arrivo!</p>";
 
-            contenuto += "<p><i>Se desideri cancellarti dall'Oroscopo del giorno, puoi farlo cliccando sul seguente link " + linkCencelIscrizione + "</i></p>";
 
-            context.setVariable(contenutoEmail, contenuto);
-            //sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+    public void inviaEmailOrosciopoGioraliero() {
+        List<EmailUtenti> emailUtentiList = emailUtentiService.findAll();
+        for(EmailUtenti emailUtente: emailUtentiList){
+            if( emailUtente.isSubscription() ){
+                String subject = "LunaSapiens - Orosocpo del giorno";
+                Context context = new Context();
+                GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+                String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+                List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+                List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+                for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+                    OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
+                    listOroscopoGiornoDTO.add(dto);
+                }
+                context.setVariable("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
+                context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
+                context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
-            sendHtmlEmail(emailUtenti.getEmail(), subject, templateEmailFragment, context);
+                sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+            }
+
         }
-    }
+
+
+}
 
 
 
@@ -131,7 +154,7 @@ public class EmailService {
         Context context = new Context();
         String contenuto = "<p>"+subject+"</p>" + "<p>"+contactForm.getMessage()+"</p>";
         context.setVariable(contenutoEmail, contenuto);
-        sendHtmlEmail(defaultFromGmailMatteoManili, subject, templateEmailFragment, context);
+        sendHtmlEmail(defaultFromGmailMatteoManili, subject, emailSubscription, context);
     }
 
 
