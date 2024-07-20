@@ -1,5 +1,6 @@
 package com.lunasapiens;
 
+import com.lunasapiens.controller.IndexController;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
@@ -12,6 +13,8 @@ import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +36,8 @@ import java.util.List;
 
 @Service
 public class EmailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -87,14 +92,16 @@ public class EmailService {
 
 
     public void inviaEmailOrosciopoGioraliero() {
+
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+
         List<EmailUtenti> emailUtentiList = emailUtentiService.findAll();
         for(EmailUtenti emailUtente: emailUtentiList){
             if( emailUtente.isSubscription() ){
                 String subject = "LunaSapiens - Orosocpo del giorno";
                 Context context = new Context();
-                GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-                String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-                List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
                 List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
                 for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
                     OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
@@ -105,6 +112,7 @@ public class EmailService {
                 context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
                 sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+                logger.info("inviaEmailOrosciopoGioraliero: "+emailUtente.getEmail());
             }
 
         }
