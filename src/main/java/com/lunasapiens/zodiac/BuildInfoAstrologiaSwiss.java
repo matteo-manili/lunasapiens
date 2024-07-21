@@ -147,6 +147,11 @@ public class BuildInfoAstrologiaSwiss {
         double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
         System.out.println("julianDate case placide: " + julianDate);
 
+
+        //double julianDate = new SweDate(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), giornOraPosDTO.getOra()).getJulDay();
+
+
+
         // SISTEMI DI DIVISIONE DELLE CASE: sono di tipo Mobile, fisso e altri tipi.
         // vedere la classe: class de.thmac.swisseph.SweHouse, ci sono le lettere dei sistemi di divisione di Case.
         // Le case a divisione fissa sono chiamate anche 'Sistema di case uguali' e sono la lettera: A oppure E.

@@ -29,11 +29,13 @@
         </div>
     </div>
 
-    <h1 class="mb-4 text-center">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
+    <h1 class="mb-4 ">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
 
-    <div class="alert alert-info text-center" role="alert">
+    <div class="alert alert-info " role="alert">
         La nostra IA viene istruita con dati di carattere astronomico e regole astrologiche per generare l'oroscopo del giorno.<br>
-        I corpi celesti sono orientati verso l'Italia alle ore 12 di oggi.
+        I corpi celesti sono orientati verso l'Italia alle ore 12 di oggi.<br>
+        Utilizziamo il sistema di effemeridi <a href="https://www.astro.com/swisseph/swephinfo_e.htm">Swiss Ephemeris</a>
+        (tabelle che mostrano le posizioni ad alta precisione dei corpi celesti) per determinare i Transiti.
     </div>
 
     <div class="mb-4">
