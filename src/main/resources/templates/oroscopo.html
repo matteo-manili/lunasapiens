@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <h1 class="mb-4 text-center">Oroscopo del Giorno</h1>
+    <h1 class="mb-4 text-center">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
 
     <div class="alert alert-info text-center" role="alert">
         La nostra IA viene istruita con dati di carattere astronomico e regole astrologiche per generare l'oroscopo del giorno.<br>
@@ -37,15 +37,15 @@
     </div>
 
     <div class="mb-4">
-        <p th:utext="${oroscopoDelGiornoDescrizioneOggi}" class="lead"></p>
+        <p th:utext="${oroscDelGiornDescDTO.descrizioneOroscopoDelGiorno}" class="lead"></p>
     </div>
 
-    <div th:each="listOroscGiorno : ${listOroscopoGiornoDTO}" class="mb-5">
-        <h2 class="mb-3 text-primary"><strong th:text="${listOroscGiorno.nomeSegnoZodiacale}"></strong></h2>
-        <p th:utext="${listOroscGiorno.testoOroscopoRifinito}"></p>
+    <div th:each="oroscGiornoIte : ${listOroscopoGiornoDTO}" class="mb-5">
+        <h2 class="mb-3 text-primary"><strong th:text="${oroscGiornoIte.nomeSegnoZodiacale}"></strong></h2>
+        <p th:utext="${oroscGiornoIte.testoOroscopoRifinito}"></p>
         <div class="video-container mb-3 ratio ratio-16x9">
             <video class="w-100" controls>
-                <source th:src="@{'/oroscopo-giornaliero/' + ${listOroscGiorno.nomeFileVideo}}" type="video/mp4">
+                <source th:src="@{'/oroscopo-giornaliero/' + ${oroscGiornoIte.nomeFileVideo}}" type="video/mp4">
                 Il tuo browser non supporta il tag video.
             </video>
         </div>

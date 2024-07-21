@@ -1,5 +1,9 @@
 package com.lunasapiens.dto;
 
+import com.lunasapiens.Constants;
+
+import java.time.LocalDateTime;
+
 public class GiornoOraPosizioneDTO {
 
     private int ora;
@@ -10,6 +14,8 @@ public class GiornoOraPosizioneDTO {
     private double lon;
     private double lat;
 
+    String giornoMeseAnnoFormattato;
+
     // Costruttori, getter e setter
 
     public GiornoOraPosizioneDTO() {
@@ -17,6 +23,7 @@ public class GiornoOraPosizioneDTO {
     }
 
     public GiornoOraPosizioneDTO(int ora, int minuti, int giorno, int mese, int anno, double lat, double lon) {
+        LocalDateTime dateTime = LocalDateTime.of(anno, mese, giorno, ora, minuti, 0);
         this.ora = ora;
         this.minuti = minuti;
         this.giorno = giorno;
@@ -24,6 +31,7 @@ public class GiornoOraPosizioneDTO {
         this.anno = anno;
         this.lat = lat;
         this.lon = lon;
+        this.giornoMeseAnnoFormattato = dateTime.format(Constants.FORMATTER_GIORNO_MESE_ANNO);
     }
 
     // Getter e setter
@@ -83,5 +91,15 @@ public class GiornoOraPosizioneDTO {
     public void setLat(double lat) {
         this.lat = lat;
     }
+
+    public String getGiornoMeseAnnoFormattato() {
+        return giornoMeseAnnoFormattato;
+    }
+
+    public void setGiornoMeseAnnoFormattato(String giornoMeseAnnoFormattato) {
+        this.giornoMeseAnnoFormattato = giornoMeseAnnoFormattato;
+    }
+
+
 }
 

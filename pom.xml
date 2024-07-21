@@ -23,23 +23,25 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
 
-        <!-- repository per scaricare swisseph -->
+        <!-- repository per scaricare swisseph
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
+        </repository> -->
     </repositories>
 
 
     <dependencies>
 
         <!-- ###################### LIBRERIA ASTROLOGICA swisseph ###################### -->
+
+        <!-- versione 2.01.00_01 | ultimo commit github 6000e46 -->
+        <!--
         <dependency>
             <groupId>com.github.krishnact</groupId>
             <artifactId>swisseph</artifactId>
-            <version>-SNAPSHOT</version> <!-- versione 2.01.00_01 | ultimo commit github 6000e46 -->
-
-        </dependency>
+            <version>-SNAPSHOT</version>
+        </dependency> -->
 
         <!-- ###################### SPRING FRAMEWORK ###################### -->
         <dependency>
@@ -108,7 +110,6 @@
             <version>2.15.2</version>
         </dependency>
 
-        <!--  -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -185,7 +186,7 @@
         </dependency>  -->
 
 
-        <!-- !uesta dipendenza fa salire il jar finale lunasapiens-0.0.1-SNAPSHOT.jar oltre i 500mb comportando il fallimento del deploy su heroku.
+        <!-- questa dipendenza fa salire il jar finale lunasapiens-0.0.1-SNAPSHOT.jar oltre i 500mb comportando il fallimento del deploy su heroku.
                 per questo ho inserito molti exclusion.
          Quindi la soluzione potrebbe essere raggruppare solo i jar necessari, creare un jar manuale e includerlo come jar esterno nel progetto
             (lunasapiens/src/lib) via maven   -->

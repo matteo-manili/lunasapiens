@@ -16,18 +16,18 @@
     <main class="main-content">
 
         <div class="mb-4">
-            <h1 class="main-title">Oroscopo del Giorno</h1>
+            <h1 class="main-title">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
         </div>
 
         <!-- Descrizione dell'oroscopo del giorno -->
         <div class="mb-4">
-            <p th:utext="${oroscopoDelGiornoDescrizioneOggi}" class="lead"></p>
+            <p th:utext="${oroscDelGiornDescDTO.getDescrizioneOroscopoDelGiorno}" class="lead"></p>
         </div>
 
         <!-- Oroscopi per ogni segno -->
-        <div th:each="listOroscGiorno : ${listOroscopoGiornoDTO}" class="mb-5">
-            <h2 class="mb-3 text-primary"><strong th:text="${listOroscGiorno.nomeSegnoZodiacale}"></strong></h2>
-            <p th:utext="${listOroscGiorno.testoOroscopoRifinito}"></p>
+        <div th:each="oroscGiornoIte : ${listOroscopoGiornoDTO}" class="mb-5">
+            <h2 class="mb-3 text-primary"><strong th:text="${oroscGiornoIte.nomeSegnoZodiacale}"></strong></h2>
+            <p th:utext="${oroscGiornoIte.testoOroscopoRifinito}"></p>
         </div>
     </main>
 

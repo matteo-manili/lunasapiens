@@ -7,6 +7,7 @@ import com.lunasapiens.ScheduledTasks;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
@@ -186,15 +187,14 @@ public class IndexController {
 
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-        String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
             listOroscopoGiornoDTO.add(dto);
         }
-        model.addAttribute("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
+        model.addAttribute("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
         model.addAttribute("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
 
         // Aggiungi infoMessage al modello per essere visualizzato nella vista

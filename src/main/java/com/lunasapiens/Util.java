@@ -46,7 +46,7 @@ public class Util {
     }
 
     /**
-     * Roma 41.89 e 12.48
+     * Roma LAT 41.89 e LONG 12.48
      */
     public static GiornoOraPosizioneDTO GiornoOraPosizione_OggiRomaOre12() {
         ZonedDateTime now = getNowRomeEurope();
@@ -107,35 +107,36 @@ public class Util {
     public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
         Map<Integer, String> segniZodiacali = new HashMap<>();
         List<String> nomiSegni = Constants.SegniZodiacali.getAllNomi();
-        if (grado >= 0 && grado < 30) {                 // Ariete
+        if (grado >= 0.0d && grado < 30.0d) {                 // Ariete
             segniZodiacali.put(0, nomiSegni.get(0));
-        } else if (grado >= 30 && grado < 60) {         // Toro
+        } else if (grado >= 30.0d && grado < 60.0d) {         // Toro
             segniZodiacali.put(1, nomiSegni.get(1));
-        } else if (grado >= 60 && grado < 90) {         // Gemelli
+        } else if (grado >= 60.0d && grado < 90.0d) {         // Gemelli
             segniZodiacali.put(2, nomiSegni.get(2));
-        } else if (grado >= 90 && grado < 120) {        // Cancro
+        } else if (grado >= 90.0d && grado < 120.0d) {        // Cancro
             segniZodiacali.put(3, nomiSegni.get(3));
-        } else if (grado >= 120 && grado < 150) {       // Leone
+        } else if (grado >= 120.0d && grado < 150.0d) {       // Leone
             segniZodiacali.put(4, nomiSegni.get(4));
-        } else if (grado >= 150 && grado < 180) {       // Vergine
+        } else if (grado >= 150.0d && grado < 180.0d) {       // Vergine
             segniZodiacali.put(5, nomiSegni.get(5));
-        } else if (grado >= 180 && grado < 210) {       // Bilancia
+        } else if (grado >= 180.0d && grado < 210.0d) {       // Bilancia
             segniZodiacali.put(6, nomiSegni.get(6));
-        } else if (grado >= 210 && grado < 240) {       // Scorpione
+        } else if (grado >= 210.0d && grado < 240.0d) {       // Scorpione
             segniZodiacali.put(7, nomiSegni.get(7));
-        } else if (grado >= 240 && grado < 270) {       // Sagittario
+        } else if (grado >= 240.0d && grado < 270.0d) {       // Sagittario
             segniZodiacali.put(8, nomiSegni.get(8));
-        } else if (grado >= 270 && grado < 300) {       // Capricorno
+        } else if (grado >= 270.0d && grado < 300.0d) {       // Capricorno
             segniZodiacali.put(9, nomiSegni.get(9));
-        } else if (grado >= 300 && grado < 330) {       // Acquario
+        } else if (grado >= 300.0d && grado < 330.0d) {       // Acquario
             segniZodiacali.put(10, nomiSegni.get(10));
-        } else if (grado >= 330 && grado < 360) {       // Pesci
+        } else if (grado >= 330.0d && grado < 360.0d) {       // Pesci
             segniZodiacali.put(11, nomiSegni.get(11));
         } else {
             segniZodiacali.put(-1, "Grado non valido");
         }
         return segniZodiacali;
     }
+
 
 
 

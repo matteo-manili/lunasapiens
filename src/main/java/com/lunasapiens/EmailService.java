@@ -3,6 +3,7 @@ package com.lunasapiens;
 import com.lunasapiens.controller.IndexController;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
@@ -92,22 +93,20 @@ public class EmailService {
 
 
     public void inviaEmailOrosciopoGioraliero() {
-
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
-        String oroscopoDelGiornoDescrizioneOggi = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
-
         List<EmailUtenti> emailUtentiList = emailUtentiService.findAll();
         for(EmailUtenti emailUtente: emailUtentiList){
             if( emailUtente.isSubscription() ){
-                String subject = "LunaSapiens - Orosocpo del giorno";
+                String subject = "LunaSapiens - Orosocpo del giorno "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato();
                 Context context = new Context();
                 List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
                 for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
                     OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
                     listOroscopoGiornoDTO.add(dto);
                 }
-                context.setVariable("oroscopoDelGiornoDescrizioneOggi", oroscopoDelGiornoDescrizioneOggi);
+                context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
                 context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
                 context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 

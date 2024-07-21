@@ -56,7 +56,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")
     public void executeTask_InvioEmailUtentiOroscopoGiornaliero() {
-        invioEmailUtentiOroscopoGiornaliero();
+        emailService.inviaEmailOrosciopoGioraliero();
         logger.info("executeTask_InvioEmailUtentiOroscopoGiornaliero eseguito alle " + Util.getNowRomeEurope());
     }
 
@@ -66,12 +66,6 @@ public class ScheduledTasks {
     }
 
 
-    public void invioEmailUtentiOroscopoGiornaliero(){
-
-
-        emailService.inviaEmailOrosciopoGioraliero();
-
-    }
 
 
 

@@ -4,6 +4,7 @@ import com.lunasapiens.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,9 @@ public class ServizioOroscopoDelGiorno {
      * @param giornoOraPosizioneDTO
      * @return
      */
-    public String oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        String descrizioneOggi = "<p><b>Oggi è: " + giornoOraPosizioneDTO.getGiorno() + "/" + giornoOraPosizioneDTO.getMese() + "/" + giornoOraPosizioneDTO.getAnno()
-                + " ore " + String.format("%02d", giornoOraPosizioneDTO.getOra()) + ":" + String.format("%02d", giornoOraPosizioneDTO.getMinuti()) + "</b></p>";
+    public OroscopoDelGiornoDescrizioneDTO oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
-        descrizioneOggi += "<p><b>Transiti:</b><br>";
+        String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
         for (PianetaPosizTransito var : pianetiTransiti) {
@@ -71,7 +70,9 @@ public class ServizioOroscopoDelGiorno {
             }
             descrizioneOggi += "</p>";
         }
-        return descrizioneOggi;
+
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDesDTO = new OroscopoDelGiornoDescrizioneDTO(descrizioneOggi, giornoOraPosizioneDTO);
+        return oroscDelGiornDesDTO;
     }
 
 

@@ -4,7 +4,9 @@ import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
+import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
+import de.thmac.swisseph.SwissLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,52 +163,17 @@ public class BuildInfoAstrologiaSwiss {
         double[] ascmc = new double[10]; // Array per memorizzare altri punti vitali
         int houseSys = (int)'P';
         // SweConst.SEFLG_SIDEREAL con SweConst.SEFLG_SWIEPH | se metto 0 i risultati sono più esatti
+
+        //int iflag = SweConst.SEFLG_JPLEPH | SweConst.SEFLG_SIDEREAL; // Utilizza le effemeridi Swiss e il sistema siderale
+
+        //int iflag = SweConst.SEFLG_SWIEPH; // Usa Swiss Ephemeris SweConst.SEFLG_JPLEPH
+
         int result = swissEph.swe_houses(julianDate, SweConst.SEFLG_SIDEREAL, giornOraPosDTO.getLat(), giornOraPosDTO.getLon(), houseSys, cusps, ascmc);
 
 
         for (int i = 0; i < cusps.length; i++) {
-            System.out.println("Elemento " + i + ": " + cusps[i]);
+            logger.info("Elemento " + i + ": " + cusps[i]);
         }
-
-
-        double[] newCusps = new double[cusps.length - 1];
-        for (int i = 1; i < cusps.length; i++) {
-            newCusps[i - 1] = cusps[i];
-        }
-
-
-        double[] data2 = convertToZodiacDegrees(newCusps);
-
-
-        // System.out.println("Casa " + i + " nel segno di: " + getZodiacSign(data2[i]));
-        for (int i = 1; i < data2.length; i++) {
-            //System.out.println("Casa " + i + " nel segno di: " + data2[i]);
-            //System.out.println("Casa " + i + " nel segno di: " + getZodiacSign(data2[i]));
-
-            Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale( data2[i] ).entrySet().iterator().next();
-
-            System.out.println(entry.getValue());
-
-        }
-
-                /*
-        for (int i = 1; i < cusps.length; i++) {
-
-            System.out.println("Casa " + i + " inizia nel segno di: " + getZodiacSign(
-
-                    adjustValue(cusps[i], 0)
-
-                    ));
-        }
-*/
-
-/*
-        String[] houseSigns = new String[12];
-        for (int i = 1; i <= 12; i++) {
-            houseSigns[i-1] = getZodiacSign(cusps[i]);
-            System.out.println("Casa " + i + " inizia nel segno di: " + houseSigns[i-1]);
-        }
-*/
 
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
@@ -214,7 +181,7 @@ public class BuildInfoAstrologiaSwiss {
                 Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
                 CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);
-                //logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
+                logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
             }
         } else {
             logger.info("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
@@ -222,8 +189,165 @@ public class BuildInfoAstrologiaSwiss {
 
         swissEph.swe_close();
 
-
         return casePlacides;
+    }
+
+
+
+    /**
+     * Roma LAT 41.89 e LONG 12.48
+     */
+
+    private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
+
+    public ArrayList<CasePlacide> getCasePlacide_OLD(GiornoOraPosizioneDTO giornOraPosDTO) {
+
+        /**
+         * The method to determine ayanamsha value:
+         */
+
+
+
+        System.out.println((int)'P');
+        // Input data:
+        //		int year = 2013;
+        //		int month = 9;
+        //		int day = 4;
+        //		double longitude = 80 + 17 / 60.0; // Chennai
+        //		double latitude = 13 + 5 / 60.0;
+        //		double hour = 7 + 30. / 60. - 5.5; // IST
+        //AmitabhBacchan http://www.astrosage.com/celebrity-horoscope/amitabh-bachchan-horoscope.asp
+        int year = 1993;
+        int month = 6;
+        int day = 19;
+        double longitude = 12.48; //81 + 50 / 60.0; // Allahabad
+        double latitude = 41.89; // 25 + 57 / 60.0;
+        double hour = 15;// 16 + (0. / 60.) - 5.5; // IST
+
+
+
+        // Use ... new SwissEph("/path/to/your/ephemeris/data/files"); when
+        // your data files don't reside somewhere in the paths defined in
+        // SweConst.SE_EPHE_PATH, which is ".:./ephe:/users/ephe2/:/users/ephe/"
+        // currently.
+        SwissEph sw = new SwissEph();
+        SweDate sd = new SweDate(year, month, day, hour);
+        System.out.println(sd.getDate(0).toString());
+        // Set sidereal mode:
+        sw.swe_set_sid_mode(SID_METHOD, 0, 0);
+
+        // Some required variables:
+        double[] cusps = new double[13];
+        double[] acsc = new double[10];
+        double[] xp = new double[6];
+        StringBuffer serr = new StringBuffer();
+
+        // Print input details:
+        System.out.println("Date (YYYY/MM/DD): " + sd.getYear() + "/" + sd.getMonth() + "/" + sd.getDay() + ", "
+                + toHMS(sd.getHour()));
+        System.out.println("Jul. day:  " + sd.getJulDay());
+        System.out.println("DeltaT:    " + sd.getDeltaT() * 24 * 3600 + " sec.");
+        System.out.println("Location:  " + toDMS(Math.abs(longitude)) + (longitude > 0 ? "E" : "W") + " / "
+                + toDMS(Math.abs(latitude)) + (latitude > 0 ? "N" : "S"));
+
+        // Get and print ayanamsa value for info:
+        double ayanamsa = sw.swe_get_ayanamsa_ut(sd.getJulDay());
+        System.out.println("Ayanamsa:  " + toDMS(ayanamsa) + " (" + sw.swe_get_ayanamsa_name(SID_METHOD) + ")");
+
+        // Get and print lagna:
+        int flags = SweConst.SEFLG_SIDEREAL;
+        int result = sw.swe_houses(sd.getJulDay(), flags, latitude, longitude, 'P', cusps, acsc);
+        System.out.println("Ascendant: " + toDMS(acsc[0]) + "\n");
+
+        int ascSign = (int) (acsc[0] / 30) + 1;
+
+        // Calculate all planets:
+        int[] planets = { SweConst.SE_SUN, SweConst.SE_MOON, SweConst.SE_MARS, SweConst.SE_MERCURY, SweConst.SE_JUPITER,
+                SweConst.SE_VENUS, SweConst.SE_SATURN, SweConst.SE_TRUE_NODE }; // Some
+        // systems
+        // prefer
+        // SE_MEAN_NODE
+
+        flags = SweConst.SEFLG_SWIEPH | // fastest method, requires data files
+                SweConst.SEFLG_SIDEREAL | // sidereal zodiac
+                SweConst.SEFLG_NONUT | // will be set automatically for sidereal
+                // calculations, if not set here
+                SweConst.SEFLG_SPEED; // to determine retrograde vs. direct
+        // motion
+        int sign;
+        int house;
+        boolean retrograde = false;
+
+        for (int p = 0; p < planets.length; p++) {
+            int planet = planets[p];
+            String planetName = sw.swe_get_planet_name(planet);
+            int ret = sw.swe_calc_ut(sd.getJulDay(), planet, flags, xp, serr);
+
+            if (ret != flags) {
+                if (serr.length() > 0) {
+                    System.err.println("Warning: " + serr);
+                } else {
+                    System.err.println(String.format("Warning, different flags used (0x%x)", ret));
+                }
+            }
+
+            sign = (int) (xp[0] / 30) + 1;
+            house = (sign + 12 - ascSign) % 12 + 1;
+            retrograde = (xp[3] < 0);
+
+            System.out.printf("%-12s: %s %c; sign: %2d; %s in house %2d\n", planetName, toDMS(xp[0]),
+                    (retrograde ? 'R' : 'D'), sign, toDMS(xp[0] % 30), house);
+        }
+        // KETU
+        xp[0] = (xp[0] + 180.0) % 360;
+        String planetName = "Ketu (true)";
+
+        sign = (int) (xp[0] / 30) + 1;
+        house = (sign + 12 - ascSign) % 12 + 1;
+
+        System.out.printf("%-12s: %s %c; sign: %2d; %s in house %2d\n", planetName, toDMS(xp[0]),
+                (retrograde ? 'R' : 'D'), sign, toDMS(xp[0] % 30), house);
+
+
+
+        if (result == SweConst.OK) {
+            // Stampare le posizioni delle case
+            for (int i = 1; i <= 12; i++) {
+                Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
+
+                logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
+            }
+        } else {
+            //logger.info("Errore durante il calcolo delle case astrologiche: " + swissEph.swe_get_planet_name(result));
+        }
+
+
+
+
+        return null;
+    }
+
+    static String toHMS(double d) {
+        d += 0.5 / 3600.; // round to one second
+        int h = (int) d;
+        d = (d - h) * 60;
+        int min = (int) d;
+        int sec = (int) ((d - min) * 60);
+
+
+
+        return String.format("%2d:%02d:%02d", h, min, sec);
+    }
+
+    static String toDMS(double d) {
+        d += 0.5 / 3600. / 10000.; // round to 1/1000 of a second
+        int deg = (int) d;
+        d = (d - deg) * 60;
+        int min = (int) d;
+        d = (d - min) * 60;
+        double sec = d;
+
+        return String.format("%3d°%02d'%07.4f\"", deg, min, sec);
     }
 
 
