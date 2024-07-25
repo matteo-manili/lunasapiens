@@ -17,25 +17,43 @@
 </th:block>
 
 <!--
-https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html
-IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
-    <title>Tema Natale Esempio</title>
-    <link rel="stylesheet" href="style_111.css">
-    <link rel="stylesheet" href="style_222.css">
+    https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html
+    IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE.
+    SE SI PASSA SOLO IL title  allora usare il metodo: common_head_title( title )
+    SE SI PASSA SOLO IL title e links allora usare il metodo: common_head_title_links( title, links )
+    SE SI PASSA IL title e links e scripts allora usare common_head_title_links_scripts( title, links, scripts )
+    SE NON SI PASSANO TUTTI PARAMETRI ALLORA DA ERRORE
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links},~{::scripts}) }">
+    <title>Tema Natale</title>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" href="style_1.css">
+		<link rel="stylesheet" href="style_2.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="file_1.js"></script>
+        <script src="file_2.js"></script>
+    </th:block>
 </head> -->
-
-<head th:fragment="common_head_title_links(title,links)">
-    <th:block th:insert="~{fragments/templateBase :: info-head}" />
-
-    <title th:replace="${title}">LunaSapiens</title>
-    <th:block th:replace="${links}" />
-</head>
 
 <head th:fragment="common_head_title(title)">
     <th:block th:insert="~{fragments/templateBase :: info-head}" />
     <title th:replace="${title}">LunaSapiens</title>
 </head>
+
+<head th:fragment="common_head_title_links(title, links)">
+    <th:block th:insert="~{fragments/templateBase :: info-head}" />
+    <title th:replace="${title}">LunaSapiens</title>
+    <th:block th:replace="${links}" />
+</head>
+
+<head th:fragment="common_head_title_links_scripts(title, links, scripts)">
+    <th:block th:insert="~{fragments/templateBase :: info-head}" />
+    <title th:replace="${title}">LunaSapiens</title>
+    <th:block th:replace="${links}" />
+    <th:block th:replace="${scripts}" />
+</head>
+
+
 <body>
 
 <!-- Responsive navbar  -->
@@ -79,10 +97,10 @@ IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
 
 <!-- sezione di link ricorrenti nelle pagine -->
 <div th:fragment="link-js-util-bootstrap-jquery">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-    <script src="/util.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/1.13.1.jquery-ui.min.js"></script>
+    <script src="/js/bootstrap.5.2.3.bundle.min.js"></script>
+    <script src="/js/util.js"></script>
 </div>
 
 

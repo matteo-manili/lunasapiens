@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
-    <title>Contatti</title><link rel="stylesheet" href="style.css">
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links}) }">
+    <title>Contatti</title>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" href="style.css">
+    </th:block>
 </head>
 
 <body>

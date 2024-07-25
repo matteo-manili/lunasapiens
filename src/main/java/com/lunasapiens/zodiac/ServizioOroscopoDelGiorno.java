@@ -233,8 +233,6 @@ public class ServizioOroscopoDelGiorno {
 
 
     public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
-
-        // TODO le case placide non le uso più per l'oroscopo giornaliero
         /*
         domandaBuilder.append("\n").append("Case Placide: ");
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {

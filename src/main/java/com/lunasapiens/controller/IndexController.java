@@ -16,17 +16,24 @@ import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
+import com.theokanning.openai.completion.chat.ChatMessage;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,6 +72,9 @@ public class IndexController {
     @Autowired
     private EmailUtentiRepository emailUtentiRepository;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     private OroscopoGiornalieroService oroscopoGiornalieroService;
     @Autowired
     public IndexController(OroscopoGiornalieroService oroscopoGiornalieroService) {
@@ -98,13 +108,25 @@ public class IndexController {
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER))
                 );
 
+
+        // ############ Dati per test, togliere poi!!! ############
+        model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
+        model.addAttribute("cityInput","Roma, Lazio, Italia");
+        model.addAttribute("cityName", "Roma");
+        model.addAttribute("regioneName", "Lazio");
+        model.addAttribute("statoName", "Italia");
+        model.addAttribute("cityLat", "41.89193");
+        model.addAttribute("cityLng", "12.51133");
+        model.addAttribute("luogoNascita", "Roma, Lazio, Italia");
+
+
         return "tema-natale";
     }
 
     @GetMapping("/temaNataleSubmit")
-    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
-            @RequestParam("cityLat") String cityLat, @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName,
-                                   @RequestParam("regioneName") String regioneName, @RequestParam("statoName") String statoName, RedirectAttributes redirectAttributes) {
+    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime, @RequestParam("cityLat") String cityLat,
+                                   @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName, @RequestParam("regioneName") String regioneName,
+                                   @RequestParam("statoName") String statoName, RedirectAttributes redirectAttributes, HttpServletResponse response) {
         // Estrai le singole componenti della data e ora
         int hour = datetime.getHour();
         int minute = datetime.getMinute();
@@ -133,9 +155,83 @@ public class IndexController {
         redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
-        redirectAttributes.addFlashAttribute("temaNataleDescrizione", servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO));
+
+        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
+        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
+
+
+
+        // TODO creare il cookie e metterci dentro un codice random che indentifica l'utente.
+        // rendere il cookie sicuro con gli attributi: SomeSite=Strict (evita il cross, cioè tra più siti), HttpOnly (non acceessbibile da javascripy), Securo (cioè solo via https)
+        // Creare un identificativo random per l'utente
+        String userId = UUID.randomUUID().toString();
+        // Creare il cookie e settare gli attributi
+        Cookie userCookie = new Cookie("userId", userId);
+        userCookie.setHttpOnly(true); // Il cookie non è accessibile tramite JavaScript
+        userCookie.setPath("/"); // Il cookie è disponibile per tutto il sito
+        // Aggiungere il cookie alla risposta
+        response.addCookie(userCookie);
+        // Aggiungere manualmente l'attributo SameSite
+        response.setHeader("Set-Cookie", userCookie.getName() + "=" + userCookie.getValue() + "; HttpOnly; SameSite=Strict");
+
+
+
+        // TODO creare una nuova sezione nella cash cafferine.
+        // che è costituira da una lista di elementio che rappresenmta la conversazione col bot gpt.
+        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        List<ChatMessage> chatMessageIa = new ArrayList<>();
+        String temaNataleDescrizioneIstruzioneBOTSystem = "Rispondi alle domande dell'utente in base al suo tema natale: " + temaNataleDescrizione;
+        chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
+        cache.put(userId, chatMessageIa);
+
+
+        // TODO creare processo -+
+        /*
+        quando l'utente invia il messaggio per fare una domanda al bot, tramite websocket:
+
+        recuper il userId dal cookie dello user
+        trtamite lo userId recupero la lista List<ChatMessage> chatMessageIa dell'utente
+
+        aggiungo un nuovo messagge alla lista in cache: chatMessageIa.add(new ChatMessage("user", domandaUser));
+        cache.put(userId, chatMessageIa);
+
+        faccio partuire il metodo della open ai e passo il la lista.
+
+        quando la IA risponde aggiungo la risposta alla lista
+        chatMessageIa.add(new ChatMessage("assistant", risposta));
+        e riaggiunro la lista in cache.
+        cache.put(userId, chatMessageIa);
+
+        e così via per ogni domanda.
+
+        all'inizio si c'è un unico messaggio al System, poi le domande che vanno in "user" e le risposte della IA vanno in "assistant"
+
+
+         */
+
+
+
         return "redirect:/tema-natale";
     }
+
+    /**
+     * Web Socket........
+     * @param message
+     * @return
+     */
+    @MessageMapping("/message")
+    @SendTo("/topic/messages")
+    public String handleMessage(String message) {
+        // Logica di elaborazione del messaggio
+        //return "{\"content\": \"Risposta dal server: " + message + "\"}";
+
+        logger.info("web sockeeeettttt");
+
+        return "ciao belllo dal serverrr";
+
+    }
+
+
 
     @GetMapping("/coordinate")
     @ResponseBody
@@ -321,9 +417,12 @@ public class IndexController {
      */
     @GetMapping("/test-invia-email")
     public String inviaEmail(Model model) {
+
+        /*
         EmailUtenti emailUtenti = new EmailUtenti();
         emailUtenti.setEmail("matteo.manili@gmail.com");
         emailService.inviaEmailOrosciopoGioraliero();
+         */
 
         return "index";
     }

@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
-    <title>Tema Natale</title><link rel="stylesheet" href="style.css">
+<head th:replace="~{fragments/templateBase :: common_head_title_links_scripts(~{::title},~{::links},~{::scripts}) }">
+    <title>Tema Natale</title>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" href="style.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="/js/1.5.2.sockjs.min.js"></script>
+        <script src="/js/2.3.3.stomp.min.js"></script>
+    </th:block>
 </head>
+
+<style>
+    /* Nascondi il testo inizialmente */
+    .hidden-text {
+        display: none;
+    }
+</style>
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
@@ -40,19 +54,117 @@
 
     <!-- Titolo principale e descrizione del tema natale -->
     <div th:if="${temaNataleDescrizione}">
-        <h2 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h2>
-        <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
-        <p th:utext="${temaNataleDescrizione}"></p>
+        <h3 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h3>
+
+        <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Tema natale</a>
+
+        <div id="textSection" class="d-none mt-3">
+            <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
+            <p th:utext="${temaNataleDescrizione}"></p>
+        </div>
+
+    </div>
+
+
+
+    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mb-5">
+        <!-- mettere qui la chat-->
+        <div class="chat-container mt-3">
+            <div class="chat-box bg-light p-3 border rounded" style="height: 300px; overflow-y: scroll;">
+                <div id="chat-messages" class="d-flex flex-column"></div>
+            </div>
+            <div class="input-group mt-3">
+                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi un messaggio...">
+                <button id="sendMessage" class="btn btn-primary">Invia</button>
+            </div>
+        </div>
     </div>
 
 </div>
 
 
+
+
+
+
+
+
+
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 
+
 <script>
+
+    // ########### CODICE CHAT ############################################
+    document.addEventListener("DOMContentLoaded", function() {
+
+        var socket = new SockJS('/chat-websocket');
+        var stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+
+            stompClient.subscribe('/topic/messages', function(messageOutput) {
+                console.log('Received message:', messageOutput.body);
+                try {
+                    //var parsedMessage = JSON.parse(messageOutput.body);
+                    var parsedMessage = messageOutput.body;
+                    showMessage(parsedMessage.content);
+                } catch (e) {
+                    console.error('Error parsing message:', e);
+                    showMessage('Errore nel messaggio ricevuto.');
+                }
+            }, function(error) {
+                console.error('STOMP error:', error);
+            });
+        }, function(error) {
+            console.error('Connection error:', error);
+        });
+
+        document.getElementById("sendMessage").addEventListener("click", function() {
+            var message = document.getElementById("userMessage").value;
+            if (message.trim() !== "") {
+                stompClient.send("/app/message", {}, JSON.stringify({'content': message}));
+                document.getElementById("userMessage").value = "";
+            } else {
+                console.log('Message is empty');
+            }
+        });
+
+        function showMessage(message) {
+            var chatMessages = document.getElementById("chat-messages");
+            var messageElement = document.createElement("div");
+            messageElement.className = "chat-message";
+            messageElement.innerText = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+    });
+
+
+
+
+
+    // ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
     $(document).ready(function() {
+
+
+        document.getElementById('toggleLink').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita il comportamento di default del link
+            var textSection = document.getElementById('textSection');
+            if (textSection.classList.contains('d-none')) {
+                textSection.classList.remove('d-none');
+                this.textContent = 'Nascondi descrizione Tema natale';
+            } else {
+                textSection.classList.add('d-none');
+                this.textContent = 'Visualizza descrizione Tema natale';
+            }
+        });
+
+
+        // ################ Form ########################
         // Funzione per controllare lo stato del pulsante di submit
         function checkFormValidity() {
             if ($("#cityName").val().trim() !== "" && $("#dateTime").val().trim() !== "") {
@@ -128,6 +240,7 @@
 
         // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
         $("#cityInput, #dateTime").on("input", checkFormValidity);
+
     });
 </script>
 

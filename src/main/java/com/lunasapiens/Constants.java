@@ -23,7 +23,10 @@ public class Constants {
     public static final String SKIP_EMAIL_SAVE = "skipEmailSave";
 
     public static final String VIDEO_CACHE = "videoCache";
+    public static final String TEMA_NATALE_BOT_CACHE = "temaNataleBotCache";
     public static final String PATH_STATIC = "src/main/resources/static/";
+
+
 
     // caratteristiche segno
     public static final List<String> segnoZodiacaleGenere = Arrays.asList("Maschile", "Femminile");

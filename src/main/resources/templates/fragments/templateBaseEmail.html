@@ -85,23 +85,12 @@
                 font-size: 12px; /* Riduci la dimensione del font per mobile */
             }
         }
-
     </style>
     <title th:replace="${title}">LunaSapiens</title>
 </head>
 
-<!--
-https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html
-IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::link}) }">
-    <title>Tema Natale Esempio</title>
-    <link rel="stylesheet" href="style_111.css">
-    <link rel="stylesheet" href="style_222.css">
-</head> -->
-
 <body>
 <div class="email-container">
-
 
     <!-- Header -->
     <div th:fragment="header" class="header">
@@ -111,7 +100,6 @@ IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
     </div>
 
 
-
     <!-- Main content -->
     <main th:fragment="mainContent" class="main-content">
 
@@ -119,8 +107,6 @@ IMPORTANTE!!!! COME USARE I FRAGMENT QUANDO SI RICHIAMANO DALLE PAGINE
             devi usare th:utext anziché th:text nella tua email template -->
         <div th:utext="${contenutoEmail}" style="font-size: 16px;"></div>
     </main>
-
-
 
 
     <!-- Footer 1 -->
