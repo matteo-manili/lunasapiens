@@ -200,9 +200,11 @@ public class IndexController {
 
             // Recupera la lista di chat messages dalla cache
             List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
+            /*
             for (ChatMessage chatMessage : chatMessageIa) {
-                System.out.println("Messaggio chatMessage: " + chatMessage.getContent());
+                logger.info("Messaggio chatMessage: " + chatMessage.getContent());
             }
+            */
 
             chatMessageIa.add(new ChatMessage("user", domanda));
             cache.put(temaNataleId, chatMessageIa);
