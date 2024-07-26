@@ -3,6 +3,7 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,36 +26,18 @@ public class ServizioTemaNatale {
     SegnoZodiacale segnoZodiacale;
 
 
-    //private Double temperature = 0.5; private Integer maxTokens = 2500;
+    private Double temperature = 0.5; private Integer maxTokens = 2500;
 
 
 
-    public static void assegnaCaseAiPianeti(List<PianetaPosizTransito> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
-        // Creare una copia della lista delle case per ordinarla
-        List<CasePlacide> caseOrdinate = new ArrayList<>(casePlacideArrayList);
-        caseOrdinate.sort(Comparator.comparingDouble(CasePlacide::getGradi));
 
-        for (PianetaPosizTransito pianeta : pianetiTransiti) {
-            double gradiPianeta = pianeta.getGradi();
-            for (int i = 0; i < caseOrdinate.size(); i++) {
-                CasePlacide casaCorrente = caseOrdinate.get(i);
-                CasePlacide casaSuccessiva = caseOrdinate.get((i + 1) % caseOrdinate.size());
+    public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
 
-                // Controllare se il pianeta è tra la casa corrente e la successiva
-                if (casaCorrente.getGradi() < casaSuccessiva.getGradi()) {
-                    if (gradiPianeta >= casaCorrente.getGradi() && gradiPianeta < casaSuccessiva.getGradi()) {
-                        pianeta.setNomeCasa(casaCorrente.getNomeCasa());
-                        break;
-                    }
-                } else {
-                    // Caso particolare in cui i gradi attraversano il punto zero
-                    if (gradiPianeta >= casaCorrente.getGradi() || gradiPianeta < casaSuccessiva.getGradi()) {
-                        pianeta.setNomeCasa(casaCorrente.getNomeCasa());
-                        break;
-                    }
-                }
-            }
-        }
+        OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature,
+                appConfig.getParamOpenAi().getModelGpt4_Mini(), chatMessageList );
+
+
     }
 
 
@@ -136,7 +119,7 @@ public class ServizioTemaNatale {
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero()) {
-                descTemaNatale.append( var.descrizione_Pianeta_Gradi_Retrogrado_Casa_SignificatoPianetaSegno());
+                descTemaNatale.append( var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
                 if (count < size - 1) { descTemaNatale.append( "<br>"); }
             }
         }
@@ -173,6 +156,33 @@ public class ServizioTemaNatale {
 
 
 
+    public static void assegnaCaseAiPianeti(List<PianetaPosizTransito> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+        // Creare una copia della lista delle case per ordinarla
+        List<CasePlacide> caseOrdinate = new ArrayList<>(casePlacideArrayList);
+        caseOrdinate.sort(Comparator.comparingDouble(CasePlacide::getGradi));
+
+        for (PianetaPosizTransito pianeta : pianetiTransiti) {
+            double gradiPianeta = pianeta.getGradi();
+            for (int i = 0; i < caseOrdinate.size(); i++) {
+                CasePlacide casaCorrente = caseOrdinate.get(i);
+                CasePlacide casaSuccessiva = caseOrdinate.get((i + 1) % caseOrdinate.size());
+
+                // Controllare se il pianeta è tra la casa corrente e la successiva
+                if (casaCorrente.getGradi() < casaSuccessiva.getGradi()) {
+                    if (gradiPianeta >= casaCorrente.getGradi() && gradiPianeta < casaSuccessiva.getGradi()) {
+                        pianeta.setNomeCasa(casaCorrente.getNomeCasa());
+                        break;
+                    }
+                } else {
+                    // Caso particolare in cui i gradi attraversano il punto zero
+                    if (gradiPianeta >= casaCorrente.getGradi() || gradiPianeta < casaSuccessiva.getGradi()) {
+                        pianeta.setNomeCasa(casaCorrente.getNomeCasa());
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
 
 }

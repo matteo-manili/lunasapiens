@@ -31,16 +31,33 @@ public class OpenAIGptTheokanning {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAIGptTheokanning.class);
 
-    /**
-     * chatgpt 3.5 e 4.0 accetta ruoli di user, system e assistant. gpt-3.5-turbo-instruct non vuole nessu ruolo
-     * chatgpt 3.5 e 4.0 vogliono system e user nella domanda
-     */
-    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, int maxTokens, double temperature, String domanda, final String modelGpt) {
 
-        System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
-        Duration timeout = Duration.ofSeconds(30);
+
+
+
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, int maxTokens, double temperature, final String modelGpt, List<ChatMessage> chatMessageList) {
+
         // Inizializza il servizio OpenAI con il client configurato
-        OpenAiService service = new OpenAiService(apiKey, timeout);
+        OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
+
+        // Costruisci la richiesta di completamento
+        ChatCompletionRequest request = ChatCompletionRequest.builder()
+                .model( modelGpt ) // Assicurati di utilizzare il modello corretto
+                .messages(chatMessageList)
+                .maxTokens(maxTokens)
+                .temperature(temperature)
+                .build();
+
+
+        return eseguiOpenAIGptTheokanning(service, maxTokens, temperature, modelGpt, chatMessageList) ;
+    }
+
+
+
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, int maxTokens, double temperature, final String modelGpt, String domanda) {
+
+        // Inizializza il servizio OpenAI con il client configurato
+        OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
         // Inizializza la lista dei messaggi
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new ChatMessage("system", domanda /*"Sei un astrologo che genera."*/ ));
@@ -50,6 +67,27 @@ public class OpenAIGptTheokanning {
         ChatCompletionRequest request = ChatCompletionRequest.builder()
                 .model( modelGpt ) // Assicurati di utilizzare il modello corretto
                 .messages(messages)
+                .maxTokens(maxTokens)
+                .temperature(temperature)
+                .build();
+
+
+        return eseguiOpenAIGptTheokanning(service, maxTokens, temperature, modelGpt, messages) ;
+    }
+
+
+    /**
+     * chatgpt 3.5 e 4.0 accetta ruoli di user, system e assistant. gpt-3.5-turbo-instruct non vuole nessu ruolo
+     * chatgpt 3.5 e 4.0 vogliono system e user nella domanda
+     */
+    private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, int maxTokens, double temperature, final String modelGpt, List<ChatMessage> chatMessageList) {
+
+        System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
+
+        // Costruisci la richiesta di completamento
+        ChatCompletionRequest request = ChatCompletionRequest.builder()
+                .model( modelGpt ) // Assicurati di utilizzare il modello corretto
+                .messages(chatMessageList)
                 .maxTokens(maxTokens)
                 .temperature(temperature)
                 .build();

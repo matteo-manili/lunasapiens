@@ -17,7 +17,6 @@ import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -32,11 +31,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -111,8 +106,13 @@ public class IndexController {
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER))
                 );
 
+
+        logger.info("Tema Natale ID: " + model.getAttribute("temaNataleId"));
+
         // ############ Dati per test, togliere poi!!! ############
-        model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
+        //model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
+
+        /*
         model.addAttribute("cityInput","Roma, Lazio, Italia");
         model.addAttribute("cityName", "Roma");
         model.addAttribute("regioneName", "Lazio");
@@ -120,7 +120,7 @@ public class IndexController {
         model.addAttribute("cityLat", "41.89193");
         model.addAttribute("cityLng", "12.51133");
         model.addAttribute("luogoNascita", "Roma, Lazio, Italia");
-
+        */
 
         return "tema-natale";
     }
@@ -161,56 +161,16 @@ public class IndexController {
         String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
+        String temaNataleId = UUID.randomUUID().toString();
+        redirectAttributes.addFlashAttribute("temaNataleId", temaNataleId);
 
 
-        // TODO creare il cookie e metterci dentro un codice random che indentifica l'utente.
-        // rendere il cookie sicuro con gli attributi: SomeSite=Strict (evita il cross, cioè tra più siti), HttpOnly (non acceessbibile da javascripy), Securo (cioè solo via https)
-        // Creare un identificativo random per l'utente
-        String userId = UUID.randomUUID().toString();
-        // Creare il cookie e settare gli attributi
-        Cookie userCookie = new Cookie("userId", userId);
-        userCookie.setHttpOnly(true); // Il cookie non è accessibile tramite JavaScript
-        userCookie.setPath("/"); // Il cookie è disponibile per tutto il sito
-        // Aggiungere il cookie alla risposta
-        response.addCookie(userCookie);
-        // Aggiungere manualmente l'attributo SameSite
-        response.setHeader("Set-Cookie", userCookie.getName() + "=" + userCookie.getValue() + "; HttpOnly; SameSite=Strict");
-
-
-
-        // TODO creare una nuova sezione nella cash cafferine.
-        // che è costituira da una lista di elementio che rappresenmta la conversazione col bot gpt.
+        // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
         List<ChatMessage> chatMessageIa = new ArrayList<>();
         String temaNataleDescrizioneIstruzioneBOTSystem = "Rispondi alle domande dell'utente in base al suo tema natale: " + temaNataleDescrizione;
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
-        cache.put(userId, chatMessageIa);
-
-
-        // TODO creare processo -+
-        /*
-        quando l'utente invia il messaggio per fare una domanda al bot, tramite websocket:
-
-        recuper il userId dal cookie dello user
-        trtamite lo userId recupero la lista List<ChatMessage> chatMessageIa dell'utente
-
-        aggiungo un nuovo messagge alla lista in cache: chatMessageIa.add(new ChatMessage("user", domandaUser));
-        cache.put(userId, chatMessageIa);
-
-        faccio partuire il metodo della open ai e passo il la lista.
-
-        quando la IA risponde aggiungo la risposta alla lista
-        chatMessageIa.add(new ChatMessage("assistant", risposta));
-        e riaggiunro la lista in cache.
-        cache.put(userId, chatMessageIa);
-
-        e così via per ogni domanda.
-
-        all'inizio si c'è un unico messaggio al System, poi le domande che vanno in "user" e le risposte della IA vanno in "assistant"
-
-
-         */
-
+        cache.put(temaNataleId, chatMessageIa);
 
 
         return "redirect:/tema-natale";
@@ -219,29 +179,49 @@ public class IndexController {
 
 
 
-    /* // così invia il messaggio a tutti gli utenti cioè a tuitti i browser.
-    @MessageMapping("/message")
-    @SendTo("/topic/messages")
-    public Map<String, String> handleMessage(Map<String, String> message) {
-        // Creazione di un oggetto con il messaggio
-        Map<String, String> response = new HashMap<>();
-        response.put("content", "Risposta dal server: " + message.get("content"));
-        return response;
-    }
-*/
 
-
+    /**
+     * Spring WebSocket
+     * In questa modalità invia il messaggio a tutti gli utenti cioè a tuitti i browser: @MessageMapping("/message") @SendTo("/topic/messages")
+     */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public Map<String, String> handleMessage(String message) {
-        System.out.println("Message received: " + message);
+    public Map<String, String> userMessageWebSocket(Map<String, String> message, Principal principal) {
 
-        Map<String, String> response = new HashMap<>();
-        response.put("content", "Risposta dal server: holaaaaa");
-        return response;
+        // con principal ottengo un codice univoco (principal.getName()) della sessione websocket, vedi classe WebSocketConfig. Non lo uso ma può essere molto utile
+        //System.out.println("Message received from user: " + principal.getName() + ", message: " + message);
+
+        String domanda = message.get("content");
+        String temaNataleId = message.get("temaNataleId");
+        System.out.println("Message received from user: " + domanda + ", temaNataleId: " + temaNataleId);
+
+        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        if (cache != null && domanda != null && !domanda.isEmpty()) {
+
+            // Recupera la lista di chat messages dalla cache
+            List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
+            for (ChatMessage chatMessage : chatMessageIa) {
+                System.out.println("Messaggio chatMessage: " + chatMessage.getContent());
+            }
+
+            chatMessageIa.add(new ChatMessage("user", domanda));
+            cache.put(temaNataleId, chatMessageIa);
+
+            StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale( chatMessageIa );
+            chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
+            cache.put(temaNataleId, chatMessageIa);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("content", rispostaIA.toString());
+
+            return response;
+
+
+        }else{
+            return message;
+        }
+
     }
-
-
 
 
 

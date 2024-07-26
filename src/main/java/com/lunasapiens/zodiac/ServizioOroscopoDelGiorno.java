@@ -24,7 +24,7 @@ public class ServizioOroscopoDelGiorno {
     SegnoZodiacale segnoZodiacale;
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
-    private Double temperature = 0.5; private Integer maxTokens = 2500;
+    private Double temperature = 0.6; private Integer maxTokens = 3000;
 
     public StringBuilder oroscopoDelGiornoIA(int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
@@ -262,8 +262,8 @@ public class ServizioOroscopoDelGiorno {
         //                appConfig.getParamOpenAi().getModelGpt4() );
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-                appConfig.getParamOpenAi().getModelGpt4_Mini() );
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature,
+                appConfig.getParamOpenAi().getModelGpt4_Mini(), domanda.toString() );
 
 
 

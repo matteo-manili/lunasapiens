@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/templateBase :: common_head_title_links_scripts(~{::title},~{::links},~{::scripts}) }">
-    <title>Tema Natale</title>
+    <title>Tema Natale IA</title>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
@@ -12,26 +12,57 @@
 </head>
 
 <style>
-    /* Nascondi il testo inizialmente */
     .hidden-text {
         display: none;
     }
+
+    #loading-indicator {
+        text-align: center;
+        font-style: italic;
+        color: #007bff; /* Colore blu per l'indicatore */
+        margin-top: 10px;
+    }
+
+    /* Stile comune per tutti i messaggi */
+    .chat-message {
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        max-width: 80%;
+        word-wrap: break-word; /* Gestisce il testo lungo */
+    }
+
+    /* Stile per i messaggi dell'utente */
+    .user-message {
+        background-color: #e3f2fd; /* Celeste chiaro per i messaggi del bot */
+        align-self: flex-end; /* Allinea i messaggi dell'utente a destra */
+        color: #01579b; /* Blu scuro per il testo */
+    }
+
+    /* Stile per i messaggi del bot */
+    .bot-message {
+        background-color: #e0f2f1; /* Verde acqua chiaro per i messaggi dell'utente */
+        align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
+        color: #004d40; /* Verde scuro per il testo */
+    }
+
+
 </style>
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-5">
-    <h1 class="mb-4">Tema Natale</h1>
+    <h1 class="mb-4">Tema Natale IA</h1>
+    <h4 class="mb-3">Dopo aver generato il tuo Tema Natale, puoi utilizzare la Chat con Intelligenza Artificiale per porre qualsiasi domanda e ottenere chiarimenti sul tuo Tema Natale.</h4>
 
     <div class="alert alert-info" role="alert">
         Utilizziamo il sistema di effemeridi <a href="https://www.astro.com/swisseph/swephinfo_e.htm">Swiss Ephemeris</a> (tabelle che mostrano le posizioni
         ad alta precisione dei corpi celesti) per determinare i transiti e la domificazione Placidus delle case.<br>
         Essendo un sistema diverso da quello dei siti più diffusi, potrebbe far sì che i segni si trovino in case diverse.<br>
-        Inoltre, stiamo lavorando per integrare un bot IA che risponderà alle tue domande sul tema natale, offrendo un'esperienza astrologica completa.
     </div>
 
-    <form action="/temaNataleSubmit" method="GET">
+    <form action="/temaNataleSubmit" method="GET" class="mb-5">
         <div class="mb-3">
             <label for="dateTime" class="form-label">Data e ora di nascita:</label>
             <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
@@ -50,13 +81,36 @@
         <button type="submit" id="submitBtn" class="btn btn-primary">genera tema natale</button>
     </form>
 
-    <hr>
+    <!-- Chat-Box IA -->
+    <input type="hidden" id="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
+    <input type="hidden" id="temaNataleId" name="temaNataleId" th:value="${temaNataleId}">
 
-    <!-- Titolo principale e descrizione del tema natale -->
-    <div th:if="${temaNataleDescrizione}">
-        <h3 class="mb-4">Descrizione Tema natale (dati grezzi non interpretati)</h3>
+    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mt-5 mb-5">
 
-        <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Tema natale</a>
+        <h5>Puoi porre qualsiasi domanda alla nostra Chat con Intelligenza Artificiale riguardo al tuo Tema Natale. Troverai una descrizione
+            dettagliata del Tema Natale più in basso.</h5>
+
+        <div class="chat-container mb-5">
+            <div class="chat-box bg-light p-3 border rounded" style="height: 300px; overflow-y: scroll;">
+                <div id="chat-messages" class="d-flex flex-column"></div>
+                <div id="loading-indicator" class="hidden-text">Attendere, per favore...</div> <!-- Indicatore di caricamento -->
+            </div>
+            <div class="input-group mt-3">
+                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi un messaggio...">
+                <button id="sendMessage" class="btn btn-primary">Invia</button>
+            </div>
+
+        </div>
+
+
+        <!-- descrizione tema natale -->
+        <div class="d-flex align-items-center">
+            <h5 class="mb-0 me-2">Descrizione Tema Natale</h5>
+            <h6 class="mb-0">
+                <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Tema Natale</a>
+            </h6>
+        </div>
+
 
         <div id="textSection" class="d-none mt-3">
             <p><b>Datra di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
@@ -66,107 +120,91 @@
     </div>
 
 
-
-    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mb-5">
-        <!-- mettere qui la chat-->
-        <div class="chat-container mt-3">
-            <div class="chat-box bg-light p-3 border rounded" style="height: 300px; overflow-y: scroll;">
-                <div id="chat-messages" class="d-flex flex-column"></div>
-            </div>
-            <div class="input-group mt-3">
-                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi un messaggio...">
-                <button id="sendMessage" class="btn btn-primary">Invia</button>
-            </div>
-        </div>
-    </div>
-
-
-
-
 </div>
-
-
-
-
-
-
-
 
 
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 
-
 <script>
     // ########### CODICE CHAT-BOT ############################################
 
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+    var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
+    // Verifica se temaNataleDescrizione non è null o una stringa vuota
+    if (temaNataleDescrizione) {
+
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function(frame) {
+        stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
 
-            stompClient.subscribe('/user/queue/reply', function(messageOutput) {
+            stompClient.subscribe('/user/queue/reply', function (messageOutput) {
                 console.log('Received message:', messageOutput.body);
                 try {
                     var parsedMessage = JSON.parse(messageOutput.body);
-                    showMessage(parsedMessage.content);
+                    showMessage(parsedMessage.content, true);
+                    hideLoadingIndicator(); // Nascondi l'indicatore quando ricevi un messaggio
                 } catch (e) {
                     console.error('Error parsing message:', e);
-                    showMessage('Errore nel messaggio ricevuto.');
+                    showMessage('Errore nel messaggio ricevuto.', true);
+                    hideLoadingIndicator(); // Nascondi l'indicatore in caso di errore
                 }
             });
         });
 
+        function showLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.remove("hidden-text");
+        }
+
+        function hideLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.add("hidden-text");
+        }
+
         function sendMessage() {
             var message = document.getElementById("userMessage").value;
+            var temaNataleId = document.querySelector('input[name="temaNataleId"]').value;
             if (message.trim() !== "") {
-                stompClient.send("/app/message", {}, message /*JSON.stringify({'content': message})*/ );
+                var payload = {
+                    content: message,
+                    temaNataleId: temaNataleId
+                };
+                stompClient.send("/app/message", {}, JSON.stringify(payload));
+
                 document.getElementById("userMessage").value = "";
-                showMessage(message); // Visualizza il messaggio inviato nella chat
+                showMessage(message, false); // Visualizza il messaggio inviato nella chat
+                showLoadingIndicator(); // Mostra l'indicatore di caricamento
             } else {
                 console.log('Message is empty');
             }
         }
 
+        /*
+        var sendMessageButton = document.getElementById("sendMessage");
+        if (sendMessageButton) {
+            sendMessageButton.addEventListener("click", sendMessage);
+        } else {
+            console.error('Element with ID "sendMessage" not found.');
+        }
+        */
+
         document.getElementById("sendMessage").addEventListener("click", sendMessage);
 
-        document.getElementById("userMessage").addEventListener("keyup", function(event) {
+        document.getElementById("userMessage").addEventListener("keyup", function (event) {
             if (event.key === "Enter") {
                 sendMessage();
             }
         });
 
-        function showMessage(message) {
+        function showMessage(message, isBotMessage) {
             var chatMessages = document.getElementById("chat-messages");
             var messageElement = document.createElement("div");
-            messageElement.className = "chat-message";
+            messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
             messageElement.innerText = message;
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
-    $(document).ready(function() {
-
 
         document.getElementById('toggleLink').addEventListener('click', function(event) {
             event.preventDefault(); // Evita il comportamento di default del link
@@ -179,86 +217,95 @@
                 this.textContent = 'Visualizza descrizione Tema natale';
             }
         });
+    }
+});
 
 
-        // ################ Form ########################
-        // Funzione per controllare lo stato del pulsante di submit
-        function checkFormValidity() {
-            if ($("#cityName").val().trim() !== "" && $("#dateTime").val().trim() !== "") {
-                $("#submitBtn").prop("disabled", false);
-            } else {
-                $("#submitBtn").prop("disabled", true);
-            }
+
+
+// ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
+$(document).ready(function() {
+
+    // Funzione per controllare lo stato del pulsante di submit
+    function checkFormValidity() {
+        if ($("#cityName").val().trim() !== "" && $("#dateTime").val().trim() !== "") {
+            $("#submitBtn").prop("disabled", false);
+        } else {
+            $("#submitBtn").prop("disabled", true);
         }
+    }
 
-        // Abilita/disabilita il pulsante di submit all'inizio
-        checkFormValidity();
+    // Abilita/disabilita il pulsante di submit all'inizio
+    checkFormValidity();
 
-        $("#cityInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "/coordinate",
-                    dataType: "json",
-                    data: {
-                        cityName: request.term
-                    },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
-                                value: item.name,
-                                fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
-                                regioneName: item.adminName1,
-                                statoName: item.countryName,
-                                lat: item.lat,
-                                lng: item.lng
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
-                $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
-                $("#regioneName").val(ui.item.regioneName);
-                $("#statoName").val(ui.item.statoName);
-                $("#cityLat").val(ui.item.lat);
-                $("#cityLng").val(ui.item.lng);
-                checkFormValidity(); // Controlla la validità del modulo
-                // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
-                event.preventDefault();
-            }
-        });
+    $("#cityInput").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/coordinate",
+                dataType: "json",
+                data: {
+                    cityName: request.term
+                },
+                success: function(data) {
 
-        // Validazione dell'invio del modulo
-        $("form").submit(function(event) {
-            var isValid = true;
-            if ($("#cityInput").val().trim() === "") {
-                $("#cityError").show(); // Mostra il messaggio di errore
-                $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
-                isValid = false;
-            } else {
-                $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-                $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
-            }
-            if ($("#dateTime").val().trim() === "") {
-                $("#dateTimeError").show(); // Mostra il messaggio di errore
-                $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
-                isValid = false;
-            } else {
-                $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-                $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
-            }
-            if (!isValid) {
-                event.preventDefault(); // Previeni l'invio del modulo
-            }
-        });
+                    console.log("Dati ricevuti:", data); // Aggiungi questo per il debug
 
-        // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
-        $("#cityInput, #dateTime").on("input", checkFormValidity);
-
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
+                            value: item.name,
+                            fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
+                            regioneName: item.adminName1,
+                            statoName: item.countryName,
+                            lat: item.lat,
+                            lng: item.lng
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        select: function(event, ui) {
+            $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
+            $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
+            $("#regioneName").val(ui.item.regioneName);
+            $("#statoName").val(ui.item.statoName);
+            $("#cityLat").val(ui.item.lat);
+            $("#cityLng").val(ui.item.lng);
+            checkFormValidity(); // Controlla la validità del modulo
+            // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
+            event.preventDefault();
+        }
     });
+
+    // Validazione dell'invio del modulo
+    $("form").submit(function(event) {
+        var isValid = true;
+        if ($("#cityInput").val().trim() === "") {
+            $("#cityError").show(); // Mostra il messaggio di errore
+            $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        if ($("#dateTime").val().trim() === "") {
+            $("#dateTimeError").show(); // Mostra il messaggio di errore
+            $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        if (!isValid) {
+            event.preventDefault(); // Previeni l'invio del modulo
+        }
+    });
+
+    // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
+    $("#cityInput, #dateTime").on("input", checkFormValidity);
+
+});
 </script>
 
 </body>

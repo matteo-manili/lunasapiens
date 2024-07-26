@@ -99,7 +99,7 @@ public class EmailService {
         List<EmailUtenti> emailUtentiList = emailUtentiService.findAll();
         for(EmailUtenti emailUtente: emailUtentiList){
             if( emailUtente.isSubscription() ){
-                String subject = "LunaSapiens - Orosocpo del giorno "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato();
+                String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
                 Context context = new Context();
                 List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
                 for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
