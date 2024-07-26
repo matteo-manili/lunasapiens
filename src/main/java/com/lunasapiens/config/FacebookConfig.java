@@ -1,4 +1,4 @@
-package com.lunasapiens;
+package com.lunasapiens.config;
 
 public class FacebookConfig {
 

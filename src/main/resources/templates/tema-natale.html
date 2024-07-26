@@ -80,6 +80,9 @@
         </div>
     </div>
 
+
+
+
 </div>
 
 
@@ -95,40 +98,43 @@
 
 
 <script>
+    // ########### CODICE CHAT-BOT ############################################
 
-    // ########### CODICE CHAT ############################################
     document.addEventListener("DOMContentLoaded", function() {
-
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function(frame) {
             console.log('Connected: ' + frame);
 
-            stompClient.subscribe('/topic/messages', function(messageOutput) {
+            stompClient.subscribe('/user/queue/reply', function(messageOutput) {
                 console.log('Received message:', messageOutput.body);
                 try {
-                    //var parsedMessage = JSON.parse(messageOutput.body);
-                    var parsedMessage = messageOutput.body;
+                    var parsedMessage = JSON.parse(messageOutput.body);
                     showMessage(parsedMessage.content);
                 } catch (e) {
                     console.error('Error parsing message:', e);
                     showMessage('Errore nel messaggio ricevuto.');
                 }
-            }, function(error) {
-                console.error('STOMP error:', error);
             });
-        }, function(error) {
-            console.error('Connection error:', error);
         });
 
-        document.getElementById("sendMessage").addEventListener("click", function() {
+        function sendMessage() {
             var message = document.getElementById("userMessage").value;
             if (message.trim() !== "") {
-                stompClient.send("/app/message", {}, JSON.stringify({'content': message}));
+                stompClient.send("/app/message", {}, message /*JSON.stringify({'content': message})*/ );
                 document.getElementById("userMessage").value = "";
+                showMessage(message); // Visualizza il messaggio inviato nella chat
             } else {
                 console.log('Message is empty');
+            }
+        }
+
+        document.getElementById("sendMessage").addEventListener("click", sendMessage);
+
+        document.getElementById("userMessage").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
             }
         });
 
@@ -140,8 +146,19 @@
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
     });
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

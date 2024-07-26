@@ -1,12 +1,10 @@
-package com.lunasapiens;
+package com.lunasapiens.config;
 
 public class OpenAiGptConfig {
 
     private String apiKeyOpenAI;
     private String modelGpt4;
-
     private String modelGpt4_Mini;
-
     private String modelGpt3_5;
     private String modelGpt3_5TurboInstruct;
 
@@ -14,10 +12,7 @@ public class OpenAiGptConfig {
     public OpenAiGptConfig(String apiKeyOpenAI, String modelGpt4, String modelGpt4_Mini, String modelGpt3_5, String modelGpt3_5TurboInstruct) {
         this.apiKeyOpenAI = apiKeyOpenAI;
         this.modelGpt4 = modelGpt4;
-
         this.modelGpt4_Mini = modelGpt4_Mini;
-
-
         this.modelGpt3_5 = modelGpt3_5;
         this.modelGpt3_5TurboInstruct = modelGpt3_5TurboInstruct;
     }

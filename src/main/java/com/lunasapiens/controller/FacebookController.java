@@ -3,8 +3,8 @@ package com.lunasapiens.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lunasapiens.AppConfig;
-import com.lunasapiens.FacebookConfig;
+import com.lunasapiens.config.AppConfig;
+import com.lunasapiens.config.FacebookConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;

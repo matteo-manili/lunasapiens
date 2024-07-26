@@ -1,6 +1,6 @@
 package com.lunasapiens.zodiac;
 
-import com.lunasapiens.AppConfig;
+import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;

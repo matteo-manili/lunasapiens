@@ -32,8 +32,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,6 +46,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -97,8 +102,6 @@ public class IndexController {
      */
     @GetMapping("/tema-natale")
     public String temaNatale(Model model, @ModelAttribute("dateTime") String datetime) {
-
-        logger.info("AAA datetime="+datetime);
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
         optionalDateTime
@@ -107,7 +110,6 @@ public class IndexController {
                         presentDateTime -> model.addAttribute("dateTime", presentDateTime),
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER))
                 );
-
 
         // ############ Dati per test, togliere poi!!! ############
         model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
@@ -214,22 +216,33 @@ public class IndexController {
         return "redirect:/tema-natale";
     }
 
-    /**
-     * Web Socket........
-     * @param message
-     * @return
-     */
+
+
+
+    /* // così invia il messaggio a tutti gli utenti cioè a tuitti i browser.
     @MessageMapping("/message")
     @SendTo("/topic/messages")
-    public String handleMessage(String message) {
-        // Logica di elaborazione del messaggio
-        //return "{\"content\": \"Risposta dal server: " + message + "\"}";
-
-        logger.info("web sockeeeettttt");
-
-        return "ciao belllo dal serverrr";
-
+    public Map<String, String> handleMessage(Map<String, String> message) {
+        // Creazione di un oggetto con il messaggio
+        Map<String, String> response = new HashMap<>();
+        response.put("content", "Risposta dal server: " + message.get("content"));
+        return response;
     }
+*/
+
+
+    @MessageMapping("/message")
+    @SendToUser("/queue/reply")
+    public Map<String, String> handleMessage(String message) {
+        System.out.println("Message received: " + message);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("content", "Risposta dal server: holaaaaa");
+        return response;
+    }
+
+
+
 
 
 

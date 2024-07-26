@@ -1,5 +1,6 @@
-package com.lunasapiens;
+package com.lunasapiens.config;
 
+import com.lunasapiens.Constants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class FilterRequestLimit extends OncePerRequestFilter {
         String ipAddress = request.getRemoteAddr();
 
         // Controllo endpoint....
-        if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
+        if (request.getRequestURI().equals("/"+ Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
             handleRequest(request, response, ipAddress);
         }
 

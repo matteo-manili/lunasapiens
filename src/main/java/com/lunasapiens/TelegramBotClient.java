@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 
+import com.lunasapiens.config.AppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
