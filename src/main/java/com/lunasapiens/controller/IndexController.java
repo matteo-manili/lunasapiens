@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.Constants;
 import com.lunasapiens.ScheduledTasks;
 import com.lunasapiens.Util;
+import com.lunasapiens.config.RateLimiter;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
@@ -74,6 +75,9 @@ public class IndexController {
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private RateLimiter rateLimiter;
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
     @Autowired
@@ -190,6 +194,14 @@ public class IndexController {
 
         // con principal ottengo un codice univoco (principal.getName()) della sessione websocket, vedi classe WebSocketConfig. Non lo uso ma può essere molto utile
         //System.out.println("Message received from user: " + principal.getName() + ", message: " + message);
+
+        String userId = principal.getName();
+
+        if (!rateLimiter.allowMessage(userId)) {
+            Map<String, String> response = new HashMap<>();
+            response.put("content", "Troppi messaggi! per favore attendi");
+            return response;
+        }
 
         String domanda = message.get("content");
         String temaNataleId = message.get("temaNataleId");
