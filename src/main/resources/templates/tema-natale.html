@@ -210,15 +210,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        /*
-        var sendMessageButton = document.getElementById("sendMessage");
-        if (sendMessageButton) {
-            sendMessageButton.addEventListener("click", sendMessage);
-        } else {
-            console.error('Element with ID "sendMessage" not found.');
-        }
-        */
-
         document.getElementById("sendMessage").addEventListener("click", sendMessage);
 
         document.getElementById("userMessage").addEventListener("keyup", function (event) {
@@ -248,7 +239,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-
         // Gestione modalità a schermo intero
         document.getElementById("fullscreenToggle").addEventListener("click", function() {
             var chatContainer = document.querySelector(".chat-container");
@@ -277,6 +267,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.msExitFullscreen();
                 }
             }
+        });
+
+        // Scorrimento automatico dell'input nel campo visibile
+        document.getElementById("userMessage").addEventListener("focus", function() {
+            setTimeout(function() {
+                document.getElementById("userMessage").scrollIntoView({behavior: "smooth", block: "center"});
+            }, 300); // Attendi un breve periodo per garantire che la tastiera sia completamente visibile
         });
 
 
