@@ -1,7 +1,7 @@
 {
-  "name": "Tema Natale IA",
-  "short_name": "Tema Natale",
-  "description": "App per generare e analizzare il tuo Tema Natale con chat IA",
+  "name": "LunaSapiens.com",
+  "short_name": "LunaSapiens",
+  "description": "Scopri un nuovo modo di esplorare l'astrologia basato su reali fattori astronomici e astrologici. Utilizziamo tecniche di intelligenza artificiale per offrirti un'esperienza unica nel comprendere le influenze celesti sulla tua vita. Scopri l'Oroscopo giornaliero e genera il tuo Tema Natale con la nostra IA.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
