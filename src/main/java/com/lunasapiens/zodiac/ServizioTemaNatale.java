@@ -26,7 +26,7 @@ public class ServizioTemaNatale {
     SegnoZodiacale segnoZodiacale;
 
 
-    private Double temperature = 0.5; private Integer maxTokens = 2500;
+    private Double temperature = 0.5; private Integer maxTokens = 3000;
 
 
 
@@ -74,7 +74,7 @@ public class ServizioTemaNatale {
         descTemaNatale.append( "<p><b>"+pianetiTransiti.get(1).descrizionePianeta()+"</b></br>");
         descTemaNatale.append( segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(1).getNumeroSegnoZodiacale() ).getDescrizioneMin()+"</p>");
 
-        descTemaNatale.append( "<p><b>Ascendente in "+casePlacideArrayList.get(0).getNomeSegnoZodiacale()+".</b><br>)");
+        descTemaNatale.append( "<p><b>Ascendente in "+casePlacideArrayList.get(0).getNomeSegnoZodiacale()+"</b><br>");
         descTemaNatale.append( segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() ).getDescrizioneMin()+"</p></big>");
 
         descTemaNatale.append( "<h4 class=\"mt-5\">Case</h4>"+ "<p>");

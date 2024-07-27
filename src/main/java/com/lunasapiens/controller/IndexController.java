@@ -2,9 +2,7 @@ package com.lunasapiens.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lunasapiens.Constants;
-import com.lunasapiens.ScheduledTasks;
-import com.lunasapiens.Util;
+import com.lunasapiens.*;
 import com.lunasapiens.config.RateLimiter;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -12,7 +10,6 @@ import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import com.lunasapiens.EmailService;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
@@ -78,6 +75,9 @@ public class IndexController {
 
     @Autowired
     private RateLimiter rateLimiter;
+
+    @Autowired
+    private TelegramBotClient telegramBotClient;
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
     @Autowired
@@ -227,6 +227,8 @@ public class IndexController {
 
             Map<String, String> response = new HashMap<>();
             response.put("content", rispostaIA.toString());
+
+            telegramBotClient.inviaMessaggio( "Domanda Utente: "+domanda);
 
             return response;
 

@@ -67,7 +67,7 @@ public class PianetaPosizTransito {
     // ---- descrizioni ----
 
     public String descrizionePianeta() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + ". ";
+        return nomePianeta + " in " + nomeSegnoZodiacale + "";
     }
 
     public String descrizione_Pianeta_Retrogrado() {
