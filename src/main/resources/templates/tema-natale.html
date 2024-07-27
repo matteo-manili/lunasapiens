@@ -4,7 +4,6 @@
     <title>Tema Natale IA</title>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
-        <link rel="manifest" href="/manifest.json">
     </th:block>
     <th:block th:fragment="scripts">
         <script src="/js/1.5.2.sockjs.min.js"></script>
@@ -47,9 +46,6 @@
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
-
-
-
 </style>
 
 <body>
@@ -212,8 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-
-
     }
 });
 
@@ -303,21 +297,6 @@ $(document).ready(function() {
     $("#cityInput, #dateTime").on("input", checkFormValidity);
 
 });
-</script>
-
-<!-- per fare la WPA -->
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                })
-                .catch(error => {
-                    console.error('Service Worker registration failed:', error);
-                });
-        });
-    }
 </script>
 
 </body>
