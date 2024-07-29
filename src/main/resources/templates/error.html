@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/templateBase :: common_head_title(~{::title}) }">
-    <title>Pagina di errore</title>
+<head th:replace="~{fragments/templateBase :: common_head_title_meta(~{::title},~{::meta})}">
+    <title th:fragment="title">Pagina di errore</title>
+    <th:block th:fragment="meta">
+        <meta name="robots" content="noindex, nofollow">
+    </th:block>
 </head>
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 
 
-    <h1>Errore</h1>
-    <p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
+    <h1>Pagina di Errore</h1>
 
-    <div th:if="${infoError != null}">
+
+
+    <div th:if="${infoError != null and infoError != ''}" class="alert alert-danger mt-3" role="alert">
+        <p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
         <p th:text="${infoError}"></p>
     </div>
+
+
 
     <!-- Aggiungi un link per tornare alla pagina index -->
     <a href="/">Torna alla pagina iniziale</a>

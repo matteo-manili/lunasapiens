@@ -140,6 +140,14 @@
             <version>20240303</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup
+        Jsoup è una libreria Java per lavorare con HTML e XML, con un'API intuitiva per recuperare URL -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.18.1</version>
+        </dependency>
+
 
         <!-- ###################### OPEN_AI ###################### -->
 
@@ -165,7 +173,7 @@
 
 
 
-        <!-- ###################### SOCIAL TIKTOK TELEGRAM FACEBOOK ###################### -->
+        <!-- ###################### SEO - SOCIAL - TIKTOK TELEGRAM FACEBOOK ###################### -->
 
         <!-- https://mvnrepository.com/artifact/com.restfb/restfb
         <dependency>
@@ -181,6 +189,14 @@
             <artifactId>telegrambots</artifactId>
             <version>6.4.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.dfabulich/sitemapgen4j -->
+        <dependency>
+            <groupId>com.github.dfabulich</groupId>
+            <artifactId>sitemapgen4j</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
 
 
         <!-- ###################### EXTERNAL LIB ###################### -->

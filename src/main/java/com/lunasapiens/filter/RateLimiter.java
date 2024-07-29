@@ -1,4 +1,4 @@
-package com.lunasapiens.config;
+package com.lunasapiens.filter;
 
 import org.springframework.stereotype.Component;
 
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class RateLimiter {
-    private static final int MAX_MESSAGES_PER_MINUTE = 30; // Limite di messaggi per minuto
+    private static final int MAX_MESSAGES_PER_MINUTE = 15; // Limite di messaggi per minuto
     private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
 
     private final Map<String, MessageTracker> userMessageCounts = new ConcurrentHashMap<>();

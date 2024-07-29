@@ -1,4 +1,4 @@
-package com.lunasapiens.config;
+package com.lunasapiens.filter;
 
 import com.lunasapiens.Constants;
 import jakarta.servlet.FilterChain;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Component
 @Order(1) // Ordine di esecuzione del filtro, se necessario
-public class FilterRequestLimit extends OncePerRequestFilter {
+public class FilterRequestResponse extends OncePerRequestFilter {
 
 
     // TODO ricorda di rimettere MAX_REQUESTS a 10
@@ -35,34 +35,38 @@ public class FilterRequestLimit extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ipAddress = request.getRemoteAddr();
 
-        // Controllo endpoint....
+        // ######################### Controllo MaxRequest #########################
         if (request.getRequestURI().equals("/"+ Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN) && request.getMethod().equals("GET")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN) && request.getMethod().equals("GET")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
         if (request.getRequestURI().equals("/contattiSubmit") && request.getMethod().equals("POST")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
         if (request.getRequestURI().equals("/test") && request.getMethod().equals("GET")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
         if (request.getRequestURI().equals("/genera-video") && request.getMethod().equals("GET")) {
-            handleRequest(request, response, ipAddress);
+            handleMaxRequestRequest(request, response, ipAddress);
         }
 
 
-
-
+        // ######################### url no index #########################
+        for (String urlNoIndex : Constants.URL_NO_INDEX_LIST) {
+            if (request.getRequestURI().equals( urlNoIndex )) {
+                response.setHeader("X-Robots-Tag", "noindex, nofollow");
+            }
+        }
 
 
 
@@ -74,7 +78,7 @@ public class FilterRequestLimit extends OncePerRequestFilter {
 
 
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse response, String ipAddress) throws IOException {
+    private void handleMaxRequestRequest(HttpServletRequest request, HttpServletResponse response, String ipAddress) throws IOException {
         if (!requestCounts.containsKey(ipAddress)) {
             requestCounts.put(ipAddress, 1);
         } else {

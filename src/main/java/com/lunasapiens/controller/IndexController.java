@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
-import com.lunasapiens.config.RateLimiter;
+import com.lunasapiens.filter.RateLimiter;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
@@ -14,12 +14,17 @@ import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
+import com.redfin.sitemapgenerator.WebSitemapGenerator;
+import com.redfin.sitemapgenerator.WebSitemapUrl;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +41,21 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+
+
+
+
 
 @Controller
 public class IndexController {
@@ -89,11 +102,49 @@ public class IndexController {
     private static final String INFO_ERROR = "infoError";
 
 
-    @GetMapping("/")
-    public String index(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
+
+
+    @GetMapping("/cattura_seek")
+    public String catturaTemaNataleAstroSeek(Model model) {
         model.addAttribute(INFO_MESSAGE, "Welcome to our dynamic landing page!");
+
+        // div id="vypocty_id_nativ"
+
+        String url = "https://horoscopes.astro-seek.com/calculate-birth-chart-horoscope-online/?input_natal=1&send_calculation=1&narozeni_den=23&narozeni_mesic=1&narozeni_rok=1981&narozeni_hodina=16&narozeni_minuta=16&narozeni_sekunda=00&narozeni_city=Rome%2C+Italy&narozeni_mesto_hidden=Rome&narozeni_stat_hidden=IT&narozeni_podstat_kratky_hidden=&narozeni_sirka_stupne=41&narozeni_sirka_minuty=54&narozeni_sirka_smer=0&narozeni_delka_stupne=12&narozeni_delka_minuty=31&narozeni_delka_smer=0&narozeni_timezone_form=auto&narozeni_timezone_dst_form=auto&house_system=placidus&hid_fortune=1&hid_fortune_check=on&hid_vertex=1&hid_vertex_check=on&hid_chiron=1&hid_chiron_check=on&hid_lilith=1&hid_lilith_check=on&hid_uzel=1&hid_uzel_check=on&tolerance=1&aya=&tolerance_paral=1.2#tabs_redraw";
+        String html = restTemplate.getForObject(url, String.class);
+        Document document = Jsoup.parse(html);
+
+        // Estrai il contenuto del div con id "vypocty_id_nativ"
+        Element divElement = document.getElementById("vypocty_id_nativ");
+
+        if (divElement != null) {
+            System.out.println("Contenuto del div 'vypocty_id_nativ':");
+
+            // Seleziona tutti i blocchi di dati dei pianeti
+            for (Element planetElement : divElement.select("div[style^=float: left; width: 80px; margin-left: -5px;]")) {
+                String planetName = planetElement.select("a.tenky-modry").text();
+                String signName = planetElement.nextElementSibling().select("img.astro_symbol").attr("alt");
+                String position = planetElement.nextElementSibling().nextElementSibling().text();
+
+                System.out.println("Pianeta: " + planetName);
+                System.out.println("Segno: " + signName);
+                System.out.println("Posizione: " + position);
+                System.out.println();
+            }
+        } else {
+            System.out.println("Il div con id 'vypocty_id_nativ' non è stato trovato.");
+        }
+
+
+
+
         return "index";
     }
+
+
+
+
+
 
 
     /**
@@ -190,79 +241,73 @@ public class IndexController {
      */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public Map<String, String> userMessageWebSocket(Map<String, String> message, Principal principal) {
-
-        // con principal ottengo un codice univoco (principal.getName()) della sessione websocket, vedi classe WebSocketConfig. Non lo uso ma può essere molto utile
-        //System.out.println("Message received from user: " + principal.getName() + ", message: " + message);
-
+    public Map<String, Object> userMessageWebSocket(Map<String, String> message, Principal principal) {
         String userId = principal.getName();
+        Map<String, Object> response = new HashMap<>();
 
+        // Controlla il limite di frequenza dei messaggi
         if (!rateLimiter.allowMessage(userId)) {
-            Map<String, String> response = new HashMap<>();
-            response.put("content", "Troppi messaggi! per favore attendi");
+            response.put("error", "Troppi messaggi! Per favore attendi.");
             return response;
         }
 
         String domanda = message.get("content");
         String temaNataleId = message.get("temaNataleId");
-        System.out.println("Message received from user: " + domanda + ", temaNataleId: " + temaNataleId);
 
-        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
-        if (cache != null && domanda != null && !domanda.isEmpty()) {
-
-            // Recupera la lista di chat messages dalla cache
-            List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
-            /*
-            for (ChatMessage chatMessage : chatMessageIa) {
-                logger.info("Messaggio chatMessage: " + chatMessage.getContent());
-            }
-            */
-
-            chatMessageIa.add(new ChatMessage("user", domanda));
-            cache.put(temaNataleId, chatMessageIa);
-
-            StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale( chatMessageIa );
-            chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
-            cache.put(temaNataleId, chatMessageIa);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("content", rispostaIA.toString());
-
-            telegramBotClient.inviaMessaggio( "Domanda Utente: "+domanda);
-
+        // Aggiunge una protezione per i dati nulli o non validi
+        if (domanda == null || domanda.isEmpty()) {
+            response.put("error", "Il messaggio non può essere vuoto.");
             return response;
-
-
-        }else{
-            return message;
         }
 
+        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        if (cache != null) {
+            // Recupera la lista di chat messages dalla cache
+            List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
+            if (chatMessageIa == null) {
+                chatMessageIa = new ArrayList<>();
+            }
+
+            chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
+            cache.put(temaNataleId, chatMessageIa);
+
+            try {
+                StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
+                cache.put(temaNataleId, chatMessageIa);
+
+                response.put("content", rispostaIA.toString());
+                telegramBotClient.inviaMessaggio("Domanda Utente: " + domanda);
+            } catch (Exception e) {
+                response.put("error", "Errore durante l'elaborazione: " + e.getMessage());
+            }
+        } else {
+            response.put("error", "Cache non trovata.");
+        }
+
+        return response;
     }
 
 
 
-
     @GetMapping("/coordinate")
-    @ResponseBody
-    public List<Map<String, Object>> getCoordinates(@RequestParam String cityName) {
+    public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
         String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
-
         logger.info(url);
-        String response = restTemplate.getForObject(url, String.class);
+        String response;
         List<Map<String, Object>> locations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         try {
+            response = restTemplate.getForObject(url, String.class);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response);
             JsonNode geonames = root.path("geonames");
             for (JsonNode node : geonames) {
-                // Controlla se il fcl è uguale a "P"
                 if ("P".equals(node.path("fcl").asText())) {
                     String name = node.path("name").asText();
                     String adminName1 = node.path("adminName1").asText();
                     String countryCode = node.path("countryCode").asText();
                     String uniqueKey = name + "|" + adminName1 + "|" + countryCode;
-                    // Aggiungi solo se non è già stato visto
                     if (!seen.contains(uniqueKey)) {
                         seen.add(uniqueKey);
                         Map<String, Object> location = new HashMap<>();
@@ -276,12 +321,19 @@ public class IndexController {
                     }
                 }
             }
+            return new ResponseEntity<>(locations, HttpStatus.OK);
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("Errore durante il recupero delle coordinate", e);
+            // Restituisci la pagina di errore con il messaggio
+            ModelAndView modelAndView = new ModelAndView("error");
+            modelAndView.addObject("infoError", "Si è verificato un errore: " + e.getMessage());
+            return new ResponseEntity<>(modelAndView.getModel(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return locations;
     }
+
+
+
 
 
     /**
@@ -388,9 +440,7 @@ public class IndexController {
      */
     @GetMapping("/contatti")
     public String contatti(Model model) {
-
             model.addAttribute("contactForm", new ContactFormDTO());
-
         return "contatti";
     }
 
@@ -410,8 +460,7 @@ public class IndexController {
 
 
     @GetMapping("/error")
-    public String handleError(HttpServletRequest request, Model model) {
-        model.addAttribute(INFO_ERROR, "Errore generale.");
+    public String pageError(HttpServletRequest request, Model model) {
         return "error";
     }
 
@@ -444,6 +493,53 @@ public class IndexController {
         //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
         scheduledTasks.creaOroscopoGiornaliero();
         return "index";
+    }
+
+    @GetMapping("/")
+    public String index(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
+        model.addAttribute(INFO_MESSAGE, "Welcome to our dynamic landing page!");
+        return "index";
+    }
+
+
+
+    @GetMapping("/robots.txt")
+    public void getRobotsTxt(HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
+        writer.println("User-agent: *");
+        for(String url : Constants.URL_NO_INDEX_LIST){
+            writer.println("Disallow: "+url);
+        }
+        writer.println();
+        writer.println("Sitemap: "+Constants.DOM_LUNA_SAPIENS+"/"+"sitemap.xml");
+        writer.close();
+    }
+
+    @GetMapping("/sitemap.xml")
+    public void getSitemap(HttpServletResponse response) throws IOException {
+        // Crea il generatore di sitemap
+        WebSitemapGenerator sitemapGenerator = WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
+
+        // Aggiungi URL alla sitemap
+        List<String> urlsForIndex = List.of(
+                "/",
+                "/oroscopo",
+                "/tema-natale",
+                "/contatti"
+        );
+
+        for (String url : urlsForIndex) {
+            WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url).build();
+            sitemapGenerator.addUrl(sitemapUrl);
+        }
+
+        // Genera la sitemap
+        List<String> sitemapUrls = sitemapGenerator.writeAsStrings();
+
+        // Imposta il tipo di contenuto e restituisci la sitemap
+        response.setContentType("application/xml");
+        response.getWriter().write(String.join("\n", sitemapUrls));
     }
 
 }

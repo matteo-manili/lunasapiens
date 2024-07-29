@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/templateBase :: common_head_title(~{::title}) }">
-    <title>Informativa sulla Privacy</title>
+<head th:replace="~{fragments/templateBase :: common_head_title_meta(~{::title},~{::meta}) }">
+    <title th:fragment="title">Informativa sulla Privacy</title>
+    <th:block th:fragment="meta">
+    <meta name="robots" content="noindex, nofollow">
+    </th:block>
 </head>
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-
 <div class="container px-4 px-lg-5">
 
-
     <section>
-        <h2>Raccolta delle informazioni personali</h2>
-        <p>Raccogliamo informazioni personali quando ci fornisci volontariamente tali informazioni tramite il nostro sito web (https://www.lunasapiens.com). Queste informazioni saranno utilizzate solo per gli scopi specificati durante la raccolta dei dati. Accedendo o utilizzando il servizio, acconsenti alla raccolta, all'uso e alla divulgazione delle tue informazioni in conformità con questa Informativa sulla Privacy. Se non acconsenti, ti preghiamo di non accedere o utilizzare il servizio.</p>
+        <h2>Raccolta delle Informazioni</h2>
+        <p>Raccogliamo informazioni personali solo quando le fornisci volontariamente attraverso il nostro sito (https://www.lunasapiens.com). Utilizziamo queste informazioni per scopi specifici e in conformità con questa Informativa sulla Privacy. Se non acconsenti, ti preghiamo di non utilizzare il nostro servizio.</p>
     </section>
 
     <section>
-        <h2>Modifiche a questa Informativa sulla Privacy</h2>
-        <p>Possiamo modificare questa Informativa sulla Privacy in qualsiasi momento senza preavviso e pubblicheremo la versione rivista sul servizio. La politica rivista sarà efficace a partire da 180 giorni dalla pubblicazione sul servizio e il tuo accesso o utilizzo continuato del servizio dopo tale periodo costituirà la tua accettazione della politica sulla privacy rivista. Raccomandiamo quindi di rivedere periodicamente questa pagina.</p>
+        <h2>Modifiche alla Privacy</h2>
+        <p>Questa Informativa sulla Privacy può essere aggiornata senza preavviso. Le modifiche saranno effettive 180 giorni dopo la pubblicazione. Ti invitiamo a controllare periodicamente questa pagina.</p>
     </section>
 
     <ol class="privacy-policy-ol">
         <li>
-            <h2 class="privacy-policy-h2">I Tuoi Diritti:</h2>
-            <p>Secondo la legge applicabile, potresti avere il diritto di accedere, rettificare o cancellare i tuoi dati personali o ricevere una copia dei tuoi dati personali, limitare o opporsi al trattamento attivo dei tuoi dati, chiederci di condividere (portare) le tue informazioni personali con un'altra entità, revocare qualsiasi consenso fornito per il trattamento dei tuoi dati, il diritto di presentare un reclamo a un'autorità di regolamentazione e altri diritti rilevanti in base alle leggi applicabili. Per esercitare questi diritti, puoi scriverci a matteo.manili@gmail.com. Risponderemo alla tua richiesta in conformità alla legge applicabile.</p>
-            <p>Tieni presente che se non ci consenti di raccogliere o elaborare le informazioni personali richieste o revochi il consenso al trattamento delle stesse per le finalità richieste, potresti non essere in grado di accedere o utilizzare i servizi per cui sono state richieste le tue informazioni.</p>
+            <h2>I Tuoi Diritti</h2>
+            <p>Hai il diritto di accedere, rettificare o cancellare i tuoi dati personali, oltre a limitare o opporre il trattamento dei tuoi dati. Puoi anche richiedere di trasferire i tuoi dati ad altra entità o revocare il consenso. Per esercitare questi diritti, contattaci a matteo.manili@gmail.com. La mancata concessione o revoca del consenso potrebbe limitare l'accesso ai nostri servizi.</p>
         </li>
         <li>
-            <h2 class="privacy-policy-h2">Cookie Etc.</h2>
-            <p>Per saperne di più su come utilizziamo questi e sulle tue scelte in relazione a queste tecnologie di tracciamento, consulta la nostra <a href="https://www.lunasapiens.com">Cookie Policy</a>.</p>
+            <h2>Cookie</h2>
+            <p>Per informazioni su come utilizziamo i cookie e le tue opzioni, consulta la nostra <a href="https://www.lunasapiens.com">Cookie Policy</a>.</p>
         </li>
         <li>
-            <h2 class="privacy-policy-h2">Sicurezza:</h2>
-            <p>La sicurezza delle tue informazioni è importante per noi e adotteremo misure di sicurezza ragionevoli per prevenire la perdita, l'abuso o la modifica non autorizzata delle tue informazioni sotto il nostro controllo. Tuttavia, date le risorse intrinseche, non possiamo garantire la sicurezza assoluta e, di conseguenza, non possiamo garantire o garantire la sicurezza di qualsiasi informazione che ci trasmetti, e lo fai a tuo rischio.</p>
+            <h2>Sicurezza</h2>
+            <p>Adottiamo misure di sicurezza ragionevoli per proteggere le tue informazioni, ma non possiamo garantire una sicurezza assoluta. L'uso del sito avviene a tuo rischio.</p>
         </li>
         <li>
-            <h2 class="privacy-policy-h2">Reclamo / Responsabile della Protezione dei Dati:</h2>
-            <p>Se hai domande o preoccupazioni sul trattamento delle tue informazioni disponibili presso di noi, puoi inviare un'email al nostro Responsabile dei Reclami email: matteo.manili@gmail.com. Affronteremo le tue preoccupazioni in conformità alla legge applicabile.</p>
+            <h2>Reclami e Contatti</h2>
+            <p>Per domande o reclami sul trattamento dei tuoi dati, visita la nostra <a href="/contatti">pagina di contatto</a>.</p>
         </li>
     </ol>
 </div>
+
 
 
 

@@ -26,15 +26,16 @@ public class ServizioTemaNatale {
     SegnoZodiacale segnoZodiacale;
 
 
-    private Double temperature = 0.5; private Integer maxTokens = 3000;
 
+    // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
+    private Double temperature = 0.4; private Integer tokensRisposta = 500;
 
 
 
     public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature,
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensRisposta,
                 appConfig.getParamOpenAi().getModelGpt4_Mini(), chatMessageList );
 
 

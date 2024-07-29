@@ -24,10 +24,12 @@ public class ServizioOroscopoDelGiorno {
     SegnoZodiacale segnoZodiacale;
 
     //private Double temperature = 0.5; private Integer maxTokens = 2500;
-    private Double temperature = 0.6; private Integer maxTokens = 3000;
+
+    // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
+    private Double temperature = 0.6; private Integer tokensRisposta = 1500;
 
     public StringBuilder oroscopoDelGiornoIA(int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        return oroscopoDelGiorno(temperature, maxTokens, segno, giornoOraPosizioneDTO);
+        return oroscopoDelGiorno(temperature, tokensRisposta, segno, giornoOraPosizioneDTO);
     }
 
 
@@ -232,7 +234,7 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
-    public StringBuilder oroscopoDelGiorno(Double temperature, Integer maxTokens, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
+    public StringBuilder oroscopoDelGiorno(Double temperature, Integer tokensRisposta, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
         /*
         domandaBuilder.append("\n").append("Case Placide: ");
         for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
@@ -262,7 +264,7 @@ public class ServizioOroscopoDelGiorno {
         //                appConfig.getParamOpenAi().getModelGpt4() );
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature,
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensRisposta,
                 appConfig.getParamOpenAi().getModelGpt4_Mini(), domanda.toString() );
 
 

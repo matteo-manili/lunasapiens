@@ -1,14 +1,14 @@
 package com.lunasapiens;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class Constants {
 
-    public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com/";
+    public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com";
+
+    public static final String PAGE_ERROR = "error";
+
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";
     public static final String DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN = "cancel-email-subscription-orosc-giorn";
@@ -26,7 +26,17 @@ public class Constants {
     public static final String TEMA_NATALE_BOT_CACHE = "temaNataleBotCache";
     public static final String PATH_STATIC = "src/main/resources/static/";
 
-
+    public static final List<String> URL_NO_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
+            "/chat-websocket",
+            "/user/queue/reply",
+            "/app/message",
+            "/coordinate",
+            "/tema",
+            "/greeting",
+            "/info-privacy",
+            "/termini-di-servizio",
+            "/error"
+    ));
 
     // caratteristiche segno
     public static final List<String> segnoZodiacaleGenere = Arrays.asList("Maschile", "Femminile");

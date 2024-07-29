@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links}) }">
-    <title>Contatti</title>
-    <th:block th:fragment="links">
-        <link rel="stylesheet" href="/css/style.css">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Contatti</title>
+    <th:block th:fragment="meta">
+    <meta name="description" content="Contatta il team di LunaSapiens.com per qualsiasi domanda o richiesta. Compila il modulo con il tuo nome, email e messaggio e ricevi assistenza per le tue esigenze astrologiche e servizi offerti. Siamo qui per aiutarti e rispondere alle tue domande!">
+    <meta name="keywords" content="contatti, assistenza clienti, supporto, richieste, LunaSapiens, modulo di contatto, informazioni astrologiche, assistenza astrologica">
     </th:block>
+    <th:block th:fragment="links"><link rel="stylesheet" href="/css/style.css"></th:block>
 </head>
 
 <body>
@@ -18,7 +20,7 @@
         <p th:text="${infoMessage}"></p>
     </div>
 
-    <div class="bg-white border rounded shadow-sm overflow-hidden">
+    <div class="bg-white border rounded shadow-sm overflow-hidden mb-4">
 
         <form action="#" th:action="@{/contattiSubmit}" th:object="${contactForm}" method="post" onsubmit="showLoadingOverlay()">
             <div class="row gy-4 gy-xl-5 p-4 p-xl-5">

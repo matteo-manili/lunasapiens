@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links}) }">
-    <title>Oroscopo del Giorno</title>
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Oroscopo del Giorno</title>
+    <th:block th:fragment="meta">
+    <meta name="description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata. Iscriviti per ricevere l'oroscopo del giorno direttamente nella tua email e rimani aggiornato sulle influenze astrali quotidiane.">
+    <meta name="keywords" content="oroscopo del giorno, previsioni astrologiche, astrologia giornaliera, Ariete, Toro, Gemelli, Cancro, Leone, Vergine, Bilancia, Scorpione, Sagittario, Capricorno, Acquario, Pesci, transiti planetari, aspetti celesti, oroscopo via email">
+    </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/style.css">

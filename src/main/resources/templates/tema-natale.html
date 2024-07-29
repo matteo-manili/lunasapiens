@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_links_scripts(~{::title},~{::links},~{::scripts}) }">
-    <title>Tema Natale IA</title>
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
+    <title th:fragment="title">Tema Natale IA</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali.">
+        <meta name="keywords" content="Tema Natale, astrologia, intelligenza artificiale, chat IA, LunaSapiens, oroscopo, astrologia personalizzata, descrizione Tema Natale, influenze celesti">
+    </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
@@ -9,7 +13,6 @@
         <script src="/js/1.5.2.sockjs.min.js"></script>
         <script src="/js/2.3.3.stomp.min.js"></script>
     </th:block>
-
 </head>
 
 <style>
