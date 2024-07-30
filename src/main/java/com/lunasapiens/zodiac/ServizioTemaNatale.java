@@ -33,19 +33,15 @@ public class ServizioTemaNatale {
 
 
     public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
-
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensRisposta,
                 appConfig.getParamOpenAi().getModelGpt4_Mini(), chatMessageList );
-
-
     }
 
 
 
 
     public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-
         Properties caseSignificato = appConfig.caseSignificato();
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetiCaseSignificatoProperties = appConfig.pianetiCaseSignificato();
