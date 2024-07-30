@@ -84,7 +84,7 @@
     </form>
 
     <!-- Chat-Box IA -->
-    <input type="hidden" id="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
+    <input type="hidden" id="temaNataleDescrizione" name="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
     <input type="hidden" id="temaNataleId" name="temaNataleId" th:value="${temaNataleId}">
 
     <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mt-5 mb-5">
@@ -133,9 +133,9 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
+
     // Verifica se temaNataleDescrizione non è null o una stringa vuota
     if (temaNataleDescrizione) {
-
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
 
@@ -210,7 +210,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.textContent = 'Visualizza descrizione Tema natale';
             }
         });
-
     }
 });
 
