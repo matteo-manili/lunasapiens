@@ -55,9 +55,6 @@ import java.util.*;
 import java.util.List;
 
 
-
-
-
 @Controller
 public class IndexController {
 
@@ -268,9 +265,13 @@ public class IndexController {
     }
 
     @GetMapping("/temaNataleSubmit")
-    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime, @RequestParam("cityLat") String cityLat,
-                                   @RequestParam("cityLng") String cityLng, @RequestParam("cityName") String cityName, @RequestParam("regioneName") String regioneName,
-                                   @RequestParam("statoName") String statoName, Model model) {
+    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+                                   @RequestParam("cityLat") String cityLat,
+                                   @RequestParam("cityLng") String cityLng,
+                                   @RequestParam("cityName") String cityName,
+                                   @RequestParam("regioneName") String regioneName,
+                                   @RequestParam("statoName") String statoName,
+                                   RedirectAttributes redirectAttributes) {
 
         logger.info("sono in temaNataleSubmit");
 
@@ -292,23 +293,24 @@ public class IndexController {
         logger.info("Latitude: " + cityLat);
         logger.info("Longitude: " + cityLng);
 
-        model.addAttribute("cityInput", cityName+", "+regioneName+", "+statoName);
-        model.addAttribute("cityName", cityName);
-        model.addAttribute("regioneName", regioneName);
-        model.addAttribute("statoName", statoName);
-        model.addAttribute("cityLat", cityLat);
-        model.addAttribute("cityLng", cityLng);
-        model.addAttribute("dateTime", datetime.format( Constants.DATE_TIME_LOCAL_FORMATTER ));
-        model.addAttribute("dataOraNascita", datetime.format( Constants.DATE_TIME_FORMATTER ));
-        model.addAttribute("luogoNascita", cityName+", "+regioneName+", "+statoName);
+        // Prepara i dati da passare tramite redirectAttributes
+        redirectAttributes.addFlashAttribute("cityInput", cityName + ", " + regioneName + ", " + statoName);
+        redirectAttributes.addFlashAttribute("cityName", cityName);
+        redirectAttributes.addFlashAttribute("regioneName", regioneName);
+        redirectAttributes.addFlashAttribute("statoName", statoName);
+        redirectAttributes.addFlashAttribute("cityLat", cityLat);
+        redirectAttributes.addFlashAttribute("cityLng", cityLng);
+        redirectAttributes.addFlashAttribute("dateTime", datetime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
+        redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format(Constants.DATE_TIME_FORMATTER));
+        redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
+
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
 
         String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
-        model.addAttribute("temaNataleDescrizione", temaNataleDescrizione);
+        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
         String temaNataleId = UUID.randomUUID().toString();
-        model.addAttribute("temaNataleId", temaNataleId);
-
+        redirectAttributes.addFlashAttribute("temaNataleId", temaNataleId);
 
         // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
@@ -317,8 +319,10 @@ public class IndexController {
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
         cache.put(temaNataleId, chatMessageIa);
 
-        return "tema-natale";
+        // Redirect alla pagina 'tema-natale'
+        return "redirect:/tema-natale";
     }
+
 
 
 
