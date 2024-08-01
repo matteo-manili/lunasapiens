@@ -181,7 +181,8 @@ public class BuildInfoAstrologiaSwiss {
             // Stampare le posizioni delle case
             for (int i = 1; i <= 12; i++) {
                 Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
-                CasePlacide aa = new CasePlacide(String.valueOf(i), cusps[i], 0, 0, entry.getKey(), entry.getValue());
+                Constants.Case casa = Constants.Case.fromNumero( i );
+                CasePlacide aa = new CasePlacide(i, casa.getName(), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);
                 logger.info("Casa " + i + ": " + cusps[i] +" "+ entry.getValue());
             }

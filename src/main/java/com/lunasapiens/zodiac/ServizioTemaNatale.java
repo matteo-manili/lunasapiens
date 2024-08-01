@@ -2,12 +2,16 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
+import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +29,11 @@ public class ServizioTemaNatale {
     @Autowired
     SegnoZodiacale segnoZodiacale;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private CacheManager cacheManager;
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
@@ -40,16 +49,29 @@ public class ServizioTemaNatale {
 
 
 
+    public String temaNataleDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
+        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
+        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO, appConfig.transitiPianetiSegni_TemaNatale() );
 
-    public String temaNataleDescrizione(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        return temaNataleDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+    }
+
+
+    public String temaNataleDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiPianetiSegni_TemaNatale());
+        ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
+        return temaNataleDescrizione(pianetiTransiti, casePlacideArrayList);
+    }
+
+
+
+    public String temaNataleDescrizione(ArrayList<PianetaPosizTransito> pianetiTransiti, ArrayList<CasePlacide> casePlacideArrayList) {
+
         Properties caseSignificato = appConfig.caseSignificato();
         Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
         Properties pianetiCaseSignificatoProperties = appConfig.pianetiCaseSignificato();
 
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-
-        ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiPianetiSegni_TemaNatale());
         assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
 
@@ -78,13 +100,13 @@ public class ServizioTemaNatale {
         for (CasePlacide varCasa : casePlacideArrayList) {
             descTemaNatale.append( "<b>" + varCasa.descrizioneCasaGradi() + (varCasa.getNomeCasa().equals("1") ? " (Ascendente)" : "") +"</b>");
             descTemaNatale.append( "<ul>");
-            descTemaNatale.append( "<li>" + caseSignificato.getProperty(varCasa.getNomeCasa()) + "</li>");
+            descTemaNatale.append( "<li>" + caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
             boolean pianetaPresete = false;
             for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa()) ){
                     pianetaPresete = true;
                     descTemaNatale.append( "<li>" + varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
-                            pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNomeCasa()) + "</li>");
+                            pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                 }
             }
             if( !pianetaPresete ){
@@ -93,7 +115,7 @@ public class ServizioTemaNatale {
                     for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
                             descTemaNatale.append( "<li>"+varPianeta.descrizione_Pianeta_Retrogrado()+"<i> (Pianeta domicilio del segno della Casa) </i>" +
-                                    pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNomeCasa()) + "</li>");
+                                    pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                         }
                     }
                 }

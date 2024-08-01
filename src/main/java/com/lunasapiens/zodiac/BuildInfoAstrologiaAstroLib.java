@@ -3,6 +3,7 @@ package com.lunasapiens.zodiac;
 import at.kugel.zodiac.TextHoroscop;
 import at.kugel.zodiac.house.*;
 import at.kugel.zodiac.planet.PlanetAA0;
+import com.lunasapiens.Constants;
 import com.lunasapiens.Util;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 
@@ -125,7 +126,11 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("segno: " + SegnoZodiacale.determinaSegnoZodiacale(degrees));
 
                         Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(degrees).entrySet().iterator().next();
-                        CasePlacide aa = new CasePlacide(planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue());
+
+
+                        Constants.Case casa = Constants.Case.fromNumero( Integer.parseInt(planetName) );
+
+                        CasePlacide aa = new CasePlacide(casa.getNumero(), planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue());
                         casePlacides.add(aa);
                     }
                 }

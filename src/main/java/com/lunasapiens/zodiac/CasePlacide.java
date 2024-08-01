@@ -2,6 +2,7 @@ package com.lunasapiens.zodiac;
 
 public class CasePlacide {
 
+    private int numeroCasa;
     private String nomeCasa;
     private double gradi;
     private int minuti;
@@ -11,7 +12,8 @@ public class CasePlacide {
     private String nomeSegnoZodiacale;
 
 
-    public CasePlacide(String nomeCasa, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale) {
+    public CasePlacide(int numeroCasa, String nomeCasa, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale) {
+        this.numeroCasa = numeroCasa;
         this.nomeCasa = nomeCasa;
         this.gradi = gradi;
         this.minuti = minuti;
@@ -20,9 +22,10 @@ public class CasePlacide {
         this.nomeSegnoZodiacale = nomeSegnoZodiacale;
     }
 
-    public String getNomeCasa() {
-        return nomeCasa;
-    }
+
+    public int getNumeroCasa() { return numeroCasa; }
+
+    public String getNomeCasa() { return nomeCasa; }
 
     public double getGradi() {
         return gradi;

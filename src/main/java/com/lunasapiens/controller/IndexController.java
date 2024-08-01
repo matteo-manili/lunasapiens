@@ -3,15 +3,15 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
+import com.lunasapiens.config.AppConfig;
+import com.lunasapiens.dto.*;
 import com.lunasapiens.filter.RateLimiter;
-import com.lunasapiens.dto.ContactFormDTO;
-import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
-import com.lunasapiens.dto.OroscopoGiornalieroDTO;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.zodiac.CasePlacide;
+import com.lunasapiens.zodiac.PianetaPosizTransito;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
@@ -60,6 +60,7 @@ public class IndexController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+
     @Autowired
     private String getApiGeonamesUsername;
 
@@ -102,109 +103,12 @@ public class IndexController {
 
     @GetMapping("/cattura_seek")
     public String catturaTemaNataleAstroSeek(Model model) {
-        model.addAttribute(INFO_MESSAGE, "Welcome to our dynamic landing page!");
 
-        // div id="vypocty_id_nativ"
-
-        String url = "https://horoscopes.astro-seek.com/calculate-birth-chart-horoscope-online/?input_natal=1" +
-                "&send_calculation=1&narozeni_den=23" +
-                "&narozeni_mesic=1&narozeni_rok=1981&narozeni_hodina=16" +
-                "&narozeni_minuta=16" +
-                "&narozeni_sekunda=00" +
-                "&narozeni_city=Rome%2C+Italy" +
-                "&narozeni_mesto_hidden=Rome" +
-                "&narozeni_stat_hidden=IT" +
-                "&narozeni_podstat_kratky_hidden=" +
-                "&narozeni_sirka_stupne=41" +
-                "&narozeni_sirka_minuty=54" +
-                "&narozeni_sirka_smer=0" +
-                "&narozeni_delka_stupne=12" +
-                "&narozeni_delka_minuty=31" +
-                "&narozeni_delka_smer=0" +
-                "&narozeni_timezone_form=auto" +
-                "&narozeni_timezone_dst_form=auto" +
-                "&house_system=placidus" +
-                "&hid_fortune=1" +
-                "&hid_fortune_check=on" +
-                "&hid_vertex=1" +
-                "&hid_vertex_check=on" +
-                "&hid_chiron=1&hid_chiron_check=on" +
-                "&hid_lilith=1&hid_lilith_check=on" +
-                "&hid_uzel=1&hid_uzel_check=on" +
-                "&tolerance=1&aya=" +
-                "&tolerance_paral=1.2#tabs_redraw";
-        String html = restTemplate.getForObject(url, String.class);
-        Document document = Jsoup.parse(html);
-
-        // Estrai il contenuto del div con id "vypocty_id_nativ"
-        Element divElement = document.getElementById("vypocty_id_nativ");
-
-        if (divElement != null) {
-            System.out.println("Contenuto del div 'vypocty_id_nativ':");
-
-            System.out.println(divElement.html());
-
-            // Seleziona tutti i blocchi di dati dei pianeti
-            for (Element planetElement : divElement.select("div[style^=float: left; width: 80px; margin-left: -5px;]")) {
-                String planetName = planetElement.select("a.tenky-modry").text();
-                String signName = planetElement.nextElementSibling().select("img.astro_symbol").attr("alt");
-                String position = planetElement.nextElementSibling().nextElementSibling().text();
-
-
-                Element retrogradeElement = planetElement.nextElementSibling().nextElementSibling().nextElementSibling().nextElementSibling();
-                boolean isRetrograde = retrogradeElement.text().trim().equals("R");
-
-                double positionInDegrees = convertToDecimalDegrees(position);
-
-                System.out.println("Pianeta: " + planetName);
-                System.out.println("Segno: " + signName);
-                System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
-
-                System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
-
-                System.out.println();
-            }
-
-
-            // TODO scrivi qui il codice per rfecuperare i valorti delle case astrologiche
-
-
-
-            // Seleziona tutti i blocchi di dati delle case astrologiche
-            //Elements houseElements = divElement.select("div[style^=float: left; width: 23px; font-size: 1.1em;]");
-                                            //                 <div style="float: left; width: 20px; font-size: 1.1em;">
-
-            for (Element houseElement : divElement.select("div[style^=float: left; width: 23px; font-size: 1.1em], div[style^=float: left; width: 20px; font-size: 1.1em]")) {
-                String houseName = houseElement.text().replace(":", "");
-                Element siblingElement = houseElement.nextElementSibling();
-                String signName = siblingElement.select("img.astro_symbol").attr("alt");
-                String position = siblingElement.nextElementSibling().text();
-
-                double positionInDegrees = convertToDecimalDegrees(position);
-
-                System.out.println("Casa: " + houseName);
-                System.out.println("Segno: " + signName);
-                System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
-                System.out.println();
-            }
-
-
-
-        } else {
-            System.out.println("Il div con id 'vypocty_id_nativ' non è stato trovato.");
-        }
         return "index";
     }
 
 
-    private double convertToDecimalDegrees(String position) {
-        String[] parts = position.split("°|'");
 
-        int degrees = Integer.parseInt(parts[0].trim());
-        int minutes = Integer.parseInt(parts[1].replace("’", "").trim());
-
-        return degrees + (minutes / 60.0);
-    }
 
 
 
@@ -217,6 +121,7 @@ public class IndexController {
                              @ModelAttribute("cityName") String cityName,
                              @ModelAttribute("regioneName") String regioneName,
                              @ModelAttribute("statoName") String statoName,
+                             @ModelAttribute("statoCode") String statoCode,
                              @ModelAttribute("cityLat") String cityLat,
                              @ModelAttribute("cityLng") String cityLng,
                              @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
@@ -224,7 +129,6 @@ public class IndexController {
     ) {
 
         logger.info("sono in temaNatale");
-
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
         optionalDateTime
@@ -233,24 +137,21 @@ public class IndexController {
                         presentDateTime -> model.addAttribute("dateTime", presentDateTime),
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER)));
 
-
         // Only add attributes if they are not null or empty
         Optional.ofNullable(cityInput).filter(input -> !input.isEmpty()).ifPresent(input -> model.addAttribute("cityInput", input));
         Optional.ofNullable(cityName).filter(name -> !name.isEmpty()).ifPresent(name -> model.addAttribute("cityName", name));
         Optional.ofNullable(regioneName).filter(region -> !region.isEmpty()).ifPresent(region -> model.addAttribute("regioneName", region));
-        Optional.ofNullable(statoName).filter(state -> !state.isEmpty()).ifPresent(state -> model.addAttribute("statoName", state));
+        Optional.ofNullable(statoName).filter(state_name -> !state_name.isEmpty()).ifPresent(state_name -> model.addAttribute("statoName", state_name));
+        Optional.ofNullable(statoCode).filter(state_code -> !state_code.isEmpty()).ifPresent(state_code -> model.addAttribute("statoCode", state_code));
         Optional.ofNullable(cityLat).filter(lat -> !lat.isEmpty()).ifPresent(lat -> model.addAttribute("cityLat", lat));
         Optional.ofNullable(cityLng).filter(lng -> !lng.isEmpty()).ifPresent(lng -> model.addAttribute("cityLng", lng));
         Optional.ofNullable(temaNataleDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("temaNataleDescrizione", description));
         Optional.ofNullable(temaNataleId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("temaNataleId", id));
 
-
-
         logger.info("Tema Natale ID: " + model.getAttribute("temaNataleId"));
 
         // ############ Dati per test, togliere poi!!! ############
         //model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
-
         /*
         model.addAttribute("cityInput","Roma, Lazio, Italia");
         model.addAttribute("cityName", "Roma");
@@ -260,7 +161,6 @@ public class IndexController {
         model.addAttribute("cityLng", "12.51133");
         model.addAttribute("luogoNascita", "Roma, Lazio, Italia");
         */
-
         return "tema-natale";
     }
 
@@ -271,10 +171,10 @@ public class IndexController {
                                    @RequestParam("cityName") String cityName,
                                    @RequestParam("regioneName") String regioneName,
                                    @RequestParam("statoName") String statoName,
+                                   @RequestParam("statoCode") String statoCode,
                                    RedirectAttributes redirectAttributes) {
 
         logger.info("sono in temaNataleSubmit");
-
         // Estrai le singole componenti della data e ora
         int hour = datetime.getHour();
         int minute = datetime.getMinute();
@@ -290,6 +190,7 @@ public class IndexController {
         logger.info("cityName: " + cityName);
         logger.info("regioneName: " + regioneName);
         logger.info("statoName: " + statoName);
+        logger.info("statoCode: " + statoCode);
         logger.info("Latitude: " + cityLat);
         logger.info("Longitude: " + cityLng);
 
@@ -298,15 +199,22 @@ public class IndexController {
         redirectAttributes.addFlashAttribute("cityName", cityName);
         redirectAttributes.addFlashAttribute("regioneName", regioneName);
         redirectAttributes.addFlashAttribute("statoName", statoName);
+        redirectAttributes.addFlashAttribute("statoCode", statoCode);
         redirectAttributes.addFlashAttribute("cityLat", cityLat);
         redirectAttributes.addFlashAttribute("cityLng", cityLng);
         redirectAttributes.addFlashAttribute("dateTime", datetime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
         redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format(Constants.DATE_TIME_FORMATTER));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
 
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
 
-        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione(giornoOraPosizioneDTO);
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
+        CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
+
+        //String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaSwiss(giornoOraPosizioneDTO);
+
+        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+
+
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
         String temaNataleId = UUID.randomUUID().toString();
@@ -322,56 +230,6 @@ public class IndexController {
         // Redirect alla pagina 'tema-natale'
         return "redirect:/tema-natale";
     }
-
-
-
-
-    @GetMapping("/coordinate")
-    public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
-        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
-        logger.info(url);
-        String response;
-        List<Map<String, Object>> locations = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-        try {
-            response = restTemplate.getForObject(url, String.class);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response);
-            JsonNode geonames = root.path("geonames");
-            for (JsonNode node : geonames) {
-                if ("P".equals(node.path("fcl").asText())) {
-                    String name = node.path("name").asText();
-                    String adminName1 = node.path("adminName1").asText();
-                    String countryCode = node.path("countryCode").asText();
-                    String uniqueKey = name + "|" + adminName1 + "|" + countryCode;
-                    if (!seen.contains(uniqueKey)) {
-                        seen.add(uniqueKey);
-                        Map<String, Object> location = new HashMap<>();
-                        location.put("name", name);
-                        location.put("adminName1", adminName1);
-                        location.put("countryName", node.path("countryName").asText());
-                        location.put("countryCode", countryCode);
-                        location.put("lat", node.path("lat").asText());
-                        location.put("lng", node.path("lng").asText());
-                        locations.add(location);
-                    }
-                }
-            }
-            return new ResponseEntity<>(locations, HttpStatus.OK);
-
-        } catch (Exception e) {
-            logger.error("Errore durante il recupero delle coordinate", e);
-            // Restituisci la pagina di errore con il messaggio
-            ModelAndView modelAndView = new ModelAndView("error");
-            modelAndView.addObject("infoError", "Si è verificato un errore: " + e.getMessage());
-            return new ResponseEntity<>(modelAndView.getModel(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-
-
-
 
     /**
      * Spring WebSocket
@@ -424,6 +282,51 @@ public class IndexController {
         }
 
         return response;
+    }
+
+
+
+
+    @GetMapping("/coordinate")
+    public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
+        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
+        logger.info(url);
+        String response;
+        List<Map<String, Object>> locations = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        try {
+            response = restTemplate.getForObject(url, String.class);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response);
+            JsonNode geonames = root.path("geonames");
+            for (JsonNode node : geonames) {
+                if ("P".equals(node.path("fcl").asText())) {
+                    String name = node.path("name").asText();
+                    String adminName1 = node.path("adminName1").asText();
+                    String countryCode = node.path("countryCode").asText();
+                    String uniqueKey = name + "|" + adminName1 + "|" + countryCode;
+                    if (!seen.contains(uniqueKey)) {
+                        seen.add(uniqueKey);
+                        Map<String, Object> location = new HashMap<>();
+                        location.put("name", name);
+                        location.put("adminName1", adminName1);
+                        location.put("countryName", node.path("countryName").asText());
+                        location.put("countryCode", countryCode);
+                        location.put("lat", node.path("lat").asText());
+                        location.put("lng", node.path("lng").asText());
+                        locations.add(location);
+                    }
+                }
+            }
+            return new ResponseEntity<>(locations, HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error("Errore durante il recupero delle coordinate", e);
+            // Restituisci la pagina di errore con il messaggio
+            ModelAndView modelAndView = new ModelAndView("error");
+            modelAndView.addObject("infoError", "Si è verificato un errore: " + e.getMessage());
+            return new ResponseEntity<>(modelAndView.getModel(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

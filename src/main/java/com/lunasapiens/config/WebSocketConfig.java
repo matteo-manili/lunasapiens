@@ -38,7 +38,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // Configura i prefissi per i messaggi gestiti dal broker
         config.enableSimpleBroker("/topic/", "/queue/");
-
     }
 
     /**

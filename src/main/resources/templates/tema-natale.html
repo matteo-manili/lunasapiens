@@ -58,11 +58,11 @@
     <h1 class="mb-4">Tema Natale IA</h1>
     <h4 class="mb-3">Dopo aver generato il tuo Tema Natale, puoi utilizzare la Chat con Intelligenza Artificiale per porre qualsiasi domanda e ottenere chiarimenti sul tuo Tema Natale.</h4>
 
-    <div class="alert alert-info" role="alert">
+    <!-- <div class="alert alert-info" role="alert">
         Utilizziamo il sistema di effemeridi <a href="https://www.astro.com/swisseph/swephinfo_e.htm">Swiss Ephemeris</a> (tabelle che mostrano le posizioni
         ad alta precisione dei corpi celesti) per determinare i transiti e la domificazione Placidus delle case.<br>
         Essendo un sistema diverso da quello dei siti più diffusi, potrebbe far sì che i segni si trovino in case diverse.
-    </div>
+    </div> -->
 
     <form action="/temaNataleSubmit" method="GET" class="mb-5">
         <div class="mb-3">
@@ -76,6 +76,7 @@
             <input type="hidden" id="cityName" name="cityName" th:value="${cityName}">
             <input type="hidden" id="regioneName" name="regioneName" th:value="${regioneName}">
             <input type="hidden" id="statoName" name="statoName" th:value="${statoName}">
+            <input type="hidden" id="statoCode" name="statoCode" th:value="${statoCode}">
             <input type="hidden" id="cityLat" name="cityLat" th:value="${cityLat}">
             <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
             <div id="cityError" class="text-danger" style="display: none;">Per favore inserisci il nome di una località.</div>
@@ -250,6 +251,7 @@ $(document).ready(function() {
                             fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
                             regioneName: item.adminName1,
                             statoName: item.countryName,
+                            statoCode: item.countryCode,
                             lat: item.lat,
                             lng: item.lng
                         };
@@ -263,6 +265,7 @@ $(document).ready(function() {
             $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
             $("#regioneName").val(ui.item.regioneName);
             $("#statoName").val(ui.item.statoName);
+            $("#statoCode").val(ui.item.statoCode);
             $("#cityLat").val(ui.item.lat);
             $("#cityLng").val(ui.item.lng);
             checkFormValidity(); // Controlla la validità del modulo
