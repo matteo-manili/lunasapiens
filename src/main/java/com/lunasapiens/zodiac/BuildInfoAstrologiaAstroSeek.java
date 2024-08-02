@@ -96,13 +96,8 @@ public class BuildInfoAstrologiaAstroSeek {
     private ArrayList<CasePlacide> casePlacidesArrayList;
 
 
-    public BuildInfoAstrologiaAstroSeek() {
-
-
-    }
-
-
-    public BuildInfoAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO, Properties transitiPianetiSegniProperties ){
+    public BuildInfoAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
+                                                                   CoordinateDTO coordinateDTO, Properties transitiPianetiSegniProperties ){
 
         String urlAstroSeek = "https://horoscopes.astro-seek.com/calculate-birth-chart-horoscope-online/?input_natal=1" +
                 "&send_calculation=1" +
@@ -179,8 +174,8 @@ public class BuildInfoAstrologiaAstroSeek {
                     Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
                     double gradiTotali = segno.getGradi() + positionInDegrees;
                     String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianeta.getNumero(), segno.getNumero());
-                    PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(pianeta.getNumero(), pianeta.getNome(), gradiTotali, 0, 0,
-                            segno.getNumero(), segno.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+                    PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(pianeta.getNumero(), pianeta.getNome(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
+                            (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                     pianetaPosizTransitoArrayList.add(pianetaPosizTransito);
                 }
 
@@ -192,19 +187,17 @@ public class BuildInfoAstrologiaAstroSeek {
                     String signName = siblingElement.select("img.astro_symbol").attr("alt");
                     String position = siblingElement.nextElementSibling().text();
 
-                    double positionInDegrees = convertToDecimalDegrees(position);
+                    Constants.Case casa = Constants.Case.fromName( houseName );
+                    Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
+                    double gradiTotali = segno.getGradi() + convertToDecimalDegrees(position);
 
                     System.out.println("Casa: " + houseName);
                     System.out.println("Segno: " + signName);
-                    System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
+                    System.out.println("valore: " + position + " "+" valore in decimali: "+gradiTotali);
                     System.out.println();
 
-
-                    Constants.Case casa = Constants.Case.fromName( houseName );
-                    Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
-                    double gradiTotali = segno.getGradi() + positionInDegrees;
-
-                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, 0, 0, segno.getNumero(), segno.getNome());
+                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
+                            (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome());
                     casePlacidesArrayList.add( casaPlacida );
                 }
 
@@ -223,66 +216,47 @@ public class BuildInfoAstrologiaAstroSeek {
                 buildInfoAstrologiaAstroSeek.setPianetaPosizTransitoArrayList( pianetaPosizTransitoArrayList );
                 buildInfoAstrologiaAstroSeek.setCasePlacidesArrayList( casePlacidesArrayList );
                 cache.put( urlAstroSeek, buildInfoAstrologiaAstroSeek );
-
                 return buildInfoAstrologiaAstroSeek;
 
             } else {
                 System.out.println("Il div con id 'vypocty_id_nativ' non è stato trovato.");
             }
-
             return null;
         }
     }
 
     private double convertToDecimalDegrees(String position) {
+        Pair<Integer, Integer> pair = dammiGradiEMinuti(position);
+        return pair.getKey() + (pair.getValue() / 60.0);
+    }
+
+    private static Pair dammiGradiEMinuti(String position) {
         String[] parts = position.split("°|'");
         int degrees = Integer.parseInt(parts[0].trim());
         int minutes = Integer.parseInt(parts[1].replace("’", "").trim());
-        return degrees + (minutes / 60.0);
-    }
-
-
-    private static Pair convertLongitudeToHoursMinutes(double longitude) {
-        // Calcola il numero totale di minuti
-        double totalMinutes = longitude * 4;
-
-        // Calcola le ore
-        int hours = (int) totalMinutes / 60;
-
-        // Calcola i minuti
-        int minutes = (int) totalMinutes % 60;
-
-        // Stampa il risultato
-        System.out.println("Longitude in hours and minutes: " + hours + " hours and " + minutes + " minutes");
-
-        Pair<Integer, Integer> pair = new Pair<>(hours, minutes);
-
-        //System.out.println("Primo valore: " + pair. getKey());
-        //System.out.println("Secondo valore: " + pair.getValue());
-
+        Pair<Integer, Integer> pair = new Pair<>(degrees, minutes);
         return pair;
     }
 
 
 
-    /*
-    private Pair dividiCoordinata(double coordinata){
-        // Ottenere la parte intera
-        int parteIntera = (int) coordinata;
-        // Ottenere la parte decimale
-        double parteDecimale = coordinata - parteIntera;
-        // Convertire la parte decimale in intero (moltiplicando per 100)
-        int parteDecimaleIntera = (int) Math.round(parteDecimale * 100);
 
-        Pair<Integer, Integer> pair = new Pair<>(parteIntera, parteDecimaleIntera);
 
-        //System.out.println("Primo valore: " + pair. getKey());
-        //System.out.println("Secondo valore: " + pair.getValue());
-
+    private static Pair convertLongitudeToHoursMinutes(double coordinata) {
+        // Estrai la parte intera
+        int integerPart = (int) coordinata;
+        // Estrai la parte decimale
+        double decimalPart = coordinata - integerPart;
+        // Moltiplica la parte decimale per 100 e cast in int per ottenere i decimali fino alla seconda posizione
+        int decimalAsInteger = (int) (decimalPart * 100);
+        // Mostra i risultati
+        //System.out.println("Parte intera: " + integerPart);
+        //System.out.println("Parte decimale (fino alla seconda posizione): " + decimalAsInteger);
+        Pair<Integer, Integer> pair = new Pair<>(integerPart, decimalAsInteger);
         return pair;
     }
 
-     */
+
 
 
     public ArrayList<PianetaPosizTransito> getPianetaPosizTransitoArrayList() {

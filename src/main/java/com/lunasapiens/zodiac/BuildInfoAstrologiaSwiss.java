@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
-
+@Deprecated
 public class BuildInfoAstrologiaSwiss {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaSwiss.class);

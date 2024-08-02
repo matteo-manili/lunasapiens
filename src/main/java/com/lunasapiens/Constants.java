@@ -63,9 +63,7 @@ public class Constants {
         private final String nome_en;
 
         Pianeti(int numero, String nome, String nome_en) {
-            this.numero = numero;
-            this.nome = nome;
-            this.nome_en = nome_en;
+            this.numero = numero; this.nome = nome; this.nome_en = nome_en;
         }
         public int getNumero() {
             return numero;
@@ -91,13 +89,6 @@ public class Constants {
             }
             return nomi;
         }
-        public static List<String> getAllNomiEn() {
-            List<String> nomiEn = new ArrayList<>();
-            for (Pianeti pianeta : Pianeti.values()) {
-                nomiEn.add(pianeta.getNomeEn());
-            }
-            return nomiEn;
-        }
 
         public static Pianeti fromNomeEn(String nomeEn) {
             try {
@@ -110,6 +101,10 @@ public class Constants {
                 return null;
             }
             return null;
+        }
+
+        public static List<Pianeti> getAllPianeti() {
+            return Arrays.asList(Pianeti.values());
         }
 
     }
@@ -142,6 +137,10 @@ public class Constants {
             }
             throw new IllegalArgumentException("Invalid code: " + code);
         }
+        public static List<Aspetti> getAllAspetti() {
+            return Arrays.asList(Aspetti.values());
+        }
+
     }
 
     public enum SegniZodiacali {
@@ -164,27 +163,17 @@ public class Constants {
         private final double gradi;
 
         SegniZodiacali(int numero, String nome, String nome_en, double gradi) {
-            this.numero = numero;
-            this.nome = nome;
-            this.nome_en = nome_en;
-            this.gradi = gradi;
+            this.numero = numero; this.nome = nome; this.nome_en = nome_en; this.gradi = gradi;
         }
 
-        public int getNumero() {
-            return numero;
-        }
-
+        public int getNumero() { return numero; }
         public String getNome() {
             return nome;
         }
-
         public String getNomeEn() {
             return nome_en;
         }
-
-        public double getGradi() {
-            return gradi;
-        }
+        public double getGradi() { return gradi; }
 
         public static SegniZodiacali fromNumero(int numero) {
             for (SegniZodiacali segno : SegniZodiacali.values()) {
@@ -203,14 +192,6 @@ public class Constants {
             return nomi;
         }
 
-        public static List<String> getAllNomiEn() {
-            List<String> nomiEn = new ArrayList<>();
-            for (SegniZodiacali segno : SegniZodiacali.values()) {
-                nomiEn.add(segno.getNomeEn());
-            }
-            return nomiEn;
-        }
-
         public static SegniZodiacali fromNomeEn(String nomeEn) {
             for (SegniZodiacali segno : SegniZodiacali.values()) {
                 if (segno.getNomeEn().equalsIgnoreCase(nomeEn)) {
@@ -219,6 +200,11 @@ public class Constants {
             }
             throw new IllegalArgumentException("Nome Pianeta non valido: " + nomeEn);
         }
+
+        public static List<SegniZodiacali> getAllSegniZodiacali() {
+            return Arrays.asList(SegniZodiacali.values());
+        }
+
     }
 
 

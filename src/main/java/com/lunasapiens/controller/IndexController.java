@@ -223,7 +223,12 @@ public class IndexController {
         // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-        String temaNataleDescrizioneIstruzioneBOTSystem = "Rispondi alle domande dell'utente in base al suo tema natale: " + temaNataleDescrizione;
+        String temaNataleDescrizioneIstruzioneBOTSystem = "Rispondi alle domande dell'utente in base al suo tema natale." +
+                "Le case astrologche ed i pineti relativi pianeti indicano il suo futuro e gli eventi.\n" +
+                "I transiti dei Pianeti indicano le sue caratteristiche e vanno declinate in base al significato del Pianeta, " +
+                "al significato dei relativi Aspetti e se retrogrado al significato di Pianeta Retrogrado.\n\n"
+                +"Tema natale: \n" + temaNataleDescrizione;
+
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
         cache.put(temaNataleId, chatMessageIa);
 

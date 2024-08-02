@@ -1,7 +1,6 @@
 package com.lunasapiens.dto;
 
 
-
 public class CoordinateDTO {
 
     private String cityName;
