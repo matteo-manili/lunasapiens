@@ -111,11 +111,11 @@ public class BuildInfoAstrologiaAstroSeek {
                 "&narozeni_mesto_hidden=" + coordinateDTO.getCityName() +
                 "&narozeni_stat_hidden=" +coordinateDTO.getStatoCode() +
                 "&narozeni_podstat_kratky_hidden=" +
-                "&narozeni_sirka_stupne=" +convertLongitudeToHoursMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
-                "&narozeni_sirka_minuty="+convertLongitudeToHoursMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
+                "&narozeni_sirka_stupne=" +convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
+                "&narozeni_sirka_minuty="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
                 "&narozeni_sirka_smer=0" +
-                "&narozeni_delka_stupne="+convertLongitudeToHoursMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
-                "&narozeni_delka_minuty="+convertLongitudeToHoursMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
+                "&narozeni_delka_stupne="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
+                "&narozeni_delka_minuty="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
                 "&narozeni_delka_smer=0" +
                 "&narozeni_timezone_form=auto" +
                 "&narozeni_timezone_dst_form=auto" +
@@ -241,18 +241,14 @@ public class BuildInfoAstrologiaAstroSeek {
 
 
 
-
-    private static Pair convertLongitudeToHoursMinutes(double coordinata) {
-        // Estrai la parte intera
-        int integerPart = (int) coordinata;
-        // Estrai la parte decimale
-        double decimalPart = coordinata - integerPart;
-        // Moltiplica la parte decimale per 100 e cast in int per ottenere i decimali fino alla seconda posizione
-        int decimalAsInteger = (int) (decimalPart * 100);
-        // Mostra i risultati
-        //System.out.println("Parte intera: " + integerPart);
-        //System.out.println("Parte decimale (fino alla seconda posizione): " + decimalAsInteger);
-        Pair<Integer, Integer> pair = new Pair<>(integerPart, decimalAsInteger);
+    private static Pair convertCoordonataToDegreesMinutes(double coordinata) {
+        int degrees = (int) coordinata;
+        double fractionalPart = coordinata - degrees;
+        // Convertire la parte decimale in minuti
+        double minutes = fractionalPart * 60;
+        int minutesInt = (int) minutes;
+        double seconds = (minutes - minutesInt) * 60;
+        Pair<Integer, Integer> pair = new Pair<>(degrees, minutesInt);
         return pair;
     }
 
