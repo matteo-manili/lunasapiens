@@ -113,7 +113,8 @@ public class ServizioTemaNatale {
                 for (int pianetaSign : pianetiSignori) {
                     for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
-                            descTemaNatale.append( "<li>"+varPianeta.descrizione_Pianeta_Retrogrado()+"<i> (Pianeta domicilio del segno della Casa) </i>" +
+                            descTemaNatale.append( "<li>"+varPianeta.descrizione_Pianeta_Retrogrado()+"<i> "
+                                +BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa+"</i>" +
                                     pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                         }
                     }

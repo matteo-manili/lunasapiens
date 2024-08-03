@@ -226,7 +226,7 @@ public class IndexController {
         String temaNataleDescrizioneIstruzioneBOTSystem = BuildInfoAstrologiaAstroSeek
                 .temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
 
-        System.out.println( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescrizioneIstruzioneBOTSystem );
+        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescrizioneIstruzioneBOTSystem );
 
 
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));

@@ -97,6 +97,7 @@ public class BuildInfoAstrologiaAstroSeek {
     private ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList;
     private ArrayList<CasePlacide> casePlacidesArrayList;
 
+    public static String pianetaDomicioSegnoCasa = "(Pianeta domicilio del segno della Casa)";
 
     public static String temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
 
@@ -104,7 +105,7 @@ public class BuildInfoAstrologiaAstroSeek {
 
         "- Le Case astrologiche ed i pineti relativi alle Case, indicano il futuro e gli eventi dell'utente.\n" +
         "- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n" +
-        "- le interpretazioni dei pianeti nelle Case vanno declinate in base al significato della Casa, al significato " +
+        "- le interpretazioni dei pianeti nelle Case inclusi i " +pianetaDomicioSegnoCasa+" vanno declinate in base al significato della Casa, al significato " +
         "del Pianeta, al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado\n"+
 
         "- Le interpretazioni dei Transiti dei Pianeti vanno declinati in base al Significato del Pianeta, " +
