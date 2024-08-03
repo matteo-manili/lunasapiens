@@ -10,10 +10,7 @@ import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
-import com.lunasapiens.zodiac.CasePlacide;
-import com.lunasapiens.zodiac.PianetaPosizTransito;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
+import com.lunasapiens.zodiac.*;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -182,6 +179,8 @@ public class IndexController {
         int month = datetime.getMonthValue();
         int year = datetime.getYear();
 
+        String luogoNascita = cityName + ", " + regioneName + ", " + statoName;
+
         logger.info("Ora: " + hour);
         logger.info("Minuti: " + minute);
         logger.info("Giorno: " + day);
@@ -223,11 +222,12 @@ public class IndexController {
         // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-        String temaNataleDescrizioneIstruzioneBOTSystem = "Rispondi alle domande dell'utente in base al suo tema natale." +
-                "Le case astrologche ed i pineti relativi pianeti indicano il suo futuro e gli eventi.\n" +
-                "I transiti dei Pianeti indicano le sue caratteristiche e vanno declinate in base al significato del Pianeta, " +
-                "al significato dei relativi Aspetti e se retrogrado al significato di Pianeta Retrogrado.\n\n"
-                +"Tema natale: \n" + temaNataleDescrizione;
+
+        String temaNataleDescrizioneIstruzioneBOTSystem = BuildInfoAstrologiaAstroSeek
+                .temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
+
+        System.out.println( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescrizioneIstruzioneBOTSystem );
+
 
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
         cache.put(temaNataleId, chatMessageIa);

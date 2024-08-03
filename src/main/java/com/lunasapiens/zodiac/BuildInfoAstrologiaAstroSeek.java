@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,6 +96,39 @@ public class BuildInfoAstrologiaAstroSeek {
 
     private ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList;
     private ArrayList<CasePlacide> casePlacidesArrayList;
+
+
+    public static String temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
+
+        return "- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n" +
+
+        "- Le Case astrologiche ed i pineti relativi alle Case, indicano il futuro e gli eventi dell'utente.\n" +
+        "- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n" +
+        "- le interpretazioni dei pianeti nelle Case vanno declinate in base al significato della Casa, al significato " +
+        "del Pianeta, al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado\n"+
+
+        "- Le interpretazioni dei Transiti dei Pianeti vanno declinati in base al Significato del Pianeta, " +
+        "al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado.\n\n" +
+
+
+        "- Data del tema natale e data nascita dell'utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n" +
+        "- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n"+
+        "- Luogo di nascita dell'utente: "+luogoNascita +"\n\n" +
+
+        "- Non puoi generare o creare temi natali. In astrologia non conosci i concetti di: karma e nodo karmico, aspetto stellium, " +
+        "luna nord e sud, kirone e altre stelle.\n" +
+        "- Non dare risposte che non centrano con i dati che ti ho fornito.\n\n" +
+
+        "- Descrizione tema natale dell'utente: \n" + Util.convertHtmlToPlainText(temaNataleDescrizione);
+    }
+
+
+    public static int calculateAge(LocalDateTime dateOfBirth) {
+        LocalDateTime now = LocalDateTime.now();
+        Period period = Period.between(dateOfBirth.toLocalDate(), now.toLocalDate());
+        return period.getYears();
+    }
+
 
 
     public BuildInfoAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO,

@@ -8,6 +8,8 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -77,6 +79,23 @@ public class Util {
 
 
 
+    public static String convertHtmlToPlainText(String html) {
+
+        Document document = Jsoup.parse(html);
+
+        document.select("b").prepend("\\n");
+
+        document.select("br").append("\\n");
+
+        document.select("h4").prepend("\\n\\n").append("\\n");
+
+        document.select("ul").unwrap();
+        //document.select("ul").prepend("\\n").append("\\n");
+
+        document.select("li").prepend("\\n");
+
+        return document.text().replace("\\n", "\n");
+    }
 
 
     /**
