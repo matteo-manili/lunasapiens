@@ -211,16 +211,16 @@ public class Constants {
 
 
     public enum Case {
-        CASA_1(1, "AC"),
+        CASA_1(1, "1 AC"),
         CASA_2(2, "2"),
         CASA_3(3, "3"),
-        CASA_4(4, "IC"),
+        CASA_4(4, "4 IC"),
         CASA_5(5, "5"),
         CASA_6(6, "6"),
-        CASA_7(7, "DC"),
+        CASA_7(7, "7 DC"),
         CASA_8(8, "8"),
         CASA_9(9, "9"),
-        CASA_10(10, "MC"),
+        CASA_10(10, "10 MC"),
         CASA_11(11, "11"),
         CASA_12(12, "12");
 
