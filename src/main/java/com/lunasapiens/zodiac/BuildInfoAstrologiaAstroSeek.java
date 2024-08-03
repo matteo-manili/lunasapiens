@@ -116,9 +116,9 @@ public class BuildInfoAstrologiaAstroSeek {
         "- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n"+
         "- Luogo di nascita dell'utente: "+luogoNascita +"\n\n" +
 
-        "- Non puoi creare temi natale in nessun modo. In astrologia non sai nulla di: karma e nodo karmico, aspetto stellium, " +
-        "luna piena, nodi lunari nord sud, lilith chirone e altre stelle.\n" +
-        "- Non dare risposte che non centrano con i dati che ti ho fornito.\n\n" +
+        "- Non puoi creare un tema natale in nessun modo. In astrologia non conosci gli argomenti di: karma, nodo karmico, aspetto stellium, " +
+        "luna piena, nodi lunari nord sud, lilith chirone.\n" +
+        "- Non dare risposte che vadano oltre l'argomento del tema natale dell'utente.\n\n" +
 
         "- Descrizione tema natale dell'utente: \n" + Util.convertHtmlToPlainText(temaNataleDescrizione);
     }
