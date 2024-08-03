@@ -223,7 +223,7 @@ public class BuildInfoAstrologiaAstroSeek {
                     String signName = siblingElement.select("img.astro_symbol").attr("alt");
                     String position = siblingElement.nextElementSibling().text();
 
-                    Constants.Case casa = Constants.Case.fromName( houseName );
+                    Constants.Case casa = Constants.Case.fromCode( houseName );
                     Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
                     double gradiTotali = segno.getGradi() + convertToDecimalDegrees(position);
 

@@ -211,33 +211,35 @@ public class Constants {
 
 
     public enum Case {
-        CASA_1(1, "1 AC"),
-        CASA_2(2, "2"),
-        CASA_3(3, "3"),
-        CASA_4(4, "4 IC"),
-        CASA_5(5, "5"),
-        CASA_6(6, "6"),
-        CASA_7(7, "7 DC"),
-        CASA_8(8, "8"),
-        CASA_9(9, "9"),
-        CASA_10(10, "10 MC"),
-        CASA_11(11, "11"),
-        CASA_12(12, "12");
+        CASA_1(1, "1 AC", "AC"),
+        CASA_2(2, "2", "2"),
+        CASA_3(3, "3", "3"),
+        CASA_4(4, "4 IC", "IC"),
+        CASA_5(5, "5", "5"),
+        CASA_6(6, "6", "6"),
+        CASA_7(7, "7 DC", "DC"),
+        CASA_8(8, "8", "8"),
+        CASA_9(9, "9", "9"),
+        CASA_10(10, "10 MC", "MC"),
+        CASA_11(11, "11", "11"),
+        CASA_12(12, "12", "12");
 
         private final int numero;
         private final String name;
+        private final String code;
 
-        Case(int numero, String name) {
+        Case(int numero, String name, String code) {
             this.numero = numero;
             this.name = name;
+            this.code = code;
         }
         public int getNumero() {
             return numero;
         }
 
-        public String getName() {
-            return name;
-        }
+        public String getName() { return name; }
+
+        public String getCode() { return code; }
 
         public static Case fromNumero(int numero) {
             for (Case casa : Case.values()) {
@@ -254,6 +256,14 @@ public class Constants {
                 }
             }
             throw new IllegalArgumentException("Invalid name: " + name);
+        }
+        public static Case fromCode(String code) {
+            for (Case casa : Case.values()) {
+                if (casa.getCode().equalsIgnoreCase(code)) {
+                    return casa;
+                }
+            }
+            throw new IllegalArgumentException("Invalid code: " + code);
         }
     }
 
