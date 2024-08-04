@@ -30,3 +30,12 @@
 .ui-helper-hidden-accessible {
     display: none; /* Nascondi il messaggio dei risultati disponibili */
 }
+/* pulsanti social */
+@media (max-width: 576px) {
+    .btn-group {
+        flex-direction: column;
+    }
+    .btn-group .btn {
+        margin: 0.5rem 0;
+    }
+}

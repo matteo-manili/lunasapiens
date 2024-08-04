@@ -49,15 +49,7 @@
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
-    /* pulsanti social */
-    @media (max-width: 576px) {
-        .btn-group {
-            flex-direction: column;
-        }
-        .btn-group .btn {
-            margin: 0.5rem 0;
-        }
-    }
+
 
 </style>
 
@@ -68,22 +60,10 @@
 
     <div class="text-center mt-5 mb-5">
         <h4>Fai conoscere LunaSapiens!</h4>
-        <p>Se ti piace scoprire il tuo Tema Natale con LunaSapiens, aiutaci a farlo conoscere ai tuoi amici! Condividi la nostra pagina con un clic sui pulsanti qui sotto e lascia che anche loro esplorino la magia dell'astrologia. Grazie per il tuo supporto! 🌟</p>
-        <div class="btn-group mt-4 d-flex flex-wrap justify-content-center" role="group">
-            <!-- Pulsante di condivisione su Facebook -->
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.lunasapiens.com/tema-natale" class="btn btn-primary rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-                Condividi su Facebook
-            </a>
-            <!-- Pulsante di condivisione su WhatsApp -->
-            <a href="https://wa.me/?text=Scopri%20il%20tuo%20Tema%20Natale%20con%20LunaSapiens!%20https://www.lunasapiens.com/tema-natale" class="btn btn-success rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-                Condividi su WhatsApp
-            </a>
-            <!-- Pulsante di condivisione su Telegram -->
-            <a href="https://t.me/share/url?url=https://www.lunasapiens.com/tema-natale&text=Scopri%20il%20tuo%20Tema%20Natale%20con%20LunaSapiens!" class="btn btn-info rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-                Condividi su Telegram
-            </a>
-        </div>
+        <p>Se ti piace scoprire il tuo Tema Natale con LunaSapiens, aiutaci a farlo conoscere ai tuoi amici! Condividi la nostra pagina con un clic sui pulsanti qui sotto e lascia che anche loro esplorino la magia dell'astrologia. Grazie per il tuo supporto!</p>
+        <div th:replace="~{fragments/templateBase :: pulsanti_social('tema-natale')}"></div>
     </div>
+
 
 
 

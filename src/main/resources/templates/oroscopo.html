@@ -17,6 +17,14 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-5">
+
+    <div class="text-center mt-5 mb-5">
+        <h4>Fai conoscere LunaSapiens!</h4>
+        <p>Se trovi utili le nostre previsioni astrologiche, condividi LunaSapiens con i tuoi amici! Utilizza i pulsanti qui sotto per far conoscere l'oroscopo del giorno a chi ti sta a cuore.</p>
+        <div th:replace="~{fragments/templateBase :: pulsanti_social('oroscopo')}"></div>
+    </div>
+
+
     <div class="p-5 mb-4 bg-light rounded-3 text-center shadow-sm">
         <h3 class="mb-4">Iscriviti per Ricevere l'Oroscopo del Giorno via email</h3>
         <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
