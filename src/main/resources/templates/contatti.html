@@ -8,22 +8,22 @@
     </th:block>
     <th:block th:fragment="links"><link rel="stylesheet" href="/css/style.css"></th:block>
 </head>
-
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-
 <div class="container mt-4">
+
     <h1 class="mb-4">Contatti</h1>
 
-    <!-- Mostra il messaggio -->
-    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-        <p th:text="${infoMessage}"></p>
-    </div>
+    <div class="bg-light p-4 rounded-3 mb-3 ">
+        <!-- Mostra il messaggio -->
+        <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+            <p th:text="${infoMessage}"></p>
+        </div>
 
-    <div class="bg-white border rounded shadow-sm overflow-hidden mb-4">
 
         <form action="#" th:action="@{/contattiSubmit}" th:object="${contactForm}" method="post" onsubmit="showLoadingOverlay()">
-            <div class="row gy-4 gy-xl-5 p-4 p-xl-5">
+            <div class="row gy-3 gy-xl-4 p-xl-4 p-4">
+
                 <div class="col-12">
                     <label for="name" class="form-label">Nome <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" th:field="*{name}" required />
@@ -55,14 +55,11 @@
         </form>
 
     </div>
-
 </div>
 
 <!-- Finestra di attesa -->
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
-
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
-
 </body>
 </html>
