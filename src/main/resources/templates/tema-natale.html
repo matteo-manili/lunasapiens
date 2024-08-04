@@ -5,6 +5,18 @@
     <th:block th:fragment="meta">
         <meta name="description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali.">
         <meta name="keywords" content="Tema Natale, astrologia, intelligenza artificiale, chat IA, LunaSapiens, oroscopo, astrologia personalizzata, descrizione Tema Natale, influenze celesti">
+        <meta property="og:title" content="Tema Natale IA" />
+        <meta property="og:description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali." />
+        <meta property="og:image" content="/moon_icon.ico" />
+        <meta property="og:image:type" content="image/x-icon" />
+        <meta property="og:image:width" content="64" />
+        <meta property="og:image:height" content="64" />
+        <meta property="og:url" content="https://www.lunasapiens.com/tema-natale" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Tema Natale IA" />
+        <meta name="twitter:description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali." />
+        <meta name="twitter:image" content="/moon_icon.ico" />
     </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
@@ -14,19 +26,16 @@
         <script src="/js/2.3.3.stomp.min.js"></script>
     </th:block>
 </head>
-
 <style>
     .hidden-text {
         display: none;
     }
-
     #loading-indicator {
         text-align: center;
         font-style: italic;
         color: #007bff; /* Colore blu per l'indicatore */
         margin-top: 10px;
     }
-
     /* Stile comune per tutti i messaggi */
     .chat-message {
         padding: 10px;
@@ -35,38 +44,27 @@
         max-width: 80%;
         word-wrap: break-word; /* Gestisce il testo lungo */
     }
-
     /* Stile per i messaggi dell'utente */
     .user-message {
         background-color: #e3f2fd; /* Celeste chiaro per i messaggi del bot */
         align-self: flex-end; /* Allinea i messaggi dell'utente a destra */
         color: #01579b; /* Blu scuro per il testo */
     }
-
     /* Stile per i messaggi del bot */
     .bot-message {
         background-color: #e0f2f1; /* Verde acqua chiaro per i messaggi dell'utente */
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
-
-
 </style>
-
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-
 <div class="container mt-5">
-
     <div class="text-center mt-5 mb-5">
         <h4>Fai conoscere LunaSapiens!</h4>
         <p>Se ti piace scoprire il tuo Tema Natale con LunaSapiens, aiutaci a farlo conoscere ai tuoi amici! Condividi la nostra pagina con un clic sui pulsanti qui sotto e lascia che anche loro esplorino la magia dell'astrologia. Grazie per il tuo supporto!</p>
         <div th:replace="~{fragments/templateBase :: pulsanti_social('tema-natale')}"></div>
     </div>
-
-
-
-
 
     <h1 class="mb-4">Tema Natale IA</h1>
     <h4 class="mb-3">Dopo aver generato il tuo Tema Natale, puoi utilizzare la Chat con Intelligenza Artificiale per porre qualsiasi domanda e ottenere chiarimenti sul tuo Tema Natale.</h4>

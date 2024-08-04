@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Oroscopo del Giorno</title>
     <th:block th:fragment="meta">
-    <meta name="description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata. Iscriviti per ricevere l'oroscopo del giorno direttamente nella tua email e rimani aggiornato sulle influenze astrali quotidiane.">
-    <meta name="keywords" content="oroscopo del giorno, previsioni astrologiche, astrologia giornaliera, Ariete, Toro, Gemelli, Cancro, Leone, Vergine, Bilancia, Scorpione, Sagittario, Capricorno, Acquario, Pesci, transiti planetari, aspetti celesti, oroscopo via email">
+        <meta name="description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata. Iscriviti per ricevere l'oroscopo del giorno direttamente nella tua email e rimani aggiornato sulle influenze astrali quotidiane.">
+        <meta name="keywords" content="oroscopo del giorno, previsioni astrologiche, astrologia giornaliera, Ariete, Toro, Gemelli, Cancro, Leone, Vergine, Bilancia, Scorpione, Sagittario, Capricorno, Acquario, Pesci, transiti planetari, aspetti celesti, oroscopo via email">
+        <meta property="og:title" content="Oroscopo del Giorno" />
+        <meta property="og:description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata." />
+        <meta property="og:image" content="/moon_icon.ico" />
+        <meta property="og:image:type" content="image/x-icon" />
+        <meta property="og:image:width" content="64" />
+        <meta property="og:image:height" content="64" />
+        <meta property="og:url" content="https://www.lunasapiens.com/oroscopo" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Oroscopo del Giorno" />
+        <meta name="twitter:description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata." />
+        <meta name="twitter:image" content="/moon_icon.ico" />
     </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
 </head>
-
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-
 <div class="container mt-5">
-
     <div class="text-center mt-5 mb-5">
         <h4>Fai conoscere LunaSapiens!</h4>
         <p>Se trovi utili le nostre previsioni astrologiche, condividi LunaSapiens con i tuoi amici! Utilizza i pulsanti qui sotto per far conoscere l'oroscopo del giorno a chi ti sta a cuore.</p>
