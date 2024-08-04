@@ -10,26 +10,19 @@
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
+<div class="container mt-4 mb-5">
 
-<div class="container mt-5 mb-5">
-
-
-    <h1>Pagina di Errore</h1>
-
-
+    <h2>Pagina di Errore</h2>
 
     <div th:if="${infoError != null and infoError != ''}" class="alert alert-danger mt-3" role="alert">
         <p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
         <p th:text="${infoError}"></p>
     </div>
 
-
-
     <!-- Aggiungi un link per tornare alla pagina index -->
     <a href="/">Torna alla pagina iniziale</a>
 
 </div>
-
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 </body>

@@ -24,18 +24,17 @@
 </head>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-<div class="container mt-5">
-    <div class="text-center mt-5 mb-5">
+<div class="container mt-4">
+    <div class="bg-light p-4 rounded-3 text-center mb-4">
         <h4>Fai conoscere LunaSapiens!</h4>
         <p>Se trovi utili le nostre previsioni astrologiche, condividi LunaSapiens con i tuoi amici! Utilizza i pulsanti qui sotto per far conoscere l'oroscopo del giorno a chi ti sta a cuore.</p>
         <div th:replace="~{fragments/templateBase :: pulsanti_social('oroscopo')}"></div>
     </div>
 
 
-    <div class="p-5 mb-4 bg-light rounded-3 text-center shadow-sm">
+    <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h3 class="mb-4">Iscriviti per Ricevere l'Oroscopo del Giorno via email</h3>
         <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
-
         <form id="subscribe-form" action="/subscribe" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
@@ -44,11 +43,11 @@
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Email</button>
             </div>
         </form>
-
         <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
             <p th:text="${infoMessage}"></p>
         </div>
     </div>
+
 
     <h1 class="mb-4 ">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
 
