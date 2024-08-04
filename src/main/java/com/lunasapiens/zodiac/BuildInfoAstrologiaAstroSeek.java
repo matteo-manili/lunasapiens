@@ -15,10 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Properties;
+import java.util.*;
 
 /**
  *         String url = "https://horoscopes.astro-seek.com/calculate-birth-chart-horoscope-online/?input_natal=1" +
@@ -90,12 +87,24 @@ import java.util.Properties;
  tolerance_paral=1.2: Tolleranza per i paralleli, impostata a 1.2 gradi.
  #tabs_redraw: Indica che la sezione dei tab deve essere ridisegnata dopo il calcolo.
  */
+
 public class BuildInfoAstrologiaAstroSeek {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaAstroSeek.class);
 
-    private ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList;
-    private ArrayList<CasePlacide> casePlacidesArrayList;
+    private final List<PianetaPosizTransito> pianetaPosizTransitoArrayList;
+    private final List<CasePlacide> casePlacidesArrayList;
+
+
+    public BuildInfoAstrologiaAstroSeek() {
+        this.pianetaPosizTransitoArrayList = Collections.emptyList();
+        this.casePlacidesArrayList = Collections.emptyList();
+    }
+
+    public BuildInfoAstrologiaAstroSeek(List<PianetaPosizTransito> pianetaPosizTransitoArrayList, List<CasePlacide> casePlacidesArrayList) {
+        this.pianetaPosizTransitoArrayList = Collections.unmodifiableList(pianetaPosizTransitoArrayList);
+        this.casePlacidesArrayList = Collections.unmodifiableList(casePlacidesArrayList);
+    }
 
     public static String pianetaDomicioSegnoCasa = "(Pianeta governatore della Casa)";
 
@@ -118,7 +127,7 @@ public class BuildInfoAstrologiaAstroSeek {
 
         "- Non puoi creare un tema natale in nessun modo. In astrologia non conosci gli argomenti di: karma, nodo karmico, aspetto stellium, " +
         "luna piena, nodi lunari nord sud, lilith chirone.\n" +
-        "- Non dare risposte che vadano oltre l'argomento del tema natale dell'utente.\n\n" +
+        "- Non dare risposte che vanno oltre l'argomento del tema natale dell'utente.\n\n" +
 
         "- Descrizione tema natale dell'utente: \n" + Util.convertHtmlToPlainText(temaNataleDescrizione);
     }
@@ -129,7 +138,6 @@ public class BuildInfoAstrologiaAstroSeek {
         Period period = Period.between(dateOfBirth.toLocalDate(), now.toLocalDate());
         return period.getYears();
     }
-
 
 
     public BuildInfoAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
@@ -174,8 +182,8 @@ public class BuildInfoAstrologiaAstroSeek {
         }else{
 
             logger.info( urlAstroSeek );
-            ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList = new ArrayList<PianetaPosizTransito>();
-            ArrayList<CasePlacide> casePlacidesArrayList = new ArrayList<CasePlacide>();
+            List<PianetaPosizTransito> pianetaPosizTransitoArrayList = new ArrayList<PianetaPosizTransito>();
+            List<CasePlacide> casePlacidesArrayList = new ArrayList<CasePlacide>();
             String html = restTemplate.getForObject(urlAstroSeek, String.class);
 
             Document document = Jsoup.parse(html);
@@ -247,11 +255,11 @@ public class BuildInfoAstrologiaAstroSeek {
                 });
 
 
-                // metto in cache la url e la classe
-                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
-                buildInfoAstrologiaAstroSeek.setPianetaPosizTransitoArrayList( pianetaPosizTransitoArrayList );
-                buildInfoAstrologiaAstroSeek.setCasePlacidesArrayList( casePlacidesArrayList );
-                cache.put( urlAstroSeek, buildInfoAstrologiaAstroSeek );
+                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetaPosizTransitoArrayList, casePlacidesArrayList);
+                cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
+
+
+
                 return buildInfoAstrologiaAstroSeek;
 
             } else {
@@ -289,22 +297,24 @@ public class BuildInfoAstrologiaAstroSeek {
     }
 
 
+    public List<PianetaPosizTransito> getPianetaPosizTransitoArrayList() { return pianetaPosizTransitoArrayList; }
+
+    public List<CasePlacide> getCasePlacidesArrayList() { return casePlacidesArrayList; }
 
 
-    public ArrayList<PianetaPosizTransito> getPianetaPosizTransitoArrayList() {
-        return pianetaPosizTransitoArrayList;
-    }
 
+        /*
     public void setPianetaPosizTransitoArrayList(ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList) {
         this.pianetaPosizTransitoArrayList = pianetaPosizTransitoArrayList;
     }
 
-    public ArrayList<CasePlacide> getCasePlacidesArrayList() {
-        return casePlacidesArrayList;
-    }
-
-    public void setCasePlacidesArrayList(ArrayList<CasePlacide> casePlacidesArrayList) {
+        public void setCasePlacidesArrayList(ArrayList<CasePlacide> casePlacidesArrayList) {
         this.casePlacidesArrayList = casePlacidesArrayList;
     }
+*/
+
+
+
+
 
 }

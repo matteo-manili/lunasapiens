@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -109,7 +110,7 @@ public class CalcoloAspetti {
 
 
 
-    public static ArrayList<Aspetti> verificaAspetti(ArrayList<PianetaPosizTransito> pianeti, Properties aspettiPianeti) {
+    public static ArrayList<Aspetti> verificaAspetti(List<PianetaPosizTransito> pianeti, Properties aspettiPianeti) {
 
         ArrayList<Aspetti> aspettiArrayList = new ArrayList<>();
 

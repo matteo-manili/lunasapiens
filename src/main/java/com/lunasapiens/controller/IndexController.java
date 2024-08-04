@@ -3,7 +3,6 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
-import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.dto.*;
 import com.lunasapiens.filter.RateLimiter;
 import com.lunasapiens.entity.EmailUtenti;
@@ -19,10 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +102,7 @@ public class IndexController {
 
 
 
-
+    // #################################### TEMA NATALE #####################################
 
     /**
      * servizio tema natale
@@ -179,7 +174,7 @@ public class IndexController {
         int month = datetime.getMonthValue();
         int year = datetime.getYear();
 
-        String luogoNascita = cityName + ", " + regioneName + ", " + statoName;
+        String luogoNascita = String.join(", ", cityName, regioneName, statoName);
 
         logger.info("Ora: " + hour);
         logger.info("Minuti: " + minute);
@@ -208,12 +203,8 @@ public class IndexController {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-
         //String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaSwiss(giornoOraPosizioneDTO);
-
         String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
-
-
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
         String temaNataleId = UUID.randomUUID().toString();
@@ -221,18 +212,17 @@ public class IndexController {
 
         // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        if (cache == null) {
+            logger.error("Cache not found: " + Constants.TEMA_NATALE_BOT_CACHE);
+            return "redirect:/tema-natale";
+        }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-
         String temaNataleDescrizioneIstruzioneBOTSystem = BuildInfoAstrologiaAstroSeek
                 .temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
-
         logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescrizioneIstruzioneBOTSystem );
-
-
         chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
         cache.put(temaNataleId, chatMessageIa);
 
-        // Redirect alla pagina 'tema-natale'
         return "redirect:/tema-natale";
     }
 
@@ -285,12 +275,8 @@ public class IndexController {
         } else {
             response.put("error", "Cache non trovata.");
         }
-
         return response;
     }
-
-
-
 
     @GetMapping("/coordinate")
     public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
@@ -335,6 +321,7 @@ public class IndexController {
     }
 
 
+    // #################################### OROSCOPO #####################################
 
 
     /**
