@@ -32,7 +32,6 @@ public class Constants {
             "/user/queue/reply",
             "/app/message",
             "/coordinate",
-            "/tema",
             "/greeting",
             "/info-privacy",
             "/termini-di-servizio",
