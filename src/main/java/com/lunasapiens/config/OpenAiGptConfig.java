@@ -37,9 +37,7 @@ public class OpenAiGptConfig {
 
     public void setModelGpt4_Mini(String modelGpt4_Mini) { this.modelGpt4_Mini = modelGpt4_Mini; }
 
-    public String getModelGpt3_5() {
-        return modelGpt3_5;
-    }
+    public String getModelGpt3_5() { return modelGpt3_5; }
 
     public void setModelGpt3_5(String modelGpt3_5) {
         this.modelGpt3_5 = modelGpt3_5;

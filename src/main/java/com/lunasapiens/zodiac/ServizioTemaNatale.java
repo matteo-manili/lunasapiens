@@ -33,14 +33,14 @@ public class ServizioTemaNatale {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private Double temperature = 0.4; private Integer tokensRisposta = 500;
+    private final Double temperature = 0.4; private final Integer tokensPerRisposta = 200; private final Double caratteriPerTokenStima = 6.0;
 
 
 
     public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensRisposta,
-                appConfig.getParamOpenAi().getModelGpt4_Mini(), chatMessageList );
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensPerRisposta, caratteriPerTokenStima,
+                 appConfig.getParamOpenAi().getModelGpt4_Mini() /* appConfig.getParamOpenAi().getModelGpt3_5()*/, chatMessageList );
     }
 
 

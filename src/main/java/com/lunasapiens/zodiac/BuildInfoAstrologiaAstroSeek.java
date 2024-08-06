@@ -116,7 +116,6 @@ public class BuildInfoAstrologiaAstroSeek {
         "- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n" +
         "- le interpretazioni dei pianeti (anche quelli governatori della casa) nelle Case, vanno declinate in base al significato della Casa, " +
         "al significato del Pianeta, al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado (se è retrogrado).\n"+
-
         "- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base al Significato del Pianeta, " +
         "al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado.\n\n" +
 
@@ -125,8 +124,9 @@ public class BuildInfoAstrologiaAstroSeek {
         "- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n"+
         "- Luogo di nascita dell'utente: "+luogoNascita +"\n\n" +
 
+
         "- Non puoi creare un tema natale in nessun modo. In astrologia non conosci gli argomenti di: karma, nodo karmico, aspetto stellium, " +
-        "luna piena, nodi lunari nord sud, lilith chirone.\n" +
+        "luna piena, nodi lunari nord sud, rivoluzione solare, lilith chirone.\n" +
         "- Non dare risposte che vanno oltre l'argomento del tema natale dell'utente.\n\n" +
 
         "- Descrizione tema natale dell'utente: \n" + Util.convertHtmlToPlainText(temaNataleDescrizione);

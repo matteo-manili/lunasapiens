@@ -56,6 +56,10 @@
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
+
+
+
+
 </style>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
@@ -104,16 +108,16 @@
         <h6>Puoi porre qualsiasi domanda alla nostra Chat con Intelligenza Artificiale riguardo il tuo Tema Natale. Troverai una descrizione
             dettagliata del Tema Natale più in basso.</h6>
 
+
         <div class="chat-container mb-5">
             <div class="chat-box bg-light p-3 border rounded" style="height: 400px; overflow-y: scroll;">
                 <div id="chat-messages" class="d-flex flex-column"></div>
-                <div id="loading-indicator" class="hidden-text">Attendere, per favore...</div> <!-- Indicatore di caricamento -->
+                <div id="loading-indicator" class="hidden-text">Attendere, per favore...</div>
             </div>
             <div class="input-group mt-3">
                 <input type="text" id="userMessage" class="form-control" placeholder="Scrivi una domanda...">
                 <button id="sendMessage" class="btn btn-primary">Invia</button>
             </div>
-
         </div>
 
 
@@ -247,12 +251,11 @@ $(document).ready(function() {
                 url: "/coordinate",
                 dataType: "json",
                 data: {
-                    cityName: request.term
+                    cityName: $.trim(request.term) // rimuove gli spazi iniziali e finali
                 },
+                delay: 300,
                 success: function(data) {
-
                     console.log("Dati ricevuti:", data); // Aggiungi questo per il debug
-
                     response($.map(data, function(item) {
                         return {
                             label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
@@ -309,6 +312,7 @@ $(document).ready(function() {
 
     // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
     $("#cityInput, #dateTime").on("input", checkFormValidity);
+
 
 
 });

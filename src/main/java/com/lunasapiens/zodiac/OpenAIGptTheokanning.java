@@ -39,7 +39,7 @@ public class OpenAIGptTheokanning {
      * @param messages Lista di messaggi contenenti il testo da tokenizzare.
      * @return Il numero totale di token stimato.
      */
-    public static int calculateTokenCount(List<ChatMessage> messages, int tokensRisposta) {
+    public static int calculateTokenCount(List<ChatMessage> messages, int tokensRisposta, Double finalcaratteriPerTokenStima) {
         int totalCharacterCount = 0;
 
         // Calcola il numero totale di caratteri in tutti i messaggi
@@ -49,24 +49,23 @@ public class OpenAIGptTheokanning {
             }
         }
 
-        // Applica la regola empirica: 1 token ≈ 4 caratteri e aggiunto i tokens per la risposta
+        // Applica la regola empirica: 1 token = 4.0 caratteri e aggiungo i tokens per la risposta
 
-
-        int tokensTotali = (int) Math.ceil(totalCharacterCount / 4.0) + tokensRisposta;
-        logger.info( "tokensTotali: "+tokensTotali );
+        int tokensTotali = (int) Math.ceil(totalCharacterCount / finalcaratteriPerTokenStima) + tokensRisposta;
+        logger.info( "totalCharacterCount: "+totalCharacterCount + " | tokensTotali: "+tokensTotali );
         return tokensTotali;
     }
 
 
-    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensRisposta, final String modelGpt, List<ChatMessage> chatMessageList) {
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensPerRisposta, double caratteriPerTokenStima, final String modelGpt, List<ChatMessage> chatMessageList) {
         // Inizializza il servizio OpenAI con il client configurato
         OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
-        return eseguiOpenAIGptTheokanning(service, temperature, tokensRisposta, modelGpt, chatMessageList) ;
+        return eseguiOpenAIGptTheokanning(service, temperature, tokensPerRisposta, caratteriPerTokenStima, modelGpt, chatMessageList) ;
     }
 
 
 
-    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensRisposta, final String modelGpt, String domanda) {
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensPerRisposta, Double caratteriPerTokenStima, final String modelGpt, String domanda) {
 
         // Inizializza il servizio OpenAI con il client configurato
         OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
@@ -76,7 +75,7 @@ public class OpenAIGptTheokanning {
         //messages.add(new ChatMessage("user", domanda));
 
 
-        return eseguiOpenAIGptTheokanning(service, temperature, tokensRisposta, modelGpt, messages) ;
+        return eseguiOpenAIGptTheokanning(service, temperature, tokensPerRisposta, caratteriPerTokenStima, modelGpt, messages ) ;
     }
 
 
@@ -86,11 +85,11 @@ public class OpenAIGptTheokanning {
      * chatgpt 3.5 e 4.0 accetta ruoli di user, system e assistant. gpt-3.5-turbo-instruct non vuole nessu ruolo
      * chatgpt 3.5 e 4.0 vogliono system e user nella domanda
      */
-    private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, double temperature, int tokensRisposta, final String modelGpt, List<ChatMessage> chatMessageList) {
+    private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, double temperature, int tokensPerRisposta, double caratteriPerTokenStima, String modelGpt, List<ChatMessage> chatMessageList) {
 
         System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
-        int maxTokens = calculateTokenCount(chatMessageList, tokensRisposta);
+        int maxTokens = calculateTokenCount(chatMessageList, tokensPerRisposta, caratteriPerTokenStima);
 
         // Costruisci la richiesta di completamento
         ChatCompletionRequest request = ChatCompletionRequest.builder()
