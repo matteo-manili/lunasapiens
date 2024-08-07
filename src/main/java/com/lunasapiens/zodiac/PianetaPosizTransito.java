@@ -87,7 +87,7 @@ public class PianetaPosizTransito {
 
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() {
         // Usa String.format per rimuovere i decimali
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno+" ";
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno;
     }
 
     public String descrizione_Pianeta_Gradi_Retrogrado_Casa_SignificatoPianetaSegno() {

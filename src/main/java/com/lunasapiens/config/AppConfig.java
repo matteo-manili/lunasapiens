@@ -51,6 +51,11 @@ public class AppConfig implements WebMvcConfigurer {
     private ApplicationContext applicationContext;
 
 
+    @Bean
+    public Properties lunaSegni(){ return getProperties( "luna-segni.properties" ); }
+
+    @Bean
+    public Properties segniAscendente(){ return getProperties( "segni-ascendente.properties" ); }
 
     @Bean
     public Properties pianetiCaseSignificato() { return getProperties("pianeti-case-significato.properties"); }

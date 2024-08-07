@@ -39,10 +39,7 @@ public class Constants {
             "/error"
     ));
 
-    // caratteristiche segno
-    public static final List<String> segnoZodiacaleGenere = Arrays.asList("Maschile", "Femminile");
-    public static final List<String> segnoZodiacaleNatura = Arrays.asList("Cardinale", "Fisso", "Mobile");
-    public static final List<String> segnoZodiacaleElemento = Arrays.asList("Fuoco", "Terra", "Aria", "Acqua");
+
 
     public static final String PIANETA_RETROGRADO = "Retrogrado";
 
@@ -111,7 +108,7 @@ public class Constants {
 
 
     public enum Aspetti {
-        CONGIUNZIONE(0, "Congiunzine"),
+        CONGIUNZIONE(0, "Congiunzione"),
         SESTILE(1, "Sestile"),
         QUADRATO(2, "Quadrato"),
         TRIGONO(3, "Trigono"),
@@ -130,17 +127,16 @@ public class Constants {
             return name;
         }
         public static Aspetti fromCode(int code) {
-            for (Aspetti aspetti : Aspetti.values()) {
-                if (aspetti.getCode() == code) {
-                    return aspetti;
+            for (Aspetti aspetto : Aspetti.values()) {
+                if (aspetto.getCode() == code) {
+                    return aspetto;
                 }
             }
-            throw new IllegalArgumentException("Invalid code: " + code);
+            throw new IllegalArgumentException("Aspetto Invalid code: " + code);
         }
         public static List<Aspetti> getAllAspetti() {
             return Arrays.asList(Aspetti.values());
         }
-
     }
 
     public enum SegniZodiacali {
@@ -200,14 +196,50 @@ public class Constants {
             }
             throw new IllegalArgumentException("Nome Pianeta non valido: " + nomeEn);
         }
-
         public static List<SegniZodiacali> getAllSegniZodiacali() {
             return Arrays.asList(SegniZodiacali.values());
         }
-
     }
 
 
+    /*
+    elencami i segni e i rispettivi elementi. e a ficanco all'elemento mettici 0 per fuoco 1 per acqua 2 per terra 3 per aria
+     */
+
+    public enum Elementi {
+        FUOCO(0, "Fuoco"),
+        ACQUA(1, "Acqua"),
+        TERRA(2, "Terra"),
+        ARIA(3, "Aria");
+        private final int code;
+        private final String name;
+        Elementi(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+        public int getCode() {
+            return code;
+        }
+        public String getName() {
+            return name;
+        }
+        public static Elementi fromCode(int code) {
+            for (Elementi elemento : Elementi.values()) {
+                if (elemento.getCode() == code) {
+                    return elemento;
+                }
+            }
+            throw new IllegalArgumentException("Elemento invalid code: " + code);
+        }
+        public static List<Elementi> getAllElementi() {
+            return Arrays.asList(Elementi.values());
+        }
+    }
+
+
+    // caratteristiche segno
+    public static final List<String> segnoZodiacaleGenere = Arrays.asList("Maschile", "Femminile");
+    public static final List<String> segnoZodiacaleNatura = Arrays.asList("Cardinale", "Fisso", "Mobile");
 
 
     public enum Case {

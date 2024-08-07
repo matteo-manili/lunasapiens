@@ -160,7 +160,6 @@ public class TemaNataleController {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-        //String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaSwiss(giornoOraPosizioneDTO);
         String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
 
@@ -174,10 +173,9 @@ public class TemaNataleController {
             return "redirect:/tema-natale";
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-        String temaNataleDescrizioneIstruzioneBOTSystem = BuildInfoAstrologiaAstroSeek
-                .temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
-        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescrizioneIstruzioneBOTSystem );
-        chatMessageIa.add(new ChatMessage("system", temaNataleDescrizioneIstruzioneBOTSystem));
+        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
+        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
+        chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
         cache.put(temaNataleId, chatMessageIa);
 
         return "redirect:/tema-natale";

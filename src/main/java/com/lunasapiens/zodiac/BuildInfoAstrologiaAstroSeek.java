@@ -108,28 +108,27 @@ public class BuildInfoAstrologiaAstroSeek {
 
     public static String pianetaDomicioSegnoCasa = "(Pianeta governatore della Casa)";
 
-    public static String temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
+    public static StringBuilder temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
+        StringBuilder textSystemBuilder = new StringBuilder();
+        textSystemBuilder.append("- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n")
 
-        return "- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n" +
+                .append("- Le Case astrologiche ed i pineti relativi alle Case, indicano il futuro e gli eventi dell'utente.\n")
+                .append("- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n")
+                .append("- le interpretazioni dei pianeti (anche quelli governatori della casa) nelle Case, vanno declinate in base al significato della Casa, ")
+                .append("al significato del Pianeta, al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado (se è retrogrado).\n")
+                .append("- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base al Significato del Pianeta, ")
+                .append("al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado.\n\n")
 
-        "- Le Case astrologiche ed i pineti relativi alle Case, indicano il futuro e gli eventi dell'utente.\n" +
-        "- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n" +
-        "- le interpretazioni dei pianeti (anche quelli governatori della casa) nelle Case, vanno declinate in base al significato della Casa, " +
-        "al significato del Pianeta, al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado (se è retrogrado).\n"+
-        "- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base al Significato del Pianeta, " +
-        "al Significato degli Aspetti del pianeta e al Significato di Pianeta Retrogrado se esso è retrogrado.\n\n" +
+                .append("- Non puoi creare un tema natale in nessun modo. In astrologia non conosci gli argomenti di: karma, nodo karmico, aspetto stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith chirone.\n")
+                .append("- Non dare risposte che vanno oltre l'argomento del tema natale dell'utente.\n\n")
 
+                .append("- Data del tema natale e data nascita dell'utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
+                .append("- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n")
+                .append("- Luogo di nascita dell'utente: "+luogoNascita +"\n\n\n")
 
-        "- Data del tema natale e data nascita dell'utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n" +
-        "- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n"+
-        "- Luogo di nascita dell'utente: "+luogoNascita +"\n\n" +
-
-
-        "- Non puoi creare un tema natale in nessun modo. In astrologia non conosci gli argomenti di: karma, nodo karmico, aspetto stellium, " +
-        "luna piena, nodi lunari nord sud, rivoluzione solare, lilith chirone.\n" +
-        "- Non dare risposte che vanno oltre l'argomento del tema natale dell'utente.\n\n" +
-
-        "- Descrizione tema natale dell'utente: \n" + Util.convertHtmlToPlainText(temaNataleDescrizione);
+                .append("- Tema natale dell'utente:")
+                .append( Util.convertHtmlToPlainText(temaNataleDescrizione) );
+        return textSystemBuilder;
     }
 
 
@@ -245,7 +244,6 @@ public class BuildInfoAstrologiaAstroSeek {
                     casePlacidesArrayList.add( casaPlacida );
                 }
 
-
                 // Ordinamento della lista in base all'attributo nomeCasa
                 Collections.sort(casePlacidesArrayList, new Comparator<CasePlacide>() {
                     @Override
@@ -254,11 +252,8 @@ public class BuildInfoAstrologiaAstroSeek {
                     }
                 });
 
-
                 buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetaPosizTransitoArrayList, casePlacidesArrayList);
                 cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
-
-
 
                 return buildInfoAstrologiaAstroSeek;
 
