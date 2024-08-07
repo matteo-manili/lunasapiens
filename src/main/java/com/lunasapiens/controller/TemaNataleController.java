@@ -4,11 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
 import com.lunasapiens.dto.*;
+import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.filter.RateLimiter;
+import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +63,11 @@ public class TemaNataleController {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmailUtentiRepository emailUtentiRepository;
 
     // #################################### TEMA NATALE #####################################
 
@@ -196,10 +206,8 @@ public class TemaNataleController {
             response.put("error", "Troppi messaggi! Per favore attendi.");
             return response;
         }
-
         String domanda = message.get("content");
         String temaNataleId = message.get("temaNataleId");
-
         // Aggiunge una protezione per i dati nulli o non validi
         if (domanda == null || domanda.isEmpty()) {
             response.put("error", "Il messaggio non può essere vuoto.");
@@ -213,10 +221,8 @@ public class TemaNataleController {
             if (chatMessageIa == null) {
                 chatMessageIa = new ArrayList<>();
             }
-
             chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
             cache.put(temaNataleId, chatMessageIa);
-
             try {
                 StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
                 chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
@@ -276,5 +282,47 @@ public class TemaNataleController {
     }
 
 
+
+
+    @PostMapping("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE)
+    public String subscribe_tn(@RequestParam("email") @Email @NotEmpty String email, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        logger.info(Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE+" endpoint");
+        logger.info("email: "+email);
+        Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
+        if (skipEmailSave != null && skipEmailSave) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Sottoscrizione email negata.");
+        }else{
+            Object[] result = emailService.salvaEmail( email );
+            Boolean success = (Boolean) result[0];
+            String infoMessage = (String) result[1];
+            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
+            if (success && emailUtenti != null) {
+                emailService.inviaConfermaEmailTemaNatale(emailUtenti);
+            }
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+        }
+        return "redirect:/tema-natale";
+    }
+
+
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE)
+    public String confirmEmailTemaNatale(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
+        logger.info(Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE);
+        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        String infoMessage = "";
+        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
+            if(emailUtenti.getDataRegistrazione()== null){
+                emailUtenti.setDataRegistrazione(new Date());
+            }
+            emailUtenti.setSubscription( false ); // TODO lo metto false altrimenti arriva all'utente l'email del Oroscopo del giorno
+            emailUtentiRepository.save(emailUtenti);
+            infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto per ricevere gli aggiornamenti del Tema Natale IA con l'indirizzo " +
+                    ""+emailUtenti.getEmail();
+        }else{
+            infoMessage = "Conferma email non riuscita. Registrati di nuovo";
+        }
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+        return "redirect:/tema-natale";
+    }
 
 }

@@ -112,18 +112,16 @@ public class BuildInfoAstrologiaAstroSeek {
         StringBuilder textSystemBuilder = new StringBuilder();
         textSystemBuilder.append("- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n")
 
-                .append("- Le Case astrologiche ed i Pianeti relativi alle Case, indicano il futuro e gli eventi dell'utente.\n")
-                .append("- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n")
-
+                .append("- Le Case ed i Pianeti nelle Case, indicano il futuro e gli eventi dell'utente.\n")
                 .append("- le interpretazioni dei Pianeti nelle Case (inclusi i Pianeti governatori della casa), vanno declinate in base a: significato della Casa, " +
-                        "significato del Pianeta, significato degli Aspetti del Pianeta e al significato di Pianeta Retrogrado (se è retrogrado).\n")
+                        "significato del Pianeta, significato dell'Aspetto del Pianeta e al significato di Pianeta Retrogrado (se è retrogrado).\n\n")
 
-                .append("- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base a: significato del Pianeta, significato degli Aspetti del Pianeta " +
+                .append("- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n")
+                .append("- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base a: significato del Pianeta, significato dell'Aspetto del Pianeta " +
                         "e al Significato di Pianeta Retrogrado (se è retrogrado).\n\n")
 
-                .append("- Non puoi creare un tema natale in nessun modo. Non puoi sapere i transiti di un'altra data. In astrologia non conosci gli argomenti di: karma, nodo karmico, " +
-                        "stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith, chirone.\n")
-                .append("- Non dare risposte che vanno oltre l'argomento del tema natale dell'utente.\n\n")
+                .append("- Non puoi creare un tema natale. Non puoi sapere i transiti di un'altra data. In astrologia non conosci gli argomenti di: karma, nodo karmico, " +
+                        "stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith, chirone.\n\n")
 
                 .append("- Data del tema natale e data nascita dell'utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
                 .append("- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n")
@@ -206,11 +204,11 @@ public class BuildInfoAstrologiaAstroSeek {
                     boolean isRetrograde = retrogradeElement.text().trim().equals("R");
                     double positionInDegrees = convertToDecimalDegrees(position);
 
-                    System.out.println("Pianeta: " + planetName);
-                    System.out.println("Segno: " + signName);
-                    System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
-                    System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
-                    System.out.println();
+                    //System.out.println("Pianeta: " + planetName);
+                    //System.out.println("Segno: " + signName);
+                    //System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
+                    //System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
+                    //System.out.println();
 
 
                     Constants.Pianeti pianeta = Constants.Pianeti.fromNomeEn( planetName );
@@ -237,10 +235,10 @@ public class BuildInfoAstrologiaAstroSeek {
                     Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
                     double gradiTotali = segno.getGradi() + convertToDecimalDegrees(position);
 
-                    System.out.println("Casa: " + houseName);
-                    System.out.println("Segno: " + signName);
-                    System.out.println("valore: " + position + " "+" valore in decimali: "+gradiTotali);
-                    System.out.println();
+                    //System.out.println("Casa: " + houseName);
+                    //System.out.println("Segno: " + signName);
+                    //System.out.println("valore: " + position + " "+" valore in decimali: "+gradiTotali);
+                    //System.out.println();
 
                     CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
                             (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome());

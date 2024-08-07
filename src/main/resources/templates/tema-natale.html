@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
-    <title th:fragment="title">Tema Natale IA</title>
+    <title th:fragment="title">Luna Sapiens | Tema Natale IA</title>
     <th:block th:fragment="meta">
         <meta name="description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali.">
         <meta name="keywords" content="Tema Natale, astrologia, intelligenza artificiale, chat IA, LunaSapiens, oroscopo, astrologia personalizzata, descrizione Tema Natale, influenze celesti">
@@ -56,30 +56,37 @@
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
-
-
-
-
 </style>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
     <div class="bg-light p-4 rounded-3 text-center mb-4">
-        <h4>Fai conoscere LunaSapiens!</h4>
+        <h5>Fai conoscere LunaSapiens!</h5>
         <p>Se ti piace scoprire il tuo Tema Natale con LunaSapiens, aiutaci a farlo conoscere ai tuoi amici! Condividi la nostra pagina con un clic sui pulsanti qui sotto e lascia che anche loro esplorino la magia dell'astrologia. Grazie per il tuo supporto!</p>
         <div th:replace="~{fragments/templateBase :: pulsanti_social('tema-natale')}"></div>
     </div>
 
+    <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
+        <h5 class="mb-4">Iscriviti per ricevere aggiornamenti sul Tema Natale IA</h5>
+        <p>Inserisci il tuo indirizzo email per ricevere aggiornamenti riguardo nuove funzionalità del Tema Natale IA.</p>
+        <form id="subscribe-form" action="/subscribe-tema-natale" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
+            <div class="col-12 col-md-8 col-lg-6 mb-3">
+                <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
+            </div>
+            <div class="col-12 col-md-4 col-lg-3">
+                <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Email</button>
+            </div>
+        </form>
+        <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+            <p th:text="${infoMessage}"></p>
+        </div>
+    </div>
+
     <h1 class="mb-4">Tema Natale IA</h1>
-    <h4 class="mb-3">Dopo aver generato il tuo Tema Natale, puoi utilizzare la Chat con Intelligenza Artificiale per porre qualsiasi domanda e ottenere chiarimenti sul tuo Tema Natale.</h4>
+    <h6 class="mb-3">Una volta generato il tuo Tema Natale, usa la Chat IA per domandare e comprendere i significati.
+        Più in basso troverai una descrizione dettagliata del Tema Natale.</h6>
 
-    <!-- <div class="alert alert-info" role="alert">
-        Utilizziamo il sistema di effemeridi <a href="https://www.astro.com/swisseph/swephinfo_e.htm">Swiss Ephemeris</a> (tabelle che mostrano le posizioni
-        ad alta precisione dei corpi celesti) per determinare i transiti e la domificazione Placidus delle case.<br>
-        Essendo un sistema diverso da quello dei siti più diffusi, potrebbe far sì che i segni si trovino in case diverse.
-    </div> -->
-
-    <form action="/temaNataleSubmit" method="GET" class="mb-5">
+    <form id="tema-natale-submit" action="/temaNataleSubmit" method="GET" class="mb-3">
         <div class="mb-3">
             <label for="dateTime" class="form-label">Data e ora di nascita:</label>
             <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
@@ -99,16 +106,15 @@
         <button type="submit" id="submitBtn" class="btn btn-primary">genera tema natale</button>
     </form>
 
-    <!-- Chat-Box IA -->
+
+
+    <!-- #################################### Chat-Box IA #################################### -->
     <input type="hidden" id="temaNataleDescrizione" name="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
     <input type="hidden" id="temaNataleId" name="temaNataleId" th:value="${temaNataleId}">
 
-    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mt-5 mb-5">
+    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mb-5">
 
-        <h6>Puoi porre qualsiasi domanda alla nostra Chat con Intelligenza Artificiale riguardo il tuo Tema Natale. Troverai una descrizione
-            dettagliata del Tema Natale più in basso.</h6>
-
-
+        <h7 class="mb-3"><b>Chat IA</b></h7>
         <div class="chat-container mb-5">
             <div class="chat-box bg-light p-3 border rounded" style="height: 400px; overflow-y: scroll;">
                 <div id="chat-messages" class="d-flex flex-column"></div>
@@ -119,6 +125,8 @@
                 <button id="sendMessage" class="btn btn-primary">Invia</button>
             </div>
         </div>
+
+
 
 
         <!-- descrizione tema natale -->
@@ -139,6 +147,7 @@
 </div>
 
 
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 
@@ -233,18 +242,6 @@ document.addEventListener("DOMContentLoaded", function() {
 // ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
 $(document).ready(function() {
 
-    // Funzione per controllare lo stato del pulsante di submit
-    function checkFormValidity() {
-        if ($("#cityName").val().trim() !== "" && $("#dateTime").val().trim() !== "") {
-            $("#submitBtn").prop("disabled", false);
-        } else {
-            $("#submitBtn").prop("disabled", true);
-        }
-    }
-
-    // Abilita/disabilita il pulsante di submit all'inizio
-    checkFormValidity();
-
     $("#cityInput").autocomplete({
         source: function(request, response) {
             $.ajax({
@@ -280,16 +277,15 @@ $(document).ready(function() {
             $("#statoCode").val(ui.item.statoCode);
             $("#cityLat").val(ui.item.lat);
             $("#cityLng").val(ui.item.lng);
-            checkFormValidity(); // Controlla la validità del modulo
             // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
             event.preventDefault();
         }
     });
 
     // Validazione dell'invio del modulo
-    $("form").submit(function(event) {
+    $("#tema-natale-submit").submit(function(event) {
         var isValid = true;
-        if ($("#cityInput").val().trim() === "") {
+        if ($("#cityInput").val().trim() === "" || $("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
             $("#cityError").show(); // Mostra il messaggio di errore
             $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
             isValid = false;
@@ -305,13 +301,13 @@ $(document).ready(function() {
             $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
             $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
         }
-        if (!isValid) {
-            event.preventDefault(); // Previeni l'invio del modulo
+        // Se il modulo è valido, mostra l'overlay e consenti l'invio
+        if (isValid) {
+            showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
+        } else {
+            event.preventDefault(); // Previeni l'invio del modulo se non è valido
         }
     });
-
-    // Controlla la validità del modulo quando l'input cityInput o dateTime cambia
-    $("#cityInput, #dateTime").on("input", checkFormValidity);
 
 
 

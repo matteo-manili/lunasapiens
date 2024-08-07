@@ -68,6 +68,31 @@ public class EmailService {
     public static final String emailOroscopo = "emailOroscopo";
     public static final String contenutoEmail = "contenutoEmail";
 
+    // ###################### EMAIL TEMA NATALE ####################################
+
+    public void inviaConfermaEmailTemaNatale(EmailUtenti emailUtenti) {
+        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
+        if( emailUtentiSetRandomCode != null ) {
+            String confirmationCode = generateRandomCode();
+            emailUtenti.setConfirmationCode(confirmationCode);
+            emailUtentiRepository.save(emailUtenti);
+
+            String subject = "LunaSapiens - Conferma iscrizione aggiornamenti Tema Natale IA";
+            Context context = new Context();
+            String linkConfirm = Constants.DOM_LUNA_SAPIENS +"/"+ Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE + "?code="+confirmationCode;
+            String contenuto = "<b>Grazie per esserti iscritto per gli aggiornamenti del Tema Natale IA.</b><br><br>" +
+                    "Per confermare l'iscrizione, clicca sul seguente link <br>" +
+                    linkConfirm + "<br><br>" +
+                    "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
+
+            context.setVariable(contenutoEmail, contenuto);
+            sendHtmlEmail(emailUtenti.getEmail(), subject, emailSubscription, context);
+        }
+    }
+
+
+
+    // ###################### EMAIL OROSCOPO GIORNALIERO ####################################
 
     public void inviaConfermaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
         EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
@@ -80,7 +105,7 @@ public class EmailService {
             Context context = new Context();
             String linkConfirm = Constants.DOM_LUNA_SAPIENS +"/"+ Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN + "?code="+confirmationCode;
             String contenuto = "<b>Grazie per esserti iscritto all'Oroscopo del giorno.</b><br><br>" +
-                    "Per confermare la tua iscrizione, clicca sul seguente link <br>" +
+                    "Per confermare l'iscrizione, clicca sul seguente link <br>" +
                     linkConfirm + "<br><br>" +
                     "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
 

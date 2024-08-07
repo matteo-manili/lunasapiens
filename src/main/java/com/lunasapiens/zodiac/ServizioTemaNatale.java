@@ -33,7 +33,7 @@ public class ServizioTemaNatale {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private final Double temperature = 0.4; private final Integer tokensPerRisposta = 200; private final Double caratteriPerTokenStima = 6.0;
+    private final Double temperature = 0.5; private final Integer tokensPerRisposta = 150; private final Double caratteriPerTokenStima = 8.0;
 
 
 
@@ -199,8 +199,6 @@ public class ServizioTemaNatale {
             descTemaNatale.append("- "+aspetto.getName() +": "+ aspettiPianetiProperties.getProperty(String.valueOf(aspetto.getCode())+"_min") );
             if (i < size - 1) { descTemaNatale.append("<br>"); }
         }
-
-
 
 
 
