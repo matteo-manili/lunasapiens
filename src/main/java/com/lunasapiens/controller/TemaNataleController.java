@@ -12,6 +12,7 @@ import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -84,7 +85,8 @@ public class TemaNataleController {
                              @ModelAttribute("cityLat") String cityLat,
                              @ModelAttribute("cityLng") String cityLng,
                              @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
-                             @ModelAttribute("temaNataleId") String temaNataleId
+                             @ModelAttribute("temaNataleId") String temaNataleId,
+                             @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId
     ) {
 
         logger.info("sono in temaNatale");
@@ -106,6 +108,7 @@ public class TemaNataleController {
         Optional.ofNullable(cityLng).filter(lng -> !lng.isEmpty()).ifPresent(lng -> model.addAttribute("cityLng", lng));
         Optional.ofNullable(temaNataleDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("temaNataleDescrizione", description));
         Optional.ofNullable(temaNataleId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("temaNataleId", id));
+        Optional.ofNullable(temaNataleId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, userSessionId));
 
         logger.info("Tema Natale ID: " + model.getAttribute("temaNataleId"));
 
@@ -131,9 +134,16 @@ public class TemaNataleController {
                                    @RequestParam("regioneName") String regioneName,
                                    @RequestParam("statoName") String statoName,
                                    @RequestParam("statoCode") String statoCode,
-                                   RedirectAttributes redirectAttributes) {
-
+                                   RedirectAttributes redirectAttributes, HttpServletRequest request) {
         logger.info("sono in temaNataleSubmit");
+
+        HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
+        String userId = (String) session.getAttribute(Constants.USER_SESSION_ID);
+        if (userId == null) {
+            userId = UUID.randomUUID().toString(); // Genera un nuovo ID solo se non esiste
+            session.setAttribute(Constants.USER_SESSION_ID, userId);
+        }
+
         // Estrai le singole componenti della data e ora
         int hour = datetime.getHour();
         int minute = datetime.getMinute();
@@ -154,6 +164,7 @@ public class TemaNataleController {
         logger.info("statoCode: " + statoCode);
         logger.info("Latitude: " + cityLat);
         logger.info("Longitude: " + cityLng);
+        logger.info(Constants.USER_SESSION_ID + userId);
 
         // Prepara i dati da passare tramite redirectAttributes
         redirectAttributes.addFlashAttribute("cityInput", cityName + ", " + regioneName + ", " + statoName);
@@ -166,6 +177,7 @@ public class TemaNataleController {
         redirectAttributes.addFlashAttribute("dateTime", datetime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
         redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format(Constants.DATE_TIME_FORMATTER));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
+        redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);
 
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
@@ -200,18 +212,28 @@ public class TemaNataleController {
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
     public Map<String, Object> userMessageWebSocket(Map<String, String> message, Principal principal) {
-        String userId = principal.getName();
-        Map<String, Object> response = new HashMap<>();
 
+        // Non lo uso ma è MOLTO UTILE perché il "Principal principal" viene settato nella classe WebSocketConfig dove imposta la connessione del web socket "registerStompEndpoints"
+        // anche "Map<String, String> message" viene settato nel "registerStompEndpoints". Infatti posso richiamare gli oggetti come parametri
+        //String userPrincipalId = principal.getName();
+
+        Map<String, Object> response = new HashMap<>();
         final String keyJsonStandardContent = "content";
 
+        String domanda = message.get( keyJsonStandardContent );
+        String temaNataleId = message.get("temaNataleId");
+        String userSessionId = message.get(Constants.USER_SESSION_ID);
+
+        System.out.println("domanda: "+domanda);
+        System.out.println("temaNataleId: "+temaNataleId);
+        System.out.println("userSessionId: "+userSessionId);
+
         // Controlla il limite di frequenza dei messaggi
-        if (!rateLimiter.allowMessage(userId)) {
+        if (!rateLimiter.allowMessage( userSessionId )) {
             response.put(keyJsonStandardContent, rateLimiter.numeroMessaggi_e_Minuti() );
             return response;
         }
-        String domanda = message.get( keyJsonStandardContent );
-        String temaNataleId = message.get("temaNataleId");
+
         // Aggiunge una protezione per i dati nulli o non validi
         if (domanda == null || domanda.isEmpty()) {
             response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");

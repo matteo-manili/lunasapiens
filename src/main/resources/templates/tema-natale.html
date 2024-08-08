@@ -111,6 +111,7 @@
     <!-- #################################### Chat-Box IA #################################### -->
     <input type="hidden" id="temaNataleDescrizione" name="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
     <input type="hidden" id="temaNataleId" name="temaNataleId" th:value="${temaNataleId}">
+    <input type="hidden" id="userSessionId" name="userSessionId" th:value="${userSessionId}">
 
     <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mb-5">
 
@@ -182,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function() {
         function showLoadingIndicator() {
             document.getElementById("loading-indicator").classList.remove("hidden-text");
         }
-
         function hideLoadingIndicator() {
             document.getElementById("loading-indicator").classList.add("hidden-text");
         }
@@ -190,13 +190,14 @@ document.addEventListener("DOMContentLoaded", function() {
         function sendMessage() {
             var message = document.getElementById("userMessage").value;
             var temaNataleId = document.querySelector('input[name="temaNataleId"]').value;
+            var userSessionId = document.querySelector('input[name="userSessionId"]').value;
             if (message.trim() !== "") {
                 var payload = {
                     content: message,
-                    temaNataleId: temaNataleId
+                    temaNataleId: temaNataleId,
+                    userSessionId: userSessionId
                 };
                 stompClient.send("/app/message", {}, JSON.stringify(payload));
-
                 document.getElementById("userMessage").value = "";
                 showMessage(message, false); // Visualizza il messaggio inviato nella chat
                 showLoadingIndicator(); // Mostra l'indicatore di caricamento
@@ -206,11 +207,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         document.getElementById("sendMessage").addEventListener("click", sendMessage);
-
         document.getElementById("userMessage").addEventListener("keyup", function (event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
+            if (event.key === "Enter") { sendMessage(); }
         });
 
         function showMessage(message, isBotMessage) {
