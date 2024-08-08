@@ -7,8 +7,11 @@ public class Constants {
 
     public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com";
 
+    public static final String PATH_STATIC = "src/main/resources/static/";
+
     public static final String INFO_MESSAGE = "infoMessage";
     public static final String INFO_ERROR = "infoError";
+
 
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";
@@ -17,11 +20,9 @@ public class Constants {
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE = "subscribe-tema-natale";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE = "confirm-email-subscription-tema-natale";
 
-
     public static final DateTimeFormatter DATE_TIME_LOCAL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     public static final DateTimeFormatter FORMATTER_GIORNO_MESE_ANNO = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ITALIAN);
-
 
     public static final int TOO_MANY_REQUESTS_STATUS_CODE = 429; // Codice di stato HTTP per "Too Many Requests"
     public static final String SKIP_EMAIL_SAVE = "skipEmailSave";
@@ -31,8 +32,6 @@ public class Constants {
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_CACHE = "rateLimiterCache";
 
-    public static final String PATH_STATIC = "src/main/resources/static/";
-
     public static final List<String> URL_NO_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",
             "/user/queue/reply",
@@ -41,12 +40,8 @@ public class Constants {
             "/greeting",
             "/info-privacy",
             "/termini-di-servizio",
-            "/error"
-    ));
+            "/error"));
 
-
-
-    public static final String PIANETA_RETROGRADO = "Retrogrado";
 
     public enum Pianeti {
         SOLE(0, "Sole", "Sun"),
@@ -91,7 +86,6 @@ public class Constants {
             }
             return nomi;
         }
-
         public static Pianeti fromNomeEn(String nomeEn) {
             try {
                 for (Pianeti pianeta : Pianeti.values()) {
@@ -104,11 +98,9 @@ public class Constants {
             }
             return null;
         }
-
         public static List<Pianeti> getAllPianeti() {
             return Arrays.asList(Pianeti.values());
         }
-
     }
 
 
@@ -144,6 +136,7 @@ public class Constants {
         }
     }
 
+
     public enum SegniZodiacali {
         ARIETE(0, "Ariete", "Aries", 0.0),
         TORO(1, "Toro", "Taurus", 30.0),
@@ -157,16 +150,13 @@ public class Constants {
         CAPRICORNO(9, "Capricorno", "Capricorn", 270.0),
         ACQUARIO(10, "Acquario", "Aquarius", 300.0),
         PESCI(11, "Pesci", "Pisces", 330.0);
-
         private final int numero;
         private final String nome;
         private final String nome_en;
         private final double gradi;
-
         SegniZodiacali(int numero, String nome, String nome_en, double gradi) {
             this.numero = numero; this.nome = nome; this.nome_en = nome_en; this.gradi = gradi;
         }
-
         public int getNumero() { return numero; }
         public String getNome() {
             return nome;
@@ -175,7 +165,6 @@ public class Constants {
             return nome_en;
         }
         public double getGradi() { return gradi; }
-
         public static SegniZodiacali fromNumero(int numero) {
             for (SegniZodiacali segno : SegniZodiacali.values()) {
                 if (segno.getNumero() == numero) {
@@ -184,7 +173,6 @@ public class Constants {
             }
             throw new IllegalArgumentException("Invalid numero: " + numero);
         }
-
         public static List<String> getAllNomi() {
             List<String> nomi = new ArrayList<>();
             for (SegniZodiacali segno : SegniZodiacali.values()) {
@@ -192,7 +180,6 @@ public class Constants {
             }
             return nomi;
         }
-
         public static SegniZodiacali fromNomeEn(String nomeEn) {
             for (SegniZodiacali segno : SegniZodiacali.values()) {
                 if (segno.getNomeEn().equalsIgnoreCase(nomeEn)) {
@@ -207,9 +194,6 @@ public class Constants {
     }
 
 
-    /*
-    elencami i segni e i rispettivi elementi. e a ficanco all'elemento mettici 0 per fuoco 1 per acqua 2 per terra 3 per aria
-     */
 
     public enum Elementi {
         FUOCO(0, "Fuoco"),
@@ -260,11 +244,9 @@ public class Constants {
         CASA_10(10, "10 MC", "MC"),
         CASA_11(11, "11", "11"),
         CASA_12(12, "12", "12");
-
         private final int numero;
         private final String name;
         private final String code;
-
         Case(int numero, String name, String code) {
             this.numero = numero;
             this.name = name;
@@ -273,11 +255,8 @@ public class Constants {
         public int getNumero() {
             return numero;
         }
-
         public String getName() { return name; }
-
         public String getCode() { return code; }
-
         public static Case fromNumero(int numero) {
             for (Case casa : Case.values()) {
                 if (casa.getNumero() == numero) {
