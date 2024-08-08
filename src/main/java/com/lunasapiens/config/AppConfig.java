@@ -121,11 +121,9 @@ public class AppConfig implements WebMvcConfigurer {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.facebook.version", "api.facebook.appid",
                     "api.facebook.appsecret", "api.facebook.accesstoken", "api.facebook.pageaccesstoken")) );
-            facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2), loadPorpoerty.get(3), loadPorpoerty.get(4));
+            facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            facebookConfig = new FacebookConfig(
-                    env.getProperty("api.facebook.version"), env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"),
-                    env.getProperty("api.facebook.accesstoken"), env.getProperty("api.facebook.pageaccesstoken"));
+            facebookConfig = new FacebookConfig( env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"), env.getProperty("api.facebook.idpage") );
         }
         return facebookConfig;
     }

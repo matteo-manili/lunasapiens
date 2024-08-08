@@ -2,25 +2,20 @@ package com.lunasapiens.config;
 
 public class FacebookConfig {
 
-    private String version;
+
     private String appId;
     private String appSecret;
-    private String accessToken;
-
-    private String pageAccessToken;
+    private String pageId;
 
 
-    public FacebookConfig(String version, String appId, String appSecret, String accessToken, String pageAccessToken) {
-        this.version = version;
+
+    public FacebookConfig(String appId, String appSecret, String pageId) {
         this.appId = appId;
         this.appSecret = appSecret;
-        this.accessToken = accessToken;
-        this.pageAccessToken = pageAccessToken;
+        this.pageId = pageId;
     }
 
-    public String getVersion() {
-        return version;
-    }
+
 
     public String getAppId() {
         return appId;
@@ -30,11 +25,5 @@ public class FacebookConfig {
         return appSecret;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getPageAccessToken() {
-        return pageAccessToken;
-    }
+    public String getPageId() { return pageId; }
 }

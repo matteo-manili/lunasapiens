@@ -1,11 +1,17 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
+import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.dto.*;
 
 import com.lunasapiens.zodiac.*;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
+import com.restfb.*;
+import com.restfb.types.FacebookType;
+import com.restfb.types.GraphResponse;
+import com.restfb.types.Page;
+import com.restfb.types.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -41,6 +47,49 @@ public class IndexController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private FacebookConfig facebookConfig;
+
+    /**
+     * lo uso solo per test
+     */
+    @GetMapping("/test")
+    public String inviaEmail(Model model) {
+
+
+        // ID Luna Sapiens: 372816732588147
+        String pageID = "372816732588147";
+        int counter = 1;
+
+
+        AccessToken accessToken =
+                new DefaultFacebookClient(Version.LATEST).obtainAppAccessToken( "1005031077419678", "5b2e947f499d02f2dfbc4f80616af7c5");
+        logger.info( "accessToken: "+accessToken );
+
+        FacebookClient facebookClient = new DefaultFacebookClient(accessToken.getAccessToken(), Version.LATEST);
+
+        // Ottieni le informazioni dell'utente (assicurati che il token di accesso abbia i permessi necessari)
+        //User myuser = facebookClient.fetchObject("me", User.class);
+
+        // Ottieni la pagina che l'utente gestisce
+        //Page mypage = facebookClient.fetchObject(pageID, Page.class);
+
+
+        Page page = facebookClient.fetchObject(pageID, Page.class, Parameter.with("fields", "access_token"));
+        String pageAccessToken = page.getAccessToken();
+
+
+        FacebookClient pageClient = new DefaultFacebookClient(pageAccessToken, Version.LATEST);
+        pageClient.publish(pageID + "/feed", FacebookType.class, Parameter.with("message", Integer.toString(counter) + ": Hello, facebook World!"));
+
+
+
+        return "index";
+    }
+
+
+
+
 
 
     /**
@@ -65,8 +114,6 @@ public class IndexController {
     }
 
 
-
-
     @GetMapping("/error")
     public String pageError(HttpServletRequest request, Model model) {
         return "error";
@@ -78,20 +125,7 @@ public class IndexController {
     @GetMapping("/termini-di-servizio")
     public String terminiDiServizio(Model model) { return "termini-di-servizio"; }
 
-    /**
-     * lo uso solo per test
-     */
-    @GetMapping("/test-invia-email")
-    public String inviaEmail(Model model) {
 
-        /*
-        EmailUtenti emailUtenti = new EmailUtenti();
-        emailUtenti.setEmail("matteo.manili@gmail.com");
-        emailService.inviaEmailOrosciopoGioraliero();
-         */
-
-        return "index";
-    }
 
     /**
      * lo uso solo per test
