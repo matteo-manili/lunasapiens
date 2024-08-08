@@ -33,13 +33,13 @@ public class ServizioTemaNatale {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private final Double temperature = 0.5; private final Integer tokensPerRisposta = 150; private final Double caratteriPerTokenStima = 8.0;
+    private final Double temperature = 0.5; private final Integer tokensAggiuntiPerRisposta = 200; private final Double caratteriPerTokenStima = 6.0;
 
 
 
     public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensPerRisposta, caratteriPerTokenStima,
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, caratteriPerTokenStima,
                  appConfig.getParamOpenAi().getModelGpt4_Mini() /* appConfig.getParamOpenAi().getModelGpt3_5()*/, chatMessageList );
     }
 
@@ -109,12 +109,12 @@ public class ServizioTemaNatale {
         for (CasePlacide varCasa : casePlacideArrayList) {
             descTemaNatale.append("<b>- " + varCasa.descrizioneCasaGradiCasaMinutiCasa() +"</b>");
             descTemaNatale.append("<ul>");
-            descTemaNatale.append("<li>" + caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
+            descTemaNatale.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
             boolean pianetaPresete = false;
             for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa())){
                     pianetaPresete = true;
-                    descTemaNatale.append("<li>" + varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
+                    descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
                             pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                 }
             }
@@ -123,7 +123,7 @@ public class ServizioTemaNatale {
                 for (int pianetaSign : pianetiSignori) {
                     for (PianetaPosizTransito varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
-                            descTemaNatale.append("<li>"+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
+                            descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
                                 +" "+"</i>"+ pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                         }
                     }

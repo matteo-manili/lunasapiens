@@ -191,6 +191,8 @@ public class TemaNataleController {
         return "redirect:/tema-natale";
     }
 
+
+
     /**
      * Spring WebSocket
      * In questa modalità invia il messaggio a tutti gli utenti cioè a tuitti i browser: @MessageMapping("/message") @SendTo("/topic/messages")
@@ -201,16 +203,18 @@ public class TemaNataleController {
         String userId = principal.getName();
         Map<String, Object> response = new HashMap<>();
 
+        final String keyJsonStandardContent = "content";
+
         // Controlla il limite di frequenza dei messaggi
         if (!rateLimiter.allowMessage(userId)) {
-            response.put("error", "Troppi messaggi! Per favore attendi.");
+            response.put(keyJsonStandardContent, rateLimiter.numeroMessaggi_e_Minuti() );
             return response;
         }
-        String domanda = message.get("content");
+        String domanda = message.get( keyJsonStandardContent );
         String temaNataleId = message.get("temaNataleId");
         // Aggiunge una protezione per i dati nulli o non validi
         if (domanda == null || domanda.isEmpty()) {
-            response.put("error", "Il messaggio non può essere vuoto.");
+            response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
             return response;
         }
 
@@ -228,13 +232,13 @@ public class TemaNataleController {
                 chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
                 cache.put(temaNataleId, chatMessageIa);
 
-                response.put("content", rispostaIA.toString());
+                response.put(keyJsonStandardContent, rispostaIA.toString());
                 telegramBotClient.inviaMessaggio("Domanda Utente: " + domanda);
             } catch (Exception e) {
-                response.put("error", "Errore durante l'elaborazione: " + e.getMessage());
+                response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
             }
         } else {
-            response.put("error", "Cache non trovata.");
+            response.put(keyJsonStandardContent, "Cache non trovata.");
         }
         return response;
     }

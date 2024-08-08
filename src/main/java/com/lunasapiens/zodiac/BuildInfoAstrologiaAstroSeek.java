@@ -113,12 +113,12 @@ public class BuildInfoAstrologiaAstroSeek {
         textSystemBuilder.append("- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n")
 
                 .append("- Le Case ed i Pianeti nelle Case, indicano il futuro e gli eventi dell'utente.\n")
-                .append("- le interpretazioni dei Pianeti nelle Case (inclusi i Pianeti governatori della casa), vanno declinate in base a: significato della Casa, " +
-                        "significato del Pianeta, significato dell'Aspetto del Pianeta e al significato di Pianeta Retrogrado (se è retrogrado).\n\n")
+                .append("- le interpretazioni dei Pianeti nelle Case vanno declinate in base a: significato della Casa, " +
+                        "significato del Pianeta, significato dell'Aspetto del Pianeta e al significato di Pianeta Retrogrado se è retrogrado.\n\n")
 
                 .append("- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n")
                 .append("- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base a: significato del Pianeta, significato dell'Aspetto del Pianeta " +
-                        "e al Significato di Pianeta Retrogrado (se è retrogrado).\n\n")
+                        "e al Significato di Pianeta Retrogrado se è retrogrado.\n\n")
 
                 .append("- Non puoi creare un tema natale. Non puoi sapere i transiti di un'altra data. In astrologia non conosci gli argomenti di: karma, nodo karmico, " +
                         "stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith, chirone.\n\n")
