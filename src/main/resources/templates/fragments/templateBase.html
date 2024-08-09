@@ -19,6 +19,16 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-H4Y4Z7JH9B');
+
+        // Funzione per inviare l'evento personalizzato a GA4
+        function trackFormSubmit() {
+            gtag('event', 'submit_form', {
+                'event_category': 'Form',
+                'event_label': 'genera_tema_natale',
+                'value': 1
+            });
+        }
+
     </script>
     <link rel="icon" type="image/x-icon" href="/moon_icon.ico" />
     <link href="/css/bootstrap.5.2.3.min.css" rel="stylesheet">

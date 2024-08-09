@@ -308,6 +308,16 @@ $(document).ready(function() {
     });
 
 
+    document.addEventListener('DOMContentLoaded', function() {
+        var submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                trackFormSubmit();
+            });
+        }
+    });
+
+
 
 });
 </script>
