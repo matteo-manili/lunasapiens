@@ -85,8 +85,6 @@ public class IndexController {
         FacebookClient pageClient = new DefaultFacebookClient(pageAccessToken, Version.LATEST);
         pageClient.publish(pageID + "/feed", FacebookType.class, Parameter.with("message", Integer.toString(counter) + ": Hello, facebook World!"));
 
-
-
         return "index";
     }
 
