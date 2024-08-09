@@ -122,8 +122,6 @@ public class IndexController {
     @GetMapping("/info-privacy")
     public String infoPrivacy(Model model) { return "info-privacy"; }
 
-    @GetMapping("/termini-di-servizio")
-    public String terminiDiServizio(Model model) { return "termini-di-servizio"; }
 
 
 
@@ -168,7 +166,8 @@ public class IndexController {
                 "/",
                 "/oroscopo",
                 "/tema-natale",
-                "/contatti"
+                "/contatti",
+                "/info-privacy"
         );
 
         for (String url : urlsForIndex) {

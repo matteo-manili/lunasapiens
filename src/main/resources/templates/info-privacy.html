@@ -1,49 +1,109 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/templateBase :: common_head_title_meta(~{::title},~{::meta}) }">
-    <title th:fragment="title">Luna Sapiens | Informativa sulla Privacy</title>
-    <th:block th:fragment="meta">
-    <meta name="robots" content="noindex, nofollow">
-    </th:block>
+<head th:replace="~{fragments/templateBase :: common_head_title(~{::title}) }">
+    <title th:fragment="title">Luna Sapiens | Informazioni e Privacy</title>
 </head>
 
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-<div class="container mt-4 px-4 px-lg-5">
 
-    <section>
-        <h2>Raccolta delle Informazioni</h2>
-        <p>Raccogliamo informazioni personali solo quando le fornisci volontariamente attraverso il nostro sito (https://www.lunasapiens.com). Utilizziamo queste informazioni per scopi specifici e in conformità con questa Informativa sulla Privacy. Se non acconsenti, ti preghiamo di non utilizzare il nostro servizio.</p>
-    </section>
+<div class="container mt-4 ">
 
-    <section>
-        <h2>Modifiche alla Privacy</h2>
-        <p>Questa Informativa sulla Privacy può essere aggiornata senza preavviso. Le modifiche saranno effettive 180 giorni dopo la pubblicazione. Ti invitiamo a controllare periodicamente questa pagina.</p>
-    </section>
+    <h3>Luna Sapiens: Presentazione del Progetto e Informativa sulla Privacy.</h3>
 
-    <ol class="privacy-policy-ol">
-        <li>
-            <h2>I Tuoi Diritti</h2>
-            <p>Hai il diritto di accedere, rettificare o cancellare i tuoi dati personali, oltre a limitare o opporre il trattamento dei tuoi dati. Puoi anche richiedere di trasferire i tuoi dati ad altra entità o revocare il consenso. Per esercitare questi diritti, contattaci a matteo.manili@gmail.com. La mancata concessione o revoca del consenso potrebbe limitare l'accesso ai nostri servizi.</p>
-        </li>
-        <li>
-            <h2>Cookie</h2>
-            <p>Per informazioni su come utilizziamo i cookie e le tue opzioni, consulta la nostra <a href="https://www.lunasapiens.com">Cookie Policy</a>.</p>
-        </li>
-        <li>
-            <h2>Sicurezza</h2>
-            <p>Adottiamo misure di sicurezza ragionevoli per proteggere le tue informazioni, ma non possiamo garantire una sicurezza assoluta. L'uso del sito avviene a tuo rischio.</p>
-        </li>
-        <li>
-            <h2>Reclami e Contatti</h2>
-            <p>Per domande o reclami sul trattamento dei tuoi dati, visita la nostra <a href="/contatti">pagina di contatto</a>.</p>
-        </li>
-    </ol>
+    <div class="card mb-4 mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Presentazione del Progetto</h5>
+            <p class="card-text">
+                Benvenuti su LunaSapiens.com, una piattaforma che unisce la tecnologia dell'intelligenza artificiale con l'astrologia tradizionale per offrire un'esperienza unica e innovativa.
+                LunaSapiens nasce dalla passione per l'astrologia e dalla mia esperienza come programmatore, con l'obiettivo di esplorare nuovi orizzonti nell'interpretazione delle influenze celesti.
+            </p>
+            <p class="card-text">
+                Attraverso il nostro sito, puoi scoprire l'oroscopo del giorno basato su dati astronomici reali e ricevere un'analisi dettagliata del tuo tema natale, il tutto gestito da algoritmi avanzati di
+                intelligenza artificiale. Crediamo che la fusione tra tecnologia e antica saggezza astrologica possa offrire strumenti nuovi e potenti per comprendere meglio il nostro percorso nella vita.
+            </p>
+            <p class="card-text">
+                LunaSapiens.com è un progetto amatoriale, nato dal desiderio di sperimentare e innovare, e siamo entusiasti di condividere con voi questa avventura. Esplora le stelle con noi e scopri cosa
+                hanno in serbo per te!
+            </p>
+        </div>
+    </div>
+
+    <h4 class="mb-4">Informativa sulla Privacy</h4>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">1. Introduzione</h5>
+            <p class="card-text">LunaSapiens.com si impegna a proteggere la privacy degli utenti. Questa informativa sulla privacy descrive come raccogliamo, utilizziamo e proteggiamo i dati personali degli utenti che interagiscono con il nostro sito e utilizzano i nostri servizi.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">2. Dati Raccolti</h5>
+            <h5>a. Cookie</h5>
+            <p>Utilizziamo i cookie per migliorare l'esperienza utente e per scopi di autenticazione. I cookie sono piccoli file di testo salvati nel dispositivo dell'utente che permettono al sito di ricordare le preferenze e le sessioni di accesso. Questi cookie sono essenziali per il funzionamento del sito e non vengono utilizzati per tracciare le attività dell'utente su altri siti web.</p>
+
+            <h5>b. Dati di Registrazione</h5>
+            <p>Quando l'utente si registra al nostro sito, raccogliamo e salviamo l'indirizzo email fornito. Questo dato è utilizzato esclusivamente per:</p>
+            <ul>
+                <li>Autenticare l'accesso ai servizi del sito.</li>
+                <li>Inviare all'utente contenuti e aggiornamenti relativi ai servizi offerti da LunaSapiens.com.</li>
+            </ul>
+
+            <h5>c. Dati dei Servizi Astrologici</h5>
+            <p>Per l'utilizzo dei nostri servizi astrologici (come l'oroscopo personalizzato o il tema natale), l'utente può inserire informazioni quali la data e l'ora di nascita, il luogo e oltre a eventuali domande rivolte al ChatBot. <strong>Questi dati non vengono memorizzati</strong> e non vengono in alcun modo divulgati o condivisi con terze parti.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">3. Finalità del Trattamento</h5>
+            <p>I dati raccolti vengono trattati per le seguenti finalità:</p>
+            <ul>
+                <li><strong>Autenticazione:</strong> Gestire l'accesso degli utenti ai servizi protetti del sito.</li>
+                <li><strong>Miglioramento del Servizio:</strong> Utilizzare cookie per migliorare la funzionalità e l'esperienza di navigazione del sito.</li>
+                <li><strong>Comunicazione:</strong> Inviare email agli utenti registrati con contenuti e aggiornamenti relativi ai servizi di LunaSapiens.com.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">4. Conservazione dei Dati</h5>
+            <p>I dati personali dell'utente, come l'indirizzo email, sono conservati in modo sicuro e protetto nei nostri sistemi, e verranno mantenuti fino a quando
+                l'utente decide di cancellare il proprio account o richiedere la rimozione dei dati. I dati inseriti per i servizi astrologici non vengono conservati.</p>
+        </div>
+    </div>
+
+    <h4 class="mb-4">Informazioni di Contatto</h4>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Ragione Sociale</h5>
+            <p class="card-text">MANILI MATTEO</p>
+            <h5 class="card-title">Partita IVA</h5>
+            <p class="card-text">MATTEO MANILI 14256941007</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Email</h5>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li style="display: inline; margin-right: 10px;">
+                    <a href="mailto:info@lunasapiens.com">info@lunasapiens.com</a>
+                </li>
+                <li style="display: inline; margin-right: 10px;">
+                    <a href="mailto:matteo.manili@gmail.com">matteo.manili@gmail.com</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
 </div>
-
-
-
 
 
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>

@@ -40,8 +40,6 @@ public class Constants {
             "/app/message",
             "/coordinate",
             "/greeting",
-            "/info-privacy",
-            "/termini-di-servizio",
             "/error"));
 
 
