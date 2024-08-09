@@ -57,13 +57,18 @@ public class IndexController {
     public String inviaEmail(Model model) {
 
 
+
         // ID Luna Sapiens: 372816732588147
-        String pageID = "372816732588147";
+        String pageID = facebookConfig.getPageId();
+        String appId = facebookConfig.getAppId();
+        String appSecrtet = facebookConfig.getAppSecret();
+
+
         int counter = 1;
 
 
         AccessToken accessToken =
-                new DefaultFacebookClient(Version.LATEST).obtainAppAccessToken( "1005031077419678", "5b2e947f499d02f2dfbc4f80616af7c5");
+                new DefaultFacebookClient(Version.LATEST).obtainAppAccessToken( appId, appSecrtet);
         logger.info( "accessToken: "+accessToken );
 
         FacebookClient facebookClient = new DefaultFacebookClient(accessToken.getAccessToken(), Version.LATEST);
