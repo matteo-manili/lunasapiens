@@ -22,6 +22,7 @@
 
         // Funzione per inviare l'evento personalizzato a GA4
         function trackFormSubmit() {
+            console.log("trackFormSubmit ok");
             gtag('event', 'submit_form', {
                 'event_category': 'Form',
                 'event_label': 'genera_tema_natale',

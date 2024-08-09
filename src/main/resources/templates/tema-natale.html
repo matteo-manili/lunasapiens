@@ -153,8 +153,95 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 
 <script>
-    // ########### CODICE CHAT-BOT ############################################
 
+/*
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('tema-natale-submit');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            trackFormSubmit();
+        });
+    }
+});
+
+ */
+
+// ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
+$(document).ready(function() {
+
+    // Validazione dell'invio del modulo
+    $("#tema-natale-submit").submit(function(event) {
+        var isValid = true;
+        if ($("#cityInput").val().trim() === "" || $("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
+            $("#cityError").show(); // Mostra il messaggio di errore
+            $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        if ($("#dateTime").val().trim() === "") {
+            $("#dateTimeError").show(); // Mostra il messaggio di errore
+            $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        // Se il modulo è valido, mostra l'overlay e consenti l'invio
+        if (isValid) {
+            showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
+            trackFormSubmit();
+        } else {
+            event.preventDefault(); // Previeni l'invio del modulo se non è valido
+        }
+    });
+
+
+    $("#cityInput").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/coordinate",
+                dataType: "json",
+                data: {
+                    cityName: $.trim(request.term) // rimuove gli spazi iniziali e finali
+                },
+                delay: 300,
+                success: function(data) {
+                    console.log("Dati ricevuti:", data); // Aggiungi questo per il debug
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
+                            value: item.name,
+                            fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
+                            regioneName: item.adminName1,
+                            statoName: item.countryName,
+                            statoCode: item.countryCode,
+                            lat: item.lat,
+                            lng: item.lng
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        select: function(event, ui) {
+            $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
+            $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
+            $("#regioneName").val(ui.item.regioneName);
+            $("#statoName").val(ui.item.statoName);
+            $("#statoCode").val(ui.item.statoCode);
+            $("#cityLat").val(ui.item.lat);
+            $("#cityLng").val(ui.item.lng);
+            // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
+            event.preventDefault();
+        }
+    });
+
+});
+
+
+// ########### CODICE CHAT-BOT ############################################
 document.addEventListener("DOMContentLoaded", function() {
     var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
 
@@ -232,93 +319,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-});
-
-
-
-
-// ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
-$(document).ready(function() {
-
-    $("#cityInput").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "/coordinate",
-                dataType: "json",
-                data: {
-                    cityName: $.trim(request.term) // rimuove gli spazi iniziali e finali
-                },
-                delay: 300,
-                success: function(data) {
-                    console.log("Dati ricevuti:", data); // Aggiungi questo per il debug
-                    response($.map(data, function(item) {
-                        return {
-                            label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
-                            value: item.name,
-                            fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
-                            regioneName: item.adminName1,
-                            statoName: item.countryName,
-                            statoCode: item.countryCode,
-                            lat: item.lat,
-                            lng: item.lng
-                        };
-                    }));
-                }
-            });
-        },
-        minLength: 3,
-        select: function(event, ui) {
-            $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
-            $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
-            $("#regioneName").val(ui.item.regioneName);
-            $("#statoName").val(ui.item.statoName);
-            $("#statoCode").val(ui.item.statoCode);
-            $("#cityLat").val(ui.item.lat);
-            $("#cityLng").val(ui.item.lng);
-            // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
-            event.preventDefault();
-        }
-    });
-
-    // Validazione dell'invio del modulo
-    $("#tema-natale-submit").submit(function(event) {
-        var isValid = true;
-        if ($("#cityInput").val().trim() === "" || $("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
-            $("#cityError").show(); // Mostra il messaggio di errore
-            $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
-            isValid = false;
-        } else {
-            $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-            $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
-        }
-        if ($("#dateTime").val().trim() === "") {
-            $("#dateTimeError").show(); // Mostra il messaggio di errore
-            $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
-            isValid = false;
-        } else {
-            $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
-            $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
-        }
-        // Se il modulo è valido, mostra l'overlay e consenti l'invio
-        if (isValid) {
-            showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
-        } else {
-            event.preventDefault(); // Previeni l'invio del modulo se non è valido
-        }
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
-                trackFormSubmit();
-            });
-        }
-    });
-
-
-
 });
 </script>
 
