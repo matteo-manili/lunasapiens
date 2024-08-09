@@ -57,8 +57,6 @@ public class IndexController {
     public String inviaEmail(Model model) {
 
 
-
-        // ID Luna Sapiens: 372816732588147
         String pageID = facebookConfig.getPageId();
         String appId = facebookConfig.getAppId();
         String appSecrtet = facebookConfig.getAppSecret();
