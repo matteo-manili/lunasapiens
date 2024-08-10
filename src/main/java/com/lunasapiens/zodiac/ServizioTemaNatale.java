@@ -33,7 +33,7 @@ public class ServizioTemaNatale {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private final Double temperature = 0.5; private final Integer tokensAggiuntiPerRisposta = 200; private final Double caratteriPerTokenStima = 6.0;
+    private final Double temperature = 0.1; private final Integer tokensAggiuntiPerRisposta = 200; private final Double caratteriPerTokenStima = 6.0;
 
 
 
