@@ -10,14 +10,11 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
-
-import org.bytedeco.ffmpeg.global.avcodec;
 
 
 public class GeneratorVideo {
@@ -47,7 +44,7 @@ public class GeneratorVideo {
 
             // Inizializza il recorder per il video
             FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(pathOroscopoGiornalieroVideo + nomeFileVideo + formatoVideo(), width, height);
-            recorder.setVideoCodec( avcodec.AV_CODEC_ID_H264 ); //avcodec.AV_CODEC_ID_MPEG4 // avcodec.AV_CODEC_ID_H264 // Imposta il codec video su MPEG4
+            recorder.setVideoCodec( 27 ); //avcodec.AV_CODEC_ID_H264 //avcodec.AV_CODEC_ID_MPEG4 // avcodec.AV_CODEC_ID_H264 // Imposta il codec video su MPEG4
             //recorder.setPixelFormat( avutil.AV_PIX_FMT_YUV420P10 ); //
             recorder.setFrameRate(frameRate); // Imposta il frame rate del video
             recorder.setVideoBitrate(3000000); // Imposta il bitrate video a 2 Mbps //3000000 3 Mbps //6000000 6 Mbps
@@ -59,7 +56,7 @@ public class GeneratorVideo {
 
             // Aggiungi la traccia audio al recorder
             recorder.setAudioChannels(audioGrabber.getAudioChannels());
-            recorder.setAudioCodec( avcodec.AV_CODEC_ID_MP3 ); // Imposta il codec audio //avcodec.AV_CODEC_ID_MP3 avcodec.AV_CODEC_ID_AAC
+            recorder.setAudioCodec( 86017 ); // avcodec.AV_CODEC_ID_MP3  // Imposta il codec audio //avcodec.AV_CODEC_ID_MP3 avcodec.AV_CODEC_ID_AAC
             recorder.setSampleRate(audioGrabber.getSampleRate());
             recorder.start();
 

@@ -277,7 +277,8 @@
                     <groupId>org.bytedeco</groupId>
                     <artifactId>videoinput-platform</artifactId>
                 </exclusion>
-                <!-- <exclusion>
+                <!-- @@@@
+                <exclusion>
                     <groupId>org.bytedeco</groupId>
                     <artifactId>ffmpeg-platform</artifactId>
                 </exclusion> -->
