@@ -191,10 +191,7 @@ public class IndexController {
         String appId = facebookConfig.getAppId();
         String appSecrtet = facebookConfig.getAppSecret();
 
-        //saasasassaassaassaas
-
         int counter = 1;
-
 
         AccessToken accessToken =
                 new DefaultFacebookClient(Version.LATEST).obtainAppAccessToken( appId, appSecrtet);
