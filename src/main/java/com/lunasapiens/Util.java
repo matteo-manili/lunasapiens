@@ -217,7 +217,7 @@ public class Util {
         try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
             properties.load(fis);
             for (String str : keysProperties) {
-                System.out.println(str);
+                //logger.info("keysProperties: "+str);
                 keysPropertiesResult.add( properties.getProperty( str ) );
             }
         } catch (IOException ioException) {

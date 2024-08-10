@@ -110,7 +110,9 @@ public class BuildInfoAstrologiaAstroSeek {
 
     public static StringBuilder temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
         StringBuilder textSystemBuilder = new StringBuilder();
-        textSystemBuilder.append("- Sei un astrologo informato sul tema natale dell'utente, rispondi alle domande dell'utente riguardo il suo tema natale.\n\n")
+        textSystemBuilder.append("Sei un astrologo informato sul tema natale dell'utente, " +
+                "rispondi alle domande dell'utente riguardo il tema natale sotto descritto. Non aggiungere e non inventare niente " +
+                "oltre le informazioni fornite.\n\n")
 
                 .append("- Le Case ed i Pianeti nelle Case, indicano il futuro e gli eventi dell'utente.\n")
                 .append("- le interpretazioni dei Pianeti nelle Case vanno declinate in base a: significato della Casa, " +
