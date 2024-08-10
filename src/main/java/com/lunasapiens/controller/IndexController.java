@@ -63,7 +63,7 @@ public class IndexController {
     private FacebookConfig facebookConfig;
 
     @Autowired
-    private JwtConfig getJwtKeys;
+    private JwtConfig getJwtRsaKeys;
 
 
 
@@ -72,8 +72,8 @@ public class IndexController {
     public String testJWT(Model model) throws NoSuchAlgorithmException {
 
         // Chiavi Base64 (esempio, sostituisci con le tue chiavi)
-        String publicKeyB64 = getJwtKeys.getKeyPublic();
-        String privateKeyB64 = getJwtKeys.getKeyPrivate();
+        String publicKeyB64 = getJwtRsaKeys.getKeyPublic();
+        String privateKeyB64 = getJwtRsaKeys.getKeyPrivate();
 
         System.out.println("publicKeyB64: " + publicKeyB64);
         System.out.println("privateKeyB64: " + privateKeyB64);

@@ -106,7 +106,7 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public JwtConfig getJwtKeys() {
+    public JwtConfig getJwtRsaKeys() {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
             return new JwtConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
