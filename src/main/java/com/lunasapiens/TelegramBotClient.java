@@ -47,13 +47,11 @@ public class TelegramBotClient extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return appConfig.getParamTelegram().get(2);
+        return appConfig.getParamTelegram().getUsername();
     }
 
     @Override
-    public String getBotToken() {
-        return appConfig.getParamTelegram().get(0);
-    }
+    public String getBotToken() { return appConfig.getParamTelegram().getToken(); }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -67,7 +65,7 @@ public class TelegramBotClient extends TelegramLongPollingBot {
 
     public void inviaMessaggio(String testoMessaggio) {
         SendMessage message = new SendMessage();
-        message.setChatId( appConfig.getParamTelegram().get(1) );
+        message.setChatId( appConfig.getParamTelegram().getChatId() );
         message.setText(testoMessaggio);
         try {
             execute(message);

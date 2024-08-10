@@ -209,22 +209,6 @@ public class Util {
     }
 
 
-/*
-    // Metodo statico per caricare le proprietà
-    public static Properties getProperties(String fileName) {
-        Properties properties = new Properties();
-        try (InputStream is = AppConfig.class.getClassLoader().getResourceAsStream(fileName)) {
-            if (is != null) {
-                properties.load(is);
-            } else {
-                throw new FileNotFoundException("File properties non trovato: " + fileName);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del file properties: " + fileName, e);
-        }
-        return properties;
-    }
-*/
 
 
     public static List<String> loadPropertiesEsternoLunaSapiens(List<String> keysProperties ) {

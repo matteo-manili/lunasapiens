@@ -51,6 +51,7 @@ public class AppConfig implements WebMvcConfigurer {
     private ApplicationContext applicationContext;
 
 
+
     @Bean
     public Properties lunaSegni(){ return getProperties( "luna-segni.properties" ); }
 
@@ -105,6 +106,17 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
+    public JwtConfig getJwtKeys() {
+        if (Util.isLocalhost()) {
+            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
+            return new JwtConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
+        }else{
+            return new JwtConfig(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
+        }
+    }
+
+
+    @Bean
     public String getApiGeonamesUsername() {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
@@ -128,22 +140,19 @@ public class AppConfig implements WebMvcConfigurer {
         return facebookConfig;
     }
 
+
     @Bean
-    public List<String> getParamTelegram() {
+    public TelegramConfig getParamTelegram() {
         List<String> paramTelegram = new ArrayList<>();
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
                     "api.telegram.bot.username")) );
-            paramTelegram.add( loadPorpoerty.get(0));
-            paramTelegram.add( loadPorpoerty.get(1));
-            paramTelegram.add( loadPorpoerty.get(2));
+            return new TelegramConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            paramTelegram.add( env.getProperty("api.telegram.token") );
-            paramTelegram.add( env.getProperty("api.telegram.chatId") );
-            paramTelegram.add( env.getProperty("api.telegram.bot.username") );
+            return new TelegramConfig(env.getProperty("api.telegram.token") , env.getProperty("api.telegram.chatId"), env.getProperty("api.telegram.bot.username"));
         }
-        return paramTelegram;
     }
+
 
     @Bean
     public OpenAiGptConfig getParamOpenAi() {
@@ -169,7 +178,6 @@ public class AppConfig implements WebMvcConfigurer {
                 env.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
         return openAiGptConfig;
     }
-
 
 
     @Bean
@@ -345,9 +353,6 @@ public class AppConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/oroscopo_giornaliero/", "file:src/main/resources/static/oroscopo_giornaliero/")
                 .setCachePeriod(0);
     }
-
-
-
 
 
 }
