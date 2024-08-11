@@ -117,12 +117,12 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public String getApiGeonamesUsername() {
+    public ApiGeonamesConfig getApiGeonames() {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
-            return loadPorpoerty.get(0);
+            return new ApiGeonamesConfig(loadPorpoerty.get(0)) ;
         }else{
-            return env.getProperty("api.geonames.username");
+            return new ApiGeonamesConfig( env.getProperty("api.geonames.username") ) ;
         }
     }
 
@@ -145,7 +145,6 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public TelegramConfig getParamTelegram() {
-        List<String> paramTelegram = new ArrayList<>();
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
                     "api.telegram.bot.username")) );

@@ -3,6 +3,7 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
+import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.dto.*;
 import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.filter.RateLimiter;
@@ -45,7 +46,7 @@ public class TemaNataleController {
     private static final Logger logger = LoggerFactory.getLogger(TemaNataleController.class);
 
     @Autowired
-    private String getApiGeonamesUsername;
+    private ApiGeonamesConfig getApiGeonames;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -279,7 +280,7 @@ public class TemaNataleController {
 
     @GetMapping("/coordinate")
     public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
-        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonamesUsername + "&style=MEDIUM&lang=it&maxRows=5";
+        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonames.getUsername() + "&style=MEDIUM&lang=it&maxRows=5";
         logger.info(url);
         String response;
         List<Map<String, Object>> locations = new ArrayList<>();
