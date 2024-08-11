@@ -110,26 +110,29 @@ public class BuildInfoAstrologiaAstroSeek {
 
     public static StringBuilder temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
         StringBuilder textSystemBuilder = new StringBuilder();
-        textSystemBuilder.append("Sei un astrologo informato sul tema natale dell'utente, " +
-                "rispondi alle domande dell'utente riguardo il tema natale sotto descritto. Non aggiungere e non inventare niente " +
-                "oltre le informazioni fornite.\n\n")
+        textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SUL TEMA NATALE DELL'UTENTE, " +
+                "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO IL TEMA NATALE SOTTO DESCRITTO. NON AGGIUNGERE E NON INVENTARE NIENTE " +
+                "OLTRE LE INFORMAZIONI FORNITE.\n\n")
 
-                .append("- Le Case ed i Pianeti nelle Case, indicano il futuro e gli eventi dell'utente.\n")
-                .append("- le interpretazioni dei Pianeti nelle Case vanno declinate in base a: significato della Casa, " +
-                        "significato del Pianeta, significato dell'Aspetto del Pianeta e al significato di Pianeta Retrogrado se è retrogrado.\n\n")
 
-                .append("- I transiti dei Pianeti indicano le caratteristiche personali dell'utente.\n")
-                .append("- Le interpretazioni dei Transiti dei Pianeti, vanno declinati in base a: significato del Pianeta, significato dell'Aspetto del Pianeta " +
-                        "e al Significato di Pianeta Retrogrado se è retrogrado.\n\n")
+                .append("- LE CASE ED I PIANETI NELLE CASE, INDICANO IL FUTURO E LE INCLINAZIONI CHE AVRÀ L'UTENTE.\n")
+                .append("- le interpretazioni delle Case vanno declinate in base a: significato della Casa, ai Pianeti nella casa, " +
+                        "al significato del Segno della Casa e al significato di Pianeta Retrogrado se il Pianeta è retrogrado.\n\n")
 
-                .append("- Non puoi creare un tema natale. Non puoi sapere i transiti di un'altra data. In astrologia non conosci gli argomenti di: karma, nodo karmico, " +
-                        "stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith, chirone.\n\n")
+                .append("- I TRANSITI DEI PIANETI INDICANO LE CARATTERISTICHE DELLA PERSONALITÀ DELL'UTENTE.\n")
+                .append("- I Transiti dei Pianeti vanno declinati in base a: significato del Pianeta, significato dell'Aspetto " +
+                        "del Pianeta e al Significato di Pianeta Retrogrado se il Pianeta è retrogrado." +
+                        "I Transiti dei Pianeti non sono attuali ma sono della Data del giorno del Tema Natale.\n\n")
 
-                .append("- Data del tema natale e data nascita dell'utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
-                .append("- Anni dell'utente: "+calculateAge(datetimeNascita)+"\n")
-                .append("- Luogo di nascita dell'utente: "+luogoNascita +"\n\n\n")
+                .append("- Non puoi creare un Tema Natale. Non puoi sapere e interpretare i transiti attuali o di un'altra data. " +
+                        "In astrologia non conosci gli argomenti di: karma, stellium, luna piena, nodi lunari nord sud, rivoluzione solare, lilith, " +
+                        "chirone.\n\n")
 
-                .append("- Tema natale dell'utente:")
+                .append("- Data del Tema Natale e data nascita dell'Utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
+                .append("- Anni dell'Utente: "+calculateAge(datetimeNascita)+"\n")
+                .append("- Luogo di nascita dell'Utente: "+luogoNascita +"\n\n\n")
+
+                .append("- Tema natale dell'Utente:")
                 .append( Util.convertHtmlToPlainText(temaNataleDescrizione) );
         return textSystemBuilder;
     }
