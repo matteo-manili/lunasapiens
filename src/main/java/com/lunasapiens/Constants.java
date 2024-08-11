@@ -34,12 +34,14 @@ public class Constants {
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_CACHE = "rateLimiterCache";
 
-    public static final List<String> URL_NO_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
+    public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",
             "/user/queue/reply",
             "/app/message",
             "/coordinate",
             "/greeting",
+            "/tema",
+            "/facebook",
             "/error"));
 
 

@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{fragments/templateBase :: common_head_title(~{::title}) }">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Informazioni e Privacy</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Scopri la presentazione di LunaSapiens, un progetto che unisce intelligenza artificiale e astrologia. Leggi la nostra informativa sulla privacy per conoscere come gestiamo i tuoi dati personali.">
+        <meta name="keywords" content="Luna Sapiens, astrologia, intelligenza artificiale, oroscopo, tema natale, privacy, informativa, protezione dati">
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/info-privacy" />
+    </th:block>
 </head>
 
 <body>
@@ -16,7 +22,7 @@
         <div class="card-body">
             <h5 class="card-title">Presentazione del Progetto</h5>
             <p class="card-text">
-                Benvenuti su LunaSapiens.com, una piattaforma che unisce la tecnologia dell'intelligenza artificiale con l'astrologia tradizionale per offrire un'esperienza unica e innovativa.
+                Benvenuti su <a href="https://www.lunasapiens.com">LunaSapiens.com</a>, una piattaforma che unisce la tecnologia dell'intelligenza artificiale con l'astrologia tradizionale per offrire un'esperienza unica e innovativa.
                 LunaSapiens nasce dalla passione per l'astrologia e dalla mia esperienza come programmatore, con l'obiettivo di esplorare nuovi orizzonti nell'interpretazione delle influenze celesti.
             </p>
             <p class="card-text">
@@ -53,7 +59,7 @@
             </ul>
 
             <h5>c. Dati dei Servizi Astrologici</h5>
-            <p>Per l'utilizzo dei nostri servizi astrologici (come l'oroscopo personalizzato o il tema natale), l'utente può inserire informazioni quali la data e l'ora di nascita, il luogo e oltre a eventuali domande rivolte al ChatBot. <strong>Questi dati non vengono memorizzati</strong> e non vengono in alcun modo divulgati o condivisi con terze parti.</p>
+            <p>Per l'utilizzo dei nostri servizi astrologici (come l'oroscopo personalizzato o il tema natale), l'utente può inserire informazioni quali la data, l'ora di nascita, il luogo e le domande rivolte al ChatBot. <strong>Questi dati non vengono memorizzati</strong> e non vengono in alcun modo divulgati o condivisi con terze parti.</p>
         </div>
     </div>
 

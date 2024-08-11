@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{fragments/templateBase :: common_head_title_meta(~{::title},~{::meta})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | HomePage</title>
     <th:block th:fragment="meta">
         <meta name="description" content="Scopri LunaSapiens.com, il sito che rivoluziona l'astrologia con l'intelligenza artificiale. Leggi il tuo Oroscopo giornaliero e crea il tuo Tema Natale personalizzato. Esplora le influenze celesti sulla tua vita con accuratezza scientifica e innovazione.">
         <meta name="keywords" content="LunaSapiens, astrologia, oroscopo, tema natale, intelligenza artificiale, IA, posizioni celesti, pianeti, transiti, aspetti astrologici, influenze celesti, oroscopo giornaliero, tema natale personalizzato">
     </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/" />
+    </th:block>
 </head>
-
-
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <!-- Page Content-->
 <div class="container mt-4">
@@ -21,7 +21,6 @@
                 intelligenza artificiale per offrirti un'esperienza unica nel comprendere le influenze celesti sulla tua vita.</p>
         </div>
     </div>
-
     <!-- Content Row-->
     <div class="row gx-4 gx-lg-5">
 

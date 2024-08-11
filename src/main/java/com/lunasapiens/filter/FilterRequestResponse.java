@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -62,8 +63,9 @@ public class FilterRequestResponse extends OncePerRequestFilter {
 
 
         // ######################### url no index #########################
-        for (String urlNoIndex : Constants.URL_NO_INDEX_LIST) {
+        for (String urlNoIndex : Constants.URL_NO_INDEX_STATUS_410_LIST) {
             if (request.getRequestURI().equals( urlNoIndex )) {
+                response.setStatus(HttpStatus.GONE.value());  // Imposta il codice di stato a 410
                 response.setHeader("X-Robots-Tag", "noindex, nofollow");
             }
         }
