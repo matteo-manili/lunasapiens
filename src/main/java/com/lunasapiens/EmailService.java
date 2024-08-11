@@ -182,7 +182,7 @@ public class EmailService {
 
 
     public void inviaEmailContatti(ContactFormDTO contactForm) {
-        String subject = "LunaSapiens | messaggio inviato da: "+contactForm.getName() +" - "+contactForm.getEmail();
+        String subject = "Luna Sapiens | messaggio inviato da: "+contactForm.getName() +" - "+contactForm.getEmail();
         Context context = new Context();
         String contenuto = "<p>"+subject+"</p>" + "<p>"+contactForm.getMessage()+"</p>";
         context.setVariable(contenutoEmail, contenuto);
