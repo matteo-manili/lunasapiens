@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.HtmlUtils;
 
 import java.security.Principal;
@@ -124,6 +125,17 @@ public class TemaNataleController {
         model.addAttribute("luogoNascita", "Roma, Lazio, Italia");
         */
         return "tema-natale";
+    }
+
+    /**
+     * questa pagina è indicizzata da google ma gli da errori, quindi va gestita e fatto redirect alla pagina canonica
+     * @return
+     */
+    @GetMapping("/tema")
+    public RedirectView tema() {
+        RedirectView redirectView = new RedirectView("/tema-natale", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
     }
 
     @GetMapping("/temaNataleSubmit")
