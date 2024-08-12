@@ -185,20 +185,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('tema-natale-submit');
     if (form) {
         form.addEventListener('submit', function(event) {
-            trackFormSubmit();
+            googleTrackFormSubmit();
         });
     }
 });
-
  */
 
-// ############## FORM TEMA NATALE - DATA e LUOIGO NASCITA #####################
+
 $(document).ready(function() {
 
-    // Validazione dell'invio del modulo
+
+    // ############################# VALIDAZIONE TEMA NATALE SUBMIT #############################
     $("#tema-natale-submit").submit(function(event) {
-        var isValid = true;
-        if ($("#cityInput").val().trim() === "" || $("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
+        var isValid = true; // Se il modulo è valido, mostra l'overlay e consenti l'invio
+
+        if ($("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
             $("#cityError").show(); // Mostra il messaggio di errore
             $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
             isValid = false;
@@ -214,134 +215,120 @@ $(document).ready(function() {
             $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
             $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
         }
-        // Se il modulo è valido, mostra l'overlay e consenti l'invio
+
         if (isValid) {
             showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
-            trackFormSubmit();
+            googleTrackFormSubmit();
         } else {
             event.preventDefault(); // Previeni l'invio del modulo se non è valido
         }
     });
-
-/*
-    $("#cityInput").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "/coordinate",
-                dataType: "json",
-                data: {
-                    cityName: $.trim(request.term) // rimuove gli spazi iniziali e finali
-                },
-                delay: 300,
-                success: function(data) {
-                    console.log("Dati ricevuti:", data); // Aggiungi questo per il debug
-                    response($.map(data, function(item) {
-                        return {
-                            label: item.name + ', ' + item.adminName1 + ', ' + item.countryName + ', ' + item.countryCode,
-                            value: item.name,
-                            fullLabel: item.name + ', ' + item.adminName1 + ', ' + item.countryName,
-                            regioneName: item.adminName1,
-                            statoName: item.countryName,
-                            statoCode: item.countryCode,
-                            lat: item.lat,
-                            lng: item.lng
-                        };
-                    }));
-                }
-            });
-        },
-        minLength: 3,
-        select: function(event, ui) {
-            $("#cityInput").val(ui.item.fullLabel); // Imposta l'intera label nel campo #city
-            $("#cityName").val(ui.item.value); // Imposta solo il nome della città in #cityName
-            $("#regioneName").val(ui.item.regioneName);
-            $("#statoName").val(ui.item.statoName);
-            $("#statoCode").val(ui.item.statoCode);
-            $("#cityLat").val(ui.item.lat);
-            $("#cityLng").val(ui.item.lng);
-            // Impedisci qualsiasi azione di visualizzazione automatica del nome della città
-            event.preventDefault();
-        }
-    });
-
- */
-
 });
-
-
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    // ############################# START PAGINA #############################
+    loadData();
+
+    function loadData() {
+        const dateTimeLocalStorage = localStorage.getItem('dateTime');
+        if( dateTimeLocalStorage !== null && dateTimeLocalStorage.trim() !== '' ){ //altrimenti prende la data di default da controller 01/01/1980
+            document.getElementById('dateTime').value = dateTimeLocalStorage;
+        }
+        const cityInput = localStorage.getItem('cityInput');
+        const cityName = localStorage.getItem('cityName');
+        const regioneName = localStorage.getItem('regioneName');
+        const statoName = localStorage.getItem('statoName');
+        const statoCode = localStorage.getItem('statoCode');
+        const cityLat = localStorage.getItem('cityLat');
+        const cityLng = localStorage.getItem('cityLng');
+
+        // Imposta i valori sugli input
+        document.getElementById('cityInput').value = cityInput || "";
+        document.getElementById('cityName').value = cityName || "";
+        document.getElementById('regioneName').value = regioneName || "";
+        document.getElementById('statoName').value = statoName || "";
+        document.getElementById('statoCode').value = statoCode || "";
+        document.getElementById('cityLat').value = cityLat || "";
+        document.getElementById('cityLng').value = cityLng || "";
+    }
+
+    // quando si modifica la data la si mette nello storage
+    document.getElementById('dateTime').addEventListener('change', function() {
+        const dateTimeValue = document.getElementById('dateTime').value;
+        localStorage.setItem('dateTime', dateTimeValue);
+    });
 
 
 
-        const input = document.getElementById('cityInput');
-        const resultsContainer = document.getElementById('autocomplete-results');
-        let timeout = null;
-        const delay = 300; // Ritardo in millisecondi
+    // ############################# AUTOCOMPLETE CITY-INPUT #############################
+    const input = document.getElementById('cityInput');
+    const resultsContainer = document.getElementById('autocomplete-results');
+    let timeout = null;
+    const delay = 300; // Ritardo in millisecondi
 
-        input.addEventListener('input', function() {
-            clearTimeout(timeout); // Pulisce il timeout precedente se esiste
+    input.addEventListener('input', function() {
+        clearTimeout(timeout); // Pulisce il timeout precedente se esiste
+        const query = input.value.trim();
+        if (query.length < 3) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        timeout = setTimeout(() => {
+            fetch(`/coordinate?cityName=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    data.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.textContent = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                        resultDiv.dataset.value = item.name;
+                        resultDiv.dataset.regioneName = item.adminName1;
+                        resultDiv.dataset.statoName = item.countryName;
+                        resultDiv.dataset.statoCode = item.countryCode;
+                        resultDiv.dataset.lat = item.lat;
+                        resultDiv.dataset.lng = item.lng;
 
-            const query = input.value.trim();
-            if (query.length < 3) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-
-            timeout = setTimeout(() => {
-                fetch(`/coordinate?cityName=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        resultsContainer.innerHTML = '';
-                        data.forEach(item => {
-                            const resultDiv = document.createElement('div');
-                            resultDiv.textContent = `${item.name}, ${item.adminName1}, ${item.countryName}`;
-                            resultDiv.dataset.value = item.name;
-                            resultDiv.dataset.regioneName = item.adminName1;
-                            resultDiv.dataset.statoName = item.countryName;
-                            resultDiv.dataset.statoCode = item.countryCode;
-                            resultDiv.dataset.lat = item.lat;
-                            resultDiv.dataset.lng = item.lng;
-
-                            resultDiv.addEventListener('click', function() {
-                                input.value = `${item.name}, ${item.adminName1}, ${item.countryName}`;
-                                document.getElementById('cityName').value = item.name;
-                                document.getElementById('regioneName').value = item.adminName1;
-                                document.getElementById('statoName').value = item.countryName;
-                                document.getElementById('statoCode').value = item.countryCode;
-                                document.getElementById('cityLat').value = item.lat;
-                                document.getElementById('cityLng').value = item.lng;
-                                resultsContainer.innerHTML = '';
-                            });
-
-                            resultsContainer.appendChild(resultDiv);
+                        resultDiv.addEventListener('click', function() {
+                            input.value = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                            document.getElementById('cityName').value = item.name;
+                            document.getElementById('regioneName').value = item.adminName1;
+                            document.getElementById('statoName').value = item.countryName;
+                            document.getElementById('statoCode').value = item.countryCode;
+                            document.getElementById('cityLat').value = item.lat;
+                            document.getElementById('cityLng').value = item.lng;
+                            // metto i campi nello storage
+                            localStorage.setItem('cityInput', `${item.name}, ${item.adminName1}, ${item.countryName}`);
+                            localStorage.setItem('cityName', item.name);
+                            localStorage.setItem('regioneName', item.adminName1);
+                            localStorage.setItem('statoName', item.countryName);
+                            localStorage.setItem('statoCode', item.countryCode);
+                            localStorage.setItem('cityLat', item.lat);
+                            localStorage.setItem('cityLng', item.lng);
+                            resultsContainer.innerHTML = '';
                         });
+                        resultsContainer.appendChild(resultDiv);
+                    });
 
-                        if (data.length === 0) {
-                            const noResultDiv = document.createElement('div');
-                            noResultDiv.textContent = 'Nessun risultato trovato';
-                            resultsContainer.appendChild(noResultDiv);
-                        }
-                    })
-                    .catch(error => console.error('Errore:', error));
-            }, delay); // Ritardo prima di inviare la richiesta
-        });
+                    if (data.length === 0) {
+                        const noResultDiv = document.createElement('div');
+                        noResultDiv.textContent = 'Nessun risultato trovato';
+                        resultsContainer.appendChild(noResultDiv);
+                    }
+                })
+                .catch(error => console.error('Errore:', error));
+        }, delay); // Ritardo prima di inviare la richiesta
+    });
 
-        document.addEventListener('click', function(event) {
-            if (!resultsContainer.contains(event.target) && event.target !== input) {
-                resultsContainer.innerHTML = '';
-            }
-        });
-
-
-
-
+    document.addEventListener('click', function(event) {
+        if (!resultsContainer.contains(event.target) && event.target !== input) {
+            resultsContainer.innerHTML = '';
+        }
+    });
 
 
-// ########### CODICE CHAT-BOT ############################################
 
-
+    // ############################# CODICE CHAT-BOT #############################
     var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
     // Verifica se temaNataleDescrizione non è null o una stringa vuota
     if (temaNataleDescrizione) {
