@@ -280,7 +280,7 @@ public class TemaNataleController {
 
     @GetMapping("/coordinate")
     public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
-        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonames.getUsername() + "&style=MEDIUM&lang=it&maxRows=5";
+        String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonames.getUsername() + "&style=MEDIUM&lang=it&maxRows=3";
         logger.info(url);
         String response;
         List<Map<String, Object>> locations = new ArrayList<>();

@@ -57,6 +57,30 @@
         align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
         color: #004d40; /* Verde scuro per il testo */
     }
+
+
+
+    .autocomplete-results {
+        position: absolute;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .autocomplete-results div {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .autocomplete-results div:hover {
+        background-color: #f0f0f0;
+    }
+
+
 </style>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
@@ -103,6 +127,7 @@
             <input type="hidden" id="cityLat" name="cityLat" th:value="${cityLat}">
             <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
             <div id="cityError" class="text-danger" style="display: none;">Per favore inserisci il nome di una località.</div>
+            <div id="autocomplete-results" class="autocomplete-results"></div>
         </div>
         <button type="submit" id="submitBtn" class="btn btn-primary">genera tema natale</button>
     </form>
@@ -198,7 +223,7 @@ $(document).ready(function() {
         }
     });
 
-
+/*
     $("#cityInput").autocomplete({
         source: function(request, response) {
             $.ajax({
@@ -239,13 +264,85 @@ $(document).ready(function() {
         }
     });
 
+ */
+
 });
 
 
-// ########### CODICE CHAT-BOT ############################################
-document.addEventListener("DOMContentLoaded", function() {
-    var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
 
+document.addEventListener("DOMContentLoaded", function() {
+
+
+
+
+        const input = document.getElementById('cityInput');
+        const resultsContainer = document.getElementById('autocomplete-results');
+        let timeout = null;
+        const delay = 300; // Ritardo in millisecondi
+
+        input.addEventListener('input', function() {
+            clearTimeout(timeout); // Pulisce il timeout precedente se esiste
+
+            const query = input.value.trim();
+            if (query.length < 3) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            timeout = setTimeout(() => {
+                fetch(`/coordinate?cityName=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsContainer.innerHTML = '';
+                        data.forEach(item => {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.textContent = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                            resultDiv.dataset.value = item.name;
+                            resultDiv.dataset.regioneName = item.adminName1;
+                            resultDiv.dataset.statoName = item.countryName;
+                            resultDiv.dataset.statoCode = item.countryCode;
+                            resultDiv.dataset.lat = item.lat;
+                            resultDiv.dataset.lng = item.lng;
+
+                            resultDiv.addEventListener('click', function() {
+                                input.value = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                                document.getElementById('cityName').value = item.name;
+                                document.getElementById('regioneName').value = item.adminName1;
+                                document.getElementById('statoName').value = item.countryName;
+                                document.getElementById('statoCode').value = item.countryCode;
+                                document.getElementById('cityLat').value = item.lat;
+                                document.getElementById('cityLng').value = item.lng;
+                                resultsContainer.innerHTML = '';
+                            });
+
+                            resultsContainer.appendChild(resultDiv);
+                        });
+
+                        if (data.length === 0) {
+                            const noResultDiv = document.createElement('div');
+                            noResultDiv.textContent = 'Nessun risultato trovato';
+                            resultsContainer.appendChild(noResultDiv);
+                        }
+                    })
+                    .catch(error => console.error('Errore:', error));
+            }, delay); // Ritardo prima di inviare la richiesta
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!resultsContainer.contains(event.target) && event.target !== input) {
+                resultsContainer.innerHTML = '';
+            }
+        });
+
+
+
+
+
+
+// ########### CODICE CHAT-BOT ############################################
+
+
+    var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
     // Verifica se temaNataleDescrizione non è null o una stringa vuota
     if (temaNataleDescrizione) {
         var socket = new SockJS('/chat-websocket');
