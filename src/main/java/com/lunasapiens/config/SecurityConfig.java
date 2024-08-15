@@ -27,10 +27,8 @@ public class SecurityConfig {
 
         http
         .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/*", "chat-websocket/**", "/js/**" ).permitAll()  // Accesso pubblico alle risorse specificate
-
+                .requestMatchers("/*", "/chat-websocket/**", "/js/**" ).permitAll()  // Accesso pubblico alle risorse specificate
                 .requestMatchers("/private/**").authenticated()  // Richiede autenticazione per le risorse private
-
                 .anyRequest().denyAll()  // Blocca tutte le altre richieste
         )
                 .formLogin(formLogin -> formLogin
