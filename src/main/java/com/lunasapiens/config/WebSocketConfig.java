@@ -3,9 +3,7 @@ package com.lunasapiens.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
+
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -55,7 +53,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     @Override
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
                         String uniqueId = UUID.randomUUID().toString();
-                        return new AnonymousAuthenticationToken(uniqueId, uniqueId, AuthorityUtils.createAuthorityList("ROLE_USER"));
+                        //return new AnonymousAuthenticationToken(uniqueId, uniqueId, AuthorityUtils.createAuthorityList("ROLE_USER"));
+                        return null;
                     }
                 })
                 .withSockJS();

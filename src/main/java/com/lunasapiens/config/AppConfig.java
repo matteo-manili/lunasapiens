@@ -254,6 +254,8 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
+
+
     @Bean
     public SpringResourceTemplateResolver templateResolver(){
         // SpringResourceTemplateResolver si integra automaticamente con l'infrastruttura di risoluzione delle risorse di Spring stessa,

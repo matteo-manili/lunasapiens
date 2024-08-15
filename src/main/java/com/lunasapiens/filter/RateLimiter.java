@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimiter {
 
-    private static final int MAX_MESSAGES_PER_MINUTE = 2; //15; // Limite di messaggi per minuto
+    private static final int MAX_MESSAGES_PER_MINUTE = 1; //15; // Limite di messaggi per minuto
     private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
 
     @Autowired

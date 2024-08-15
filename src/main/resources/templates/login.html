@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title(~{::title})}">
+    <title th:fragment="title">Luna Sapiens | Login</title>
+
+</head>
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+<div class="container mt-4">
+
+    <h1 class="mb-4">Login Page</h1>
+
+
+</div>
+
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+</body>
+</html>

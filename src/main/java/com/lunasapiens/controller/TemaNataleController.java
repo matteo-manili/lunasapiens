@@ -230,6 +230,10 @@ public class TemaNataleController {
         // anche "Map<String, String> message" viene settato nel "registerStompEndpoints". Infatti posso richiamare gli oggetti come parametri
         //String userPrincipalId = principal.getName();
 
+
+        logger.info("sono in userMessageWebSocket");
+
+
         Map<String, Object> response = new HashMap<>();
         final String keyJsonStandardContent = "content";
 
