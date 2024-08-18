@@ -1,42 +1,31 @@
 package com.lunasapiens.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.lunasapiens.Constants;
-import com.lunasapiens.EmailService;
-import com.lunasapiens.config.FacebookConfig;
-import com.lunasapiens.config.JwtConfig;
-import com.lunasapiens.dto.ContactFormDTO;
+import com.lunasapiens.service.EmailService;
+import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.config.JwtElements;
+import com.lunasapiens.entity.ProfiloUtente;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
+import com.lunasapiens.service.JwtService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
+import java.time.LocalDateTime;
 
 
 @Controller
@@ -54,48 +43,130 @@ public class JwtController {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private FacebookConfig facebookConfig;
 
     @Autowired
-    private JwtConfig getJwtRsaKeys;
+    private ProfiloUtenteRepository profiloUtenteRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private TelegramBotClient telegramBotClient;
+
+    //  TODO da togliere dopo i test
+    @Autowired
+    private JwtElements.JwtKeys jwtKeys;
 
 
 
-    @GetMapping("/register")
-    public String register(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage) {
-
-        //model.addAttribute("contactForm", new ContactFormDTO());
-        return "register";
-    }
 
 
 
 
-    @PostMapping("/registrazioneSubmit")
-    public String registrazioneSubmit(RedirectAttributes redirectAttributes) {
-        logger.info("sono in registrazioneSubmit");
+
+    /**
+     * INVIO EMAIL REGISTRAZIOE CON LINK TOKEN
+     */
+    @PostMapping("/registrazioneUtente")
+    public String registrazioneUtente(@RequestParam("email") @Email @NotEmpty String email, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+
+        logger.info("sono in registrazioneUtente");
+        Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
+        if (skipEmailSave != null && skipEmailSave) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Registrazione negata.");
+        }
+
+        ProfiloUtente profiloUtente = profiloUtenteRepository.findByEmail( email ).orElse(null);
+        JwtElements.JwtToken jwtConfigToken = jwtService.generateToken(email);
+        String codeTokenJwt = jwtConfigToken.getToken();
+        String infoMessage = "";
+        if(profiloUtente == null) {
+            profiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
+                    false, false, null );
+            profiloUtente = profiloUtenteRepository.save( profiloUtente );
+            emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
+            infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
+
+        }else if( profiloUtente != null && profiloUtente.getDataCreazione() != null ){
+            profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
+            profiloUtenteRepository.save( profiloUtente );
+            emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
+            infoMessage = "Utente già registrato. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
+        }
+
+        telegramBotClient.inviaMessaggio( "Profilo registrato: "+profiloUtente.getEmail());
 
 
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Messaggio inviato con successo!");
+
+
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/register";
     }
 
 
 
 
+    /**
+     * CONFERMA EMAIL CODE REGISTRAZIOE
+     */
+    @GetMapping("/confirmRegistrazioneUtente")
+    public ResponseEntity<String> confirmRegistrazione(@RequestParam(name = "code", required = true) String codeTokenJwt,
+                                                       RedirectAttributes redirectAttributes, HttpServletResponse response) {
+        logger.info("confirmRegistrazione");
+
+        // TODO SALVARE il COOKIE JWT SUL DISPOSITIVO dell' UTENTE
+
+        String emailJwt = jwtService.validateTokenAndGetEmail( codeTokenJwt ).getEmail();
+
+        String infoMessage = "";
+        if( emailJwt != null ) {
+
+            // Creazione del cookie con il token JWT
+            Cookie jwtCookie = new Cookie("jwtToken", codeTokenJwt);
+            jwtCookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
+            jwtCookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
+            jwtCookie.setPath("/"); // Imposta il percorso del cookie
+
+            //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
+            jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
 
 
+            // Aggiungi il cookie alla risposta HTTP
+            response.addCookie(jwtCookie);
+
+
+            infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+emailJwt;
+        }else{
+            infoMessage = "Conferma email non riuscita. Registrati di nuovo. Se il problema persiste mandaci un messaggio.";
+        }
+
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/private/privatePage");
+
+        return ResponseEntity.status(302).headers(headers).build();
+
+    }
+
+
+
+
+
+
+
+    // ############################### CODICE DI TEST JWT ###############################
+
+/*
 
     @GetMapping("/jwt")
     public String testJWT(Model model) throws NoSuchAlgorithmException {
 
         // Chiavi Base64 (esempio, sostituisci con le tue chiavi)
-        String publicKeyB64 = getJwtRsaKeys.getKeyPublic();
-        String privateKeyB64 = getJwtRsaKeys.getKeyPrivate();
+        String publicKeyB64 = jwtKeys.getKeyPublic();
+        String privateKeyB64 = jwtKeys.getKeyPrivate();
 
-        System.out.println("publicKeyB64: " + publicKeyB64);
-        System.out.println("privateKeyB64: " + privateKeyB64);
+        System.out.println("publicKeyB64 testJWT: " + publicKeyB64);
+        System.out.println("privateKeyB64 testJWT: " + privateKeyB64);
 
         RSAPublicKey rSAPublicKey = decodificaChiaveJwtPublic(publicKeyB64);
         RSAPrivateKey rSAPrivateKey = decodificaChiaveJwtPrivate(privateKeyB64);
@@ -106,7 +177,12 @@ public class JwtController {
         try {
             Algorithm algorithm = Algorithm.RSA256(rSAPublicKey, rSAPrivateKey);
             token = JWT.create()
-                    .withIssuer("auth0")
+                    .withIssuer( Constants.JWT_WITH_ISSUER )
+
+                    .withSubject("emailllllll")
+                    .withIssuedAt(new Date()) // Aggiunge data di emissione
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 86400000)) // Token valido per 1 giorno
+
                     .sign(algorithm);
 
 
@@ -130,7 +206,7 @@ public class JwtController {
             Algorithm algorithm = Algorithm.RSA256(rSAPublicKey, rSAPrivateKey);
             JWTVerifier verifier = JWT.require(algorithm)
                     // specify any specific claim validations
-                    .withIssuer("auth0")
+                    .withIssuer( Constants.JWT_WITH_ISSUER )
                     // reusable verifier instance
                     .build();
 
@@ -198,7 +274,7 @@ public class JwtController {
     }
 
 
-
+ */
 
 }
 

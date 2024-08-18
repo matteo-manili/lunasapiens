@@ -3,9 +3,11 @@
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | registrazione utente</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="registrazione utenteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee">
-        <meta name="keywords" content="registrazione utenteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee">
-        <meta property="og:title" content="registrazione utenteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" />
+        <meta name="description" content="Registrati su LunaSapiens.com per accedere a vantaggi esclusivi come il chatbot del Tema Natale IA e il servizio Sinastria. Ricevi un link di accesso valido per 7 giorni, senza necessità di password.">
+        <meta name="keywords" content="registrazione, tema natale, chatbot, sinastria, accesso gratuito, LunaSapiens">
+
+
+        <meta property="og:title" content="registrazione " />
     </th:block>
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/register" />
@@ -16,31 +18,48 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
-    <h1 class="mb-4">PAgina di registreazione</h1>
+    <h1 class="mb-4">Pagina di registrazione</h1>
 
+
+
+
+
+    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+        <p th:text="${infoMessage}"></p>
+    </div>
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
-        <h5 class="mb-4">Iscriviti per Registrarti a LunaSapiens</h5>
-        <p>Registrati per usufruire al meglio i nostri servizi.</p>
+        <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
 
-         th:object="${contactForm}" method="post" onsubmit="showLoadingOverlay()"
+        <p>Registrandoti, riceverai un'email con un link per accedere.<br>
+            L'accesso sarà valido per 7 giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
 
-        <form id="subscribe-form" th:action="@{/registrazioneSubmit}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
+
+        <form id="subscribe-form" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" value="sasasas@sss.ss" required>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
             <div class="col-12 col-md-4 col-lg-3">
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Utente</button>
             </div>
         </form>
-        <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-            <p th:text="${infoMessage}"></p>
-        </div>
+
     </div>
 
 
-    <div class="alert alert-info " role="alert">
-        informazioni varie ecc ecc
+
+
+    <div class="alert alert-success mt-3" role="alert">
+        <p><b>Registrandoti, potrai usufruire di diversi vantaggi:</b></p>
+        <ul>
+            <li>Fino a 30 domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a></li>
+            <li>Accesso al prossimo servizio basato sul Tema Natale IA: La Sinastria, che permette il confronto tra due Temi Natale.</li>
+        </ul>
+        <p><b>Se scegli di non registrarti, avrai comunque accesso a:</b></p>
+        <ul>
+            <li>Fino a 10 domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a>.</li>
+        </ul>
     </div>
+
 
 
 
@@ -50,5 +69,41 @@
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+
+
+<script>
+
+    loadData();
+
+    function loadData() {
+        const email = localStorage.getItem('email');
+        // Imposta i valori sugli input
+        document.getElementById('email').value = email || "";
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ottieni il modulo
+        const form = document.getElementById('subscribe-form');
+        // Aggiungi un event listener per l'evento submit
+        form.addEventListener('submit', function(event) {
+            // Prevenire l'invio del modulo se necessario
+            event.preventDefault();
+            // Ottieni il valore dell'input email
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
+
+            // Salva il valore nel localStorage
+            localStorage.setItem('email', email);
+
+            // Esegui il submit del modulo
+            form.submit();
+        });
+    });
+</script>
+
+
+
+
 </body>
 </html>

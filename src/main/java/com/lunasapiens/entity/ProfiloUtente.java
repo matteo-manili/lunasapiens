@@ -15,11 +15,11 @@ public class ProfiloUtente implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password; // Nuova colonna per la password
+    @Column
+    private String password; // NON LO USO
 
-    @Column(nullable = false)
-    private String ruolo; // L'applicazione prevede solo un ruolo per utente
+    @Column
+    private String ruolo; // NON LO USO
 
     @Column(name = "data_creazione", nullable = false)
     private LocalDateTime dataCreazione;
@@ -27,23 +27,35 @@ public class ProfiloUtente implements Serializable {
     @Column(name = "data_ultimo_accesso")
     private LocalDateTime dataUltimoAccesso;
 
-    @Column(name = "indirizzo_ip")
+    @Column(name = "indirizzo_ip", nullable = false)
     private String indirizzoIp;
 
-    @Column(name = "token_jwt_oauth")
-    private String tokenJwtOauth;
+    @Column(name = "email_oroscopo_girnaliero")
+    private boolean emailOroscopoGiornaliero;
+
+    @Column(name = "email_agg_tema_natale")
+    private boolean emailAggiornamentiTemaNatale;
+
+    @Column
+    private String confirmationCode;
 
     // Costruttori
     public ProfiloUtente() {}
 
-    public ProfiloUtente(String email, String password, String ruolo, LocalDateTime dataCreazione, String indirizzoIp, String tokenJwtOauth) {
+    public ProfiloUtente(String email, String password, String ruolo, LocalDateTime dataCreazione, LocalDateTime dataUltimoAccesso, String indirizzoIp,
+                         boolean emailOroscopoGiornaliero, boolean emailAggiornamentiTemaNatale, String confirmationCode) {
         this.email = email;
         this.password = password;
         this.ruolo = ruolo;
         this.dataCreazione = dataCreazione;
+        this.dataUltimoAccesso = dataUltimoAccesso;
         this.indirizzoIp = indirizzoIp;
-        this.tokenJwtOauth = tokenJwtOauth;
+        this.emailOroscopoGiornaliero = emailOroscopoGiornaliero;
+        this.emailAggiornamentiTemaNatale = emailAggiornamentiTemaNatale;
+        this.confirmationCode = confirmationCode;
     }
+
+
 
     // Getters e Setters
     public Long getId() {
@@ -102,11 +114,22 @@ public class ProfiloUtente implements Serializable {
         this.indirizzoIp = indirizzoIp;
     }
 
-    public String getTokenJwtOauth() {
-        return tokenJwtOauth;
+    public boolean isEmailOroscopoGiornaliero() {
+        return emailOroscopoGiornaliero;
     }
 
-    public void setTokenJwtOauth(String tokenJwtOauth) {
-        this.tokenJwtOauth = tokenJwtOauth;
+    public void setEmailOroscopoGiornaliero(boolean emailOroscopoGiornaliero) {
+        this.emailOroscopoGiornaliero = emailOroscopoGiornaliero;
     }
+
+    public boolean isEmailAggiornamentiTemaNatale() {
+        return emailAggiornamentiTemaNatale;
+    }
+
+    public void setEmailAggiornamentiTemaNatale(boolean emailAggiornamentiTemaNatale) {
+        this.emailAggiornamentiTemaNatale = emailAggiornamentiTemaNatale;
+    }
+
+    public String getConfirmationCode() { return confirmationCode; }
+    public void setConfirmationCode(String confirmationCode) { this.confirmationCode = confirmationCode; }
 }

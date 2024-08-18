@@ -1,12 +1,23 @@
 package com.lunasapiens.filter;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.config.JwtElements;
+import com.lunasapiens.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -20,12 +31,16 @@ import java.util.Map;
  */
 
 @Component
-@Order(1) // Ordine di esecuzione del filtro, se necessario
+//@Order(1) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
 public class FilterRequestResponse extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(FilterRequestResponse.class);
+
+    @Autowired
+    JwtService jwtService;
 
     // TODO ricorda di rimettere MAX_REQUESTS a 10
-    private static final int MAX_REQUESTS = 30; // Limite massimo di richieste per IP
+    private static final int MAX_REQUESTS = 100; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
@@ -35,6 +50,9 @@ public class FilterRequestResponse extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ipAddress = request.getRemoteAddr();
+
+        logger.info("sono in FilterRequestResponse doFilterInternal");
+
 
         // ######################### Controllo MaxRequest #########################
         if (request.getRequestURI().equals("/"+ Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
@@ -70,7 +88,47 @@ public class FilterRequestResponse extends OncePerRequestFilter {
             }
         }
 
+        // ######################### AUTENTICAZIONE JWT #########################
+        String email = null;
+        // Cerca il token nel cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwtToken".equals(cookie.getName())) {
+                    String token = cookie.getValue();
 
+                    if(token != null){
+                        JwtElements.JwtEmail jwtEmail = jwtService.validateTokenAndGetEmail(token);
+                        email = jwtEmail.getEmail();
+                        break;
+                    }
+
+                }
+            }
+        }
+
+
+        /*
+        // Il codice legge il token JWT dall'header Authorization e lo verifica.
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+            email = jwtService.validateTokenAndGetEmail(token);
+        }
+         */
+
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Verifica se l'utente è già autenticato
+
+            logger.info("eseguo la autenticazione: .setAuthentication(authentication)");
+
+            UserDetails userDetails = User.withUsername(email).password("").authorities("USER").build();
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication); // Imposta l'autenticazione
+
+        }
 
 
 

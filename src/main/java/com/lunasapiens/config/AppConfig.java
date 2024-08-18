@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -40,7 +41,7 @@ import java.util.Properties;
 
 
 @Configuration
-@ComponentScan(basePackages = {"com.lunasapiens", "com.lunasapiens.zodiac"})
+@ComponentScan(basePackages = {"com.lunasapiens", "com.lunasapiens.zodiac", "com.lunasapiens.filter", "com.lunasapiens.service"})
 @EnableCaching
 public class AppConfig implements WebMvcConfigurer {
 
@@ -106,12 +107,12 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public JwtConfig getJwtRsaKeys() {
+    public JwtElements.JwtKeys getJwtRsaKeys() {
         if (Util.isLocalhost()) {
             List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
-            return new JwtConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
+            return new JwtElements.JwtKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
-            return new JwtConfig(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
+            return new JwtElements.JwtKeys(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
         }
     }
 
@@ -277,6 +278,9 @@ public class AppConfig implements WebMvcConfigurer {
         // SpringTemplateEngine applica automaticamente SpringStandardDialect e
         // abilita i meccanismi di risoluzione dei messaggi di Spring attraverso MessageSource.
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+
+        templateEngine.addDialect(new SpringSecurityDialect()); // Registrazione del dialetto di sicurezza
+
         templateEngine.setTemplateResolver(templateResolver());
         // Abilitare il compilatore SpringEL con Spring 4.2.4 o successivo può
         // accelerare l'esecuzione nella maggior parte dei casi, ma potrebbe essere incompatibile

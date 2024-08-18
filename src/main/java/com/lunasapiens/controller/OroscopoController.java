@@ -2,9 +2,10 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
 import com.lunasapiens.dto.*;
-import com.lunasapiens.entity.EmailUtenti;
+import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import com.lunasapiens.repository.EmailUtentiRepository;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
+import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
@@ -42,7 +43,7 @@ public class OroscopoController {
     private EmailService emailService;
 
     @Autowired
-    private EmailUtentiRepository emailUtentiRepository;
+    private ProfiloUtenteRepository profiloUtenteRepository;
 
     private OroscopoGiornalieroService oroscopoGiornalieroService;
     @Autowired
@@ -85,12 +86,12 @@ public class OroscopoController {
         if (skipEmailSave != null && skipEmailSave) {
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Sottoscrizione email negata.");
         }else{
-            Object[] result = emailService.salvaEmail( email );
+            Object[] result = emailService.salvaEmail( email, request.getRemoteAddr() );
             Boolean success = (Boolean) result[0];
             String infoMessage = (String) result[1];
-            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
-            if (success && emailUtenti != null) {
-                emailService.inviaConfermaEmailOrosciopoGioraliero(emailUtenti);
+            ProfiloUtente profiloUtente = result[2] instanceof ProfiloUtente ? (ProfiloUtente) result[2] : null;
+            if (success && profiloUtente != null) {
+                emailService.inviaConfermaEmailOrosciopoGioraliero(profiloUtente);
             }
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         }
@@ -100,15 +101,12 @@ public class OroscopoController {
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN)
     public String confirmEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
         logger.info("confirmEmailOroscGiorn endpoint");
-        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        ProfiloUtente profiloUtente = profiloUtenteRepository.findByConfirmationCode( code ).orElse(null);
         String infoMessage = "";
-        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
-            if(emailUtenti.getDataRegistrazione()== null){
-                emailUtenti.setDataRegistrazione(new Date());
-            }
-            emailUtenti.setSubscription(true);
-            emailUtentiRepository.save(emailUtenti);
-            infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+emailUtenti.getEmail()+". " +
+        if(profiloUtente != null && profiloUtente.getConfirmationCode().trim().equals(code.trim())) {
+            profiloUtente.setEmailOroscopoGiornaliero(true);
+            profiloUtenteRepository.save(profiloUtente);
+            infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+profiloUtente.getEmail()+". " +
                     "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
         }else{
             infoMessage = "Conferma email non riuscita. Registrati di nuovo";
@@ -120,14 +118,11 @@ public class OroscopoController {
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN)
     public String cancelEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
         logger.info("cancelEmailOroscGiorn code: "+code);
-        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        ProfiloUtente profiloUtente = profiloUtenteRepository.findByConfirmationCode( code ).orElse(null);
         String infoMessage = "";
-        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
-            if(emailUtenti.getDataRegistrazione()== null){
-                emailUtenti.setDataRegistrazione(new Date());
-            }
-            emailUtenti.setSubscription(false);
-            emailUtentiRepository.save(emailUtenti);
+        if(profiloUtente != null && profiloUtente.getConfirmationCode().trim().equals(code.trim())) {
+            profiloUtente.setEmailOroscopoGiornaliero(false);
+            profiloUtenteRepository.save(profiloUtente);
             infoMessage = "La tua cancellazione dall'Oroscopo del giorno è avvenuta con successo. Non riceverai più le nostre previsioni giornaliere. " +
                     "Se desideri iscriverti nuovamente in futuro, visita il nostro sito.";
         }else{

@@ -4,22 +4,27 @@ import com.lunasapiens.*;
 import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.dto.*;
 
+import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.*;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import com.restfb.*;
 import com.restfb.exception.FacebookOAuthException;
-import com.restfb.json.JsonObject;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Page;
 import com.restfb.types.User;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +35,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.util.List;
 
 
@@ -109,8 +115,14 @@ public class IndexController {
      * pagina contatti
      */
     @GetMapping("/contatti")
-    public String contatti(Model model) {
+    public String contatti(Model model, Principal principal) {
+        if (principal != null) {
+            ContactFormDTO contactFormDTO = new ContactFormDTO();
+            contactFormDTO.setEmail( principal.getName() );
+            model.addAttribute("contactForm", contactFormDTO);
+        }else{
             model.addAttribute("contactForm", new ContactFormDTO());
+        }
         return "contatti";
     }
 
@@ -119,6 +131,7 @@ public class IndexController {
 
     @PostMapping("/contattiSubmit")
     public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        logger.info("sono in contattiSubmit");
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
             return "redirect:/error";
@@ -134,8 +147,11 @@ public class IndexController {
         return "error";
     }
 
+
     @GetMapping("/info-privacy")
-    public String infoPrivacy(Model model) { return "info-privacy"; }
+    public String infoPrivacy(Model model) {
+        return "info-privacy";
+    }
 
 
     @GetMapping("/termini-di-servizio")
@@ -164,20 +180,84 @@ public class IndexController {
     }
 
 
+
+
+    @GetMapping("/")
+    public String rootBase(Model model) {
+        logger.info("sono in roorBase");
+        return "index";
+    }
+
     @GetMapping("/private/privatePage")
-    public String privatePage() {
+    public String privatePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+
+        logger.info( "sono in: privatePage" );
+
+        if (userDetails != null) {
+            String username = userDetails.getUsername();
+            String authorities = userDetails.getAuthorities().toString();
+            System.out.println("Username: " + username);
+            System.out.println("Authorities: " + authorities);
+
+            //model.addAttribute("userDetails", userDetails);
+
+        } else {
+            System.out.println("UserDetails is null.");
+        }
+
         return "/private/privatePage";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
+
+
+    @GetMapping("/logout")
+    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
+
+        logger.info( "sono in logout" );
+
+        // Cancella il cookie JWT
+        Cookie jwtCookie = new Cookie("jwtToken", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Scadenza immediata
+        response.addCookie(jwtCookie);
+
+        // Disconnetti l'utente dal contesto di sicurezza (opzionale, Spring Security lo gestisce di default)
+        SecurityContextHolder.clearContext();
+
+        // Invalidare la sessione (opzionale, se utilizzi sessioni HTTP)
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        RedirectView redirectView = new RedirectView("/register", true);
+
+        return redirectView;
     }
+
+
+
+
+
+    /**
+     * restituisce il codice html del frammento "header menu", il quale ritorna alla funziona javascritp
+     * document.getElementById("header-placeholder").innerHTML = html;
+     * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
+     */
+    @GetMapping("/header")
+    public String header() {
+        return "fragments/templateBase :: header";
+    }
+
 
 
 

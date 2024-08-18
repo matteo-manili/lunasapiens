@@ -1,21 +1,42 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title(~{::title})}">
-    <title th:fragment="title">Luna Sapiens | Pagina Privata</title>
-
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
+    <title th:fragment="title">Luna Sapiens | Pagina privata</title>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" href="/css/style.css">
+    </th:block>
 </head>
+
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
+
 <div class="container mt-4">
 
-    <h1 class="mb-4">Pagina Privata</h1>
+
+    <h1 class="mb-4">Pagina Utente</h1>
+
+    <div class="alert alert-info mb-4">
+        Benvenuto, <span sec:authentication="name">NOT FOUND</span>! Sei un utente registrato su LunaSapiens.<br>
+        Ora puoi approfittare del vantaggio di porre più domande al <a href="/tema-natale">TemaNatale IA</a>.
+    </div>
+
+    <div class="alert alert-warning mb-4">
+        L'applicazione è in fase di sviluppo. Sono previsti aggiornamenti, tra cui il miglioramento <a href="/oroscopo">dell'oroscopo giornaliero</a>
+        e l'implementazione della Sinastria nel <a href="/tema-natale">TemaNatale IA</a>. Il ChatBot sarà in grado di confrontare due Temi natale.
+    </div>
+
+
+    <div class="mb-4">
+        <a href="/logout" class="btn btn-primary">Esci dal tuo account</a>
+        <p class="text-muted mt-2">Una volta effettuato il logout, dovrai richiedere nuovamente l'email per autenticarti al prossimo accesso.</p>
+    </div>
+
 
 
 
 
 </div>
 
-<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 </body>

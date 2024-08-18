@@ -18,12 +18,8 @@ public interface ProfiloUtenteRepository extends JpaRepository<ProfiloUtente, Lo
     Optional<ProfiloUtente> findByEmail(@Param("email") String email);
 
 
-    @Query("SELECT o FROM ProfiloUtente o WHERE o.tokenJwtOauth = :tokenJwtOauth")
-    Optional<ProfiloUtente> findByTokenJwtOauth(@Param("tokenJwtOauth") String confirmationCode);
-
-
-
-
+    @Query("SELECT o FROM ProfiloUtente o WHERE o.confirmationCode = :confirmationCode")
+    Optional<ProfiloUtente> findByConfirmationCode(@Param("confirmationCode") String confirmationCode);
 
 
 

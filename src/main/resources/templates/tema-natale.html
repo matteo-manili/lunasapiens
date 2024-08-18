@@ -91,6 +91,9 @@
         <div th:replace="~{fragments/templateBase :: pulsanti_social('tema-natale')}"></div>
     </div>
 
+    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+        <p th:text="${infoMessage}"></p>
+    </div>
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Iscriviti per ricevere aggiornamenti sul Tema Natale IA</h5>
         <p>Inserisci il tuo indirizzo email per ricevere aggiornamenti riguardo nuove funzionalità del Tema Natale IA.</p>
@@ -102,9 +105,7 @@
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Email</button>
             </div>
         </form>
-        <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-            <p th:text="${infoMessage}"></p>
-        </div>
+
     </div>
 
     <h1 class="mb-4">Tema Natale IA</h1>
@@ -152,7 +153,6 @@
                 <button id="sendMessage" class="btn btn-primary">Invia</button>
             </div>
         </div>
-
 
 
 
@@ -387,7 +387,8 @@ document.addEventListener("DOMContentLoaded", function() {
             var chatMessages = document.getElementById("chat-messages");
             var messageElement = document.createElement("div");
             messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
-            messageElement.innerText = message;
+            messageElement.innerHTML = message; // interpeta l'eventuale codice htmol nel testo
+            //messageElement.innerText = message; // solo testo
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }

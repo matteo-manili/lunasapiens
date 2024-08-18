@@ -25,7 +25,8 @@ public class ServizioOroscopoDelGiorno {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private Double temperature = 0.6; private Integer tokensAggiuntiPerRisposta = 1000; private final Double finalcaratteriPerTokenStima = 10.0;
+    private Double temperature = 0.3; private Integer tokensAggiuntiPerRisposta = 0;
+        private final Double finalcaratteriPerTokenStima = 10.0;
 
     public StringBuilder oroscopoDelGiornoIA(int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         return oroscopoDelGiorno(temperature, segno, giornoOraPosizioneDTO);

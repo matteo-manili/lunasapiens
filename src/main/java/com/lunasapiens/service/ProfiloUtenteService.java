@@ -38,7 +38,7 @@ public class ProfiloUtenteService {
 
 
     @Transactional(readOnly = true)
-    public Optional<ProfiloUtente> findByEmailUtenti(String email) {
+    public Optional<ProfiloUtente> findByProfiloUtente(String email) {
         return profiloUtenteRepository.findByEmail(email);
     }
 
@@ -46,8 +46,11 @@ public class ProfiloUtenteService {
 
     @Transactional
     public ProfiloUtente salvaProfiloUtente(String email, String password, String ruolo, LocalDateTime dataCreazione, LocalDateTime dataUltimoAccesso,
-                                            String indirizzoIp, String tokenJwtOauth) throws Exception {
-        ProfiloUtente profiloUtente = new ProfiloUtente(email, password, ruolo, dataCreazione, indirizzoIp, tokenJwtOauth);
+                                            String indirizzoIp, boolean emailOroscopoGiornaliero, boolean emailAggiornamentiTemaNatale, String confirmationCode) throws Exception {
+
+        ProfiloUtente profiloUtente = new ProfiloUtente(email, password, ruolo, dataCreazione, dataUltimoAccesso, indirizzoIp,
+                emailOroscopoGiornaliero, emailAggiornamentiTemaNatale, confirmationCode);
+
         return profiloUtenteRepository.save(profiloUtente);
     }
 

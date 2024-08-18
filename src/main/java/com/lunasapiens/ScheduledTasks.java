@@ -1,10 +1,9 @@
 package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.entity.EmailUtenti;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import com.lunasapiens.repository.EmailUtentiRepository;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
+import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import org.slf4j.Logger;
@@ -55,9 +54,9 @@ public class ScheduledTasks {
     }
 
     @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")
-    public void executeTask_InvioEmailUtentiOroscopoGiornaliero() {
+    public void executeTask_InvioProfiloUtenteOroscopoGiornaliero() {
         emailService.inviaEmailOrosciopoGioraliero();
-        logger.info("executeTask_InvioEmailUtentiOroscopoGiornaliero eseguito alle " + Util.getNowRomeEurope());
+        logger.info("executeTask_InvioProfiloUtenteOroscopoGiornaliero eseguito alle " + Util.getNowRomeEurope());
     }
 
 

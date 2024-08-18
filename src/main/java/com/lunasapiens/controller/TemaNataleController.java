@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
 import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.dto.*;
-import com.lunasapiens.entity.EmailUtenti;
-import com.lunasapiens.filter.RateLimiter;
-import com.lunasapiens.repository.EmailUtentiRepository;
+import com.lunasapiens.entity.ProfiloUtente;
+import com.lunasapiens.filter.RateLimiterUser;
+import com.lunasapiens.filter.RateLimiterUtente;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
+import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
@@ -61,7 +63,10 @@ public class TemaNataleController {
     private CacheManager cacheManager;
 
     @Autowired
-    private RateLimiter rateLimiter;
+    private RateLimiterUser rateLimiterUser;
+
+    @Autowired
+    private RateLimiterUtente rateLimiterUtente;
 
     @Autowired
     private TelegramBotClient telegramBotClient;
@@ -70,7 +75,7 @@ public class TemaNataleController {
     private EmailService emailService;
 
     @Autowired
-    private EmailUtentiRepository emailUtentiRepository;
+    private ProfiloUtenteRepository profiloUtenteRepository;
 
     // #################################### TEMA NATALE #####################################
 
@@ -245,11 +250,26 @@ public class TemaNataleController {
         System.out.println("temaNataleId: "+temaNataleId);
         System.out.println("userSessionId: "+userSessionId);
 
-        // Controlla il limite di frequenza dei messaggi
-        if (!rateLimiter.allowMessage( userSessionId )) {
-            response.put(keyJsonStandardContent, rateLimiter.numeroMessaggi_e_Minuti() );
-            return response;
+        // Ottenere l'oggetto Authentication dal contesto di sicurezza
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+
+        if (principal != null) {
+            logger.info("User logged in: " + principal.getName());
+            if (!rateLimiterUtente.allowMessage( principal.getName() )) {
+                response.put(keyJsonStandardContent, rateLimiterUtente.numeroMessaggi_e_Minuti() );
+                return response;
+            }
+
+        } else {
+            logger.info("User not logged in");
+            if (!rateLimiterUser.allowMessage( userSessionId )) {
+                response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti() );
+                return response;
+            }
+
         }
+
 
         // Aggiunge una protezione per i dati nulli o non validi
         if (domanda == null || domanda.isEmpty()) {
@@ -335,12 +355,12 @@ public class TemaNataleController {
         if (skipEmailSave != null && skipEmailSave) {
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Sottoscrizione email negata.");
         }else{
-            Object[] result = emailService.salvaEmail( email );
+            Object[] result = emailService.salvaEmail( email, request.getRemoteAddr() );
             Boolean success = (Boolean) result[0];
             String infoMessage = (String) result[1];
-            EmailUtenti emailUtenti = result[2] instanceof EmailUtenti ? (EmailUtenti) result[2] : null;
-            if (success && emailUtenti != null) {
-                emailService.inviaConfermaEmailTemaNatale(emailUtenti);
+            ProfiloUtente profiloUtente = result[2] instanceof ProfiloUtente ? (ProfiloUtente) result[2] : null;
+            if (success && profiloUtente != null) {
+                emailService.inviaConfermaEmailTemaNatale(profiloUtente);
             }
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         }
@@ -351,16 +371,13 @@ public class TemaNataleController {
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE)
     public String confirmEmailTemaNatale(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
         logger.info(Constants.DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE);
-        EmailUtenti emailUtenti = emailUtentiRepository.findByConfirmationCode( code ).orElse(null);
+        ProfiloUtente profiloUtente = profiloUtenteRepository.findByConfirmationCode( code ).orElse(null);
         String infoMessage = "";
-        if(emailUtenti != null && emailUtenti.getConfirmationCode().trim().equals(code.trim())) {
-            if(emailUtenti.getDataRegistrazione()== null){
-                emailUtenti.setDataRegistrazione(new Date());
-            }
-            emailUtenti.setSubscription( false ); // TODO lo metto false altrimenti arriva all'utente l'email del Oroscopo del giorno
-            emailUtentiRepository.save(emailUtenti);
+        if(profiloUtente != null && profiloUtente.getConfirmationCode().trim().equals(code.trim())) {
+            profiloUtente.setEmailAggiornamentiTemaNatale( false ); // TODO lo metto false altrimenti arriva all'utente l'email del Oroscopo del giorno
+            profiloUtenteRepository.save(profiloUtente);
             infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto per ricevere gli aggiornamenti del Tema Natale IA con l'indirizzo " +
-                    ""+emailUtenti.getEmail();
+                    ""+profiloUtente.getEmail();
         }else{
             infoMessage = "Conferma email non riuscita. Registrati di nuovo";
         }

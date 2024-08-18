@@ -1,15 +1,15 @@
-package com.lunasapiens;
+package com.lunasapiens.service;
 
-import com.lunasapiens.controller.IndexController;
+import com.lunasapiens.Constants;
+import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.Util;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import com.lunasapiens.dto.OroscopoGiornalieroDTO;
-import com.lunasapiens.entity.EmailUtenti;
+import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import com.lunasapiens.repository.EmailUtentiRepository;
-import com.lunasapiens.service.EmailUtentiService;
-import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,10 +29,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class EmailService {
@@ -47,10 +44,10 @@ public class EmailService {
     private SpringTemplateEngine templateEngine;
 
     @Autowired
-    private EmailUtentiService emailUtentiService;
+    private ProfiloUtenteService profiloUtenteService;
 
     @Autowired
-    private EmailUtentiRepository emailUtentiRepository;
+    private ProfiloUtenteRepository profiloUtenteRepository;
 
     @Autowired
     private TelegramBotClient telegramBotClient;
@@ -68,14 +65,35 @@ public class EmailService {
     public static final String emailOroscopo = "emailOroscopo";
     public static final String contenutoEmail = "contenutoEmail";
 
+
+
+
+// ###################### EMAIL REGISTRAZION PROFILO UTENTE ####################################
+
+    public void inviaemailRegistrazioneUtente(ProfiloUtente profiloUtente, String codeTokenJwt) {
+        if( profiloUtente != null ) {
+            String subject = "LunaSapiens - Conferma registrazione LunaSapiens";
+            Context context = new Context();
+            String linkConfirm = Constants.DOM_LUNA_SAPIENS +"/"+ "confirmRegistrazioneUtente" + "?code="+codeTokenJwt;
+            String contenuto = "<b>Grazie per esserti registato a LunaSapiens.</b><br><br>" +
+                    "Per autenticarti e accedere a LunsaSapiens, clicca sul seguente link <br>" + linkConfirm +
+                    "<br><br>" + "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
+
+            context.setVariable(contenutoEmail, contenuto);
+            sendHtmlEmail(profiloUtente.getEmail(), subject, emailSubscription, context);
+        }
+    }
+
+
+
     // ###################### EMAIL TEMA NATALE ####################################
 
-    public void inviaConfermaEmailTemaNatale(EmailUtenti emailUtenti) {
-        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
-        if( emailUtentiSetRandomCode != null ) {
+    public void inviaConfermaEmailTemaNatale(ProfiloUtente profiloUtente) {
+        ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
+        if( profiloUtenteSetRandomCode != null ) {
             String confirmationCode = generateRandomCode();
-            emailUtenti.setConfirmationCode(confirmationCode);
-            emailUtentiRepository.save(emailUtenti);
+            profiloUtente.setConfirmationCode(confirmationCode);
+            profiloUtenteRepository.save(profiloUtente);
 
             String subject = "LunaSapiens - Conferma iscrizione aggiornamenti Tema Natale IA";
             Context context = new Context();
@@ -86,7 +104,7 @@ public class EmailService {
                     "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
 
             context.setVariable(contenutoEmail, contenuto);
-            sendHtmlEmail(emailUtenti.getEmail(), subject, emailSubscription, context);
+            sendHtmlEmail(profiloUtente.getEmail(), subject, emailSubscription, context);
         }
     }
 
@@ -94,12 +112,12 @@ public class EmailService {
 
     // ###################### EMAIL OROSCOPO GIORNALIERO ####################################
 
-    public void inviaConfermaEmailOrosciopoGioraliero(EmailUtenti emailUtenti) {
-        EmailUtenti emailUtentiSetRandomCode = emailUtentiService.findByEmailUtenti( emailUtenti.getEmail() ).orElse(null);
-        if( emailUtentiSetRandomCode != null ) {
+    public void inviaConfermaEmailOrosciopoGioraliero(ProfiloUtente profiloUtente) {
+        ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
+        if( profiloUtenteSetRandomCode != null ) {
             String confirmationCode = generateRandomCode();
-            emailUtenti.setConfirmationCode(confirmationCode);
-            emailUtentiRepository.save(emailUtenti);
+            profiloUtente.setConfirmationCode(confirmationCode);
+            profiloUtenteRepository.save(profiloUtente);
 
             String subject = "LunaSapiens - Conferma iscrizione Oroscopo del giorno";
             Context context = new Context();
@@ -110,7 +128,7 @@ public class EmailService {
                     "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
 
             context.setVariable(contenutoEmail, contenuto);
-            sendHtmlEmail(emailUtenti.getEmail(), subject, emailSubscription, context);
+            sendHtmlEmail(profiloUtente.getEmail(), subject, emailSubscription, context);
         }
     }
 
@@ -121,9 +139,9 @@ public class EmailService {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
-        List<EmailUtenti> emailUtentiList = emailUtentiService.findAll();
-        for(EmailUtenti emailUtente: emailUtentiList){
-            if( emailUtente.isSubscription() ){
+        List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
+        for(ProfiloUtente emailUtente: profiloUtenteList){
+            if( emailUtente.isEmailOroscopoGiornaliero() ){
                 String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
                 Context context = new Context();
                 List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
@@ -154,21 +172,36 @@ public class EmailService {
     }
 
 
-    public Object[] salvaEmail(String email) {
-        telegramBotClient.inviaMessaggio( "Email registrata: "+email);
+    public Object[] salvaEmail(String email, String ipAddress) {
         Object[] result = new Object[3];
         try{
-            EmailUtenti emailUtenti = emailUtentiService.salvaEmailUtenti(email, new Date(), false);
-            result[0] = true; // Indica successo
-            result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +
-                    "Controlla la tua casella di posta per confermare la tua iscrizione.";
-            result[2] = emailUtenti;
+            Optional<ProfiloUtente> profiloUtenteOptional = profiloUtenteRepository.findByEmail(email);
+            if (profiloUtenteOptional.isPresent()) {
+                ProfiloUtente profiloUtente = profiloUtenteOptional.get();
+                profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
+                profiloUtente.setEmailOroscopoGiornaliero(true);
+                profiloUtente.setEmailAggiornamentiTemaNatale(true);
+                profiloUtente.setConfirmationCode( generateRandomCode() );
+                profiloUtenteRepository.save(profiloUtente);
+                result[0] = true; // Indica fallimento
+                result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
+                result[2] = profiloUtenteOptional.get();
+            } else {
+
+                ProfiloUtente profiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, LocalDateTime.now(), null,
+                        ipAddress, true, true, generateRandomCode() );
+                result[0] = true; // Indica successo
+                result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +
+                        "Controlla la tua casella di posta per confermare la tua iscrizione.";
+                result[2] = profiloUtente;
+            }
+            telegramBotClient.inviaMessaggio( "Email registrata: "+email);
 
         } catch (DataIntegrityViolationException e) {
             System.out.println("Duplicate email detected: " + e.getMessage());
-            result[0] = true; // Indica fallimento
-            result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
-            result[2] = emailUtentiService.findByEmailUtenti( email ).orElse(null);
+            result[0] = false; // Indica fallimento
+            result[1] = email + " errore duplicate email detected.";
+            result[2] = null;
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -199,7 +232,6 @@ public class EmailService {
             helper.setFrom(Util.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
             helper.setTo(to);
             helper.setSubject(subject);
-
             String htmlContent = templateEngine.process(templateName, context);
             helper.setText(htmlContent, true);
 
