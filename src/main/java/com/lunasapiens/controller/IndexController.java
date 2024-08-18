@@ -213,7 +213,7 @@ public class IndexController {
             System.out.println("principal is null.");
         }
 
-        return "/private/privatePage";
+        return "private/privatePage";
     }
 
 
