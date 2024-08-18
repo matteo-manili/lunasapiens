@@ -48,7 +48,7 @@ public class SecurityConfig {
             // "/*" = significa tutti gli url ma non i sotto url (esempio localhost:/contatti)
             // "/*" = significa tutti gli url e anche i sotto url (esempio localhost:/private/privatePage)
             .authorizeHttpRequests(requests -> requests
-                    .requestMatchers("/", "/*", "/chat-websocket/**", "/css/**", "/js/**" ).permitAll()  // Accesso pubblico alle risorse specificate
+                    .requestMatchers("/", "/*", "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**" ).permitAll()  // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()  // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()  // Blocca tutte le altre richieste
             )

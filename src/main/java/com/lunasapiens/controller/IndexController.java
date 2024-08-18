@@ -174,35 +174,43 @@ public class IndexController {
         scheduledTasks.creaOroscopoGiornaliero();
 
         // Restituisci una RedirectView per reindirizzare alla home page
-        RedirectView redirectView = new RedirectView("/index", true);
+        RedirectView redirectView = new RedirectView("/", true);
         redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410
         return redirectView;
     }
 
 
 
-
     @GetMapping("/")
-    public String rootBase(Model model) {
+    public String rootBase() {
         logger.info("sono in roorBase");
         return "index";
     }
 
+
+
+    @GetMapping("/index")
+    public RedirectView index() {
+        logger.info("sono in index");
+        RedirectView redirectView = new RedirectView("/", true);
+        return redirectView;
+    }
+
+
+
+
     @GetMapping("/private/privatePage")
-    public String privatePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String privatePage(Principal principal, Model model) {
 
-        logger.info( "sono in: privatePage" );
+        logger.info( "sono in: private/privatePage" );
 
-        if (userDetails != null) {
-            String username = userDetails.getUsername();
-            String authorities = userDetails.getAuthorities().toString();
+        if (principal != null) {
+            String username = principal.getName();
             System.out.println("Username: " + username);
-            System.out.println("Authorities: " + authorities);
 
-            //model.addAttribute("userDetails", userDetails);
 
         } else {
-            System.out.println("UserDetails is null.");
+            System.out.println("principal is null.");
         }
 
         return "/private/privatePage";
@@ -249,7 +257,7 @@ public class IndexController {
 
 
     /**
-     * restituisce il codice html del frammento "header menu", il quale ritorna alla funziona javascritp
+     * restituisce il codice html del frammento "header menu", il quale ritorna dalla funziona javascript
      * document.getElementById("header-placeholder").innerHTML = html;
      * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
      */
