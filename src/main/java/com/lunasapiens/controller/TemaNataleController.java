@@ -260,7 +260,6 @@ public class TemaNataleController {
                 response.put(keyJsonStandardContent, rateLimiterUtente.numeroMessaggi_e_Minuti() );
                 return response;
             }
-
         } else {
             logger.info("User not logged in");
             if (!rateLimiterUser.allowMessage( userSessionId )) {
@@ -292,7 +291,13 @@ public class TemaNataleController {
                 cache.put(temaNataleId, chatMessageIa);
 
                 response.put(keyJsonStandardContent, rispostaIA.toString());
-                telegramBotClient.inviaMessaggio("Domanda Utente: " + domanda);
+
+                if (principal != null) {
+                    telegramBotClient.inviaMessaggio(principal.getName()+": " + domanda);
+                }else{
+                    telegramBotClient.inviaMessaggio("User: " + domanda);
+                }
+
             } catch (Exception e) {
                 response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
             }
