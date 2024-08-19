@@ -235,9 +235,7 @@ public class TemaNataleController {
         // anche "Map<String, String> message" viene settato nel "registerStompEndpoints". Infatti posso richiamare gli oggetti come parametri
         //String userPrincipalId = principal.getName();
 
-
         logger.info("sono in userMessageWebSocket");
-
 
         Map<String, Object> response = new HashMap<>();
         final String keyJsonStandardContent = "content";
@@ -246,13 +244,9 @@ public class TemaNataleController {
         String temaNataleId = message.get("temaNataleId");
         String userSessionId = message.get(Constants.USER_SESSION_ID);
 
-        System.out.println("domanda: "+domanda);
-        System.out.println("temaNataleId: "+temaNataleId);
-        System.out.println("userSessionId: "+userSessionId);
-
-        // Ottenere l'oggetto Authentication dal contesto di sicurezza
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+        //System.out.println("domanda: "+domanda);
+        //System.out.println("temaNataleId: "+temaNataleId);
+        //System.out.println("userSessionId: "+userSessionId);
 
         if (principal != null) {
             logger.info("User logged in: " + principal.getName());
@@ -268,7 +262,6 @@ public class TemaNataleController {
             }
 
         }
-
 
         // Aggiunge una protezione per i dati nulli o non validi
         if (domanda == null || domanda.isEmpty()) {
@@ -289,7 +282,6 @@ public class TemaNataleController {
                 StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
                 chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
                 cache.put(temaNataleId, chatMessageIa);
-
                 response.put(keyJsonStandardContent, rispostaIA.toString());
 
                 if (principal != null) {
