@@ -283,13 +283,11 @@ public class TemaNataleController {
                 chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
                 cache.put(temaNataleId, chatMessageIa);
                 response.put(keyJsonStandardContent, rispostaIA.toString());
-
                 if (principal != null) {
                     telegramBotClient.inviaMessaggio(principal.getName()+": " + domanda);
                 }else{
                     telegramBotClient.inviaMessaggio("User: " + domanda);
                 }
-
             } catch (Exception e) {
                 response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
             }
