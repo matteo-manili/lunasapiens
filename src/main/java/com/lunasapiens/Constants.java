@@ -15,6 +15,7 @@ public class Constants {
     public static final String INFO_ERROR = "infoError";
 
     public static final String JWT_WITH_ISSUER = "lunaSapiens_jwt_auth0";
+    public static final String COOKIE_JWT_NAME = "jwtToken";
 
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";
@@ -34,6 +35,14 @@ public class Constants {
     public static final String TEMA_NATALE_BOT_CACHE = "temaNataleBotCache";
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_CACHE = "rateLimiterCache";
+
+    public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
+            "/",
+            "/oroscopo",
+            "/tema-natale",
+            "/contatti",
+            "/register",
+            "/info-privacy"));
 
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",

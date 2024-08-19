@@ -2,7 +2,7 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class ServizioOroscopoDelGiorno {
         Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
         Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
 
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
 

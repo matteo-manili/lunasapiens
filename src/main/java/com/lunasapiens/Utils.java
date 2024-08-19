@@ -2,6 +2,10 @@ package com.lunasapiens;
 
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweDate;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -10,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -18,10 +23,28 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class Util {
+public class Utils {
 
-    private static final Logger logger = LoggerFactory.getLogger(Util.class);
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+
+    public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("cancello Cookie JWT e ClearSecurityContext");
+        // Cancella il cookie JWT
+        Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Scadenza immediata
+        response.addCookie(jwtCookie);
+        // Disconnetti l'utente dal contesto di sicurezza
+        SecurityContextHolder.clearContext();
+        // Invalidare la sessione (se presente)
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
 
     public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {
         double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);

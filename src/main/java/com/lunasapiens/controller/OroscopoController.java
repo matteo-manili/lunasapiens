@@ -62,9 +62,9 @@ public class OroscopoController {
     public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage) {
 
         logger.info("oroscopo endpoint");
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
@@ -142,7 +142,7 @@ public class OroscopoController {
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
         if (oroscopoGiornaliero.getVideo() != null) {
-            return Util.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo());
+            return Utils.VideoResponseEntityByteArrayResource(oroscopoGiornaliero.getVideo());
         } else {
             return ResponseEntity.notFound().build();
         }

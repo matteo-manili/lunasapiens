@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SwissEph;
@@ -64,7 +64,7 @@ public class BuildInfoAstrologiaSwiss {
         double[] position = new double[6]; // Ecli
 
         // ptic position (x, y, z) and speed (dx, dy, dz)
-        double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
+        double julianDate = Utils.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
 
         logger.info("julianDate: " + julianDate);
 
@@ -101,8 +101,8 @@ public class BuildInfoAstrologiaSwiss {
 
                 boolean retrogrado = position[3] < 0 ? true : false;
 
-                Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
-                String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
+                Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
+                String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
 
                 PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(i, Constants.Pianeti.fromNumero(i).getNome(), position[0], 0, 0,
                         entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
@@ -143,7 +143,7 @@ public class BuildInfoAstrologiaSwiss {
         // verrà effettuato nel sistema siderale anziché nel sistema tropicale. Il sistema siderale è quello usato nei siti web più famosi.
         // Per il sistema tropicale usare invece SweConst.SEFLG_SWIEPH
 
-        double julianDate = Util.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
+        double julianDate = Utils.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
         System.out.println("julianDate case placide: " + julianDate);
 
         //double julianDate = new SweDate(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), giornOraPosDTO.getOra()).getJulDay();
@@ -180,7 +180,7 @@ public class BuildInfoAstrologiaSwiss {
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
             for (int i = 1; i <= 12; i++) {
-                Map.Entry<Integer, String> entry = Util.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
+                Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
                 Constants.Case casa = Constants.Case.fromNumero( i );
                 CasePlacide aa = new CasePlacide(i, casa.getName(), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);

@@ -102,7 +102,7 @@
         <div class="container px-5">
             <a class="navbar-brand" href="/">LunaSapiens.com</a>
             <div sec:authorize="isAuthenticated()">
-                <a class="navbar-brand ms-3" href="/private/privatePage"><span sec:authentication="name">USER-NO-FOUND</span></a>
+                <a class="navbar-brand ms-3" href="/private/privatePage"><span sec:authentication="name" id="user-email" class="small">USER-NO-FOUND</span></a> <!-- Usato la classe small -->
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">

@@ -1,6 +1,6 @@
 package com.lunasapiens.config;
 
-import com.lunasapiens.filter.FilterRequestResponse;
+import com.lunasapiens.filter.FilterCheckJwtAuthentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Autowired
-    private FilterRequestResponse filterRequestResponse;
+    private FilterCheckJwtAuthentication filterCheckJwtAuthentication;
 
 
     @Bean
@@ -57,9 +57,12 @@ public class SecurityConfig {
                     .permitAll()  // Accesso pubblico alla pagina di login
             )
 
+
             .exceptionHandling(exceptionHandling -> exceptionHandling
                     .accessDeniedPage("/error")  // Pagina di errore per accesso negato
             )
+
+
 
         /**
          * Controllo della sequenza di esecuzione: La posizione di un filtro nella catena di filtri è importante perché determina l'ordine in cui i
@@ -67,7 +70,7 @@ public class SecurityConfig {
          * nome utente e password. Se hai un filtro che gestisce l'autenticazione tramite JWT (JSON Web Token), dovresti assicurarti che venga eseguito
          * prima del filtro che gestisce la logica di autenticazione tradizionale, altrimenti i token JWT potrebbero non essere validati correttamente.
          */
-        .addFilterBefore(filterRequestResponse, UsernamePasswordAuthenticationFilter.class); // Aggiunge il filtro JWT
+        .addFilterBefore(filterCheckJwtAuthentication, UsernamePasswordAuthenticationFilter.class); // Aggiunge il filtro JWT
 
 
         return http.build();

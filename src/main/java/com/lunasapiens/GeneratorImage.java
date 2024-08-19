@@ -52,7 +52,7 @@ public class GeneratorImage {
 
         // Salvataggio dell'immagine su disco
         try {
-            Util.createDirectory( imagePathFileName );
+            Utils.createDirectory( imagePathFileName );
             ImageIO.write(bufferedImage, "png", new File(imagePathFileName));
 
         } catch (IOException e) {

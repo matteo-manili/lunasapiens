@@ -41,7 +41,7 @@ public class GeneratorVideo {
             int totalDurationSeconds = numImages * durataSecondiImmagine; // Ogni immagine dura 5 secondi
             double frameRate = (double) numImages / totalDurationSeconds;
 
-            Util.createDirectory( pathOroscopoGiornalieroVideo );
+            Utils.createDirectory( pathOroscopoGiornalieroVideo );
 
             // Inizializza il recorder per il video
             FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(pathOroscopoGiornalieroVideo + nomeFileVideo + formatoVideo(), width, height);

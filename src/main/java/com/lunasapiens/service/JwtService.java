@@ -9,6 +9,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.lunasapiens.Constants;
 import com.lunasapiens.config.JwtElements;
+import com.lunasapiens.config.SecurityConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Autowired
     private JwtElements.JwtKeys getJwtRsaKeys;
@@ -47,20 +51,17 @@ public class JwtService {
             // Calcola la data di scadenza a 7 giorni da ora
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 7);
+            //calendar.add(Calendar.MINUTE, 1);
             Date expiresAt = calendar.getTime();
-
 
             JwtElements.JwtToken jwtConfigInfo = new JwtElements.JwtToken(
                     JWT.create()
                     .withIssuer( Constants.JWT_WITH_ISSUER )
                     .withSubject( emailUtente )
                     .withExpiresAt(expiresAt)  // Imposta la data di scadenza
-                    .sign(algorithm)
-
-            );
+                    .sign(algorithm));
 
             return jwtConfigInfo;
-
 
         } catch (JWTCreationException exception) {
             exception.printStackTrace();
@@ -69,8 +70,7 @@ public class JwtService {
     }
 
 
-
-    public JwtElements.JwtEmail validateTokenAndGetEmail(String codeTokenJwt) {
+    public JwtElements.JwtDetails validateToken(String codeTokenJwt) {
         try {
             String publicKeyB64 = getJwtRsaKeys.getKeyPublic();
             String privateKeyB64 = getJwtRsaKeys.getKeyPrivate();
@@ -78,33 +78,42 @@ public class JwtService {
             RSAPublicKey rSAPublicKey = decodificaChiaveJwtPublic(publicKeyB64);
             RSAPrivateKey rSAPrivateKey = decodificaChiaveJwtPrivate(privateKeyB64);
 
-            DecodedJWT decodedJWT;
             Algorithm algorithm = Algorithm.RSA256(rSAPublicKey, rSAPrivateKey);
+
             JWTVerifier verifier = JWT.require(algorithm)
                     // specify any specific claim validations
                     .withIssuer( Constants.JWT_WITH_ISSUER )
                     // reusable verifier instance
                     .build();
 
-            decodedJWT = verifier.verify(codeTokenJwt);
+            DecodedJWT decodedJWT = verifier.verify(codeTokenJwt);
 
-            // Se arriviamo qui, il token è valido
-            //System.out.println("Token valido!");
-            //System.out.println("Issuer: " + decodedJWT.getIssuer());
-            //System.out.println("Claims: " + decodedJWT.getClaims());
-            //System.out.println("email: " + decodedJWT.getSubject());
+            System.out.println("decodedJWT.getIssuer(): "+decodedJWT.getIssuer());
+            System.out.println("decodedJWT.getSubject():"+decodedJWT.getSubject());
+            System.out.println("decodedJWT.getExpiresAt(): "+decodedJWT.getExpiresAt());
+            System.out.println("decodedJWT.getHeader():"+decodedJWT.getHeader());
+            System.out.println("decodedJWT.getClaims(): "+decodedJWT.getClaims());
+
+            return new JwtElements.JwtDetails(true, false, null, decodedJWT.getIssuer(), decodedJWT.getSubject(),
+                    decodedJWT.getExpiresAt(), decodedJWT.getClaims(), decodedJWT.getHeader(), decodedJWT.getToken()) ;
 
 
-            JwtElements.JwtEmail jwtConfigEmail = new JwtElements.JwtEmail(
-                    decodedJWT.getSubject()
-            );
+        } catch (JWTVerificationException exceptionJwt) {
+                logger.info("JWTVerificationException validateTokenAndGetEmail: " +exceptionJwt.getMessage());
+            if( exceptionJwt.getMessage().contains("The Token has expired") ) {
+                return new JwtElements.JwtDetails(false, true, null, null, null,
+                        null, null, null, null) ;
+            }
+            return new JwtElements.JwtDetails(false, false, exceptionJwt.getMessage(), null, null,
+                    null, null,null,null);
 
-            return jwtConfigEmail;
 
-        } catch (JWTVerificationException exception) {
-            System.out.println("Token non valido: " + exception.getMessage());
-            return null; // Token non valido
+        } catch (Exception exception) {
+            logger.info("Exception validateTokenAndGetEmail: " +exception.getMessage());
+            return new JwtElements.JwtDetails(false, false, exception.getMessage(), null, null,null,
+                    null,null,null);
         }
+
     }
 
 

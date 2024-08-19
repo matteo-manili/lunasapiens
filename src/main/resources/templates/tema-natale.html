@@ -58,8 +58,7 @@
         color: #004d40; /* Verde scuro per il testo */
     }
 
-
-
+    /* Style per l'autocompletamento delle città */
     .autocomplete-results {
         position: absolute;
         border: 1px solid #ddd;
@@ -70,12 +69,10 @@
         overflow-y: auto;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
-
     .autocomplete-results div {
         padding: 8px;
         cursor: pointer;
     }
-
     .autocomplete-results div:hover {
         background-color: #f0f0f0;
     }
@@ -387,8 +384,13 @@ document.addEventListener("DOMContentLoaded", function() {
             var chatMessages = document.getElementById("chat-messages");
             var messageElement = document.createElement("div");
             messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
-            messageElement.innerHTML = message; // interpeta l'eventuale codice htmol nel testo
-            //messageElement.innerText = message; // solo testo
+
+            // interpeta il codice html nel message (perché devo fare vedere i link nel messaggio ma non converte \n in <br>).
+            // Gli \n li mette le risposte della IA
+            let formattedMessage = message.replace(/\n/g, '<br>'); // // Sostituisci tutti i \n con <br>
+            messageElement.innerHTML = formattedMessage; // messageElement.innerText = message; // solo testo
+
+
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }

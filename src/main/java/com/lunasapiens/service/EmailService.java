@@ -2,7 +2,7 @@ package com.lunasapiens.service;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.TelegramBotClient;
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
@@ -136,9 +136,9 @@ public class EmailService {
 
 
     public void inviaEmailOrosciopoGioraliero() {
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Util.GiornoOraPosizione_OggiRomaOre12();
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Util.OggiOre12());
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
         for(ProfiloUtente emailUtente: profiloUtenteList){
             if( emailUtente.isEmailOroscopoGiornaliero() ){
@@ -229,7 +229,7 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom(Util.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
+            helper.setFrom(Utils.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
             helper.setTo(to);
             helper.setSubject(subject);
             String htmlContent = templateEngine.process(templateName, context);
@@ -244,7 +244,7 @@ public class EmailService {
 
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( Util.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
+        message.setFrom( Utils.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

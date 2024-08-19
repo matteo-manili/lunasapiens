@@ -19,6 +19,11 @@
         <p th:text="${infoError}"></p>
     </div>
 
+    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+        <p>Si è verificato un problema durante l'elaborazione della richiesta.</p>
+        <p th:text="${infoMessage}"></p>
+    </div>
+
     <!-- Aggiungi un link per tornare alla pagina index -->
     <a href="/">Torna alla pagina iniziale</a>
 

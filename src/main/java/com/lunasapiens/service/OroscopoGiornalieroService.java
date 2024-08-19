@@ -1,6 +1,6 @@
 package com.lunasapiens.service;
 
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
@@ -69,7 +69,7 @@ public class OroscopoGiornalieroService {
                                                          byte[] video, String nomeFileVideo) throws Exception {
 
         // Ottenere l'oggetto Date dal Calendar
-        Date date = Util.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO);
+        Date date = Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO);
 
         OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date, video, nomeFileVideo);
 

@@ -107,22 +107,19 @@ public class JwtController {
 
 
     /**
-     * CONFERMA EMAIL CODE REGISTRAZIOE
+     * CONFERMA EMAIL CODE REGISTRAZIOE e SETTA IL COOKIE COL JSON DENTRO
      */
     @GetMapping("/confirmRegistrazioneUtente")
     public ResponseEntity<String> confirmRegistrazione(@RequestParam(name = "code", required = true) String codeTokenJwt,
                                                        RedirectAttributes redirectAttributes, HttpServletResponse response) {
         logger.info("confirmRegistrazione");
 
-        // TODO SALVARE il COOKIE JWT SUL DISPOSITIVO dell' UTENTE
-
-        String emailJwt = jwtService.validateTokenAndGetEmail( codeTokenJwt ).getEmail();
-
+        JwtElements.JwtDetails jwtDetails = jwtService.validateToken( codeTokenJwt );
         String infoMessage = "";
-        if( emailJwt != null ) {
+        if( jwtDetails.isSuccess() ) {
 
             // Creazione del cookie con il token JWT
-            Cookie jwtCookie = new Cookie("jwtToken", codeTokenJwt);
+            Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
             jwtCookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
             jwtCookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
             jwtCookie.setPath("/"); // Imposta il percorso del cookie
@@ -134,8 +131,7 @@ public class JwtController {
             // Aggiungi il cookie alla risposta HTTP
             response.addCookie(jwtCookie);
 
-
-            infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+emailJwt;
+            infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+jwtDetails.getSubject();
         }else{
             infoMessage = "Conferma email non riuscita. Registrati di nuovo. Se il problema persiste mandaci un messaggio.";
         }

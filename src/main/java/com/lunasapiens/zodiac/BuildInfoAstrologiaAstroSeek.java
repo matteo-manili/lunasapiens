@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import javafx.util.Pair;
@@ -133,7 +133,7 @@ public class BuildInfoAstrologiaAstroSeek {
                 .append("- Luogo di nascita dell'Utente: "+luogoNascita +"\n\n\n")
 
                 .append("- Tema natale dell'Utente:")
-                .append( Util.convertHtmlToPlainText(temaNataleDescrizione) );
+                .append( Utils.convertHtmlToPlainText(temaNataleDescrizione) );
         return textSystemBuilder;
     }
 
@@ -222,7 +222,7 @@ public class BuildInfoAstrologiaAstroSeek {
                     }
                     Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
                     double gradiTotali = segno.getGradi() + positionInDegrees;
-                    String significatoTransitoPianetaSegno = Util.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianeta.getNumero(), segno.getNumero());
+                    String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianeta.getNumero(), segno.getNumero());
                     PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(pianeta.getNumero(), pianeta.getNome(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
                             (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                     pianetaPosizTransitoArrayList.add(pianetaPosizTransito);

@@ -1,15 +1,8 @@
 package com.lunasapiens.zodiac;
 
 
-import com.lunasapiens.Util;
-import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import de.thmac.swisseph.SweConst;
-import de.thmac.swisseph.SweDate;
-import de.thmac.swisseph.SwissEph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 public class AAA_Prove {
 

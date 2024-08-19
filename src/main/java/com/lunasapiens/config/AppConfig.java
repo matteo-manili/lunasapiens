@@ -1,7 +1,7 @@
 package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.lunasapiens.Util;
+import com.lunasapiens.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -108,8 +108,8 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtElements.JwtKeys getJwtRsaKeys() {
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
             return new JwtElements.JwtKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
             return new JwtElements.JwtKeys(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
@@ -119,8 +119,8 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public ApiGeonamesConfig getApiGeonames() {
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
             return new ApiGeonamesConfig(loadPorpoerty.get(0)) ;
         }else{
             return new ApiGeonamesConfig( env.getProperty("api.geonames.username") ) ;
@@ -131,8 +131,8 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "api.facebook.appid",
                     "api.facebook.appsecret",
                     "api.facebook.idpage" )) );
@@ -146,8 +146,8 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public TelegramConfig getParamTelegram() {
-        if (Util.isLocalhost()) {
-            List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
                     "api.telegram.bot.username")) );
             return new TelegramConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
@@ -184,7 +184,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public JavaMailSender javaMailSender() {
-        if (Util.isLocalhost()) {
+        if (Utils.isLocalhost()) {
             return javaMailSenderGmailDev();
         } else {
             return javaMailSenderLunaSapiensProd();
@@ -194,7 +194,7 @@ public class AppConfig implements WebMvcConfigurer {
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(env.getProperty("gmail.mail.username"));
-        List<String> loadPorpoerty = Util.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
+        List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
         mailSender.setPassword( loadPorpoerty.get(0) );
         mailSender.setHost(env.getProperty("gmail.mail.smtp.host"));
         mailSender.setPort(Integer.parseInt(env.getProperty("gmail.mail.smtp.port")));

@@ -12,7 +12,6 @@ import com.restfb.*;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Page;
-import com.restfb.types.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,9 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,8 +55,6 @@ public class IndexController {
 
     @Autowired
     private FacebookConfig facebookConfig;
-    private User user;
-
 
 
 
@@ -201,25 +196,28 @@ public class IndexController {
 
     @GetMapping("/private/privatePage")
     public String privatePage(Principal principal, Model model) {
-
         logger.info( "sono in: private/privatePage" );
-
         if (principal != null) {
             String username = principal.getName();
             System.out.println("Username: " + username);
-
-
         } else {
             System.out.println("principal is null.");
         }
-
         return "private/privatePage";
     }
 
 
 
     @GetMapping("/register")
-    public String register() {
+    public String register(Model model, HttpServletRequest request) {
+
+
+        String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
+        if (messaggio != null) {
+            model.addAttribute(Constants.INFO_ERROR, messaggio);
+            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+        }
+
         return "register";
     }
 
@@ -230,25 +228,9 @@ public class IndexController {
 
         logger.info( "sono in logout" );
 
-        // Cancella il cookie JWT
-        Cookie jwtCookie = new Cookie("jwtToken", null);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(0); // Scadenza immediata
-        response.addCookie(jwtCookie);
-
-        // Disconnetti l'utente dal contesto di sicurezza (opzionale, Spring Security lo gestisce di default)
-        SecurityContextHolder.clearContext();
-
-        // Invalidare la sessione (opzionale, se utilizzi sessioni HTTP)
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+        Utils.clearJwtCookie_ClearSecurityContext(request, response);
 
         RedirectView redirectView = new RedirectView("/register", true);
-
         return redirectView;
     }
 
@@ -288,15 +270,7 @@ public class IndexController {
         WebSitemapGenerator sitemapGenerator = WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
 
         // Aggiungi URL alla sitemap
-        List<String> urlsForIndex = List.of(
-                "/",
-                "/oroscopo",
-                "/tema-natale",
-                "/contatti",
-                "/info-privacy"
-        );
-
-        for (String url : urlsForIndex) {
+        for (String url : Constants.URL_INDEX_LIST) {
             WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url).build();
             sitemapGenerator.addUrl(sitemapUrl);
         }
