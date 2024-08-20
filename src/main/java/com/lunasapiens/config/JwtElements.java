@@ -35,10 +35,12 @@ public class JwtElements {
         private String token;
 
 
-        public JwtDetails(boolean success) {
-            this.success = success;
-        }
 
+        public JwtDetails(boolean success, boolean tokenScaduto, String messaggioErroreJwt) {
+            this.success = success;
+            this.tokenScaduto = tokenScaduto;
+            this.messaggioErroreJwt = messaggioErroreJwt;
+        }
 
         public JwtDetails(boolean success, boolean tokenScaduto, String messaggioErroreJwt, String issuer, String subject, Date expiresAt, Map<String, Claim> claims, String header, String token) {
             this.success = success;

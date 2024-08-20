@@ -99,19 +99,16 @@ public class JwtService {
 
 
         } catch (JWTVerificationException exceptionJwt) {
-                logger.info("JWTVerificationException validateTokenAndGetEmail: " +exceptionJwt.getMessage());
+            logger.info("JWTVerificationException validateTokenAndGetEmail: " +exceptionJwt.getMessage());
             if( exceptionJwt.getMessage().contains("The Token has expired") ) {
-                return new JwtElements.JwtDetails(false, true, null, null, null,
-                        null, null, null, null) ;
+                return new JwtElements.JwtDetails(false, true, null) ;
             }
-            return new JwtElements.JwtDetails(false, false, exceptionJwt.getMessage(), null, null,
-                    null, null,null,null);
+            return new JwtElements.JwtDetails(false, false, exceptionJwt.getMessage());
 
 
         } catch (Exception exception) {
             logger.info("Exception validateTokenAndGetEmail: " +exception.getMessage());
-            return new JwtElements.JwtDetails(false, false, exception.getMessage(), null, null,null,
-                    null,null,null);
+            return new JwtElements.JwtDetails(false, false, exception.getMessage());
         }
 
     }

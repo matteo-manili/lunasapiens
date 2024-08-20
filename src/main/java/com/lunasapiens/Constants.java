@@ -41,6 +41,7 @@ public class Constants {
             "/oroscopo",
             "/tema-natale",
             "/contatti",
+            "/documenti",
             "/register",
             "/info-privacy"));
 

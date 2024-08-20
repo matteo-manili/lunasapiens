@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -23,13 +23,17 @@ public class GlobalExceptionHandler {
      * @return
      */
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleGlobalException(Exception ex, RedirectAttributes redirectAttributes) {
+    //@ExceptionHandler(Exception.class)
+    //@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleGlobalException(Exception ex, RedirectAttributes redirectAttributes) {
 
-        logger.info("GlobalExceptionHandler handleGlobalException");
-        redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Si è verificato un errore interno del server: "+ex.getMessage());
-        return "redirect:/error";
+        logger.info("sono in GlobalExceptionHandler handleGlobalException cause: "+ex.getCause());
+        logger.info("sono in GlobalExceptionHandler handleGlobalException message: "+ex.getMessage());
+
+        logger.info("sono in GlobalExceptionHandler handleGlobalException");
+
+
+
     }
 
 

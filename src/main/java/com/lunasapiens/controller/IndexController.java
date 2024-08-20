@@ -150,7 +150,7 @@ public class IndexController {
 
 
     @GetMapping("/termini-di-servizio")
-    public RedirectView terminiDiServizio() {
+    public RedirectView terminiDiServizio_redirect_301() {
         RedirectView redirectView = new RedirectView("/info-privacy", true);
         redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
         return redirectView;
@@ -210,14 +210,11 @@ public class IndexController {
 
     @GetMapping("/register")
     public String register(Model model, HttpServletRequest request) {
-
-
         String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
         if (messaggio != null) {
             model.addAttribute(Constants.INFO_ERROR, messaggio);
             request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
         }
-
         return "register";
     }
 
@@ -225,11 +222,8 @@ public class IndexController {
 
     @GetMapping("/logout")
     public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
-
         logger.info( "sono in logout" );
-
         Utils.clearJwtCookie_ClearSecurityContext(request, response);
-
         RedirectView redirectView = new RedirectView("/register", true);
         return redirectView;
     }

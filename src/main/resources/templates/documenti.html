@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Luna Sapiens | Biblioteca Astrologica</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Scopri una vasta gamma di documenti e risorse astrologiche scaricabili, inclusi libri, PDF e materiale astrologico vario.">
+        <meta name="keywords" content="astrologia, libri astrologici, PDF astrologia, temi natali, progressioni, case astrologiche, segni zodiacali, astrologia karmica, astrologia tibetana, astrologia cinese, astrologia medica, oroscopo">
+        <meta property="og:title" content="Luna Sapiens | Biblioteca Astrologica" />
+        <meta property="og:description" content="Esplora la nostra biblioteca astrologica con documenti e libri scaricabili per approfondire le tue conoscenze astrologiche." />
+        <meta property="og:image" content="/moon_icon.ico" />
+        <meta property="og:image:type" content="image/x-icon" />
+        <meta property="og:image:width" content="64" />
+        <meta property="og:image:height" content="64" />
+        <meta property="og:url" content="https://www.lunasapiens.com/documenti" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Luna Sapiens - Biblioteca Astrologica" />
+        <meta name="twitter:description" content="Scarica documenti e libri astrologici per approfondire le tue conoscenze astrologiche." />
+        <meta name="twitter:image" content="/moon_icon.ico" />
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/documents" />
+        <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+</head>
+
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Biblioteca Astrologica</h1>
+    <h3 class="mb-4">Materiale di contenuti astrologici da scaricare</h3>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Bondanini N. - Progressioni secondarie</h5>
+                    <a href="/download-pdf?fileName=Bondanini_Progressioni_secondarie.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Bondanini_Progressioni_secondarie.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">I Dispositori secondo Ciro Discepolo 1998</h5>
+                    <a href="/download-pdf?fileName=I_Dispositori_secondo_Ciro_Discepolo_1998.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=I_Dispositori_secondo_Ciro_Discepolo_1998.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Glossario dei termini astrologici & Tabelle sintetiche RAE ORION</h5>
+                    <a href="/download-pdf?fileName=Glossario_dei_termini_astrologici_&_Tabelle_sintetiche_RAE_ORION.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Glossario_dei_termini_astrologici_e_Tabelle_sintetiche_RAE_ORION.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">La Domificazione Segni Case Ellenistica</h5>
+                    <a href="/download-pdf?fileName=LA_DOMIFICAZIONE_SEGNI_CASE_Ellenistica.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=LA_DOMIFICAZIONE_SEGNI_CASE_Ellenistica.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Pianeti nelle case</h5>
+                    <a href="/download-pdf?fileName=Pianeti-nelle-case.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Pianeti-nelle-case.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Case astrologiche</h5>
+                    <a href="/download-pdf?fileName=Case_astrologiche.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Case_astrologiche.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Le case astrologiche, nuovi significati</h5>
+                    <a href="/download-pdf?fileName=Capone_Federico_Le_case_astrologiche_nuovi_significati.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Capone_Federico_Le_case_astrologiche_nuovi_significati.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">L'Eclair André - Astrologia eretica</h5>
+                    <a href="/download-pdf?fileName=L_Eclair_Andre_Astrologia_eretica.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=L_Eclair_Andre_Astrologia_eretica.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Guida all' astrologia - parte seconda</h5>
+                    <a href="/download-pdf?fileName=Linee_guida_all_astrologia_seconda_parte.odt" class="btn btn-info">Scarica DOC</a>
+                    <!-- <button data-file="/view-pdf?fileName=Linee_guida_all_astrologia_seconda_parte.odt" class="btn btn-success view-pdf">Visualizza PDF</button>  --> <!-- il .docx non si visualizza -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">IL TEMA KARMICO</h5>
+                     <a href="/download-pdf?fileName=IL_TEMA_KARMICO.docx" class="btn btn-info">Scarica DOC</a>
+                    <!-- <button data-file="/view-pdf?fileName=IL_TEMA_KARMICO.docx" class="btn btn-success view-pdf">Visualizza PDF</button>  --> <!-- il .docx non si visualizza -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Astrologia Karmico-Evolutiva e Vibrazionale</h5>
+                    <a href="/download-pdf?fileName=Astrologia_Karmico_Evolutiva_e_Vibrazionale.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Astrologia_Karmico_Evolutiva_e_Vibrazionale.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Omeopatia e Astrologia</h5>
+                    <a href="/download-pdf?fileName=Omeopatia_e_Astrologia.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Omeopatia_e_Astrologia.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tibetan Astrology</h5>
+                    <a href="/download-pdf?fileName=Tibetan_Astrology.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Tibetan_Astrology.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Chinese Astrology - Exploring The Eastern Zodiac</h5>
+                    <a href="/download-pdf?fileName=Chinese_Astrology_Exploring_The_Eastern_Zodiac.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Chinese_Astrology_Exploring_The_Eastern_Zodiac.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Astrologia messicana, una sintesi astrologica</h5>
+                    <a href="/download-pdf?fileName=Guajardo_Gloria_Astrologia_messicana_una_sintesi_astrologica.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Guajardo_Gloria_Astrologia_messicana_una_sintesi_astrologica.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Astrologia medica</h5>
+                    <a href="/download-pdf?fileName=Astrologia_medica.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Astrologia_medica.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">La Luna in astrologia</h5>
+                    <a href="/download-pdf?fileName=La_Luna_in_astrologia.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=La_Luna_in_astrologia.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Le esaltazioni</h5>
+                    <a href="/download-pdf?fileName=biosferanoosfera.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=biosferanoosfera.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Il Tema Progresso</h5>
+                    <a href="/download-pdf?fileName=tema_progresso.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=tema_progresso.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">CIA Centro Italiano di Astrologia Linguaggio astrale dal 1970 2004</h5>
+                    <a href="/download-pdf?fileName=CIA_Centro_Italiano_di_Astrologia_Linguaaggio_astrale_dal_1970_2004.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=CIA_Centro_Italiano_di_Astrologia_Linguaaggio_astrale_dal_1970_2004.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Astrology of the Seers</h5>
+                    <a href="/download-pdf?fileName=Frawley_David_Astrology_of_the_Seers.pdf" class="btn btn-info">Scarica PDF</a>
+                    <button data-file="/view-pdf?fileName=Frawley_David_Astrology_of_the_Seers.pdf" class="btn btn-success view-pdf">Visualizza PDF</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div> <!-- fine row -->
+</div> <!-- fine container -->
+
+
+<!-- Modal for PDF viewer -->
+<div id="pdfModal" class="modal fade" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">Visualizza PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="pdfViewer" style="width: 100%; height: 80vh;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+<script>
+    document.querySelectorAll('.view-pdf').forEach(button => {
+        button.addEventListener('click', function() {
+            const fileUrl = this.getAttribute('data-file');
+            const modal = new bootstrap.Modal(document.getElementById('pdfModal'));
+            const viewer = document.getElementById('pdfViewer');
+            viewer.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:100%; border: none;"></iframe>`;
+            modal.show();
+        });
+    });
+</script>
+</body>
+</html>

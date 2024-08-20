@@ -52,16 +52,23 @@ public class SecurityConfig {
                     .requestMatchers("/private/**").authenticated()  // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()  // Blocca tutte le altre richieste
             )
+
             .formLogin(formLogin -> formLogin
                     .loginPage("/register")  // Pagina di login personalizzata
                     .permitAll()  // Accesso pubblico alla pagina di login
             )
 
-
             .exceptionHandling(exceptionHandling -> exceptionHandling
                     .accessDeniedPage("/error")  // Pagina di errore per accesso negato
             )
 
+
+            // .headers(headers -> headers): Configura le intestazioni di sicurezza HTTP dell'applicazione per proteggerla da attacchi.
+            // .frameOptions(frameOptions -> frameOptions): Imposta l'intestazione X-Frame-Options per controllare la visualizzazione delle pagine in iframe.
+            // .sameOrigin(): Imposta X-Frame-Options su SAMEORIGIN, permettendo la visualizzazione solo da frame dello stesso dominio per prevenire il clickjacking.
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permette solo il rendering dello stesso dominio
+            )
 
 
         /**

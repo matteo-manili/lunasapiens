@@ -58,15 +58,11 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null ) {
-
                     Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
                     boolean isAuthenticated = authenticationNow != null && authenticationNow.isAuthenticated();
-
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken( cookie.getValue() );
-
                     if (jwtDetails.isSuccess() ) {
-                        if( !isAuthenticated ) { // per non fare fare sempre la autenticazione
-                            // Verifica se l'utente è già autenticato
+                        if( !isAuthenticated ) { // per non fare fare sempre la autenticazione - Verifica se l'utente è già autenticato
                             logger.info("eseguo la autenticazione: .setAuthentication(authentication)");
                             UserDetails userDetails = User.withUsername( jwtDetails.getSubject() ).password("").authorities("USER").build();
                             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -77,15 +73,13 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                     }else {
                         if( jwtDetails.isTokenScaduto() ) {
                             logger.info("token scaduto");
-                            Utils.clearJwtCookie_ClearSecurityContext(request, response);
                             // Imposta un attributo nella sessione
                             request.getSession().setAttribute(Constants.INFO_ERROR, "Link di autenticazione scaduto. Ripetere l'autenticazione.");
-
                         }else{
-                            Utils.clearJwtCookie_ClearSecurityContext(request, response);
                             // Imposta un attributo nella sessione
                             request.getSession().setAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
                         }
+                        Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         response.sendRedirect("/register");
                     }
                     break;
