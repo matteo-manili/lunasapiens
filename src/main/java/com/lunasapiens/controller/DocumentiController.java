@@ -1,6 +1,5 @@
 package com.lunasapiens.controller;
 
-import com.lunasapiens.Constants;
 import com.lunasapiens.ScheduledTasks;
 import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.service.EmailService;
