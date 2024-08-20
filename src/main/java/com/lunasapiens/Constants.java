@@ -40,10 +40,10 @@ public class Constants {
             "/",
             "/oroscopo",
             "/tema-natale",
-            "/contatti",
             "/forum",
+            "/info-privacy",
             "/register",
-            "/info-privacy"));
+            "/contatti"));
 
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",
