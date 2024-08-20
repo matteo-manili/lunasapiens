@@ -31,26 +31,15 @@ public class DocumentiController {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentiController.class);
 
-    @Autowired
-    private ScheduledTasks scheduledTasks;
 
     @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
-
-    @Autowired
-    ServizioTemaNatale servizioTemaNatale;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private FacebookConfig facebookConfig;
+    private RestTemplate restTemplate;
 
 
 
-    @GetMapping("/documenti")
+    @GetMapping("/forum")
     public String register(Model model, HttpServletRequest request) {
-        return "documenti";
+        return "forum";
     }
 
 
@@ -68,7 +57,6 @@ public class DocumentiController {
 
         try {
             // Usa RestTemplate per scaricare il PDF dal repository GitHub
-            RestTemplate restTemplate = new RestTemplate();
             byte[] pdfBytes = restTemplate.getForObject(pdfUrl, byte[].class);
 
             // Crea una risorsa per la risposta

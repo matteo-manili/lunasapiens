@@ -56,9 +56,12 @@ public class OroscopoController {
 
     // #################################### OROSCOPO #####################################
 
-
+    /**
+     * vedi google search console tra le pagine indicizzate c'è questa
+     */
     @GetMapping("/oroscopo#!")
     public RedirectView oroscopo_redirect_301() {
+        logger.info("sono in oroscopo_redirect_301");
         RedirectView redirectView = new RedirectView("/oroscopo", true);
         redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
         return redirectView;
