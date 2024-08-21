@@ -213,7 +213,6 @@ public class IndexController {
 
     @GetMapping("/register")
     public String register(Model model, HttpServletRequest request) {
-
         // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
         // è per questo che qui raccolgo l'eventuale attributo
         String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);

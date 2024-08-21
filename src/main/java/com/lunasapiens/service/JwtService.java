@@ -88,11 +88,11 @@ public class JwtService {
 
             DecodedJWT decodedJWT = verifier.verify(codeTokenJwt);
 
-            System.out.println("decodedJWT.getIssuer(): "+decodedJWT.getIssuer());
-            System.out.println("decodedJWT.getSubject():"+decodedJWT.getSubject());
-            System.out.println("decodedJWT.getExpiresAt(): "+decodedJWT.getExpiresAt());
-            System.out.println("decodedJWT.getHeader():"+decodedJWT.getHeader());
-            System.out.println("decodedJWT.getClaims(): "+decodedJWT.getClaims());
+            //System.out.println("decodedJWT.getIssuer(): "+decodedJWT.getIssuer());
+            //System.out.println("decodedJWT.getSubject():"+decodedJWT.getSubject());
+            //System.out.println("decodedJWT.getExpiresAt(): "+decodedJWT.getExpiresAt());
+            //System.out.println("decodedJWT.getHeader():"+decodedJWT.getHeader());
+            //System.out.println("decodedJWT.getClaims(): "+decodedJWT.getClaims());
 
             return new JwtElements.JwtDetails(true, false, null, decodedJWT.getIssuer(), decodedJWT.getSubject(),
                     decodedJWT.getExpiresAt(), decodedJWT.getClaims(), decodedJWT.getHeader(), decodedJWT.getToken()) ;

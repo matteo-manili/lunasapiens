@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.Map;
 @Order(2) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
+    //private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
 
 
     // TODO ricorda di rimettere MAX_REQUESTS a 10
@@ -56,6 +57,11 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         if (request.getRequestURI().equals("/"+Constants.DOM_LUNA_SAPIENS_CANCELLA_ISCRIZ_OROSC_GIORN) && request.getMethod().equals("GET")) {
             handleMaxRequestRequest(request, response, ipAddress);
         }
+
+        if (request.getRequestURI().equals("/registrazioneUtente") && request.getMethod().equals("POST")) {
+            handleMaxRequestRequest(request, response, ipAddress);
+        }
+
 
         if (request.getRequestURI().equals("/contattiSubmit") && request.getMethod().equals("POST")) {
             handleMaxRequestRequest(request, response, ipAddress);

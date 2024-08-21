@@ -46,7 +46,7 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
-        logger.info("sono in FilterCheckJwtAuthentication doFilterInternal");
+        //logger.info("sono in FilterCheckJwtAuthentication doFilterInternal");
 
 
 
