@@ -10,6 +10,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
+import java.net.InetSocketAddress;
 import java.security.Principal;
 import java.util.Map;
 import java.util.UUID;
@@ -52,9 +53,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setHandshakeHandler(new DefaultHandshakeHandler() {
                     @Override
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+
+
                         String uniqueId = UUID.randomUUID().toString();
-                        //return new AnonymousAuthenticationToken(uniqueId, uniqueId, AuthorityUtils.createAuthorityList("ROLE_USER"));
-                        return null;
+                        InetSocketAddress remoteAddress = request.getRemoteAddress();
+                        String ipAddress = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : "unknown";
+
+                        // attributes.put("ipAddress", ipAddress);
+
+
+                        return new CustomWebSocketPrincipal(uniqueId, ipAddress); // Usa una classe che estende Principal
+
                     }
                 })
                 .withSockJS();

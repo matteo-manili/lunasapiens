@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
 import com.lunasapiens.config.ApiGeonamesConfig;
+import com.lunasapiens.config.CustomWebSocketPrincipal;
 import com.lunasapiens.dto.*;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.filter.RateLimiterUser;
@@ -237,6 +238,10 @@ public class TemaNataleController {
 
         logger.info("sono in userMessageWebSocket");
 
+        CustomWebSocketPrincipal customPrincipal = (CustomWebSocketPrincipal) principal;
+        String ipAddress = customPrincipal.getIpAddress();
+
+
         Map<String, Object> response = new HashMap<>();
         final String keyJsonStandardContent = "content";
 
@@ -244,7 +249,8 @@ public class TemaNataleController {
         String temaNataleId = message.get("temaNataleId");
         String userSessionId = message.get(Constants.USER_SESSION_ID);
 
-        //System.out.println("domanda: "+domanda);
+        System.out.println("ipAddress: "+ipAddress);
+        System.out.println("domanda: "+domanda);
         //System.out.println("temaNataleId: "+temaNataleId);
         //System.out.println("userSessionId: "+userSessionId);
 
@@ -256,7 +262,7 @@ public class TemaNataleController {
             }
         } else {
             logger.info("User not logged in");
-            if (!rateLimiterUser.allowMessage( userSessionId )) {
+            if (!rateLimiterUser.allowMessage( ipAddress /*userSessionId*/ )) {
                 response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti() );
                 return response;
             }
