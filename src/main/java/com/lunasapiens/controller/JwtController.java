@@ -1,6 +1,7 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.Utils;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.TelegramBotClient;
 import com.lunasapiens.config.JwtElements;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,7 +27,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Controller
@@ -42,7 +46,6 @@ public class JwtController {
 
     @Autowired
     private EmailService emailService;
-
 
     @Autowired
     private ProfiloUtenteRepository profiloUtenteRepository;
@@ -75,28 +78,39 @@ public class JwtController {
         if (skipEmailSave != null && skipEmailSave) {
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Registrazione negata.");
         }
-
-        ProfiloUtente profiloUtente = profiloUtenteRepository.findByEmail( email ).orElse(null);
+        Optional<ProfiloUtente> profiloUteteOpt = profiloUtenteRepository.findByEmail( email ); //.orElse(null);
         JwtElements.JwtToken jwtConfigToken = jwtService.generateToken(email);
         String codeTokenJwt = jwtConfigToken.getToken();
         String infoMessage = "";
-        if(profiloUtente == null) {
-            profiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
-                    false, false, null );
-            profiloUtente = profiloUtenteRepository.save( profiloUtente );
-            emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
-            infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
 
-        }else if( profiloUtente != null && profiloUtente.getDataCreazione() != null ){
-            profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
-            profiloUtenteRepository.save( profiloUtente );
+        if(profiloUteteOpt.isPresent() ) {
+            ProfiloUtente profiloUtente = profiloUteteOpt.get();
+            if(profiloUtente.getDataCreazione() != null){
+                profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
+                profiloUtenteRepository.save( profiloUtente );
+            }
             emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
             infoMessage = "Utente già registrato. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
+
+        }else {
+            try{
+
+                ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
+                        false, false, Utils.generateRandomCode() );
+                newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
+                emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
+                infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
+                telegramBotClient.inviaMessaggio( "Profilo registrato: "+newProfiloUtente.getEmail());
+
+            } catch (DataIntegrityViolationException e) {
+                System.out.println("DataIntegrityViolationException: " + e.getMessage());
+                e.printStackTrace();
+
+            }catch (Exception exc){
+                System.out.println("Exception: " + exc.getMessage());
+                exc.printStackTrace();;
+            }
         }
-
-        telegramBotClient.inviaMessaggio( "Profilo registrato: "+profiloUtente.getEmail());
-
-
 
 
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);

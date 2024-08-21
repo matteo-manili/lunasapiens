@@ -4,6 +4,8 @@ import com.lunasapiens.*;
 import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.dto.*;
 
+import com.lunasapiens.entity.ProfiloUtente;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.*;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
@@ -12,16 +14,13 @@ import com.restfb.*;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Page;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -55,6 +55,9 @@ public class IndexController {
 
     @Autowired
     private FacebookConfig facebookConfig;
+
+    @Autowired
+    private ProfiloUtenteRepository profiloUtenteRepository;
 
 
 
@@ -198,10 +201,10 @@ public class IndexController {
     public String privatePage(Principal principal, Model model) {
         logger.info( "sono in: private/privatePage" );
         if (principal != null) {
-            String username = principal.getName();
-            System.out.println("Username: " + username);
+            //String username = principal.getName();
+            //System.out.println("Username: " + username);
         } else {
-            System.out.println("principal is null.");
+            //System.out.println("principal is null.");
         }
         return "private/privatePage";
     }
@@ -210,6 +213,9 @@ public class IndexController {
 
     @GetMapping("/register")
     public String register(Model model, HttpServletRequest request) {
+
+        // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
+        // è per questo che qui raccolgo l'eventuale attributo
         String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
         if (messaggio != null) {
             model.addAttribute(Constants.INFO_ERROR, messaggio);
@@ -229,6 +235,42 @@ public class IndexController {
     }
 
 
+    /**
+     * CANCELLAZIONE UTENTE
+     */
+    @GetMapping("/private/cancellaUtente")
+    public String cancellaUtente(Principal principal, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        logger.info( "sono in: private/cancellaUtente" );
+        if (principal != null) {
+            String username = principal.getName();
+            logger.info("Username: " + username);
+            Optional<ProfiloUtente> optionalProfiloUtente = profiloUtenteRepository.findByEmail(principal.getName());
+            if (optionalProfiloUtente.isPresent()) {
+                try {
+                    // Recupera l'utente e cancella
+                    ProfiloUtente profiloUtente = optionalProfiloUtente.get();
+                    String email = profiloUtente.getEmail();
+                    profiloUtenteRepository.delete(profiloUtente);
+                    Utils.clearJwtCookie_ClearSecurityContext(request, response);
+                    redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Utente con email " + email +
+                            " è stato cancellato con successo. Puoi registrarti nuovamente in qualsiasi momento.");
+                    return "redirect:/register";
+
+                } catch (Exception e) {
+                    logger.error("Errore durante la cancellazione dell'utente: " + e.getMessage(), e);
+                    redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore durante la cancellazione dell'utente.");
+                }
+            } else {
+                logger.error("Utente con email " + username + " non trovato.");
+                redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Utente con email " + username + " non trovato.");
+            }
+        } else {
+            logger.error("Utente non trovato.");
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Utente non trovato.");
+        }
+        Utils.clearJwtCookie_ClearSecurityContext(request, response);
+        return "redirect:/error";
+    }
 
 
 

@@ -38,11 +38,11 @@ public class Constants {
 
     public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/",
-            "/oroscopo",
             "/tema-natale",
+            "/oroscopo",
             "/forum",
-            "/info-privacy",
             "/register",
+            "/info-privacy",
             "/contatti"));
 
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(

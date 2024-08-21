@@ -182,7 +182,7 @@ public class TikTokApiClient {
 
 
 
-    //https://www.lunasapiens.com/oroscopo-giornaliero/2024-03-15_1.mp4
+    //https://www.lunasapiens.com/video-oroscopo-giornaliero/2024-03-15_1.mp4
 
     private final String UPLOAD_ENDPOINT = "https://open-api.tiktok.com/share/video/upload/";
 

@@ -91,7 +91,7 @@ public class EmailService {
     public void inviaConfermaEmailTemaNatale(ProfiloUtente profiloUtente) {
         ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
         if( profiloUtenteSetRandomCode != null ) {
-            String confirmationCode = generateRandomCode();
+            String confirmationCode = Utils.generateRandomCode();
             profiloUtente.setConfirmationCode(confirmationCode);
             profiloUtenteRepository.save(profiloUtente);
 
@@ -115,7 +115,7 @@ public class EmailService {
     public void inviaConfermaEmailOrosciopoGioraliero(ProfiloUtente profiloUtente) {
         ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
         if( profiloUtenteSetRandomCode != null ) {
-            String confirmationCode = generateRandomCode();
+            String confirmationCode = Utils.generateRandomCode();
             profiloUtente.setConfirmationCode(confirmationCode);
             profiloUtenteRepository.save(profiloUtente);
 
@@ -158,17 +158,6 @@ public class EmailService {
             }
 
         }
-
-
-}
-
-
-
-    public String generateRandomCode() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[16];
-        secureRandom.nextBytes(randomBytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
 
@@ -181,19 +170,19 @@ public class EmailService {
                 profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
                 profiloUtente.setEmailOroscopoGiornaliero(true);
                 profiloUtente.setEmailAggiornamentiTemaNatale(true);
-                profiloUtente.setConfirmationCode( generateRandomCode() );
+                profiloUtente.setConfirmationCode( Utils.generateRandomCode() );
                 profiloUtenteRepository.save(profiloUtente);
                 result[0] = true; // Indica fallimento
                 result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
                 result[2] = profiloUtenteOptional.get();
             } else {
 
-                ProfiloUtente profiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, LocalDateTime.now(), null,
-                        ipAddress, true, true, generateRandomCode() );
+                ProfiloUtente newProfiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, LocalDateTime.now(), null,
+                        ipAddress, true, true, Utils.generateRandomCode() );
                 result[0] = true; // Indica successo
                 result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +
                         "Controlla la tua casella di posta per confermare la tua iscrizione.";
-                result[2] = profiloUtente;
+                result[2] = newProfiloUtente;
             }
             telegramBotClient.inviaMessaggio( "Email registrata: "+email);
 

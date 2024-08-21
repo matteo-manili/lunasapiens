@@ -149,7 +149,7 @@ public class OroscopoController {
      * trasmissione del video
      */
     @Cacheable(value = Constants.VIDEO_CACHE, key = "#videoName")
-    @GetMapping("/oroscopo-giornaliero/{videoName}")
+    @GetMapping("/video-oroscopo-giornaliero/{videoName}")
     public ResponseEntity<ByteArrayResource> streamVideo(@PathVariable String videoName) throws IOException {
         OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNomeFileVideo(videoName)
                 .orElseThrow(() -> new NoSuchElementException("Video not found with name: " + videoName));
