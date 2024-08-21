@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -200,12 +202,15 @@ public class IndexController {
     @GetMapping("/private/privatePage")
     public String privatePage(Principal principal, Model model) {
         logger.info( "sono in: private/privatePage" );
-        if (principal != null) {
-            //String username = principal.getName();
-            //System.out.println("Username: " + username);
-        } else {
-            //System.out.println("principal is null.");
+
+        /* // per recuperare facilmente la autenticazione utente
+        Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationNow != null && principal != null) {
+            System.out.println("authenticationNow.getName(): " + authenticationNow.getName());
+            System.out.println("principal.getName(): " + principal.getName());
         }
+         */
+
         return "private/privatePage";
     }
 

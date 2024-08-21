@@ -29,8 +29,9 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
 
+
     public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("cancello Cookie JWT e ClearSecurityContext");
+        logger.info("sono in clearJwtCookie_ClearSecurityContext");
         // Cancella il cookie JWT
         Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, null);
         jwtCookie.setHttpOnly(true);

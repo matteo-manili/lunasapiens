@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -56,6 +55,8 @@ public class JwtController {
     @Autowired
     private TelegramBotClient telegramBotClient;
 
+
+
     //  TODO da togliere dopo i test
     @Autowired
     private JwtElements.JwtKeys jwtKeys;
@@ -82,7 +83,6 @@ public class JwtController {
         JwtElements.JwtToken jwtConfigToken = jwtService.generateToken(email);
         String codeTokenJwt = jwtConfigToken.getToken();
         String infoMessage = "";
-
         if(profiloUteteOpt.isPresent() ) {
             ProfiloUtente profiloUtente = profiloUteteOpt.get();
             if(profiloUtente.getDataCreazione() != null){
@@ -91,10 +91,8 @@ public class JwtController {
             }
             emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
             infoMessage = "Utente già registrato. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
-
         }else {
             try{
-
                 ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
                         false, false, Utils.generateRandomCode() );
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
@@ -125,36 +123,39 @@ public class JwtController {
      */
     @GetMapping("/confirmRegistrazioneUtente")
     public ResponseEntity<String> confirmRegistrazione(@RequestParam(name = "code", required = true) String codeTokenJwt,
-                                                       RedirectAttributes redirectAttributes, HttpServletResponse response) {
+                                                       RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmRegistrazione");
-
         JwtElements.JwtDetails jwtDetails = jwtService.validateToken( codeTokenJwt );
+        HttpHeaders headers = new HttpHeaders();
         String infoMessage = "";
         if( jwtDetails.isSuccess() ) {
+            Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail( jwtDetails.getSubject() );
+            if( profiloUtenteOpt.isPresent() ){
+                // Creazione del cookie con il token JWT
+                Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
+                jwtCookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
+                jwtCookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
+                jwtCookie.setPath("/"); // Imposta il percorso del cookie
 
-            // Creazione del cookie con il token JWT
-            Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
-            jwtCookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
-            jwtCookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
-            jwtCookie.setPath("/"); // Imposta il percorso del cookie
+                //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
+                jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
+                // Aggiungi il cookie alla risposta HTTP
+                response.addCookie(jwtCookie);
+                infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+jwtDetails.getSubject();
 
-            //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
-            jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
-
-
-            // Aggiungi il cookie alla risposta HTTP
-            response.addCookie(jwtCookie);
-
-            infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+jwtDetails.getSubject();
-        }else{
-            infoMessage = "Conferma email non riuscita. Registrati di nuovo. Se il problema persiste mandaci un messaggio.";
+                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+                headers.add("Location", "/private/privatePage");
+                return ResponseEntity.status(302).headers(headers).build();
+            }
         }
 
+        Utils.clearJwtCookie_ClearSecurityContext(request, response);
+        infoMessage = "Email non riconosciuta. Registrati di nuovo.";
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/private/privatePage");
-
+        headers.add("Location", "/register");
         return ResponseEntity.status(302).headers(headers).build();
+
+
 
     }
 

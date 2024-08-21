@@ -3,6 +3,8 @@ package com.lunasapiens.filter;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.config.JwtElements;
+import com.lunasapiens.entity.ProfiloUtente;
+import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +24,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Optional;
 
 
 /**
@@ -30,7 +33,7 @@ import java.io.IOException;
  */
 
 @Component
-@Order(1) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
+@Order(2) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
 public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterCheckJwtAuthentication.class);
@@ -38,6 +41,8 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     @Autowired
     JwtService jwtService;
 
+    @Autowired
+    private ProfiloUtenteRepository profiloUtenteRepository;
 
     /**
      * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip che richiama questi endpoint
@@ -45,38 +50,21 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-
         //logger.info("sono in FilterCheckJwtAuthentication doFilterInternal");
-
-
 
         // ######################### AUTENTICAZIONE JWT #########################
         Cookie[] cookies = request.getCookies();
-
-
-
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null ) {
-                    Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
-                    boolean isAuthenticated = authenticationNow != null && authenticationNow.isAuthenticated();
-                    JwtElements.JwtDetails jwtDetails = jwtService.validateToken( cookie.getValue() );
-                    if (jwtDetails.isSuccess() ) {
-                        if( !isAuthenticated ) { // per non fare fare sempre la autenticazione - Verifica se l'utente è già autenticato
-                            logger.info("eseguo la autenticazione: .setAuthentication(authentication)");
-                            UserDetails userDetails = User.withUsername( jwtDetails.getSubject() ).password("").authorities("USER").build();
-                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            SecurityContextHolder.getContext().setAuthentication(authentication); // Imposta l'autenticazione
-                        }
-                    }else {
-                        if( jwtDetails.isTokenScaduto() ) {
+                if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null) {
+                    JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
+                    if (jwtDetails.isSuccess()) {
+                        autenticaUtente(jwtDetails, request, response);
+                    } else {
+                        if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
-                            // Imposta un attributo nella sessione
                             request.getSession().setAttribute(Constants.INFO_ERROR, "Link di autenticazione scaduto. Ripetere l'autenticazione.");
-                        }else{
-                            // Imposta un attributo nella sessione
+                        } else {
                             request.getSession().setAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
                         }
                         Utils.clearJwtCookie_ClearSecurityContext(request, response);
@@ -87,13 +75,34 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
             }
         }
 
-
-
-
         filterChain.doFilter(request, response);
     }
 
 
 
-}
+    public void autenticaUtente(JwtElements.JwtDetails jwtDetails, HttpServletRequest request, HttpServletResponse response) {
+        Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationNow == null) {
+            Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
+            if (profiloUtenteOpt.isPresent()) {
+                logger.info("eseguo la autenticazione: .setAuthentication(authentication)");
+                UserDetails userDetails = User.withUsername(profiloUtenteOpt.get().getEmail())
+                        .password("")
+                        .authorities("USER")
+                        .build();
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // Imposta l'autenticazione nel contesto di sicurezza
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
 
+            // controllo che la sessione attiva sia effettivamente quella dell'utente del token altrimenti la cancello
+        } else if (authenticationNow != null && authenticationNow.isAuthenticated()
+                && !authenticationNow.getName().equals(jwtDetails.getSubject())) {
+            logger.info("authenticationNow.getName(): " + authenticationNow.getName());
+            Utils.clearJwtCookie_ClearSecurityContext(request, response);
+        }
+    }
+
+}

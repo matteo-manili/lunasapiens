@@ -24,7 +24,7 @@ import java.util.Map;
  */
 
 @Component
-@Order(2) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
+@Order(1) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
     //private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
@@ -42,7 +42,7 @@ public class FilterCheckUrls extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ipAddress = request.getRemoteAddr();
 
-        logger.info("sono in FilterCheckUrls doFilterInternal");
+        //logger.info("sono in FilterCheckUrls doFilterInternal");
 
 
         // ######################### Controllo MaxRequest #########################
