@@ -34,7 +34,8 @@ public class Constants {
     public static final String VIDEO_CACHE = "videoCache";
     public static final String TEMA_NATALE_BOT_CACHE = "temaNataleBotCache";
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
-    public static final String LIMITATORE_MESS_BOT_IA_CACHE = "rateLimiterCache";
+    public static final String LIMITATORE_MESS_BOT_IA_CACHE_USER = "rateLimiterCacheUser";
+    public static final String LIMITATORE_MESS_BOT_IA_CACHE_UTENTE = "rateLimiterCacheUtente";
 
     public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/",

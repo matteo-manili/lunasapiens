@@ -31,7 +31,7 @@ public class Utils {
 
 
     public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("sono in clearJwtCookie_ClearSecurityContext");
+        logger.info("cancello Cookie JWT e ClearSecurityContext");
         // Cancella il cookie JWT
         Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, null);
         jwtCookie.setHttpOnly(true);

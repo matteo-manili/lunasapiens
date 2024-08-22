@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.*;
 import com.lunasapiens.config.ApiGeonamesConfig;
-import com.lunasapiens.config.CustomWebSocketPrincipal;
+import com.lunasapiens.config.CustomPrincipalWebSocket;
+import com.lunasapiens.config.WebSocketConfig;
 import com.lunasapiens.dto.*;
 import com.lunasapiens.entity.ProfiloUtente;
-import com.lunasapiens.filter.RateLimiterUser;
+import com.lunasapiens.filter.RateLimiterAnonymous;
 import com.lunasapiens.filter.RateLimiterUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
@@ -38,7 +39,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.HtmlUtils;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class TemaNataleController {
     private CacheManager cacheManager;
 
     @Autowired
-    private RateLimiterUser rateLimiterUser;
+    private RateLimiterAnonymous rateLimiterAnonymous;
 
     @Autowired
     private RateLimiterUtente rateLimiterUtente;
@@ -230,75 +230,66 @@ public class TemaNataleController {
      */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public Map<String, Object> userMessageWebSocket(Map<String, String> message, Principal principal) {
-
-        // Non lo uso ma è MOLTO UTILE perché il "Principal principal" viene settato nella classe WebSocketConfig dove imposta la connessione del web socket "registerStompEndpoints"
-        // anche "Map<String, String> message" viene settato nel "registerStompEndpoints". Infatti posso richiamare gli oggetti come parametri
-        //String userPrincipalId = principal.getName();
-
+    public Map<String, Object> userMessageWebSocket(Map<String, String> message, CustomPrincipalWebSocket principal) {
         logger.info("sono in userMessageWebSocket");
+        Map<String, Object> response = new HashMap<>(); final String keyJsonStandardContent = "content";
 
-        CustomWebSocketPrincipal customPrincipal = (CustomWebSocketPrincipal) principal;
-        String ipAddress = customPrincipal.getIpAddress();
+        CustomPrincipalWebSocket customPrincipalWebSocket = (CustomPrincipalWebSocket) principal;
 
+        if( customPrincipalWebSocket != null ){
+            String domanda = message.get( keyJsonStandardContent );
+            String temaNataleId = message.get("temaNataleId");
+            String userSessionId = message.get(Constants.USER_SESSION_ID);
 
-        Map<String, Object> response = new HashMap<>();
-        final String keyJsonStandardContent = "content";
+            logger.info("customPrincipal.getIpAddress(): "+customPrincipalWebSocket.getIpAddress());
+            logger.info("customPrincipal.getName(): "+customPrincipalWebSocket.getName());
+            logger.info("domanda: "+domanda);
 
-        String domanda = message.get( keyJsonStandardContent );
-        String temaNataleId = message.get("temaNataleId");
-        String userSessionId = message.get(Constants.USER_SESSION_ID);
-
-        System.out.println("ipAddress: "+ipAddress);
-        System.out.println("domanda: "+domanda);
-        //System.out.println("temaNataleId: "+temaNataleId);
-        //System.out.println("userSessionId: "+userSessionId);
-
-        if (principal != null) {
-            logger.info("User logged in: " + principal.getName());
-            if (!rateLimiterUtente.allowMessage( principal.getName() )) {
-                response.put(keyJsonStandardContent, rateLimiterUtente.numeroMessaggi_e_Minuti() );
-                return response;
-            }
-        } else {
-            logger.info("User not logged in");
-            if (!rateLimiterUser.allowMessage( ipAddress /*userSessionId*/ )) {
-                response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti() );
-                return response;
-            }
-
-        }
-
-        // Aggiunge una protezione per i dati nulli o non validi
-        if (domanda == null || domanda.isEmpty()) {
-            response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
-            return response;
-        }
-
-        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
-        if (cache != null) {
-            // Recupera la lista di chat messages dalla cache
-            List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
-            if (chatMessageIa == null) {
-                chatMessageIa = new ArrayList<>();
-            }
-            chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
-            cache.put(temaNataleId, chatMessageIa);
-            try {
-                StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
-                chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
-                cache.put(temaNataleId, chatMessageIa);
-                response.put(keyJsonStandardContent, rispostaIA.toString());
-                if (principal != null) {
-                    telegramBotClient.inviaMessaggio(principal.getName()+": " + domanda);
-                }else{
-                    telegramBotClient.inviaMessaggio("User: " + domanda);
+            if( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ){
+                logger.info("User not logged in");
+                if (!rateLimiterAnonymous.allowMessage( customPrincipalWebSocket.getIpAddress() )) {
+                    response.put(keyJsonStandardContent, rateLimiterAnonymous.numeroMessaggi_e_Minuti() );
+                    return response;
                 }
-            } catch (Exception e) {
-                response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
+            }else{
+                if (!rateLimiterUtente.allowMessage( customPrincipalWebSocket.getIpAddress() )) {
+                    response.put(keyJsonStandardContent, rateLimiterUtente.numeroMessaggi_e_Minuti() );
+                    return response;
+                }
             }
-        } else {
-            response.put(keyJsonStandardContent, "Cache non trovata.");
+
+            // Aggiunge una protezione per i dati nulli o non validi
+            if (domanda == null || domanda.isEmpty()) {
+                response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
+                return response;
+            }
+
+            Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+            if (cache != null ) {
+                // Recupera la lista di chat messages dalla cache
+                List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
+                if (chatMessageIa == null) {
+                    chatMessageIa = new ArrayList<>();
+                }
+                chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
+                cache.put(temaNataleId, chatMessageIa);
+                try {
+                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                    chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
+                    cache.put(temaNataleId, chatMessageIa);
+                    response.put(keyJsonStandardContent, rispostaIA.toString());
+
+                    if ( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ) {
+                        telegramBotClient.inviaMessaggio("User: " + domanda);
+                    }else{
+                        telegramBotClient.inviaMessaggio(customPrincipalWebSocket.getName()+": " + domanda);
+                    }
+                } catch (Exception e) {
+                    response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
+                }
+            } else {
+                response.put(keyJsonStandardContent, "Errore durante l'elaborazione.");
+            }
         }
         return response;
     }

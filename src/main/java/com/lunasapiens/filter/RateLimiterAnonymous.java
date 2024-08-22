@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Component
-public class RateLimiterUser {
+public class RateLimiterAnonymous {
 
     private static final int MAX_MESSAGES_PER_MINUTE = 2; // 2; // Limite di messaggi per minuto
     private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
 
-    private static final int MAX_MESSAGES_PER_DAY = 10; // 10 Limite di messaggi per giorno
+    private static final int MAX_MESSAGES_PER_DAY = 5; // 10 Limite di messaggi per giorno
     private static final long DAY_WINDOW_SIZE_MS = 86400000; // 1 giorno in millisecondi
 
     @Autowired
@@ -34,7 +34,7 @@ public class RateLimiterUser {
 
 
     public boolean allowMessage(String userId) {
-        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_CACHE);
+        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_CACHE_USER);
         MessageTracker tracker = cache.get(userId, MessageTracker.class);
         if (tracker == null) {
             tracker = new MessageTracker();

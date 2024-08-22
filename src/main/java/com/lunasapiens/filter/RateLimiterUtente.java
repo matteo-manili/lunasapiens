@@ -33,7 +33,7 @@ public class RateLimiterUtente {
 
 
     public boolean allowMessage(String userId) {
-        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_CACHE);
+        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_CACHE_UTENTE);
         MessageTracker tracker = cache.get(userId, MessageTracker.class);
         if (tracker == null) {
             tracker = new MessageTracker();
