@@ -5,6 +5,7 @@ import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.dto.*;
 
 import com.lunasapiens.entity.ProfiloUtente;
+import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.*;
@@ -221,6 +222,9 @@ public class IndexController {
         // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
         // è per questo che qui raccolgo l'eventuale attributo
         String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
+
+        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
         if (messaggio != null) {
             model.addAttribute(Constants.INFO_ERROR, messaggio);
             request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione

@@ -239,8 +239,8 @@ public class AppConfig implements WebMvcConfigurer {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterAccess(Duration.ofDays(1))
-                .maximumSize(500)); // massimo numero di elementi
+                //.expireAfterAccess(Duration.ofDays(1))
+                .maximumSize(1000)); // massimo numero di elementi
         return cacheManager;
     }
 

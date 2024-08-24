@@ -8,8 +8,7 @@ import com.lunasapiens.config.CustomPrincipalWebSocket;
 import com.lunasapiens.config.WebSocketConfig;
 import com.lunasapiens.dto.*;
 import com.lunasapiens.entity.ProfiloUtente;
-import com.lunasapiens.filter.RateLimiterAnonymous;
-import com.lunasapiens.filter.RateLimiterUtente;
+import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
@@ -64,10 +63,7 @@ public class TemaNataleController {
     private CacheManager cacheManager;
 
     @Autowired
-    private RateLimiterAnonymous rateLimiterAnonymous;
-
-    @Autowired
-    private RateLimiterUtente rateLimiterUtente;
+    private RateLimiterUser rateLimiterUser;
 
     @Autowired
     private TelegramBotClient telegramBotClient;
@@ -233,7 +229,6 @@ public class TemaNataleController {
     public Map<String, Object> userMessageWebSocket(Map<String, String> message, CustomPrincipalWebSocket principal) {
         logger.info("sono in userMessageWebSocket");
         Map<String, Object> response = new HashMap<>(); final String keyJsonStandardContent = "content";
-
         CustomPrincipalWebSocket customPrincipalWebSocket = (CustomPrincipalWebSocket) principal;
 
         if( customPrincipalWebSocket != null ){
@@ -247,13 +242,13 @@ public class TemaNataleController {
 
             if( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ){
                 logger.info("User not logged in");
-                if (!rateLimiterAnonymous.allowMessage( customPrincipalWebSocket.getIpAddress() )) {
-                    response.put(keyJsonStandardContent, rateLimiterAnonymous.numeroMessaggi_e_Minuti() );
+                if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
+                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
                     return response;
                 }
             }else{
-                if (!rateLimiterUtente.allowMessage( customPrincipalWebSocket.getIpAddress() )) {
-                    response.put(keyJsonStandardContent, rateLimiterUtente.numeroMessaggi_e_Minuti() );
+                if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
+                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
                     return response;
                 }
             }
@@ -275,6 +270,8 @@ public class TemaNataleController {
                 cache.put(temaNataleId, chatMessageIa);
                 try {
                     StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                    //StringBuilder rispostaIA = new StringBuilder("ewewewweweewwewe");
+
                     chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
                     cache.put(temaNataleId, chatMessageIa);
                     response.put(keyJsonStandardContent, rispostaIA.toString());

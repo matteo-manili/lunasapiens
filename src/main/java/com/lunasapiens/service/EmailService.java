@@ -72,7 +72,7 @@ public class EmailService {
 
     public void inviaemailRegistrazioneUtente(ProfiloUtente profiloUtente, String codeTokenJwt) {
         if( profiloUtente != null ) {
-            String subject = "LunaSapiens - Conferma registrazione LunaSapiens";
+            String subject = "LunaSapiens - Conferma iscrizione LunaSapiens";
             Context context = new Context();
             String linkConfirm = Constants.DOM_LUNA_SAPIENS +"/"+ "confirmRegistrazioneUtente" + "?code="+codeTokenJwt;
             String contenuto = "<b>Grazie per esserti registato a LunaSapiens.</b><br><br>" +

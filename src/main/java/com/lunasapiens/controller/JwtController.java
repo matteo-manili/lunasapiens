@@ -77,7 +77,7 @@ public class JwtController {
         logger.info("sono in registrazioneUtente");
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Registrazione negata.");
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Iscrizione negata.");
         }
         Optional<ProfiloUtente> profiloUteteOpt = profiloUtenteRepository.findByEmail( email ); //.orElse(null);
         JwtElements.JwtToken jwtConfigToken = jwtService.generateToken(email);

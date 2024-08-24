@@ -10,37 +10,42 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Component
-public class RateLimiterAnonymous {
+public class RateLimiterUser {
 
-    private static final int MAX_MESSAGES_PER_MINUTE = 2; // 2; // Limite di messaggi per minuto
-    private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
+    public static final int MAX_MESSAGES_PER_DAY_UTENTE = 20; // 20 Limite di messaggi per giorno
+    public static final int MAX_MESSAGES_PER_DAY_ANONYMOUS = 5; // 5 Limite di messaggi per giorno
 
-    private static final int MAX_MESSAGES_PER_DAY = 5; // 10 Limite di messaggi per giorno
+
     private static final long DAY_WINDOW_SIZE_MS = 86400000; // 1 giorno in millisecondi
+    private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
+    private static final int MAX_MESSAGES_PER_MINUTE = 2; // 2 // Limite di messaggi per minuto
+
+
+
+
 
     @Autowired
     private CacheManager cacheManager;
 
 
 
-    public static String numeroMessaggi_e_Minuti() {
+    public static String numeroMessaggi_e_Minuti(int maxMessagePerDay) {
         int windowSizeInMinutes = (int) (WINDOW_SIZE_MS / 60000); // Converti millisecondi in minuti
         int windowSizeInDays = (int) (DAY_WINDOW_SIZE_MS / 86400000); // Converti millisecondi in giorni
         return "Troppi messaggi! (Max " + MAX_MESSAGES_PER_MINUTE + (MAX_MESSAGES_PER_MINUTE > 1 ? " messaggi" : " messaggio") + " in " + (windowSizeInMinutes > 1 ? windowSizeInMinutes + " minuti" : windowSizeInMinutes + " minuto") +
-                ", " + MAX_MESSAGES_PER_DAY + " messaggi al giorno).<br>" +
-                "<a href=\"/register\">Rgistrati</a> per aumentare il numero dei messaggi";
+                ", " + maxMessagePerDay + " messaggi al giorno).";
     }
 
 
 
-    public boolean allowMessage(String userId) {
-        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_CACHE_USER);
+    public boolean allowMessage(String userId, int maxMessagePerDay) {
+        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_USER_CACHE);
         MessageTracker tracker = cache.get(userId, MessageTracker.class);
         if (tracker == null) {
             tracker = new MessageTracker();
             cache.put(userId, tracker);
         }
-        return tracker.allowMessage();
+        return tracker.allowMessage(maxMessagePerDay);
     }
 
     private class MessageTracker {
@@ -50,7 +55,7 @@ public class RateLimiterAnonymous {
         private long startMinuteTime = System.currentTimeMillis();
         private long startDayTime = System.currentTimeMillis();
 
-        public synchronized boolean allowMessage() {
+        public synchronized boolean allowMessage( int maxMessagePerDay ) {
             long currentTime = System.currentTimeMillis();
 
             // Controllo del limite per minuto
@@ -66,7 +71,7 @@ public class RateLimiterAnonymous {
             }
 
             if (messageCountPerMinute.incrementAndGet() <= MAX_MESSAGES_PER_MINUTE
-                    && messageCountPerDay.incrementAndGet() <= MAX_MESSAGES_PER_DAY) {
+                    && messageCountPerDay.incrementAndGet() <= maxMessagePerDay) {
                 return true;
             } else {
                 // Se uno dei limiti è superato, diminuiamo i contatori rispettivi
