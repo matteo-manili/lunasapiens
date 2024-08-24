@@ -240,6 +240,10 @@ public class TemaNataleController {
             logger.info("customPrincipal.getName(): "+customPrincipalWebSocket.getName());
             logger.info("domanda: "+domanda);
 
+            if (domanda == null || domanda.isEmpty()) {
+                response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
+                return response;
+            }
             if( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ){
                 logger.info("User not logged in");
                 if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
@@ -253,11 +257,6 @@ public class TemaNataleController {
                 }
             }
 
-            // Aggiunge una protezione per i dati nulli o non validi
-            if (domanda == null || domanda.isEmpty()) {
-                response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
-                return response;
-            }
 
             Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
             if (cache != null ) {
