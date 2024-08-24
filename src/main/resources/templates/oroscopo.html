@@ -26,11 +26,6 @@
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
-    <div class="bg-light p-4 rounded-3 text-center mb-4">
-        <h5>Fai conoscere LunaSapiens!</h5>
-        <p>Se trovi utili le nostre previsioni astrologiche, condividi LunaSapiens con i tuoi amici! Utilizza i pulsanti qui sotto per far conoscere l'oroscopo del giorno a chi ti sta a cuore.</p>
-        <div th:replace="~{fragments/templateBase :: pulsanti_social('oroscopo')}"></div>
-    </div>
 
     <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
         <p th:text="${infoMessage}"></p>

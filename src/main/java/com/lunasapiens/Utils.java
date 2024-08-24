@@ -48,13 +48,6 @@ public class Utils {
         }
     }
 
-    public static String generateRandomCode() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[16];
-        secureRandom.nextBytes(randomBytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
-    }
-
     public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {
         double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);
         return SweDate.getJulDay(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), hour, true);

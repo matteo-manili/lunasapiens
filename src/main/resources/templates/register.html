@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Iscrizione Utente</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="Registrati su LunaSapiens.com per accedere a vantaggi esclusivi come il chatbot del Tema Natale IA e il servizio Sinastria. Ricevi un link di accesso valido per 7 giorni, senza necessità di password.">
+        <meta name="description" content="Iscriviti su LunaSapiens.com per accedere a vantaggi esclusivi come il chatbot del Tema Natale IA e il servizio Sinastria. Ricevi un link di accesso valido per 7 giorni, senza necessità di password.">
         <meta name="keywords" content="iscrizione, tema natale, chatbot, sinastria, accesso gratuito, LunaSapiens">
     </th:block>
     <th:block th:fragment="links">
@@ -15,7 +15,7 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
-    <h1 class="mb-4">Pagina di iscrizione</h1>
+    <h1 class="mb-4">Pagina di Iscrizione</h1>
 
 
     <div th:if="${infoError != null and infoError != ''}" class="alert alert-warning mt-3" role="alert">
@@ -27,7 +27,7 @@
     </div>
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
-        <p>Registrandoti, riceverai un'email con un link per accedere.<br>
+        <p>Iscrivendoti, riceverai un'email con un link per accedere.<br>
             L'accesso sarà valido per 7 giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
         <form id="subscribe-form" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
@@ -42,14 +42,15 @@
 
 
     <div class="alert alert-success mt-3" role="alert">
-        <p><b>Registrandoti, potrai usufruire di diversi vantaggi:</b></p>
+        <p><b>Iscrivendoti, potrai usufruire di diversi vantaggi:</b></p>
         <ul>
-            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_UTENTE}"></span> domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a></li>
-            <li>Accesso al prossimo servizio basato sul Tema Natale IA: La Sinastria, che permette il confronto tra due Temi Natale.</li>
+            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_UTENTE}"></span> domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a> e <a href="/sinastria">Sinastria IA</a>.</li>
+            <li>Accesso servizio <a href="/sinastria">Sinastria IA</a>, che permette il confronto tra due Temi Natale.</li>
         </ul>
         <p><b>Se scegli di non registrarti, avrai comunque accesso a:</b></p>
         <ul>
-            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_ANONYMOUS}"></span> domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a>.</li>
+            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_ANONYMOUS}"></span> domande al giorno con la ChatBot del <a href="/tema-natale">Tema Natale IA</a> e <a href="/sinastria">Sinastria IA</a>.</li>
+            <li>Accesso servizio <a href="/sinastria">Sinastria IA</a>, che permette il confronto tra due Temi Natale.</li>
         </ul>
     </div>
 
@@ -88,6 +89,9 @@
 
             // Salva il valore nel localStorage
             localStorage.setItem('email', email);
+
+
+            googleTrackFormSubmitRegister();
 
             // Esegui il submit del modulo
             form.submit();

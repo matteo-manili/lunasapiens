@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Controller
@@ -94,7 +95,7 @@ public class JwtController {
         }else {
             try{
                 ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
-                        false, false, Utils.generateRandomCode() );
+                        false, false, UUID.randomUUID().toString() );
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
                 emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
                 infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
@@ -150,7 +151,7 @@ public class JwtController {
         }
 
         Utils.clearJwtCookie_ClearSecurityContext(request, response);
-        infoMessage = "Email non riconosciuta. Registrati di nuovo.";
+        infoMessage = "Email non riconosciuta. Iscriviti di nuovo.";
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         headers.add("Location", "/register");
         return ResponseEntity.status(302).headers(headers).build();

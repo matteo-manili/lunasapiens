@@ -115,18 +115,6 @@ public class TemaNataleController {
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
 
         logger.info("Tema Natale ID: " + model.getAttribute("temaNataleId"));
-
-        // ############ Dati per test, togliere poi!!! ############
-        //model.addAttribute("temaNataleDescrizione", "ciao bello ciao bello ciao bello ciao bello ciao bello <br> ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>ciao bello ciao bello <br>");
-        /*
-        model.addAttribute("cityInput","Roma, Lazio, Italia");
-        model.addAttribute("cityName", "Roma");
-        model.addAttribute("regioneName", "Lazio");
-        model.addAttribute("statoName", "Italia");
-        model.addAttribute("cityLat", "41.89193");
-        model.addAttribute("cityLng", "12.51133");
-        model.addAttribute("luogoNascita", "Roma, Lazio, Italia");
-        */
         return "tema-natale";
     }
 
@@ -168,18 +156,9 @@ public class TemaNataleController {
 
         String luogoNascita = String.join(", ", cityName, regioneName, statoName);
 
-        logger.info("Ora: " + hour);
-        logger.info("Minuti: " + minute);
-        logger.info("Giorno: " + day);
-        logger.info("Mese: " + month);
-        logger.info("Anno: " + year);
-        logger.info("cityName: " + cityName);
-        logger.info("regioneName: " + regioneName);
-        logger.info("statoName: " + statoName);
-        logger.info("statoCode: " + statoCode);
-        logger.info("Latitude: " + cityLat);
-        logger.info("Longitude: " + cityLng);
-        logger.info(Constants.USER_SESSION_ID + userId);
+        logger.info("Ora: " + hour); logger.info("Minuti: " + minute); logger.info("Giorno: " + day); logger.info("Mese: " + month); logger.info("Anno: " + year);
+        logger.info("cityName: " + cityName); logger.info("regioneName: " + regioneName); logger.info("statoName: " + statoName); logger.info("statoCode: " + statoCode);
+        logger.info("Latitude: " + cityLat); logger.info("Longitude: " + cityLng); logger.info(Constants.USER_SESSION_ID + userId);
 
         // Prepara i dati da passare tramite redirectAttributes
         redirectAttributes.addFlashAttribute("cityInput", cityName + ", " + regioneName + ", " + statoName);
@@ -195,10 +174,12 @@ public class TemaNataleController {
         redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);
 
 
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
+        final GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-        String temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
-        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione);
+        StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatiTemaNataleDescrizione();
+        temaNataleDescrizione.append( significatiTemaNataleDescrizione );
+        redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione.toString());
 
         String temaNataleId = UUID.randomUUID().toString();
         redirectAttributes.addFlashAttribute("temaNataleId", temaNataleId);
@@ -210,7 +191,7 @@ public class TemaNataleController {
             return "redirect:/tema-natale";
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione, datetime, luogoNascita);
+        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), datetime, luogoNascita);
         logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
         cache.put(temaNataleId, chatMessageIa);
@@ -367,7 +348,7 @@ public class TemaNataleController {
             infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto per ricevere gli aggiornamenti del Tema Natale IA con l'indirizzo " +
                     ""+profiloUtente.getEmail();
         }else{
-            infoMessage = "Conferma email non riuscita. Registrati di nuovo";
+            infoMessage = "Conferma email non riuscita. Iscriviti di nuovo";
         }
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/tema-natale";

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
-    <title th:fragment="title">Luna Sapiens | Tema Natale IA</title>
+    <title th:fragment="title">Luna Sapiens | Sinastria IA</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali.">
-        <meta name="keywords" content="Tema Natale, astrologia, intelligenza artificiale, chat IA, LunaSapiens, oroscopo, astrologia personalizzata, descrizione Tema Natale, influenze celesti">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
 
-        <meta property="og:title" content="Luna Sapiens | Tema Natale IA" />
-        <meta property="og:description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali." />
+        <meta property="og:title" content="Luna Sapiens | Sinastria IA" />
+        <meta property="og:description" content="" />
         <meta property="og:image" content="/moon_icon.ico" />
         <meta property="og:image:type" content="image/x-icon" />
         <meta property="og:image:width" content="64" />
@@ -15,8 +15,8 @@
         <meta property="og:url" content="https://www.lunasapiens.com/tema-natale" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Tema Natale IA" />
-        <meta name="twitter:description" content="Scopri il tuo Tema Natale con LunaSapiens! Dopo aver generato il tuo Tema Natale, interagisci con la nostra Chat con Intelligenza Artificiale per chiarire qualsiasi dubbio e ottenere spiegazioni dettagliate sui tuoi aspetti astrologici personali." />
+        <meta name="twitter:title" content="Sinastria IA" />
+        <meta name="twitter:description" content="" />
         <meta name="twitter:image" content="/moon_icon.ico" />
     </th:block>
     <th:block th:fragment="links">
@@ -83,64 +83,101 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
-    <!-- <div class="bg-light p-4 rounded-3 text-center mb-2">
-        <h5>Fai conoscere LunaSapiens!</h5>
-        <p>Se ti piace scoprire il tuo Tema Natale con LunaSapiens, aiutaci a farlo conoscere ai tuoi amici! Condividi la nostra pagina con un clic sui pulsanti qui sotto e lascia che anche loro esplorino la magia dell'astrologia. Grazie per il tuo supporto!</p>
-        <div th:replace="~{fragments/templateBase :: pulsanti_social('tema-natale')}"></div>
-    </div> -->
-
-    <!-- ISCRIZIONE EMAIL RICEVERE AGGIORNAMENTI
-    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-        <p th:text="${infoMessage}"></p>
-    </div>
-    <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
-        <h5 class="mb-4">Iscriviti per ricevere aggiornamenti sul Tema Natale IA</h5>
-        <p>Inserisci il tuo indirizzo email per ricevere aggiornamenti riguardo nuove funzionalità del Tema Natale IA.</p>
-        <form id="subscribe-form" th:action="@{/subscribe-tema-natale}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
-            <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
-            </div>
-            <div class="col-12 col-md-4 col-lg-3">
-                <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Registra Email</button>
-            </div>
-        </form>
-    </div> -->
-
 
 
     <div class="container my-4 p-3 shadow-lg rounded bg-light">
-        <h1 class="display-4  mb-3 text-center">Tema Natale IA</h1>
-        <p class="fs-4 text-center mb-2">Dopo aver generato il tuo Tema Natale, utilizza la Chat IA per porre domande e approfondire i significati.
-            Scorrendo in basso troverai una descrizione dettagliata del tuo Tema Natale.</p>
+        <h1 class="display-4  mb-3 text-center">Sinastria IA</h1>
+        <p class="fs-4 text-center mb-2">Dopo aver generato la Sinastria, utilizza la Chat IA per porre domande e approfondire i significati.
+            Scorrendo in basso troverai una descrizione dettagliata dei 2 Temi Natale.</p>
 
-        <form id="tema-natale-submit" th:action="@{/temaNataleSubmit}" method="GET" class="p-4 border rounded">
-            <div class="mb-4">
-                <label for="dateTime" class="form-label">Data e ora di nascita:</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                    <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
+        <form id="sinastria-submit" th:action="@{/sinastriaSubmit}" method="GET" class="p-4 border rounded">
+
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label for="relationship" class="form-label">Tipo di relazione:</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-link"></i></span>
+                        <select id="relationship" name="relationship" class="form-control" required>
+                            <option th:each="option, iterStat : ${relationshipOptions}"
+                                    th:value="${option.code}" th:text="${option.description}" th:selected="${iterStat.index == 0}">
+                            </option>
+                        </select>
+                    </div>
                 </div>
-                <div id="dateTimeError" class="text-danger mt-2" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
             </div>
 
-            <div class="mb-4">
-                <label for="cityInput" class="form-label">Località di nascita:</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                    <input type="text" id="cityInput" name="cityInput" class="form-control" th:value="${cityInput}">
-                </div>
-                <input type="hidden" id="cityName" name="cityName" th:value="${cityName}">
-                <input type="hidden" id="regioneName" name="regioneName" th:value="${regioneName}">
-                <input type="hidden" id="statoName" name="statoName" th:value="${statoName}">
-                <input type="hidden" id="statoCode" name="statoCode" th:value="${statoCode}">
-                <input type="hidden" id="cityLat" name="cityLat" th:value="${cityLat}">
-                <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
-                <div id="cityError" class="text-danger mt-2" style="display: none;">Per favore inserisci il nome di una località.</div>
-                <div id="autocomplete-results" class="autocomplete-results mt-2"></div>
-            </div>
+            <div class="row">
+                <div class="col-md-6 ">
+                    <div class="mb-2">
+                        <label for="nome" class="form-label">Nome:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-file-person"></i></span>
+                            <input type="text" id="nome" name="nome" class="form-control" th:value="${nome}" required>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="dateTime" class="form-label">Data e ora di nascita:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                            <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
+                        </div>
+                        <div id="dateTimeError" class="text-danger mt-2" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="cityInput" class="form-label">Località di nascita:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" id="cityInput" name="cityInput" class="form-control" th:value="${cityInput}">
+                        </div>
+                        <input type="hidden" id="cityName" name="cityName" th:value="${cityName}">
+                        <input type="hidden" id="regioneName" name="regioneName" th:value="${regioneName}">
+                        <input type="hidden" id="statoName" name="statoName" th:value="${statoName}">
+                        <input type="hidden" id="statoCode" name="statoCode" th:value="${statoCode}">
+                        <input type="hidden" id="cityLat" name="cityLat" th:value="${cityLat}">
+                        <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
+                        <div id="cityError" class="text-danger mt-2" style="display: none;">Per favore inserisci il nome di una località.</div>
+                        <div id="autocomplete-results" class="autocomplete-results mt-2"></div>
+                    </div>
+                </div> <!-- FINE COL 1 -->
+
+                <div class="col-md-6 ">
+                    <div class="mb-2">
+                        <label for="nome_2" class="form-label">Nome:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-file-person"></i></span>
+                            <input type="text" id="nome_2" name="nome_2" class="form-control" th:value="${nome_2}" required>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="dateTime_2" class="form-label">Data e ora di nascita:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                            <input type="datetime-local" id="dateTime_2" name="dateTime_2" class="form-control" th:value="${dateTime_2}">
+                        </div>
+                        <div id="dateTimeError_2" class="text-danger mt-2" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="cityInput_2" class="form-label">Località di nascita:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" id="cityInput_2" name="cityInput_2" class="form-control" th:value="${cityInput_2}">
+                        </div>
+                        <input type="hidden" id="cityName_2" name="cityName_2" th:value="${cityName_2}">
+                        <input type="hidden" id="regioneName_2" name="regioneName_2" th:value="${regioneName_2}">
+                        <input type="hidden" id="statoName_2" name="statoName_2" th:value="${statoName_2}">
+                        <input type="hidden" id="statoCode_2" name="statoCode_2" th:value="${statoCode_2}">
+                        <input type="hidden" id="cityLat_2" name="cityLat_2" th:value="${cityLat_2}">
+                        <input type="hidden" id="cityLng_2" name="cityLng_2" th:value="${cityLng_2}">
+                        <div id="cityError_2" class="text-danger mt-2" style="display: none;">Per favore inserisci il nome di una località.</div>
+                        <div id="autocomplete-results_2" class="autocomplete-results mt-2"></div>
+                    </div>
+
+                </div> <!-- FINE COL 2 -->
+            </div> <!-- FINE ROW -->
+
 
             <div class="text-center">
-                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Genera Tema Natale</button>
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Genera Sinastria</button>
             </div>
         </form>
     </div>
@@ -167,19 +204,21 @@
 
 
 
-        <!-- descrizione tema natale -->
+        <!-- descrizione Sinastria -->
         <div class="d-flex align-items-center">
-            <h6 class="mb-0 me-2">Descrizione Tema Natale</h6>
+            <h6 class="mb-0 me-2">Descrizione Sinastria</h6>
             <h7 class="mb-0">
-                <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Tema Natale</a>
+                <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Sinastria</a>
             </h7>
         </div>
 
 
         <div id="textSection" class="d-none mt-3">
-            <p><b>Data di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
+            <p><b>Nome: </b><span th:text="${nome}"></span> <b>Data di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
+            <p><b>Nome: </b><span th:text="${nome_2}"></span> <b>Data di nascita:</b> <span th:text="${dataOraNascita_2}"></span> <b>Luogo:</b> <span th:text="${luogoNascita_2}"></span></p>
             <p th:utext="${temaNataleDescrizione}"></p>
         </div>
+
 
     </div>
 </div>
@@ -191,11 +230,14 @@
 
 <script>
 
+
+
 $(document).ready(function() {
 
 
-    // ############################# VALIDAZIONE TEMA NATALE SUBMIT #############################
-    $("#tema-natale-submit").submit(function(event) {
+    // ############################# VALIDAZIONE SINASTRIA SUBMIT #############################
+
+    $("#sinastria-submit").submit(function(event) {
         var isValid = true; // Se il modulo è valido, mostra l'overlay e consenti l'invio
 
         if ($("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
@@ -215,9 +257,27 @@ $(document).ready(function() {
             $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
         }
 
+
+        if ($("#cityName_2").val().trim() === "" || $("#cityLat_2").val().trim() === "" || $("#cityLng_2").val().trim() === "") {
+            $("#cityError_2").show(); // Mostra il messaggio di errore
+            $("#cityInput_2").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#cityError_2").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#cityInput_2").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        if ($("#dateTime_2").val().trim() === "") {
+            $("#dateTimeError_2").show(); // Mostra il messaggio di errore
+            $("#dateTime_2").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#dateTimeError_2").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#dateTime_2").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+
         if (isValid) {
             showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
-            googleTrackFormSubmitTemaNatale();
+            googleTrackFormSubmitSinastria();
         } else {
             event.preventDefault(); // Previeni l'invio del modulo se non è valido
         }
@@ -230,9 +290,15 @@ document.addEventListener("DOMContentLoaded", function() {
     loadData();
 
     function loadData() {
+        const relationship = localStorage.getItem('relationship');
+        document.getElementById('relationship').value = relationship || "";
         const dateTimeLocalStorage = localStorage.getItem('dateTime');
         if( dateTimeLocalStorage !== null && dateTimeLocalStorage.trim() !== '' ){ //altrimenti prende la data di default da controller 01/01/1980
             document.getElementById('dateTime').value = dateTimeLocalStorage;
+        }
+        const dateTimeLocalStorage_2 = localStorage.getItem('dateTime_2"');
+        if( dateTimeLocalStorage_2 !== null && dateTimeLocalStorage_2.trim() !== '' ){ //altrimenti prende la data di default da controller 01/01/1980
+            document.getElementById('dateTime_2').value = dateTimeLocalStorage_2;
         }
         const cityInput = localStorage.getItem('cityInput');
         const cityName = localStorage.getItem('cityName');
@@ -241,6 +307,16 @@ document.addEventListener("DOMContentLoaded", function() {
         const statoCode = localStorage.getItem('statoCode');
         const cityLat = localStorage.getItem('cityLat');
         const cityLng = localStorage.getItem('cityLng');
+        const nome = localStorage.getItem('nome');
+
+        const cityInput_2 = localStorage.getItem('cityInput_2');
+        const cityName_2 = localStorage.getItem('cityName_2');
+        const regioneName_2 = localStorage.getItem('regioneName_2');
+        const statoName_2 = localStorage.getItem('statoName_2');
+        const statoCode_2 = localStorage.getItem('statoCode_2');
+        const cityLat_2 = localStorage.getItem('cityLat_2');
+        const cityLng_2 = localStorage.getItem('cityLng_2');
+        const nome_2 = localStorage.getItem('nome_2');
 
         // Imposta i valori sugli input
         document.getElementById('cityInput').value = cityInput || "";
@@ -250,22 +326,49 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('statoCode').value = statoCode || "";
         document.getElementById('cityLat').value = cityLat || "";
         document.getElementById('cityLng').value = cityLng || "";
+        document.getElementById('nome').value = nome || "";
+
+        document.getElementById('cityInput_2').value = cityInput_2 || "";
+        document.getElementById('cityName_2').value = cityName_2 || "";
+        document.getElementById('regioneName_2').value = regioneName_2 || "";
+        document.getElementById('statoName_2').value = statoName_2 || "";
+        document.getElementById('statoCode_2').value = statoCode_2 || "";
+        document.getElementById('cityLat_2').value = cityLat_2 || "";
+        document.getElementById('cityLng_2').value = cityLng_2 || "";
+        document.getElementById('nome_2').value = nome_2 || "";
     }
 
+
     // quando si modifica la data la si mette nello storage
+    document.getElementById('relationship').addEventListener('change', function() {
+        const relationship = document.getElementById('relationship').value;
+        localStorage.setItem('relationship', relationship);
+    });
     document.getElementById('dateTime').addEventListener('change', function() {
         const dateTimeValue = document.getElementById('dateTime').value;
         localStorage.setItem('dateTime', dateTimeValue);
     });
-
+    document.getElementById('dateTime_2').addEventListener('change', function() {
+        const dateTimeValue_2 = document.getElementById('dateTime_2').value;
+        localStorage.setItem('dateTime_2', dateTimeValue_2);
+    });
+    document.getElementById('nome').addEventListener('change', function() {
+        const nome = document.getElementById('nome').value;
+        localStorage.setItem('nome', nome);
+    });
+    document.getElementById('nome_2').addEventListener('change', function() {
+        const nome_2 = document.getElementById('nome_2').value;
+        localStorage.setItem('nome_2', nome_2);
+    });
 
 
     // ############################# AUTOCOMPLETE CITY-INPUT #############################
-    const input = document.getElementById('cityInput');
-    const resultsContainer = document.getElementById('autocomplete-results');
     let timeout = null;
     const delay = 300; // Ritardo in millisecondi
 
+    // ################ autocomplete input 1 ################
+    const input = document.getElementById('cityInput');
+    const resultsContainer = document.getElementById('autocomplete-results');
     input.addEventListener('input', function() {
         clearTimeout(timeout); // Pulisce il timeout precedente se esiste
         const query = input.value.trim();
@@ -324,6 +427,71 @@ document.addEventListener("DOMContentLoaded", function() {
             resultsContainer.innerHTML = '';
         }
     });
+
+    // ################ autocomplete input 2 ################
+    const input_2 = document.getElementById('cityInput_2');
+    const resultsContainer_2 = document.getElementById('autocomplete-results_2');
+
+    input_2.addEventListener('input', function() {
+        clearTimeout(timeout); // Pulisce il timeout precedente se esiste
+        const query = input_2.value.trim();
+        if (query.length < 3) {
+            resultsContainer_2.innerHTML = '';
+            return;
+        }
+        timeout = setTimeout(() => {
+            fetch(`/coordinate?cityName=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer_2.innerHTML = '';
+                    data.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.textContent = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                        resultDiv.dataset.value = item.name;
+                        resultDiv.dataset.regioneName = item.adminName1;
+                        resultDiv.dataset.statoName = item.countryName;
+                        resultDiv.dataset.statoCode = item.countryCode;
+                        resultDiv.dataset.lat = item.lat;
+                        resultDiv.dataset.lng = item.lng;
+
+                        resultDiv.addEventListener('click', function() {
+                            input_2.value = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                            document.getElementById('cityName_2').value = item.name;
+                            document.getElementById('regioneName_2').value = item.adminName1;
+                            document.getElementById('statoName_2').value = item.countryName;
+                            document.getElementById('statoCode_2').value = item.countryCode;
+                            document.getElementById('cityLat_2').value = item.lat;
+                            document.getElementById('cityLng_2').value = item.lng;
+
+                            // Metto i campi nello storage
+                            localStorage.setItem('cityInput_2', `${item.name}, ${item.adminName1}, ${item.countryName}`);
+                            localStorage.setItem('cityName_2', item.name);
+                            localStorage.setItem('regioneName_2', item.adminName1);
+                            localStorage.setItem('statoName_2', item.countryName);
+                            localStorage.setItem('statoCode_2', item.countryCode);
+                            localStorage.setItem('cityLat_2', item.lat);
+                            localStorage.setItem('cityLng_2', item.lng);
+                            resultsContainer_2.innerHTML = '';
+                        });
+                        resultsContainer_2.appendChild(resultDiv);
+                    });
+
+                    if (data.length === 0) {
+                        const noResultDiv = document.createElement('div');
+                        noResultDiv.textContent = 'Nessun risultato trovato';
+                        resultsContainer_2.appendChild(noResultDiv);
+                    }
+                })
+                .catch(error => console.error('Errore:', error));
+        }, delay); // Ritardo prima di inviare la richiesta
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!resultsContainer_2.contains(event.target) && event.target !== input_2) {
+            resultsContainer_2.innerHTML = '';
+        }
+    });
+
 
 
 
@@ -402,10 +570,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var textSection = document.getElementById('textSection');
             if (textSection.classList.contains('d-none')) {
                 textSection.classList.remove('d-none');
-                this.textContent = 'Nascondi descrizione Tema natale';
+                this.textContent = 'Nascondi descrizione Sinastria';
             } else {
                 textSection.classList.add('d-none');
-                this.textContent = 'Visualizza descrizione Tema natale';
+                this.textContent = 'Visualizza descrizione Sinastria';
             }
         });
     }

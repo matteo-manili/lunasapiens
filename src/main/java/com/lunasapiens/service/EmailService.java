@@ -91,7 +91,7 @@ public class EmailService {
     public void inviaConfermaEmailTemaNatale(ProfiloUtente profiloUtente) {
         ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
         if( profiloUtenteSetRandomCode != null ) {
-            String confirmationCode = Utils.generateRandomCode();
+            String confirmationCode = UUID.randomUUID().toString();
             profiloUtente.setConfirmationCode(confirmationCode);
             profiloUtenteRepository.save(profiloUtente);
 
@@ -115,7 +115,7 @@ public class EmailService {
     public void inviaConfermaEmailOrosciopoGioraliero(ProfiloUtente profiloUtente) {
         ProfiloUtente profiloUtenteSetRandomCode = profiloUtenteService.findByProfiloUtente( profiloUtente.getEmail() ).orElse(null);
         if( profiloUtenteSetRandomCode != null ) {
-            String confirmationCode = Utils.generateRandomCode();
+            String confirmationCode = UUID.randomUUID().toString();
             profiloUtente.setConfirmationCode(confirmationCode);
             profiloUtenteRepository.save(profiloUtente);
 
@@ -170,7 +170,7 @@ public class EmailService {
                 profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
                 profiloUtente.setEmailOroscopoGiornaliero(true);
                 profiloUtente.setEmailAggiornamentiTemaNatale(true);
-                profiloUtente.setConfirmationCode( Utils.generateRandomCode() );
+                profiloUtente.setConfirmationCode( UUID.randomUUID().toString() );
                 profiloUtenteRepository.save(profiloUtente);
                 result[0] = true; // Indica fallimento
                 result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
@@ -178,7 +178,7 @@ public class EmailService {
             } else {
 
                 ProfiloUtente newProfiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, LocalDateTime.now(), null,
-                        ipAddress, true, true, Utils.generateRandomCode() );
+                        ipAddress, true, true, UUID.randomUUID().toString() );
                 result[0] = true; // Indica successo
                 result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +
                         "Controlla la tua casella di posta per confermare la tua iscrizione.";

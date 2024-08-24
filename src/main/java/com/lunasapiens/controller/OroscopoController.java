@@ -121,7 +121,7 @@ public class OroscopoController {
             infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+profiloUtente.getEmail()+". " +
                     "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
         }else{
-            infoMessage = "Conferma email non riuscita. Registrati di nuovo";
+            infoMessage = "Conferma email non riuscita. Iscriviti di nuovo";
         }
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/oroscopo";

@@ -18,13 +18,22 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-XGFTKCH8TD');
-
-        // Funzione per inviare l'evento personalizzato a GA4
-        function googleTrackFormSubmit() {
-            console.log("googleTrackFormSubmit ok");
-            gtag('event', 'submit_form', {
+        // Funzioni per inviare l'evento personalizzato a GA4
+        function googleTrackFormSubmitTemaNatale() {
+            gtag('event', 'submit_form_TemaNatale', {
                 'event_category': 'Form',
-                'event_label': 'genera_tema_natale',
+                'value': 1
+            });
+        }
+        function googleTrackFormSubmitSinastria() {
+            gtag('event', 'submit_form_Sinastria', {
+                'event_category': 'Form',
+                'value': 1
+            });
+        }
+        function googleTrackFormSubmitRegister() {
+            gtag('event', 'submit_form_Register', {
+                'event_category': 'Form',
                 'value': 1
             });
         }
@@ -109,10 +118,11 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="/tema-natale">Tema Natale IA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sinastria">Sinastria IA</a></li>
                     <li class="nav-item"><a class="nav-link" href="/oroscopo">Oroscopo</a></li>
                     <li class="nav-item"><a class="nav-link" href="/forum">Forum e Biblioteca</a></li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/register">Registrati</a></li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/contatti">Contatti</a></li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/register">Iscriviti</a></li>
+                    <!-- <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/contatti">Contatti</a></li> -->
                     <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/private/privatePage">Profilo Utente</a></li>
                 </ul>
             </div>
@@ -123,16 +133,20 @@
 
 <!-- pulsanti social -->
 <div th:fragment="pulsanti_social(linkEnding)" class="btn-group mt-4 d-flex flex-wrap justify-content-center" role="group">
+    <!-- Pulsante Facebook -->
     <a th:href="|https://www.facebook.com/sharer/sharer.php?u=https://www.lunasapiens.com/${linkEnding}|" class="btn btn-primary rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-        Condividi su Facebook
+        <i class="bi bi-facebook"></i> Condividi su Facebook
     </a>
+    <!-- Pulsante WhatsApp -->
     <a th:href="|https://wa.me/?text=Scopri%20il%20tuo%20${linkEnding}%20con%20LunaSapiens!%20https://www.lunasapiens.com/${linkEnding}|" class="btn btn-success rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-        Condividi su WhatsApp
+        <i class="bi bi-whatsapp"></i> Condividi su WhatsApp
     </a>
+    <!-- Pulsante Telegram -->
     <a th:href="|https://t.me/share/url?url=https://www.lunasapiens.com/${linkEnding}&text=Scopri%20il%20tuo%20${linkEnding}%20con%20LunaSapiens!|" class="btn btn-info rounded-pill m-2" target="_blank" rel="noopener noreferrer">
-        Condividi su Telegram
+        <i class="bi bi-telegram"></i> Condividi su Telegram
     </a>
 </div>
+
 
 
 

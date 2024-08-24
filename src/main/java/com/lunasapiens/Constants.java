@@ -1,5 +1,7 @@
 package com.lunasapiens;
 
+import com.lunasapiens.dto.RelationshipOption;
+
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -36,14 +38,26 @@ public class Constants {
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_USER_CACHE = "rateLimiterUserCache";
 
+    public static final List<RelationshipOption> RELATIONSHIP_OPTIONS  = Collections.unmodifiableList(Arrays.asList(
+            new RelationshipOption("P", "Partners"),
+            new RelationshipOption("G", "Genitore - figlio"),
+            new RelationshipOption("F", "Figlio - Genitore"),
+            new RelationshipOption("A", "Amici"),
+            new RelationshipOption("PR", "Professionale"),
+            new RelationshipOption("N", "Preferisco non dirlo")));
+
+
+
     public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/",
             "/tema-natale",
+            "/sinastria",
             "/oroscopo",
             "/forum",
             "/register",
             "/info-privacy",
             "/contatti"));
+
 
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",

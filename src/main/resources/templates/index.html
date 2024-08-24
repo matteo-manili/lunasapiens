@@ -8,11 +8,15 @@
     </th:block>
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     </th:block>
 </head>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <!-- Page Content-->
 <div class="container mt-4">
+
+
+
     <!-- Highlight Section -->
     <div class="px-lg-5 my-3">
         <div class="highlight-section text-center p-5 bg-light shadow rounded">
@@ -23,7 +27,15 @@
     </div>
     <!-- Content Row-->
     <div class="row gx-4 gx-lg-5">
-
+        <div class="col-md-6 mb-5">
+            <div class="card h-100 p-5 bg-light shadow rounded">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Scopri il Tema Natale IA</h4>
+                    <p class="card-text">Inserisci la tua data e luogo di nascita per generare il tuo tema natale. La nostra IA utilizzerà le informazioni per rispondere alle tue domande e guidarti nella scoperta del tuo percorso astrologico. Esplora i misteri delle stelle e scopri cosa ti riservano!</p>
+                </div>
+                <a class="btn btn-primary mt-3" href="/tema-natale">Scopri il tuo tema natale</a>
+            </div>
+        </div>
         <div class="col-md-6 mb-5">
             <div class="card h-100 p-5 bg-light shadow rounded">
                 <div class="card-body text-center">
@@ -35,17 +47,16 @@
                 <a class="btn btn-primary mt-3" href="/oroscopo">Consulta l'oroscopo del giorno</a>
             </div>
         </div>
-        <div class="col-md-6 mb-5">
-            <div class="card h-100 p-5 bg-light shadow rounded">
-                <div class="card-body text-center">
-                    <h4 class="card-title">Scopri il Tema Natale IA</h4>
-                    <p class="card-text">Inserisci la tua data e luogo di nascita per generare il tuo tema natale. La nostra IA utilizzerà le informazioni per rispondere alle tue domande e guidarti nella scoperta del tuo percorso astrologico. Esplora i misteri delle stelle e scopri cosa ti riservano!</p>
-                </div>
-                <a class="btn btn-primary mt-3" href="/tema-natale">Scopri il tuo tema natale</a>
-            </div>
-        </div>
-
     </div>
+
+    <div class="row gx-4 gx-lg-5">
+        <div class="bg-light p-4 rounded-3 text-center mb-2">
+            <h5>Fai conoscere LunaSapiens!</h5>
+            <p>Se apprezzi il modo innovativo con cui LunaSapiens esplora l'astrologia attraverso l'intelligenza artificiale, aiutaci a far conoscere la nostra piattaforma! Condividi la nostra pagina con i tuoi amici cliccando sui pulsanti qui sotto e permetti anche a loro di scoprire le influenze celesti sulla loro vita. Grazie per il tuo supporto!</p>
+            <div th:replace="~{fragments/templateBase :: pulsanti_social('index')}"></div>
+        </div>
+    </div>
+
 
 </div>
 
