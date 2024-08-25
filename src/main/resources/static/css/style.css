@@ -1,4 +1,5 @@
-/* Stile per la finestra di attesa */
+/* ################## Stile per la finestra di attesa ################## */
+
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -16,7 +17,6 @@
     height: 3rem;
 }
 
-
 .ui-helper-hidden-accessible {
     display: none; /* Nascondi il messaggio dei risultati disponibili */
 }
@@ -28,4 +28,58 @@
     .btn-group .btn {
         margin: 0.5rem 0;
     }
+}
+
+/* ################## Bot Chat IA Message ################## */
+.hidden-text {
+    display: none;
+}
+
+#loading-indicator {
+    text-align: center;
+    font-style: italic;
+    color: #007bff; /* Colore blu per l'indicatore */
+    margin-top: 10px;
+}
+
+/* Stile comune per tutti i messaggi */
+.chat-message {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    max-width: 80%;
+    word-wrap: break-word; /* Gestisce il testo lungo */
+}
+/* Stile per i messaggi dell'utente */
+.user-message {
+    background-color: #e3f2fd; /* Celeste chiaro per i messaggi del bot */
+    align-self: flex-end; /* Allinea i messaggi dell'utente a destra */
+    color: #01579b; /* Blu scuro per il testo */
+}
+/* Stile per i messaggi del bot */
+.bot-message {
+    background-color: #e0f2f1; /* Verde acqua chiaro per i messaggi dell'utente */
+    align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
+    color: #004d40; /* Verde scuro per il testo */
+}
+
+
+/* ################## Autocomplete ################## */
+/* Style per l'autocompletamento delle città */
+.autocomplete-results {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.autocomplete-results div {
+    padding: 8px;
+    cursor: pointer;
+}
+.autocomplete-results div:hover {
+    background-color: #f0f0f0;
 }

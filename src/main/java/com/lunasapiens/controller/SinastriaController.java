@@ -37,11 +37,6 @@ public class SinastriaController {
 
     private static final Logger logger = LoggerFactory.getLogger(SinastriaController.class);
 
-    @Autowired
-    private ApiGeonamesConfig getApiGeonames;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
@@ -52,17 +47,6 @@ public class SinastriaController {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    private RateLimiterUser rateLimiterUser;
-
-    @Autowired
-    private TelegramBotClient telegramBotClient;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private ProfiloUtenteRepository profiloUtenteRepository;
 
     // #################################### TEMA NATALE #####################################
 
@@ -91,8 +75,8 @@ public class SinastriaController {
                             @ModelAttribute("cityLng_2") String cityLng_2,
                             @ModelAttribute("nome_2") String nome_2,
 
-                            @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
-                            @ModelAttribute("temaNataleId") String temaNataleId,
+                            @ModelAttribute("sinastriaDescrizione") String sinastriaDescrizione,
+                            @ModelAttribute("paginaChatId") String paginaChatId,
                             @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId,
                             @ModelAttribute("relationship") String relationship
     ) {
@@ -131,8 +115,8 @@ public class SinastriaController {
         Optional.ofNullable(cityLat_2).filter(lat_2 -> !lat_2.isEmpty()).ifPresent(lat_2 -> model.addAttribute("cityLat_2", lat_2));
         Optional.ofNullable(cityLng_2).filter(lng_2 -> !lng_2.isEmpty()).ifPresent(lng_2 -> model.addAttribute("cityLng_2", lng_2));
 
-        Optional.ofNullable(temaNataleDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("temaNataleDescrizione", description));
-        Optional.ofNullable(temaNataleId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("temaNataleId", id));
+        Optional.ofNullable(sinastriaDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("sinastriaDescrizione", description));
+        Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
         Optional.ofNullable(relationship).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("relationship", id));
 
@@ -236,18 +220,17 @@ public class SinastriaController {
                 .append(significatiTemaNatale).toString();
 
 
+        redirectAttributes.addFlashAttribute("sinastriaDescrizione", descrizioneTemaNatalePage);
 
-        redirectAttributes.addFlashAttribute("temaNataleDescrizione", descrizioneTemaNatalePage);
 
-
-        String temaNataleId = UUID.randomUUID().toString();
-        redirectAttributes.addFlashAttribute("temaNataleId", temaNataleId);
+        String paginaChatId = UUID.randomUUID().toString();
+        redirectAttributes.addFlashAttribute("paginaChatId", paginaChatId);
         redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);
 
         // Metto in cache i chatMessageIa
-        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        Cache cache = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
         if (cache == null) {
-            logger.error("Cache not found: " + Constants.TEMA_NATALE_BOT_CACHE);
+            logger.error("Cache not found: " + Constants.MESSAGE_BOT_CACHE);
             return "redirect:/sinastria";
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
@@ -256,7 +239,7 @@ public class SinastriaController {
 
         logger.info( "sinastriaDescrizioneIstruzioneBOTSystem: "+sinastriaDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", sinastriaDescIstruzioniBOTSystem.toString() ));
-        cache.put(temaNataleId, chatMessageIa);
+        cache.put(paginaChatId, chatMessageIa);
 
         return "redirect:/sinastria";
     }

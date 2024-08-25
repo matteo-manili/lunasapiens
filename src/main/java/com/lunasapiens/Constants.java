@@ -34,7 +34,7 @@ public class Constants {
     public static final String SKIP_EMAIL_SAVE = "skipEmailSave";
 
     public static final String VIDEO_CACHE = "videoCache";
-    public static final String TEMA_NATALE_BOT_CACHE = "temaNataleBotCache";
+    public static final String MESSAGE_BOT_CACHE = "messageBotCache";
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_USER_CACHE = "rateLimiterUserCache";
 

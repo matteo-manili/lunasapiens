@@ -261,7 +261,7 @@ public class IndexController {
                     profiloUtenteRepository.delete(profiloUtente);
                     Utils.clearJwtCookie_ClearSecurityContext(request, response);
                     redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Utente con email " + email +
-                            " è stato cancellato con successo. Puoi registrarti nuovamente in qualsiasi momento.");
+                            " è stato cancellato con successo. Puoi iscriverti nuovamente in qualsiasi momento.");
                     return "redirect:/register";
 
                 } catch (Exception e) {

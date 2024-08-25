@@ -95,7 +95,7 @@ public class ServizioTemaNatale {
         SegnoZodiacale segnoLuna = segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(1).getNumeroSegnoZodiacale() );
         SegnoZodiacale segnoAscendente = segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() );
 
-        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Elementi principali</h4><br>");
+        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Elementi generali</h4><br>");
 
         descTemaNatale.append("<p><b>- "+pianetiTransiti.get(0).descrizionePianeta()+"</b><br>");
         descTemaNatale.append(segnoSole.getDescrizioneMin()+"</p>");

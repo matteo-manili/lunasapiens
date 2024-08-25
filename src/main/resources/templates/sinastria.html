@@ -3,11 +3,10 @@
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
     <title th:fragment="title">Luna Sapiens | Sinastria IA</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="">
-        <meta name="keywords" content="">
-
+        <meta name="description" content="Sinastria IA - Genera una sinastria astrologica personalizzata utilizzando l'intelligenza artificiale. Analizza le compatibilità tra due temi natali e ottieni approfondimenti dettagliati.">
+        <meta name="keywords" content="sinastria, astrologia, compatibilità, temi natali, intelligenza artificiale, oroscopo, astrologia delle relazioni">
         <meta property="og:title" content="Luna Sapiens | Sinastria IA" />
-        <meta property="og:description" content="" />
+        <meta property="og:description" content="Scopri la tua sinastria astrologica con Sinastria IA. Approfondisci la compatibilità tra due persone attraverso un'analisi dettagliata dei loro temi natali." />
         <meta property="og:image" content="/moon_icon.ico" />
         <meta property="og:image:type" content="image/x-icon" />
         <meta property="og:image:width" content="64" />
@@ -16,12 +15,12 @@
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Sinastria IA" />
-        <meta name="twitter:description" content="" />
+        <meta name="twitter:description" content="Genera una sinastria personalizzata con l'IA. Ottieni analisi dettagliate sulla compatibilità astrologica tra due persone." />
         <meta name="twitter:image" content="/moon_icon.ico" />
     </th:block>
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/sinastria" />
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/style.css?v=2.0">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     </th:block>
     <th:block th:fragment="scripts">
@@ -29,56 +28,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     </th:block>
 </head>
-<style>
-    .hidden-text {
-        display: none;
-    }
-    #loading-indicator {
-        text-align: center;
-        font-style: italic;
-        color: #007bff; /* Colore blu per l'indicatore */
-        margin-top: 10px;
-    }
-    /* Stile comune per tutti i messaggi */
-    .chat-message {
-        padding: 10px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        max-width: 80%;
-        word-wrap: break-word; /* Gestisce il testo lungo */
-    }
-    /* Stile per i messaggi dell'utente */
-    .user-message {
-        background-color: #e3f2fd; /* Celeste chiaro per i messaggi del bot */
-        align-self: flex-end; /* Allinea i messaggi dell'utente a destra */
-        color: #01579b; /* Blu scuro per il testo */
-    }
-    /* Stile per i messaggi del bot */
-    .bot-message {
-        background-color: #e0f2f1; /* Verde acqua chiaro per i messaggi dell'utente */
-        align-self: flex-start; /* Allinea i messaggi del bot a sinistra */
-        color: #004d40; /* Verde scuro per il testo */
-    }
-
-    /* Style per l'autocompletamento delle città */
-    .autocomplete-results {
-        position: absolute;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #fff;
-        z-index: 1000;
-        max-height: 200px;
-        overflow-y: auto;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-    .autocomplete-results div {
-        padding: 8px;
-        cursor: pointer;
-    }
-    .autocomplete-results div:hover {
-        background-color: #f0f0f0;
-    }
-</style>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
@@ -91,13 +40,12 @@
             Scorrendo in basso troverai una descrizione dettagliata dei 2 Temi Natale.</p>
 
 
-
-
+<!--
         <div class="alert alert-info " role="alert">
             Per motivi tecnici sospendiamo temporaneamente la funzione Sinastra IA.
-        </div>
+        </div> -->
 
-        <!--
+
         <form id="sinastria-submit" th:action="@{/sinastriaSubmit}" method="GET" class="p-4 border rounded">
 
             <div class="row">
@@ -114,7 +62,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-md-6 ">
                     <div class="mb-2">
                         <label for="nome" class="form-label">Nome:</label>
@@ -188,7 +136,7 @@
                 <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Genera Sinastria</button>
             </div>
         </form>
-        -->
+
 
 
     </div>
@@ -197,11 +145,11 @@
 
 
     <!-- #################################### Chat-Box IA #################################### -->
-    <input type="hidden" id="temaNataleDescrizione" name="temaNataleDescrizione" th:value="${temaNataleDescrizione}">
-    <input type="hidden" id="temaNataleId" name="temaNataleId" th:value="${temaNataleId}">
+    <input type="hidden" id="sinastriaDescrizione" name="sinastriaDescrizione" th:value="${sinastriaDescrizione}">
+    <input type="hidden" id="paginaChatId" name="paginaChatId" th:value="${paginaChatId}">
     <input type="hidden" id="userSessionId" name="userSessionId" th:value="${userSessionId}">
 
-    <div th:if="${temaNataleDescrizione != null and !temaNataleDescrizione.isEmpty()}" class="mb-5">
+    <div th:if="${sinastriaDescrizione != null and !sinastriaDescrizione.isEmpty()}" class="mb-5">
 
         <h7 class="mb-3"><b>Chat IA - Domanda all'Astrologo</b></h7>
         <div class="chat-container mb-5">
@@ -229,7 +177,7 @@
         <div id="textSection" class="d-none mt-3">
             <p><b>Nome: </b><span th:text="${nome}"></span> <b>Data di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
             <p><b>Nome: </b><span th:text="${nome_2}"></span> <b>Data di nascita:</b> <span th:text="${dataOraNascita_2}"></span> <b>Luogo:</b> <span th:text="${luogoNascita_2}"></span></p>
-            <p th:utext="${temaNataleDescrizione}"></p>
+            <p th:utext="${sinastriaDescrizione}"></p>
         </div>
 
 
@@ -509,15 +457,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // ############################# CODICE CHAT-BOT #############################
-    var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
-    // Verifica se temaNataleDescrizione non è null o una stringa vuota
-    if (temaNataleDescrizione) {
+    var sinastriaDescrizione = document.getElementById('sinastriaDescrizione').value;
+    // Verifica se sinastriaDescrizione non è null o una stringa vuota
+    if (sinastriaDescrizione) {
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-
             stompClient.subscribe('/user/queue/reply', function (messageOutput) {
                 console.log('Received message:', messageOutput.body);
                 try {
@@ -539,14 +486,19 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("loading-indicator").classList.add("hidden-text");
         }
 
+        document.getElementById("sendMessage").addEventListener("click", sendMessage);
+        document.getElementById("userMessage").addEventListener("keyup", function (event) {
+            if (event.key === "Enter") { sendMessage(); }
+        });
+
         function sendMessage() {
             var message = document.getElementById("userMessage").value;
-            var temaNataleId = document.querySelector('input[name="temaNataleId"]').value;
+            var paginaChatId = document.querySelector('input[name="paginaChatId"]').value;
             var userSessionId = document.querySelector('input[name="userSessionId"]').value;
             if (message.trim() !== "") {
                 var payload = {
                     content: message,
-                    temaNataleId: temaNataleId,
+                    paginaChatId: paginaChatId,
                     userSessionId: userSessionId
                 };
                 stompClient.send("/app/message", {}, JSON.stringify(payload));
@@ -558,10 +510,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        document.getElementById("sendMessage").addEventListener("click", sendMessage);
-        document.getElementById("userMessage").addEventListener("keyup", function (event) {
-            if (event.key === "Enter") { sendMessage(); }
-        });
 
         function showMessage(message, isBotMessage) {
             var chatMessages = document.getElementById("chat-messages");

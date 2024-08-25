@@ -89,7 +89,7 @@ public class TemaNataleController {
                              @ModelAttribute("cityLat") String cityLat,
                              @ModelAttribute("cityLng") String cityLng,
                              @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
-                             @ModelAttribute("temaNataleId") String temaNataleId,
+                             @ModelAttribute("paginaChatId") String paginaChatId,
                              @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId
     ) {
 
@@ -111,10 +111,10 @@ public class TemaNataleController {
         Optional.ofNullable(cityLat).filter(lat -> !lat.isEmpty()).ifPresent(lat -> model.addAttribute("cityLat", lat));
         Optional.ofNullable(cityLng).filter(lng -> !lng.isEmpty()).ifPresent(lng -> model.addAttribute("cityLng", lng));
         Optional.ofNullable(temaNataleDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("temaNataleDescrizione", description));
-        Optional.ofNullable(temaNataleId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("temaNataleId", id));
+        Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
 
-        logger.info("Tema Natale ID: " + model.getAttribute("temaNataleId"));
+        logger.info("Tema Natale ID: " + model.getAttribute("paginaChatId"));
         return "tema-natale";
     }
 
@@ -181,23 +181,26 @@ public class TemaNataleController {
         temaNataleDescrizione.append( significatiTemaNataleDescrizione );
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione.toString());
 
-        String temaNataleId = UUID.randomUUID().toString();
-        redirectAttributes.addFlashAttribute("temaNataleId", temaNataleId);
+        String paginaChatId = UUID.randomUUID().toString();
+        redirectAttributes.addFlashAttribute("paginaChatId", paginaChatId);
 
         // Metto in cache i chatMessageIa
-        Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+        Cache cache = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
         if (cache == null) {
-            logger.error("Cache not found: " + Constants.TEMA_NATALE_BOT_CACHE);
+            logger.error("Cache not found: " + Constants.MESSAGE_BOT_CACHE);
             return "redirect:/tema-natale";
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
         StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), datetime, luogoNascita);
         logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
-        cache.put(temaNataleId, chatMessageIa);
+        cache.put(paginaChatId, chatMessageIa);
 
         return "redirect:/tema-natale";
     }
+
+
+
 
 
 
@@ -207,14 +210,20 @@ public class TemaNataleController {
      */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public Map<String, Object> userMessageWebSocket(Map<String, String> message, CustomPrincipalWebSocket principal) {
-        logger.info("sono in userMessageWebSocket");
+    public Map<String, Object> userMessageWebSocketTemaNatale(Map<String, String> message, CustomPrincipalWebSocket principal) {
+        logger.info("sono in userMessageWebSocketTemaNatale");
+        return responseChatBot(message, principal);
+    }
+
+
+
+    public Map<String, Object> responseChatBot( Map<String, String> message, CustomPrincipalWebSocket principal ){
+
         Map<String, Object> response = new HashMap<>(); final String keyJsonStandardContent = "content";
         CustomPrincipalWebSocket customPrincipalWebSocket = (CustomPrincipalWebSocket) principal;
-
         if( customPrincipalWebSocket != null ){
             String domanda = message.get( keyJsonStandardContent );
-            String temaNataleId = message.get("temaNataleId");
+            String paginaChatId = message.get("paginaChatId");
             String userSessionId = message.get(Constants.USER_SESSION_ID);
 
             logger.info("customPrincipal.getIpAddress(): "+customPrincipalWebSocket.getIpAddress());
@@ -225,10 +234,11 @@ public class TemaNataleController {
                 response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
                 return response;
             }
-            if( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ){
+            if( customPrincipalWebSocket.getName().startsWith(WebSocketConfig.userAnonymous) ){
                 logger.info("User not logged in");
                 if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
-                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
+                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
+                            + "<br>" + "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
                     return response;
                 }
             }else{
@@ -238,28 +248,27 @@ public class TemaNataleController {
                 }
             }
 
-
-            Cache cache = cacheManager.getCache(Constants.TEMA_NATALE_BOT_CACHE);
+            Cache cache = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
             if (cache != null ) {
                 // Recupera la lista di chat messages dalla cache
-                List<ChatMessage> chatMessageIa = cache.get(temaNataleId, List.class);
+                List<ChatMessage> chatMessageIa = cache.get(paginaChatId, List.class);
                 if (chatMessageIa == null) {
                     chatMessageIa = new ArrayList<>();
                 }
                 chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
-                cache.put(temaNataleId, chatMessageIa);
+                cache.put(paginaChatId, chatMessageIa);
                 try {
-                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
-                    //StringBuilder rispostaIA = new StringBuilder("ewewewweweewwewe");
+                    //StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                    StringBuilder rispostaIA = new StringBuilder("risposta dalla iaaaaaaaaaaaaaaaaaaaa");
 
                     chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
-                    cache.put(temaNataleId, chatMessageIa);
+                    cache.put(paginaChatId, chatMessageIa);
                     response.put(keyJsonStandardContent, rispostaIA.toString());
 
-                    if ( customPrincipalWebSocket.getName().equals(WebSocketConfig.userAnonymous) ) {
-                        telegramBotClient.inviaMessaggio("User: " + domanda);
+                    if ( customPrincipalWebSocket.getName().startsWith(WebSocketConfig.userAnonymous) ) {
+                        telegramBotClient.inviaMessaggio("user: "+domanda);
                     }else{
-                        telegramBotClient.inviaMessaggio(customPrincipalWebSocket.getName()+": " + domanda);
+                        telegramBotClient.inviaMessaggio("utente: "+domanda);
                     }
                 } catch (Exception e) {
                     response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());
@@ -268,8 +277,13 @@ public class TemaNataleController {
                 response.put(keyJsonStandardContent, "Errore durante l'elaborazione.");
             }
         }
+
         return response;
+
+
     }
+
+
 
     @GetMapping("/coordinate")
     public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {

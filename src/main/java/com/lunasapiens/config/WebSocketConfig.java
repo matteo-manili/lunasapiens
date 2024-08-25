@@ -1,9 +1,7 @@
 package com.lunasapiens.config;
 
-import com.lunasapiens.service.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -20,6 +18,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import java.net.InetSocketAddress;
 import java.security.Principal;
 import java.util.Map;
+import java.util.UUID;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -27,8 +26,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
-    @Autowired
-    JwtService jwtService;
 
 
     public static final String userAnonymous = "anonymous";
@@ -61,6 +58,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      *
      * - il Principal non lo sto usando ma potrebbe essere utile per gestire gli utenti del webSocket
      */
+    /**
+     * crea una autenticazione univoca e esistente nell'ambito del Web Socket. Non c'entra con la autenticazione di Spring. Utilizza soltanto gli stessi oggetti.
+     * ciò che determina una singola comunucazione è la username di Principal (CustomPrincipalWebSocket). Se due utenti chattano con la stessa username
+     * riceverranno dal server la stessa risposta.
+     * Per la logica di business va bene così.
+     * @param registry
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat-websocket")
@@ -69,7 +73,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
 
                         InetSocketAddress remoteAddress = request.getRemoteAddress();
-                        String ipAddress = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : "unknown";
+                        String ipAddress = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : UUID.randomUUID().toString();
 
                         // Recupera l'utente autenticato da Spring Security
                         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -81,9 +85,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                 return new CustomPrincipalWebSocket(userDetails.getUsername(), ipAddress); // Usa il nome utente come identificativo
                             }
                         }
-
-                        // Se non c'è un'utente autenticato, puoi decidere come gestire la situazione
-                        return new CustomPrincipalWebSocket(userAnonymous, ipAddress); // Utente anonimo, ad esempio
+                        // Se l'utente non è autenticato, crea un nome univoco per l'utente anonimo
+                        String anonymousId = userAnonymous +"-"+ UUID.randomUUID().toString();
+                        return new CustomPrincipalWebSocket(anonymousId, ipAddress); // Utente anonimo, ad esempio
                     }
                 })
                 .withSockJS();

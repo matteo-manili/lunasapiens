@@ -91,7 +91,7 @@ public class JwtController {
                 profiloUtenteRepository.save( profiloUtente );
             }
             emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
-            infoMessage = "Utente già registrato. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
+            infoMessage = "Utente già iscritto. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
         }else {
             try{
                 ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
@@ -99,7 +99,7 @@ public class JwtController {
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
                 emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
                 infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
-                telegramBotClient.inviaMessaggio( "Profilo registrato: "+newProfiloUtente.getEmail());
+                telegramBotClient.inviaMessaggio( "Profilo iscritto: "+newProfiloUtente.getEmail());
 
             } catch (DataIntegrityViolationException e) {
                 System.out.println("DataIntegrityViolationException: " + e.getMessage());
@@ -142,7 +142,7 @@ public class JwtController {
                 jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
                 // Aggiungi il cookie alla risposta HTTP
                 response.addCookie(jwtCookie);
-                infoMessage = "Grazie per aver confermato la tua email. Sei un Utente registrato, email: "+jwtDetails.getSubject();
+                infoMessage = "Grazie per aver confermato la tua email. Ora sei un Utente iscritto con email: "+jwtDetails.getSubject();
 
                 redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
                 headers.add("Location", "/private/privatePage");

@@ -173,7 +173,7 @@ public class EmailService {
                 profiloUtente.setConfirmationCode( UUID.randomUUID().toString() );
                 profiloUtenteRepository.save(profiloUtente);
                 result[0] = true; // Indica fallimento
-                result[1] = "L'indirizzo email " + email + " è già registrato nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
+                result[1] = "L'indirizzo email " + email + " è già iscritto nel sistema. Se non hai confermato l'iscrizione, controlla la tua casella di posta.";
                 result[2] = profiloUtenteOptional.get();
             } else {
 
