@@ -258,8 +258,8 @@ public class TemaNataleController {
                 chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
                 cache.put(paginaChatId, chatMessageIa);
                 try {
-                    //StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
-                    StringBuilder rispostaIA = new StringBuilder("risposta dalla iaaaaaaaaaaaaaaaaaaaa");
+                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                    //StringBuilder rispostaIA = new StringBuilder("risposta dalla iaaaaaaaaaaaaaaaaaaaa");
 
                     chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
                     cache.put(paginaChatId, chatMessageIa);
