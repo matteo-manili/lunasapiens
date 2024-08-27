@@ -16,6 +16,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
@@ -244,10 +245,8 @@ public class AppConfig implements WebMvcConfigurer {
         return cacheManager;
     }
 
-    /**
-     *  È utilizzato per effettuare chiamate HTTP verso altre API web. Viene utilizzato per inviare richieste HTTP (GET, POST, PUT, DELETE) e gestire le risposte.
-     * @return
-     */
+
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -256,7 +255,20 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
+    /**
+     * Più recente adatto per le chiamate asincrone e in un ambiente reattivo in cui le operazioni non sono bloccanti
+     *  È utilizzato per effettuare chiamate HTTP verso altre API web. Viene utilizzato per inviare richieste HTTP (GET, POST, PUT, DELETE) e gestire le risposte.
+     * @return
+     */
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
 
+    /**
+     *  È utilizzato per effettuare chiamate HTTP verso altre API web. Viene utilizzato per inviare richieste HTTP (GET, POST, PUT, DELETE) e gestire le risposte.
+     * @return
+     */
     @Bean
     public SpringResourceTemplateResolver templateResolver(){
         // SpringResourceTemplateResolver si integra automaticamente con l'infrastruttura di risoluzione delle risorse di Spring stessa,

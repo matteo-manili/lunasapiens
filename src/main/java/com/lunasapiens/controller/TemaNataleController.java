@@ -91,7 +91,7 @@ public class TemaNataleController {
         Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
 
-        logger.info("Tema Natale ID: " + model.getAttribute("paginaChatId"));
+
         return "tema-natale";
     }
 
@@ -115,8 +115,8 @@ public class TemaNataleController {
                                    @RequestParam("statoName") String statoName,
                                    @RequestParam("statoCode") String statoCode,
                                    RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        logger.info("sono in temaNataleSubmit");
 
+        logger.info("sono in temaNataleSubmit");
         HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
         String userId = (String) session.getAttribute(Constants.USER_SESSION_ID);
         if (userId == null) {
@@ -150,7 +150,6 @@ public class TemaNataleController {
         redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
         redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);
 
-
         final GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
         StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
@@ -160,6 +159,7 @@ public class TemaNataleController {
 
         String paginaChatId = UUID.randomUUID().toString();
         redirectAttributes.addFlashAttribute("paginaChatId", paginaChatId);
+        logger.info("paginaChatId: " + paginaChatId);
 
         // Metto in cache i chatMessageIa
         Cache cache = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
@@ -172,7 +172,6 @@ public class TemaNataleController {
         logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
         cache.put(paginaChatId, chatMessageIa);
-
         return "redirect:/tema-natale";
     }
 

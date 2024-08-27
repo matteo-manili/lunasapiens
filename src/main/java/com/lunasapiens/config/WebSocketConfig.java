@@ -1,7 +1,9 @@
 package com.lunasapiens.config;
 
+import com.lunasapiens.TelegramBotClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -26,7 +28,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
-
+    @Autowired
+    private TelegramBotClient telegramBotClient;
 
     public static final String userAnonymous = "anonymous";
 
@@ -73,7 +76,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
 
                         InetSocketAddress remoteAddress = request.getRemoteAddress();
-                        String ipAddress = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : UUID.randomUUID().toString();
+
+                        String ipAddress = "";
+                        if (remoteAddress != null){
+                            ipAddress = remoteAddress.getAddress().getHostAddress();
+                        }else{
+                            ipAddress = "ipAddress-"+UUID.randomUUID().toString();
+                            logger.warn("ipAddress non trovato, assegno uno random: "+ipAddress);
+                            telegramBotClient.inviaMessaggio("WebSocketConfig ipAddress non trovato, assegno uno random");
+                        }
 
                         // Recupera l'utente autenticato da Spring Security
                         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

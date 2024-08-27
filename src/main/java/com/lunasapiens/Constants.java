@@ -64,6 +64,7 @@ public class Constants {
             "/user/queue/reply",
             "/app/message",
             "/coordinate",
+            "/private",
             "/greeting",
             "/facebook",
             "/error"));

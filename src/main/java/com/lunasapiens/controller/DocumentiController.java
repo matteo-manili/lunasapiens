@@ -1,14 +1,11 @@
 package com.lunasapiens.controller;
 
-import com.lunasapiens.ScheduledTasks;
-import com.lunasapiens.config.FacebookConfig;
-import com.lunasapiens.service.EmailService;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayInputStream;
 
@@ -35,7 +34,8 @@ public class DocumentiController {
     @Autowired
     private RestTemplate restTemplate;
 
-
+    @Autowired
+    private WebClient.Builder webClientBuilder;
 
     @GetMapping("/forum")
     public String register(Model model, HttpServletRequest request) {
@@ -44,15 +44,12 @@ public class DocumentiController {
 
 
 
+
     @GetMapping("/view-pdf")
     public ResponseEntity<Resource> viewPDF(@RequestParam String fileName) {
 
         logger.info("sono in DocumentiController viewPDF");
-
-        // URL base del repository GitHub dove si trovano i PDF
         String baseUrl = "https://github.com/matteo-manili/lunasapiens_download/raw/main/";
-
-        // Costruzione del link completo per il download
         String pdfUrl = baseUrl + fileName;
 
         try {
@@ -76,6 +73,94 @@ public class DocumentiController {
             // Gestisci errori, ad esempio file non trovato
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+
+    //@GetMapping("/view-pdf")
+    public ResponseEntity<Resource> viewPDF_NEW(@RequestParam String fileName) {
+        logger.info("sono in DocumentiController viewPDF");
+        try {
+
+        String baseUrl = "https://github.com/matteo-manili/lunasapiens_download/raw/main/";
+
+            String url = baseUrl + fileName;
+            logger.info( "url: "+url );
+
+            WebClient webClient = webClientBuilder.build();
+
+            /*
+            byte[] pdfBytes = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(byte[].class)
+                    .block();  // Usa block() per ottenere il risultato in modo sincrono
+             */
+
+            Mono<byte[]> pdfBytesMono = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(byte[].class);
+
+            byte[] pdfBytes = pdfBytesMono.block();
+
+            // Crea una risorsa per la risposta
+            InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+
+            // Imposta il tipo di contenuto e il nome del file
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + fileName);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(pdfBytes.length)
+                    .body(resource);
+
+        } catch (Exception e) {
+            // Gestisci errori, ad esempio file non trovato
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
+
+
+    //@GetMapping("/view-pdf")
+    public Mono<ResponseEntity<ByteArrayResource>> viewPDF_NEW_NEW(@RequestParam String fileName) {
+
+        logger.info("sono in DocumentiController viewPDF");
+
+        String baseUrl = "https://github.com/matteo-manili/lunasapiens_download/raw/main/";
+        String url = baseUrl + fileName;
+        logger.info( "url: "+url );
+
+        WebClient webClient = webClientBuilder.build();
+
+
+        return webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(byte[].class)
+                .doOnNext(pdfBytes -> {
+                    // Fai qualcosa con i byte[] se necessario
+                    System.out.println("PDF scaricato con successo, lunghezza byte: " + pdfBytes.length);
+                })
+                .map(pdfBytes -> {
+                    // Crea un Resource da byte[]
+                    ByteArrayResource resource = new ByteArrayResource(pdfBytes);
+
+                    // Restituisci il PDF come Resource
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_PDF)
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                            .body(resource);
+                })
+                .onErrorResume(e -> {
+                    // Gestisci gli errori
+                    System.err.println("Errore durante il download del PDF: " + e.getMessage());
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                });
     }
 
 

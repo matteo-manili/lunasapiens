@@ -75,7 +75,7 @@ public class EmailService {
             String subject = "LunaSapiens - Conferma iscrizione LunaSapiens";
             Context context = new Context();
             String linkConfirm = Constants.DOM_LUNA_SAPIENS +"/"+ "confirmRegistrazioneUtente" + "?code="+codeTokenJwt;
-            String contenuto = "<b>Grazie per esserti registato a LunaSapiens.</b><br><br>" +
+            String contenuto = "<b>Grazie per esserti iscritto a LunaSapiens.</b><br><br>" +
                     "Per autenticarti e accedere a LunsaSapiens, clicca sul seguente link <br>" + linkConfirm +
                     "<br><br>" + "<i>Se non hai mai visitato il sito LunaSapiens e hai ricevuto questa email per errore, puoi ignorarla.</i>";
 

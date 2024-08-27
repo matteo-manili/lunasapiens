@@ -304,6 +304,8 @@ public class IndexController {
             writer.println("Disallow: "+url);
         }
         writer.println();
+        writer.println("Allow: /download-pdf");
+        writer.println();
         writer.println("Sitemap: "+Constants.DOM_LUNA_SAPIENS+"/"+"sitemap.xml");
         writer.close();
     }

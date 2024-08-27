@@ -23,9 +23,10 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class WebSocket_e_ApiController {
     private ApiGeonamesConfig getApiGeonames;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient.Builder webClientBuilder;
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
@@ -144,11 +145,17 @@ public class WebSocket_e_ApiController {
     public ResponseEntity<Object> getCoordinates(@RequestParam String cityName) {
         String url = "http://api.geonames.org/searchJSON?name_startsWith=" + cityName + "&username=" + getApiGeonames.getUsername() + "&style=MEDIUM&lang=it&maxRows=3";
         logger.info(url);
-        String response;
         List<Map<String, Object>> locations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         try {
-            response = restTemplate.getForObject(url, String.class);
+            WebClient webClient = webClientBuilder.build();
+            Mono<String> responseMono = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(String.class);
+            String response = responseMono.block(); // Note: Using block() is not recommended for non-blocking code
+
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response);
             JsonNode geonames = root.path("geonames");

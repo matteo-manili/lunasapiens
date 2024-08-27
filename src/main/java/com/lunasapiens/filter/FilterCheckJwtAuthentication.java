@@ -53,13 +53,26 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
         //logger.info("sono in FilterCheckJwtAuthentication doFilterInternal");
 
         // ######################### AUTENTICAZIONE JWT #########################
+
+
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
+            Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
             for (Cookie cookie : cookies) {
-                if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null) {
+                if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null && authenticationNow == null) {
+                    logger.info("authenticationNow è null");
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
                     if (jwtDetails.isSuccess()) {
-                        autenticaUtente(jwtDetails, request, response);
+                        autenticaUtente(jwtDetails, request);
+                        // controllo che la sessione attiva sia effettivamente quella dell'utente del token altrimenti la cancello
+                        if (authenticationNow != null && authenticationNow.isAuthenticated()
+                                && !authenticationNow.getName().equals(jwtDetails.getSubject())) {
+                            logger.warn("errore autenticazione utente, Jwt (getSubject()) e Authentication (getName()) non corrispondono. " +
+                                    "Cancello cookie e autienticazione: " + authenticationNow.getName());
+                            Utils.clearJwtCookie_ClearSecurityContext(request, response);
+                        }
+
                     } else {
                         if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
@@ -80,29 +93,21 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
 
 
 
-    public void autenticaUtente(JwtElements.JwtDetails jwtDetails, HttpServletRequest request, HttpServletResponse response) {
-        Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
-        if (authenticationNow == null) {
-            Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
-            if (profiloUtenteOpt.isPresent()) {
-                logger.info("eseguo la autenticazione: .setAuthentication(authentication)");
-                UserDetails userDetails = User.withUsername(profiloUtenteOpt.get().getEmail())
-                        .password("")
-                        .authorities("USER")
-                        .build();
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // Imposta l'autenticazione nel contesto di sicurezza
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-
-            // controllo che la sessione attiva sia effettivamente quella dell'utente del token altrimenti la cancello
-        } else if (authenticationNow != null && authenticationNow.isAuthenticated()
-                && !authenticationNow.getName().equals(jwtDetails.getSubject())) {
-            logger.info("authenticationNow.getName(): " + authenticationNow.getName());
-            Utils.clearJwtCookie_ClearSecurityContext(request, response);
+    public void autenticaUtente(JwtElements.JwtDetails jwtDetails, HttpServletRequest request) {
+        Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
+        if (profiloUtenteOpt.isPresent()) {
+            logger.info("eseguo la autenticazione: "+profiloUtenteOpt.get().getEmail());
+            UserDetails userDetails = User.withUsername(profiloUtenteOpt.get().getEmail())
+                    .password("")
+                    .authorities("USER")
+                    .build();
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Imposta l'autenticazione nel contesto di sicurezza
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
     }
 
 }

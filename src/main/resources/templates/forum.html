@@ -276,6 +276,7 @@
     </div> <!-- fine row -->
 </div> <!-- fine container -->
 
+
 <!-- Modal for PDF viewer -->
 <div id="pdfModal" class="modal fade" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-fullscreen">
@@ -295,19 +296,32 @@
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
+    const pdfModal = new bootstrap.Modal(document.getElementById('pdfModal'));
+    const viewer = document.getElementById('pdfViewer');
+
     document.querySelectorAll('.view-pdf').forEach(button => {
         button.addEventListener('click', function() {
             const fileUrl = this.getAttribute('data-file');
-            const modal = new bootstrap.Modal(document.getElementById('pdfModal'));
-            const viewer = document.getElementById('pdfViewer');
             viewer.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:100%; border: none;"></iframe>`;
-            modal.show();
+            pdfModal.show();
+            history.pushState({ pdfUrl: fileUrl }, '', fileUrl);
         });
     });
-});
 
+    document.getElementById('pdfModal').addEventListener('hide.bs.modal', function () {
+        history.pushState(null, '', location.pathname);
+    });
+
+    window.addEventListener('popstate', function (event) {
+        if (event.state && event.state.pdfUrl) {
+            viewer.innerHTML = `<iframe src="${event.state.pdfUrl}" style="width:100%; height:100%; border: none;"></iframe>`;
+            pdfModal.show();
+        } else {
+            pdfModal.hide();
+        }
+    });
+});
 </script>
 </body>
 </html>
