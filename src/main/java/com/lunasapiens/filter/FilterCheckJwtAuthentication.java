@@ -92,9 +92,9 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
             }
         }
 
-        //
+        // non funziona. anche se l'utete è autenticato comunquie da null
         if ( SecurityContextHolder.getContext().getAuthentication() == null ){
-            logger.info("authenticationNow = null");
+            //logger.info("authenticationNow = null");
         }
 
 
