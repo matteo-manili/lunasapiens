@@ -3,13 +3,13 @@ package com.lunasapiens.config;
 import java.security.Principal;
 
 
-public class CustomPrincipalWebSocket implements Principal {
+public class CustomPrincipalWebSocketChatBot implements Principal {
 
     private final String name;
     private final String ipAddress; // Nuovo campo per l'IP Address
 
     // Costruttore aggiornato per accettare anche l'IP Address
-    public CustomPrincipalWebSocket(String name, String ipAddress) {
+    public CustomPrincipalWebSocketChatBot(String name, String ipAddress) {
         this.name = name;
         this.ipAddress = ipAddress;
     }

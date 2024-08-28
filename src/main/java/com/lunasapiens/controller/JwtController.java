@@ -126,9 +126,10 @@ public class JwtController {
     public ResponseEntity<String> confirmRegistrazione(@RequestParam(name = "code", required = true) String codeTokenJwt,
                                                        RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmRegistrazione");
+
         JwtElements.JwtDetails jwtDetails = jwtService.validateToken( codeTokenJwt );
-        HttpHeaders headers = new HttpHeaders();
-        String infoMessage = "";
+        HttpHeaders headers = new HttpHeaders(); String infoMessage = "";
+
         if( jwtDetails.isSuccess() ) {
             Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail( jwtDetails.getSubject() );
             if( profiloUtenteOpt.isPresent() ){
@@ -142,8 +143,11 @@ public class JwtController {
                 jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
                 // Aggiungi il cookie alla risposta HTTP
                 response.addCookie(jwtCookie);
-                infoMessage = "Grazie per aver confermato la tua email. Ora sei un Utente iscritto con email: "+jwtDetails.getSubject();
 
+                logger.info("creo cookie jwt per l'utente");
+
+
+                infoMessage = "Grazie per aver confermato la tua email. Ora sei un Utente iscritto con email: "+jwtDetails.getSubject();
                 redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
                 headers.add("Location", "/private/privatePage");
                 return ResponseEntity.status(302).headers(headers).build();
@@ -155,9 +159,6 @@ public class JwtController {
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         headers.add("Location", "/register");
         return ResponseEntity.status(302).headers(headers).build();
-
-
-
     }
 
 

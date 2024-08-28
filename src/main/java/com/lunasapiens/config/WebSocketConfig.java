@@ -1,6 +1,8 @@
 package com.lunasapiens.config;
 
+import com.lunasapiens.Constants;
 import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.exception.UserNotAuthenticatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +32,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Autowired
     private TelegramBotClient telegramBotClient;
-
-    public static final String userAnonymous = "anonymous";
 
 
     /**
@@ -74,31 +74,37 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setHandshakeHandler(new DefaultHandshakeHandler() {
                     @Override
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-
-                        InetSocketAddress remoteAddress = request.getRemoteAddress();
-
-                        String ipAddress = "";
-                        if (remoteAddress != null){
-                            ipAddress = remoteAddress.getAddress().getHostAddress();
-                        }else{
-                            ipAddress = "ipAddress-"+UUID.randomUUID().toString();
-                            logger.warn("ipAddress non trovato, assegno uno random: "+ipAddress);
-                            telegramBotClient.inviaMessaggio("WebSocketConfig ipAddress non trovato, assegno uno random");
-                        }
-
-                        // Recupera l'utente autenticato da Spring Security
-                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                        if (authentication != null && authentication.isAuthenticated()) {
-                            Object principal = authentication.getPrincipal();
-                            // Verifica se il principal è un'istanza di un tuo oggetto utente
-                            if (principal instanceof UserDetails) {
-                                UserDetails userDetails = (UserDetails) principal;
-                                return new CustomPrincipalWebSocket(userDetails.getUsername(), ipAddress); // Usa il nome utente come identificativo
+                        try{
+                            InetSocketAddress remoteAddress = request.getRemoteAddress(); String ipAddress = "";
+                            if (remoteAddress != null){
+                                ipAddress = remoteAddress.getAddress().getHostAddress();
+                            }else{
+                                ipAddress = "ipAddress-"+UUID.randomUUID().toString();
+                                logger.warn("ipAddress non trovato, assegno uno random: "+ipAddress);
+                                telegramBotClient.inviaMessaggio("WebSocketConfig ipAddress non trovato, assegno uno random");
                             }
+                            // Recupera l'utente autenticato da Spring Security
+                            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                            if (authentication != null && authentication.isAuthenticated()) {
+                                Object principal = authentication.getPrincipal();
+                                // Verifica se il principal è un'istanza di un tuo oggetto utente
+                                if (principal instanceof UserDetails) {
+                                    UserDetails userDetails = (UserDetails) principal;
+                                    logger.info("CustomPrincipalWebSocketChatBot: "+userDetails.getUsername());
+
+                                    return new CustomPrincipalWebSocketChatBot(userDetails.getUsername(), ipAddress); // Usa il nome utente come identificativo
+                                }
+                            }
+
+                            // Se l'utente non è autenticato, crea un nome univoco per l'utente anonimo
+                            String anonymousId = Constants.userAnonymous +"-"+ UUID.randomUUID().toString();
+                            return new CustomPrincipalWebSocketChatBot(anonymousId, ipAddress); // Utente anonimo, ad esempio
+
+
+                        } catch (UserNotAuthenticatedException ex) {
+                            logger.error("Errore durante il WebSocket handshake: " + ex.getMessage());
+                            throw new IllegalStateException("Errore durante il WebSocket handshake: " + ex.getMessage()); // Impedisce il WebSocket handshake
                         }
-                        // Se l'utente non è autenticato, crea un nome univoco per l'utente anonimo
-                        String anonymousId = userAnonymous +"-"+ UUID.randomUUID().toString();
-                        return new CustomPrincipalWebSocket(anonymousId, ipAddress); // Utente anonimo, ad esempio
                     }
                 })
                 .withSockJS();

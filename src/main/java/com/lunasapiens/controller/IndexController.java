@@ -184,7 +184,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String rootBase() {
-        logger.info("sono in roorBase");
+        logger.info("sono in rootBase");
         return "index";
     }
 

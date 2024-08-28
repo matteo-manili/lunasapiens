@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.Constants;
 import com.lunasapiens.TelegramBotClient;
 import com.lunasapiens.config.ApiGeonamesConfig;
-import com.lunasapiens.config.CustomPrincipalWebSocket;
+import com.lunasapiens.config.CustomPrincipalWebSocketChatBot;
 import com.lunasapiens.config.WebSocketConfig;
 import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
@@ -66,38 +66,38 @@ public class WebSocket_e_ApiController {
      */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public Map<String, Object> userMessageWebSocket(Map<String, String> message, CustomPrincipalWebSocket principal) {
+    public Map<String, Object> userMessageWebSocket(Map<String, String> message, CustomPrincipalWebSocketChatBot principal) {
         logger.info("sono in userMessageWebSocket");
         return responseChatBot(message, principal);
     }
 
 
 
-    public Map<String, Object> responseChatBot( Map<String, String> message, CustomPrincipalWebSocket principal ){
+    public Map<String, Object> responseChatBot( Map<String, String> message, CustomPrincipalWebSocketChatBot principal ){
         Map<String, Object> response = new HashMap<>(); final String keyJsonStandardContent = "content";
-        CustomPrincipalWebSocket customPrincipalWebSocket = (CustomPrincipalWebSocket) principal;
-        if( customPrincipalWebSocket != null ){
+        CustomPrincipalWebSocketChatBot customPrincipalWebSocketChatBot = (CustomPrincipalWebSocketChatBot) principal;
+        if( customPrincipalWebSocketChatBot != null ){
             String domanda = message.get( keyJsonStandardContent );
             String paginaChatId = message.get("paginaChatId");
             String userSessionId = message.get(Constants.USER_SESSION_ID);
 
-            logger.info("customPrincipal.getIpAddress(): "+customPrincipalWebSocket.getIpAddress());
-            logger.info("customPrincipal.getName(): "+customPrincipalWebSocket.getName());
+            logger.info("customPrincipal.getIpAddress(): "+ customPrincipalWebSocketChatBot.getIpAddress());
+            logger.info("customPrincipal.getName(): "+ customPrincipalWebSocketChatBot.getName());
             logger.info("domanda: "+domanda);
 
             if (domanda == null || domanda.isEmpty()) {
                 response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
                 return response;
             }
-            if( customPrincipalWebSocket.getName().startsWith(WebSocketConfig.userAnonymous) ){
+            if( customPrincipalWebSocketChatBot.getName().startsWith(Constants.userAnonymous) ){
                 logger.info("User not logged in");
-                if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
+                if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
                     response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
                             + "<br>" + "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
                     return response;
                 }
             }else{
-                if (!rateLimiterUser.allowMessage( customPrincipalWebSocket.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
+                if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
                     response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
                     return response;
                 }
@@ -120,7 +120,7 @@ public class WebSocket_e_ApiController {
                     cache.put(paginaChatId, chatMessageIa);
                     response.put(keyJsonStandardContent, rispostaIA.toString());
 
-                    if ( customPrincipalWebSocket.getName().startsWith(WebSocketConfig.userAnonymous) ) {
+                    if ( customPrincipalWebSocketChatBot.getName().startsWith(Constants.userAnonymous) ) {
                         telegramBotClient.inviaMessaggio("user: "+domanda);
                     }else{
                         telegramBotClient.inviaMessaggio("utente: "+domanda);
@@ -131,8 +131,9 @@ public class WebSocket_e_ApiController {
             } else {
                 response.put(keyJsonStandardContent, "Errore durante l'elaborazione.");
             }
+        }else{
+            response.put(keyJsonStandardContent, "Utente non riconosciuto");
         }
-
         return response;
 
 
@@ -184,7 +185,7 @@ public class WebSocket_e_ApiController {
             logger.error("Errore durante il recupero delle coordinate", e);
             // Restituisci la pagina di errore con il messaggio
             ModelAndView modelAndView = new ModelAndView("error");
-            modelAndView.addObject("infoError", "Si è verificato un errore: " + e.getMessage());
+            modelAndView.addObject(Constants.INFO_ERROR, "Si è verificato un errore nel recupero coordinate: " + e.getMessage());
             return new ResponseEntity<>(modelAndView.getModel(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

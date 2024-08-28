@@ -47,7 +47,6 @@ public class Constants {
             new RelationshipOption("N", "Preferisco non dirlo")));
 
 
-
     public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/",
             "/tema-natale",
@@ -58,7 +57,6 @@ public class Constants {
             "/info-privacy",
             "/contatti"));
 
-
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/chat-websocket",
             "/user/queue/reply",
@@ -68,6 +66,12 @@ public class Constants {
             "/greeting",
             "/facebook",
             "/error"));
+
+    public static final String userAnonymous = "anonymous";
+    public static final String USER = "USER";
+
+
+
 
 
     public enum Pianeti {

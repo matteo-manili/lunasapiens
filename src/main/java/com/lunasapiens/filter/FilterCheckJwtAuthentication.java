@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -44,6 +46,8 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     @Autowired
     private ProfiloUtenteRepository profiloUtenteRepository;
 
+
+
     /**
      * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip che richiama questi endpoint
      */
@@ -51,12 +55,10 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //logger.info("sono in FilterCheckJwtAuthentication doFilterInternal");
-
         // ######################### AUTENTICAZIONE JWT #########################
 
-
-
         Cookie[] cookies = request.getCookies();
+
         if (cookies != null) {
             Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
             for (Cookie cookie : cookies) {
@@ -64,7 +66,10 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                     logger.info("authenticationNow è null");
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
                     if (jwtDetails.isSuccess()) {
-                        autenticaUtente(jwtDetails, request);
+                        Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
+                        if (profiloUtenteOpt.isPresent()) {
+                            autenticaUtente(profiloUtenteOpt.get().getEmail(), request);
+                        }
                         // controllo che la sessione attiva sia effettivamente quella dell'utente del token altrimenti la cancello
                         if (authenticationNow != null && authenticationNow.isAuthenticated()
                                 && !authenticationNow.getName().equals(jwtDetails.getSubject())) {
@@ -72,7 +77,6 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                                     "Cancello cookie e autienticazione: " + authenticationNow.getName());
                             Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         }
-
                     } else {
                         if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
@@ -88,26 +92,30 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
             }
         }
 
+        //
+        if ( SecurityContextHolder.getContext().getAuthentication() == null ){
+            logger.info("authenticationNow = null");
+        }
+
+
         filterChain.doFilter(request, response);
     }
 
 
-
-    public void autenticaUtente(JwtElements.JwtDetails jwtDetails, HttpServletRequest request) {
-        Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
-        if (profiloUtenteOpt.isPresent()) {
-            logger.info("eseguo la autenticazione: "+profiloUtenteOpt.get().getEmail());
-            UserDetails userDetails = User.withUsername(profiloUtenteOpt.get().getEmail())
-                    .password("")
-                    .authorities("USER")
-                    .build();
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // Imposta l'autenticazione nel contesto di sicurezza
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-
+    public void autenticaUtente(String email, HttpServletRequest request) {
+        logger.info("eseguo la autenticazione: "+email);
+        UserDetails userDetails = User.withUsername(email)
+                .password("")
+                .authorities( Constants.USER )
+                .build();
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        // Imposta l'autenticazione nel contesto di sicurezza
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+
+
 
 }

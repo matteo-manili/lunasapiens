@@ -5,7 +5,6 @@ import de.thmac.swisseph.SweDate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -14,12 +13,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.SecureRandom;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -27,7 +31,6 @@ import java.util.*;
 public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
-
 
 
     public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
@@ -39,6 +42,16 @@ public class Utils {
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0); // Scadenza immediata
         response.addCookie(jwtCookie);
+        ClearSecurityContext(request, response);
+    }
+
+    public static void ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            // Esegue il logout dell'utente
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        /*
         // Disconnetti l'utente dal contesto di sicurezza
         SecurityContextHolder.clearContext();
         // Invalidare la sessione (se presente)
@@ -46,7 +59,10 @@ public class Utils {
         if (session != null) {
             session.invalidate();
         }
+        */
     }
+
+
 
     public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {
         double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);
