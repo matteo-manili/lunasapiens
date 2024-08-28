@@ -33,7 +33,6 @@
 
     <dependencies>
 
-
         <!-- ###################### SPRING FRAMEWORK ###################### -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -62,7 +61,6 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
