@@ -2,7 +2,7 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
-import com.lunasapiens.config.AppConfig;
+import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class ServizioOmeopatiaAstrologica {
     private static final Logger logger = LoggerFactory.getLogger(ServizioOmeopatiaAstrologica.class);
 
     @Autowired
-    private AppConfig appConfig;
+    private PropertiesConfig propertiesConfig;
 
     @Autowired
     SegnoZodiacale segnoZodiacale;
@@ -40,7 +40,7 @@ public class ServizioOmeopatiaAstrologica {
 
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
-                    appConfig.transitiPianetiSegni_TemaNatale() );
+                propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
         return omeopatiaAstrologicaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
     }
@@ -52,7 +52,7 @@ public class ServizioOmeopatiaAstrologica {
 
     public StringBuilder omeopatiaAstrologicaDescrizione(List<PianetaPosizTransito> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
 
-        Properties omeopatiaElementiProperties = appConfig.omeopatiaElementi();
+        Properties omeopatiaElementiProperties = propertiesConfig.omeopatiaElementi();
 
 
         // ############################ OMEOPATIA ASTROLOGIA ########################

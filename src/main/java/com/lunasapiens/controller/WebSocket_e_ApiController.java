@@ -89,7 +89,7 @@ public class WebSocket_e_ApiController {
                 response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
                 return response;
             }
-            if( customPrincipalWebSocketChatBot.getName().startsWith(Constants.userAnonymous) ){
+            if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ){
                 logger.info("User not logged in");
                 if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
                     response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
@@ -120,7 +120,7 @@ public class WebSocket_e_ApiController {
                     cache.put(paginaChatId, chatMessageIa);
                     response.put(keyJsonStandardContent, rispostaIA.toString());
 
-                    if ( customPrincipalWebSocketChatBot.getName().startsWith(Constants.userAnonymous) ) {
+                    if ( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ) {
                         telegramBotClient.inviaMessaggio("user: "+domanda);
                     }else{
                         telegramBotClient.inviaMessaggio("utente: "+domanda);

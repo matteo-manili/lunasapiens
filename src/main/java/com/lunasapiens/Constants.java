@@ -52,6 +52,7 @@ public class Constants {
             "/tema-natale",
             "/sinastria",
             "/oroscopo",
+            "/omeopatia-astrologica",
             "/forum",
             "/register",
             "/info-privacy",
@@ -67,7 +68,7 @@ public class Constants {
             "/facebook",
             "/error"));
 
-    public static final String userAnonymous = "anonymous";
+
     public static final String USER = "USER";
 
 

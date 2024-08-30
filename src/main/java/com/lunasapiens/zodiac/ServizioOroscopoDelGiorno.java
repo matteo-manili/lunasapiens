@@ -3,6 +3,7 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
+import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
 import org.slf4j.Logger;
@@ -19,6 +20,9 @@ public class ServizioOroscopoDelGiorno {
 
     @Autowired
     private AppConfig appConfig;
+
+    @Autowired
+    private PropertiesConfig propertiesConfig;
 
     @Autowired
     SegnoZodiacale segnoZodiacale;
@@ -48,7 +52,7 @@ public class ServizioOroscopoDelGiorno {
 
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
         for (PianetaPosizTransito var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
@@ -64,7 +68,7 @@ public class ServizioOroscopoDelGiorno {
             }
         }
         descrizioneOggi += "</p>";
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, propertiesConfig.aspettiPianeti());
         if(!aspetti.isEmpty()){
             descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
@@ -79,13 +83,13 @@ public class ServizioOroscopoDelGiorno {
 
 
     public StringBuilder domanda_prompt(int numeroSegno) {
-        Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
-        Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
-        Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
+        Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
+        Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
+        Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
         logger.info( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 

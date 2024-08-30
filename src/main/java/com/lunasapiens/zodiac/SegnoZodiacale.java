@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
-import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
+import com.lunasapiens.config.PropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +28,12 @@ public class SegnoZodiacale {
 
 
     @Autowired
-    private AppConfig appConfig;
+    private PropertiesConfig propertiesConfig;
 
 
     public SegnoZodiacale getSegnoZodiacale(int numeroSegno) {
         SegnoZodiacale segnoZodiacale = new SegnoZodiacale();
-        Properties segniZodiacali = appConfig.segniZodiacali();
+        Properties segniZodiacali = propertiesConfig.segniZodiacali();
 
         switch (numeroSegno) {
             case 0: // ariete

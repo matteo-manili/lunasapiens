@@ -2,6 +2,7 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
+import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -22,6 +23,9 @@ public class ServizioTemaNatale {
 
     @Autowired
     private AppConfig appConfig;
+
+    @Autowired
+    private PropertiesConfig propertiesConfig;
 
     @Autowired
     SegnoZodiacale segnoZodiacale;
@@ -55,7 +59,7 @@ public class ServizioTemaNatale {
 
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
-                    appConfig.transitiPianetiSegni_TemaNatale() );
+                propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
         return temaNataleDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
     }
@@ -63,7 +67,7 @@ public class ServizioTemaNatale {
 
     public StringBuilder temaNataleDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, appConfig.transitiPianetiSegni_TemaNatale());
+        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
         ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
         return temaNataleDescrizione(pianetiTransiti, casePlacideArrayList);
     }
@@ -71,17 +75,17 @@ public class ServizioTemaNatale {
 
 
     public StringBuilder temaNataleDescrizione(List<PianetaPosizTransito> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
-        Properties caseSignificato = appConfig.caseSignificato();
-        Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
-        Properties pianetiCaseSignificatoProperties = appConfig.pianetiCaseSignificato();
-        Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
-        Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
-        Properties segniZodProperties = appConfig.segniZodiacali();
-        Properties segniAscendenteProperties = appConfig.segniAscendente();
-        Properties lunaSegniProperties = appConfig.lunaSegni();
+        Properties caseSignificato = propertiesConfig.caseSignificato();
+        Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
+        Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
+        Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
+        Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
+        Properties segniZodProperties = propertiesConfig.segniZodiacali();
+        Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
+        Properties lunaSegniProperties = propertiesConfig.lunaSegni();
 
         assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, appConfig.aspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, propertiesConfig.aspettiPianeti());
 
         //for(Aspetti var: aspetti) {
         //    logger.info( var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName() );
@@ -171,10 +175,10 @@ public class ServizioTemaNatale {
 
 
     public StringBuilder significatiTemaNataleDescrizione() {
-        Properties aspettiPianetiProperties = appConfig.aspettiPianeti();
-        Properties pianetiOroscopoSignificatoProperties = appConfig.pianetiOroscopoSignificato();
-        Properties pianetaRetrogradoProperties = appConfig.pianetaRetrogrado();
-        Properties segniZodProperties = appConfig.segniZodiacali();
+        Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
+        Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
+        Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
+        Properties segniZodProperties = propertiesConfig.segniZodiacali();
 
         StringBuilder significatiTemaNatale = new StringBuilder();
 

@@ -30,6 +30,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
+    public static final String userAnonymous = "anonymous";
+
     @Autowired
     private TelegramBotClient telegramBotClient;
 
@@ -97,7 +99,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                             }
 
                             // Se l'utente non è autenticato, crea un nome univoco per l'utente anonimo
-                            String anonymousId = Constants.userAnonymous +"-"+ UUID.randomUUID().toString();
+                            String anonymousId = userAnonymous +"-"+ UUID.randomUUID().toString();
                             return new CustomPrincipalWebSocketChatBot(anonymousId, ipAddress); // Utente anonimo, ad esempio
 
 
