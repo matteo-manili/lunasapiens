@@ -53,6 +53,8 @@ public class AppConfig implements WebMvcConfigurer {
     private ApplicationContext applicationContext;
 
 
+    @Bean
+    public Properties omeopatiaElementi(){ return getProperties( "omeopatia-elementi.properties" ); }
 
     @Bean
     public Properties lunaSegni(){ return getProperties( "luna-segni.properties" ); }

@@ -288,9 +288,7 @@ public class IndexController {
      * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
      */
     @GetMapping("/header")
-    public String header() {
-        return "fragments/templateBase :: header";
-    }
+    public String header() { return "fragments/templateBase :: header"; }
 
 
 

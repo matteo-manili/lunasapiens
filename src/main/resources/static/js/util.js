@@ -1,23 +1,4 @@
 
-document.addEventListener("DOMContentLoaded", function() {
-
-/**
- * quesrto serve per fare il refresh del fragments header, perché se l'utente si logga deve vedere la username nel header
- */
-fetch("/header")
-    .then(response => response.text())
-    .then(html => {
-        // Inserisci l'HTML dell'header nella pagina
-        document.getElementById("header-placeholder").innerHTML = html;
-        // Esegui il codice di evidenziazione del link del menu dopo aver aggiornato l'header
-        highlightActiveMenuLink();
-    })
-    .catch(error => {
-        console.error('Errore nel caricamento dell\'header:', error);
-    });
-
-});
-
 
     /**
      * Questo script evidenzia dinamicamente il link del menu corrispondente alla pagina corrente.

@@ -141,6 +141,13 @@ public class Utils {
         return document.text().replace("\\n", "\n");
     }
 
+    public static String convertPlainTextToHtml(String text) {
+        return text.replaceAll("\\n", "<br>");
+    }
+
+
+
+
 
     /**
      * In sintesi, questo metodo prepara e restituisce una risposta HTTP che contiene un video sotto forma di ByteArrayResource, con le appropriate

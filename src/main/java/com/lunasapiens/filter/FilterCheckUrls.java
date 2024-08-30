@@ -5,12 +5,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class FilterCheckUrls extends OncePerRequestFilter {
 
 
     // TODO ricorda di rimettere MAX_REQUESTS a 10
-    private static final int MAX_REQUESTS = 100; // Limite massimo di richieste per IP
+    private static final int MAX_REQUESTS = 20; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
 
@@ -43,7 +40,6 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         String ipAddress = request.getRemoteAddr();
 
         //logger.info("sono in FilterCheckUrls doFilterInternal");
-
 
         // ######################### Controllo MaxRequest #########################
         if (request.getRequestURI().equals("/"+ Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
@@ -61,7 +57,6 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         if (request.getRequestURI().equals("/registrazioneUtente") && request.getMethod().equals("POST")) {
             handleMaxRequestRequest(request, response, ipAddress);
         }
-
 
         if (request.getRequestURI().equals("/contattiSubmit") && request.getMethod().equals("POST")) {
             handleMaxRequestRequest(request, response, ipAddress);

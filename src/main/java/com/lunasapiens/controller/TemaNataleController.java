@@ -20,6 +20,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -66,10 +68,13 @@ public class TemaNataleController {
                              @ModelAttribute("cityLng") String cityLng,
                              @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
                              @ModelAttribute("paginaChatId") String paginaChatId,
-                             @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId
+                             @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId,
+                             @AuthenticationPrincipal UserDetails userDetails
     ) {
 
         logger.info("sono in temaNatale");
+        if( userDetails != null ){ logger.info("userDetails: "+userDetails.getUsername()); }
+
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
         optionalDateTime

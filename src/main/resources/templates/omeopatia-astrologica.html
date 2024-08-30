@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Luna Sapiens | Omeopatia Astrologica</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Scopri come l'omeopatia si integra con l'astrologia con il nostro strumento avanzato. Inserisci la tua data e ora di nascita per generare la tua Omeopatia Astrologica e ottenere informazioni sui tuoi elementi astrologici e costituzioni omeopatiche.">
+        <meta name="keywords" content="omeopatia astrologica, astrologia, elementi astrologici, costituzioni omeopatiche, data e ora di nascita, strumenti omeopatici, consulenza astrologica">
+        <meta property="og:title" content="Luna Sapiens | Omeopatia Astrologica" />
+        <meta property="og:description" content="Utilizza il nostro strumento di Omeopatia Astrologica per scoprire l'associazione tra i tuoi elementi astrologici e le costituzioni omeopatiche. Inserisci i tuoi dati di nascita e ottieni una consulenza personalizzata." />
+        <meta property="og:image" content="/moon_icon.ico" />
+        <meta property="og:image:type" content="image/x-icon" />
+        <meta property="og:image:width" content="64" />
+        <meta property="og:image:height" content="64" />
+        <meta property="og:url" content="https://www.lunasapiens.com/omeopatia-astrologica" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Omeopatia Astrologica" />
+        <meta name="twitter:description" content="Scopri come l'omeopatia si integra con l'astrologia. Inserisci i tuoi dati di nascita per una consulenza personalizzata basata sui tuoi elementi astrologici e costituzioni omeopatiche." />
+        <meta name="twitter:image" content="/moon_icon.ico" />
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/omeopatia-astrologica" />
+        <link rel="stylesheet" href="/css/style.css?v=2.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    </th:block>
+</head>
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+<div class="container mt-4">
+
+    <div class="container my-4 p-3 shadow-lg rounded bg-light">
+        <h1 class="display-4  mb-3 text-center">Omeopatia Astrologica</h1>
+        <p class="fs-6 text-center mb-2">Dopo aver generato la Omeopatia Astrologica, verranno visualizzate informazioni riguardo agli elementi (fuoco, aria, terra, acqua) e le Costituzioni Omeopatiche.<br>
+            L'elemento predominante nei pianeti, insieme all'elemento dell'ascendente, indica a quale Costituzione appartieni.<br>
+            Questa funzionalità implementa i contenuti del testo "I QUATTRO ELEMENTI ASTROLOGICI E LE COSTITUZIONI OMEOPATICHE", visualizzabile nella sezione <a class="text-primary" href="/forum">Forum e Biblioteca</a><br>
+            Questa funzionalità di LunaSapiens è in fase sperimentale e di ricerca.</p>
+
+        <form id="omeopatia-astrologia-submit" th:action="@{/omeopatiaAstrologicaSubmit}" method="GET" class="p-4 border rounded">
+            <div class="mb-4">
+                <label for="dateTime" class="form-label">Data e ora di nascita:</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                    <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" th:value="${dateTime}">
+                </div>
+                <div id="dateTimeError" class="text-danger mt-2" style="display: none;">Per favore inserisci una data e ora di nascita.</div>
+            </div>
+
+            <div class="mb-4">
+                <label for="cityInput" class="form-label">Località di nascita:</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                    <input type="text" id="cityInput" name="cityInput" class="form-control" th:value="${cityInput}">
+                </div>
+                <input type="hidden" id="cityName" name="cityName" th:value="${cityName}">
+                <input type="hidden" id="regioneName" name="regioneName" th:value="${regioneName}">
+                <input type="hidden" id="statoName" name="statoName" th:value="${statoName}">
+                <input type="hidden" id="statoCode" name="statoCode" th:value="${statoCode}">
+                <input type="hidden" id="cityLat" name="cityLat" th:value="${cityLat}">
+                <input type="hidden" id="cityLng" name="cityLng" th:value="${cityLng}">
+                <div id="cityError" class="text-danger mt-2" style="display: none;">Per favore inserisci il nome di una località.</div>
+                <div id="autocomplete-results" class="autocomplete-results mt-2"></div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Genera Omeopatia Astrologica</button>
+            </div>
+        </form>
+    </div>
+
+
+
+    <input type="hidden" id="omeopatiaAstrologicaDescrizione" name="omeopatiaAstrologicaDescrizione" th:value="${omeopatiaAstrologicaDescrizione}">
+
+    <div th:if="${omeopatiaAstrologicaDescrizione != null and !omeopatiaAstrologicaDescrizione.isEmpty()}" class="mb-5">
+
+
+        <div class="mt-3">
+            <p><b>Data di nascita:</b> <span th:text="${dataOraNascita}"></span> <b>Luogo:</b> <span th:text="${luogoNascita}"></span></p>
+            <p th:utext="${omeopatiaAstrologicaDescrizione}"></p>
+        </div>
+
+    </div>
+</div>
+
+
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+
+<script>
+
+$(document).ready(function() {
+
+
+    // ############################# VALIDAZIONE Omeopatia Astrologica SUBMIT #############################
+    $("#omeopatia-astrologia-submit").submit(function(event) {
+        var isValid = true; // Se il modulo è valido, mostra l'overlay e consenti l'invio
+
+        if ($("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
+            $("#cityError").show(); // Mostra il messaggio di errore
+            $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#cityError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#cityInput").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+        if ($("#dateTime").val().trim() === "") {
+            $("#dateTimeError").show(); // Mostra il messaggio di errore
+            $("#dateTime").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
+            isValid = false;
+        } else {
+            $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
+            $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
+        }
+
+        if (isValid) {
+            showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
+            googleTrackFormSubmitTemaNatale();
+        } else {
+            event.preventDefault(); // Previeni l'invio del modulo se non è valido
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    // ############################# START PAGINA #############################
+    loadData();
+
+    function loadData() {
+        const dateTimeLocalStorage = localStorage.getItem('dateTime');
+        if( dateTimeLocalStorage !== null && dateTimeLocalStorage.trim() !== '' ){ //altrimenti prende la data di default da controller 01/01/1980
+            document.getElementById('dateTime').value = dateTimeLocalStorage;
+        }
+        const cityInput = localStorage.getItem('cityInput');
+        const cityName = localStorage.getItem('cityName');
+        const regioneName = localStorage.getItem('regioneName');
+        const statoName = localStorage.getItem('statoName');
+        const statoCode = localStorage.getItem('statoCode');
+        const cityLat = localStorage.getItem('cityLat');
+        const cityLng = localStorage.getItem('cityLng');
+
+        // Imposta i valori sugli input
+        document.getElementById('cityInput').value = cityInput || "";
+        document.getElementById('cityName').value = cityName || "";
+        document.getElementById('regioneName').value = regioneName || "";
+        document.getElementById('statoName').value = statoName || "";
+        document.getElementById('statoCode').value = statoCode || "";
+        document.getElementById('cityLat').value = cityLat || "";
+        document.getElementById('cityLng').value = cityLng || "";
+    }
+
+    // quando si modifica la data la si mette nello storage
+    document.getElementById('dateTime').addEventListener('change', function() {
+        const dateTimeValue = document.getElementById('dateTime').value;
+        localStorage.setItem('dateTime', dateTimeValue);
+    });
+
+
+
+    // ############################# AUTOCOMPLETE CITY-INPUT #############################
+    const input = document.getElementById('cityInput');
+    const resultsContainer = document.getElementById('autocomplete-results');
+    let timeout = null;
+    const delay = 300; // Ritardo in millisecondi
+
+    input.addEventListener('input', function() {
+        clearTimeout(timeout); // Pulisce il timeout precedente se esiste
+        const query = input.value.trim();
+        if (query.length < 3) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        timeout = setTimeout(() => {
+            fetch(`/coordinate?cityName=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    data.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.textContent = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                        resultDiv.dataset.value = item.name;
+                        resultDiv.dataset.regioneName = item.adminName1;
+                        resultDiv.dataset.statoName = item.countryName;
+                        resultDiv.dataset.statoCode = item.countryCode;
+                        resultDiv.dataset.lat = item.lat;
+                        resultDiv.dataset.lng = item.lng;
+
+                        resultDiv.addEventListener('click', function() {
+                            input.value = `${item.name}, ${item.adminName1}, ${item.countryName}`;
+                            document.getElementById('cityName').value = item.name;
+                            document.getElementById('regioneName').value = item.adminName1;
+                            document.getElementById('statoName').value = item.countryName;
+                            document.getElementById('statoCode').value = item.countryCode;
+                            document.getElementById('cityLat').value = item.lat;
+                            document.getElementById('cityLng').value = item.lng;
+                            // metto i campi nello storage
+                            localStorage.setItem('cityInput', `${item.name}, ${item.adminName1}, ${item.countryName}`);
+                            localStorage.setItem('cityName', item.name);
+                            localStorage.setItem('regioneName', item.adminName1);
+                            localStorage.setItem('statoName', item.countryName);
+                            localStorage.setItem('statoCode', item.countryCode);
+                            localStorage.setItem('cityLat', item.lat);
+                            localStorage.setItem('cityLng', item.lng);
+                            resultsContainer.innerHTML = '';
+                        });
+                        resultsContainer.appendChild(resultDiv);
+                    });
+
+                    if (data.length === 0) {
+                        const noResultDiv = document.createElement('div');
+                        noResultDiv.textContent = 'Nessun risultato trovato';
+                        resultsContainer.appendChild(noResultDiv);
+                    }
+                })
+                .catch(error => console.error('Errore:', error));
+        }, delay); // Ritardo prima di inviare la richiesta
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!resultsContainer.contains(event.target) && event.target !== input) {
+            resultsContainer.innerHTML = '';
+        }
+    });
+
+
+
+});
+</script>
+
+</body>
+</html>

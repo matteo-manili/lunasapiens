@@ -111,11 +111,9 @@ public class JwtController {
             }
         }
 
-
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/register";
     }
-
 
 
 
@@ -126,10 +124,8 @@ public class JwtController {
     public ResponseEntity<String> confirmRegistrazione(@RequestParam(name = "code", required = true) String codeTokenJwt,
                                                        RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmRegistrazione");
-
         JwtElements.JwtDetails jwtDetails = jwtService.validateToken( codeTokenJwt );
         HttpHeaders headers = new HttpHeaders(); String infoMessage = "";
-
         if( jwtDetails.isSuccess() ) {
             Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail( jwtDetails.getSubject() );
             if( profiloUtenteOpt.isPresent() ){

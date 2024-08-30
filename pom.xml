@@ -67,7 +67,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -109,7 +108,6 @@
 
         <!-- ###################### OPEN_AI ###################### -->
 
-        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/service -->
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>client</artifactId>
@@ -122,7 +120,6 @@
             <version>0.18.2</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.azure/azure-ai-openai -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-ai-openai</artifactId>
@@ -132,7 +129,6 @@
 
         <!-- ###################### UTIL ###################### -->
 
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -140,7 +136,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -153,14 +148,12 @@
             <version>2.15.2</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.14.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
