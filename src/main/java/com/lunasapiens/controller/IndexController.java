@@ -15,15 +15,16 @@ import com.restfb.*;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.FacebookType;
 import com.restfb.types.Page;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,131 +65,11 @@ public class IndexController {
 
 
 
-    @GetMapping("/test")
-    public String testFacebook(Model model) {
-        try {
-            String pageID = facebookConfig.getPageId();
-            String appId = facebookConfig.getAppId();
-            String appSecret = facebookConfig.getAppSecret();
-
-            // Ottieni il token di accesso dell'app
-            AccessToken appAccessToken = new DefaultFacebookClient(Version.LATEST)
-                    .obtainAppAccessToken(appId, appSecret);
-
-            // Crea un client Facebook con il token dell'app
-            FacebookClient facebookClient = new DefaultFacebookClient(appAccessToken.getAccessToken(), Version.LATEST);
-
-
-
-            System.out.println("appAccessToken.getAccessToken(): "+appAccessToken. getAccessToken());
-
-
-            // Ottieni la pagina
-            Page page = facebookClient.fetchObject(pageID, Page.class, Parameter.with("fields", "access_token"));
-
-            // Ottieni il token di accesso della pagina
-            String pageAccessToken = page.getAccessToken();
-
-            // Crea un client Facebook per la pagina con il token della pagina
-            FacebookClient pageClient = new DefaultFacebookClient(pageAccessToken, Version.LATEST);
-
-            // Pubblica un messaggio sulla bacheca della pagina
-            pageClient.publish(pageID + "/feed", FacebookType.class, Parameter.with("message", "1: Hello, facebook World!"));
-
-            return "index";
-        } catch (FacebookOAuthException e) {
-            logger.error("FacebookOAuthException occurred: ", e);
-            return "error";
-        } catch (Exception e) {
-            logger.error("Exception occurred: ", e);
-            return "error";
-        }
-    }
-
-
-
-
-
-
-
-
-    /**
-     * pagina contatti
-     */
-    @GetMapping("/contatti")
-    public String contatti(Model model, Principal principal) {
-        if (principal != null) {
-            ContactFormDTO contactFormDTO = new ContactFormDTO();
-            contactFormDTO.setEmail( principal.getName() );
-            model.addAttribute("contactForm", contactFormDTO);
-        }else{
-            model.addAttribute("contactForm", new ContactFormDTO());
-        }
-        return "contatti";
-    }
-
-
-
-
-    @PostMapping("/contattiSubmit")
-    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        logger.info("sono in contattiSubmit");
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
-            return "redirect:/error";
-        }
-        emailService.inviaEmailContatti(contactForm);
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Messaggio inviato con successo!");
-        return "redirect:/contatti";
-    }
-
-
-    @GetMapping("/error")
-    public String pageError(HttpServletRequest request, Model model) {
-        return "error";
-    }
-
-
-    @GetMapping("/info-privacy")
-    public String infoPrivacy(Model model) {
-        return "info-privacy";
-    }
-
-
-    @GetMapping("/termini-di-servizio")
-    public RedirectView terminiDiServizio_redirect_301() {
-        RedirectView redirectView = new RedirectView("/info-privacy", true);
-        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
-        return redirectView;
-    }
-
-
-
-    /**
-     * lo uso solo per test
-     * Reindirizza alla home page e segnala che la risorsa non esiste più
-     */
-    @GetMapping("/genera-video")
-    public RedirectView gerneraVideo() {
-
-        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
-        scheduledTasks.creaOroscopoGiornaliero();
-
-        // Restituisci una RedirectView per reindirizzare alla home page
-        RedirectView redirectView = new RedirectView("/", true);
-        redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410
-        return redirectView;
-    }
-
-
-
     @GetMapping("/")
     public String rootBase() {
         logger.info("sono in rootBase");
         return "index";
     }
-
-
 
     @GetMapping("/index")
     public RedirectView index() {
@@ -196,25 +77,6 @@ public class IndexController {
         RedirectView redirectView = new RedirectView("/", true);
         return redirectView;
     }
-
-
-
-
-    @GetMapping("/private/privatePage")
-    public String privatePage(Principal principal, Model model) {
-        logger.info( "sono in: private/privatePage" );
-
-        /* // per recuperare facilmente la autenticazione utente
-        Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
-        if (authenticationNow != null && principal != null) {
-            System.out.println("authenticationNow.getName(): " + authenticationNow.getName());
-            System.out.println("principal.getName(): " + principal.getName());
-        }
-         */
-
-        return "private/privatePage";
-    }
-
 
 
     @GetMapping("/register")
@@ -233,19 +95,37 @@ public class IndexController {
     }
 
 
-
-    @GetMapping("/logout")
-    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
-        logger.info( "sono in logout" );
-        Utils.clearJwtCookie_ClearSecurityContext(request, response);
-        RedirectView redirectView = new RedirectView("/register", true);
-        return redirectView;
+    @GetMapping("/private/privatePage")
+    public String privatePage(HttpServletRequest request, Principal principal, Model model) {
+        logger.info( "sono in: private/privatePage" );
+        // constrollo se è presente il cookie per disabilitare Google Analytics
+        String disabledAnalyticsCookie = "infoDisabledAnalyticsCookie";
+        if( Utils.isPresentCookieDisabledGoogleAnalytics(request) ) {
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'COOKIE_DISABLED_GOOGLE_ANALYTICS' è true. NON STA tracciando questo dispositivo.");
+        }else {
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'COOKIE_DISABLED_GOOGLE_ANALYTICS' è false. STA tracciando questo dispositivo.");
+        }
+        return "private/privatePage";
     }
 
-
     /**
-     * CANCELLAZIONE UTENTE
+     * serve a creare un coockie per al dispositivo dell'utente (solo il mio) che indica che google analytics non deve tracciare.
+     * lo faccio per mantenere i dati di analytics puliti dai miei test
      */
+    @GetMapping("/set-disable-analytics-cookie")
+    public ResponseEntity<String> setDisabledAnalyticsCookie(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        Cookie cookie = new Cookie(Constants.COOKIE_DISABLED_GOOGLE_ANALYTICS, "true");
+        cookie.setMaxAge(30 * 24 * 60 * 60); // Durata di 30 giorni
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        logger.info("creato cookie di disabilitazione analytics");
+
+        HttpHeaders headers = new HttpHeaders();
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Cookie di disabilitazione analytics impostato");
+        headers.add("Location", "/private/privatePage");
+        return ResponseEntity.status(302).headers(headers).build();
+    }
+
     @GetMapping("/private/cancellaUtente")
     public String cancellaUtente(Principal principal, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         logger.info( "sono in: private/cancellaUtente" );
@@ -280,6 +160,13 @@ public class IndexController {
         return "redirect:/error";
     }
 
+    @GetMapping("/logout")
+    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
+        logger.info( "sono in logout" );
+        Utils.clearJwtCookie_ClearSecurityContext(request, response);
+        RedirectView redirectView = new RedirectView("/register", true);
+        return redirectView;
+    }
 
 
     /**
@@ -291,6 +178,61 @@ public class IndexController {
     public String header() { return "fragments/templateBase :: header"; }
 
 
+    @GetMapping("/contatti")
+    public String contatti(Model model, Principal principal) {
+        if (principal != null) {
+            ContactFormDTO contactFormDTO = new ContactFormDTO();
+            contactFormDTO.setEmail( principal.getName() );
+            model.addAttribute("contactForm", contactFormDTO);
+        }else{
+            model.addAttribute("contactForm", new ContactFormDTO());
+        }
+        return "contatti";
+    }
+
+    @PostMapping("/contattiSubmit")
+    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        logger.info("sono in contattiSubmit");
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
+            return "redirect:/error";
+        }
+        emailService.inviaEmailContatti(contactForm);
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Messaggio inviato con successo!");
+        return "redirect:/contatti";
+    }
+
+
+    @GetMapping("/info-privacy")
+    public String infoPrivacy(Model model) {
+        return "info-privacy";
+    }
+
+    @GetMapping("/termini-di-servizio")
+    public RedirectView terminiDiServizio_redirect_301() {
+        RedirectView redirectView = new RedirectView("/info-privacy", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+    @GetMapping("/error")
+    public String pageError(HttpServletRequest request, Model model) {
+        return "error";
+    }
+
+    /**
+     * lo uso solo per test
+     * Reindirizza alla home page e segnala che la risorsa non esiste più
+     */
+    @GetMapping("/genera-video")
+    public RedirectView gerneraVideo() {
+        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        scheduledTasks.creaOroscopoGiornaliero();
+        // Restituisci una RedirectView per reindirizzare alla home page
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410
+        return redirectView;
+    }
 
 
     @GetMapping("/robots.txt")
@@ -382,6 +324,41 @@ public class IndexController {
      * Per impedire l'indicizzazione senza rimuovere: Usa noindex.
      * Per rimozione immediata da Google: Usa Google Search Console.
      */
+
+    // #######################################################################################
+    // ############################# TEST ####################################################
+    // #######################################################################################
+
+    @GetMapping("/test")
+    public String testFacebook(Model model) {
+        try {
+            String pageID = facebookConfig.getPageId();
+            String appId = facebookConfig.getAppId();
+            String appSecret = facebookConfig.getAppSecret();
+            // Ottieni il token di accesso dell'app
+            AccessToken appAccessToken = new DefaultFacebookClient(Version.LATEST)
+                    .obtainAppAccessToken(appId, appSecret);
+            // Crea un client Facebook con il token dell'app
+            FacebookClient facebookClient = new DefaultFacebookClient(appAccessToken.getAccessToken(), Version.LATEST);
+            logger.info("appAccessToken.getAccessToken(): "+appAccessToken. getAccessToken());
+            // Ottieni la pagina
+            Page page = facebookClient.fetchObject(pageID, Page.class, Parameter.with("fields", "access_token"));
+            // Ottieni il token di accesso della pagina
+            String pageAccessToken = page.getAccessToken();
+            // Crea un client Facebook per la pagina con il token della pagina
+            FacebookClient pageClient = new DefaultFacebookClient(pageAccessToken, Version.LATEST);
+            // Pubblica un messaggio sulla bacheca della pagina
+            pageClient.publish(pageID + "/feed", FacebookType.class, Parameter.with("message", "1: Hello, facebook World!"));
+            return "index";
+        } catch (FacebookOAuthException e) {
+            logger.error("FacebookOAuthException occurred: ", e);
+            return "error";
+        } catch (Exception e) {
+            logger.error("Exception occurred: ", e);
+            return "error";
+        }
+    }
+
 
 
 }

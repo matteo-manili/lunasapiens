@@ -29,7 +29,7 @@
         <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
         <p>Iscrivendoti, riceverai un'email con un link per accedere.<br>
             L'accesso sarà valido per 7 giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
-        <form id="subscribe-form" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
+        <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
@@ -76,7 +76,7 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         // Ottieni il modulo
-        const form = document.getElementById('subscribe-form');
+        const form = document.getElementById('register-submit');
         // Aggiungi un event listener per l'evento submit
         form.addEventListener('submit', function(event) {
             // Prevenire l'invio del modulo se necessario
@@ -88,8 +88,7 @@
             // Salva il valore nel localStorage
             localStorage.setItem('email', email);
 
-
-            googleTrackFormSubmitRegister();
+            googleTrackFormSubmit('register-submit');
 
             // Esegui il submit del modulo
             form.submit();

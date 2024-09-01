@@ -130,15 +130,15 @@ public class JwtController {
             Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail( jwtDetails.getSubject() );
             if( profiloUtenteOpt.isPresent() ){
                 // Creazione del cookie con il token JWT
-                Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
-                jwtCookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
-                jwtCookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
-                jwtCookie.setPath("/"); // Imposta il percorso del cookie
+                Cookie cookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
+                cookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
+                cookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
+                cookie.setPath("/"); // Imposta il percorso del cookie
 
                 //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
-                jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
+                cookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
                 // Aggiungi il cookie alla risposta HTTP
-                response.addCookie(jwtCookie);
+                response.addCookie(cookie);
 
                 logger.info("creo cookie jwt per l'utente");
 

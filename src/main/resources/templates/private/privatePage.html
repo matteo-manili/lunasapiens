@@ -16,7 +16,7 @@
     <h1 class="mb-4">Pagina Utente</h1>
 
     <div class="alert alert-success mb-4">
-        <p>Benvenuto, <b><span sec:authentication="name">NOT FOUND</span></b>! Sei un utente iscritto su LunaSapiens.<br>
+        <p>Benvenuto, <b><span sec:authentication="name">NOT FOUND</span>!</b> Sei un utente iscritto su LunaSapiens.<br>
         Ora puoi approfittare del vantaggio di porre più domande al <a href="/tema-natale">Tema Natale IA</a> e alla <a href="/sinastria">Sinastria IA</a>.</p>
 
         <p>L'applicazione è in fase di sviluppo. Sono previsti aggiornamenti, tra cui il miglioramento dell'<a href="/oroscopo">Oroscopo giornaliero</a>
@@ -24,6 +24,21 @@
     </div>
 
 
+
+    <!-- Sezione visibile solo per l'utente "matte.manili@gmail.com" -->
+    <div sec:authorize="authentication.principal.username == 'matteo.manili@gmail.com'">
+        <div class="alert alert-dark mt-4">
+        <p th:text="${infoDisabledAnalyticsCookie}"></p>
+        <p class="mt-2">
+            <a href="/set-disable-analytics-cookie">Clicca qui per disabilitare il tracciamento di Google Analytics</a>
+        </p>
+    </div>
+
+
+
+
+
+    <!-- scerivi qui il codice -->
     <div class="row">
         <div class="col-md-6">
             <div class="alert alert-info mb-4 ">

@@ -13,12 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 import java.io.*;
@@ -62,6 +58,21 @@ public class Utils {
         */
     }
 
+    public static boolean isPresentCookieDisabledGoogleAnalytics(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        // Se non ci sono cookie nella richiesta, ritorna false
+        if (cookies == null) {
+            return false;
+        }
+        // Cerca il cookie con il nome specifico
+        for (Cookie cookie : cookies) {
+            if (Constants.COOKIE_DISABLED_GOOGLE_ANALYTICS.equals(cookie.getName())) {
+                // Controlla se il valore del cookie è "true"
+                return "true".equals(cookie.getValue());
+            }
+        }
+        return false;
+    }
 
 
     public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {

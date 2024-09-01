@@ -18,6 +18,8 @@ public class Constants {
 
     public static final String JWT_WITH_ISSUER = "lunaSapiens_jwt_auth0";
     public static final String COOKIE_JWT_NAME = "jwtToken";
+    public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "cookie_disable_google_analytics";
+
 
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";
