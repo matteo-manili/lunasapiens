@@ -66,6 +66,7 @@ public class Constants {
             "/app/message",
             "/coordinate",
             "/private",
+            "/header",
             "/greeting",
             "/facebook",
             "/error"));

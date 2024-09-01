@@ -169,15 +169,6 @@ public class IndexController {
     }
 
 
-    /**
-     * restituisce il codice html del frammento "header menu", il quale ritorna dalla funziona javascript
-     * document.getElementById("header-placeholder").innerHTML = html;
-     * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
-     */
-    @GetMapping("/header")
-    public String header() { return "fragments/templateBase :: header"; }
-
-
     @GetMapping("/contatti")
     public String contatti(Model model, Principal principal) {
         if (principal != null) {
@@ -234,6 +225,13 @@ public class IndexController {
         return redirectView;
     }
 
+    /**
+     * restituisce il codice html del frammento "header menu", il quale ritorna dalla funziona javascript
+     * document.getElementById("header-placeholder").innerHTML = html;
+     * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
+     */
+    @GetMapping("/header")
+    public String header() { return "fragments/templateBase :: header"; }
 
     @GetMapping("/robots.txt")
     public void getRobotsTxt(HttpServletResponse response) throws IOException {
