@@ -101,9 +101,9 @@ public class IndexController {
         // constrollo se è presente il cookie per disabilitare Google Analytics
         String disabledAnalyticsCookie = "infoDisabledAnalyticsCookie";
         if( Utils.isPresentCookieDisabledGoogleAnalytics(request) ) {
-            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'COOKIE_DISABLED_GOOGLE_ANALYTICS' è true. NON STA tracciando questo dispositivo.");
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'cookie_disable_google_analytics' è true. NON STA tracciando questo dispositivo.");
         }else {
-            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'COOKIE_DISABLED_GOOGLE_ANALYTICS' è false. STA tracciando questo dispositivo.");
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'cookie_disable_google_analytics' è false. STA tracciando questo dispositivo.");
         }
         return "private/privatePage";
     }
