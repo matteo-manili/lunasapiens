@@ -137,7 +137,7 @@ public class BuildInfoAstrologiaAstroSeek {
                 .append("\n\n")
 
 
-// TODO AGGIUNGERE
+// TODO DA AGGIUNGERE
 /*
 La sinastria è una tecnica astrologica che confronta le carte natali di due persone per determinare la compatibilità e le dinamiche della loro relazione. Ecco le principali caratteristiche da tenere in considerazione per fare una sinastria tra le carte natali di una coppia:
 
