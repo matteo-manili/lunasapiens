@@ -1,7 +1,7 @@
 package com.lunasapiens.zodiac;
 
-import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
+import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -13,12 +13,15 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Properties;
 
 @Component
-public class ServizioTemaNatale {
+public class ServizioSinastria {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServizioTemaNatale.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServizioSinastria.class);
 
     @Autowired
     private AppConfig appConfig;
@@ -42,7 +45,7 @@ public class ServizioTemaNatale {
 
 
 
-    public StringBuilder chatBotTemaNatale( List<ChatMessage> chatMessageList ) {
+    public StringBuilder chatBotSinastria( List<ChatMessage> chatMessageList ) {
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, caratteriPerTokenStima,
                  appConfig.getParamOpenAi().getModelGpt4_Mini() /* appConfig.getParamOpenAi().getModelGpt3_5()*/, chatMessageList );
@@ -50,29 +53,29 @@ public class ServizioTemaNatale {
 
 
 
-    public StringBuilder temaNataleDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
+    public StringBuilder sinastriaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
         BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
 
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        StringBuilder temaNataleDesc = temaNataleDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
 
-        return temaNataleDesc;
+        return sinastriaDesc;
     }
 
 
-    public StringBuilder temaNataleDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public StringBuilder sinastriaDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<Pianeta> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
         ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
-        return temaNataleDescrizione(pianetiList, casePlacideArrayList);
+        return sinastriaDescrizione(pianetiList, casePlacideArrayList);
     }
 
 
 
-    public StringBuilder temaNataleDescrizione(List<Pianeta> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    public StringBuilder sinastriaDescrizione(List<Pianeta> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         Properties caseSignificato = propertiesConfig.caseSignificato();
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
@@ -92,30 +95,30 @@ public class ServizioTemaNatale {
         // Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
         // Quindi nel prompt mostrare i segni coi suoi pianeti domiciliati
 
-        StringBuilder descTemaNatale = new StringBuilder();
+        StringBuilder descSinastria = new StringBuilder();
         SegnoZodiacale segnoSole = segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(0).getNumeroSegnoZodiacale() );
         SegnoZodiacale segnoLuna = segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(1).getNumeroSegnoZodiacale() );
         SegnoZodiacale segnoAscendente = segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() );
 
-        descTemaNatale.append("<p><b>- "+pianetiTransiti.get(0).descrizionePianetaSegno()+"</b><br>");
-        descTemaNatale.append(segnoSole.getDescrizioneMin()+"</p>");
+        descSinastria.append("<p><b>- "+pianetiTransiti.get(0).descrizionePianetaSegno()+"</b><br>");
+        descSinastria.append(segnoSole.getDescrizioneMin()+"</p>");
 
-        descTemaNatale.append("<p><b>- "+pianetiTransiti.get(1).descrizionePianetaSegno()+"</b></br>");
-        descTemaNatale.append( lunaSegniProperties.getProperty(String.valueOf(segnoLuna.getNumeroSegnoZodiacale())) +"</p>");
+        descSinastria.append("<p><b>- "+pianetiTransiti.get(1).descrizionePianetaSegno()+"</b></br>");
+        descSinastria.append( lunaSegniProperties.getProperty(String.valueOf(segnoLuna.getNumeroSegnoZodiacale())) +"</p>");
 
-        descTemaNatale.append("<p><b>- Ascendente in "+segnoAscendente.getNomeSegnoZodiacale()+"</b><br>");
-        descTemaNatale.append( segniAscendenteProperties.getProperty(String.valueOf(segnoSole.getNumeroSegnoZodiacale())+"_"+segnoAscendente.getElemento().getCode())+"</p>");
+        descSinastria.append("<p><b>- Ascendente in "+segnoAscendente.getNomeSegnoZodiacale()+"</b><br>");
+        descSinastria.append( segniAscendenteProperties.getProperty(String.valueOf(segnoSole.getNumeroSegnoZodiacale())+"_"+segnoAscendente.getElemento().getCode())+"</p>");
 
-        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Case</h4><br>");
+        descSinastria.append("<h4 class=\"mt-5 mb-0\">Case</h4><br>");
         for (CasePlacide varCasa : casePlacideArrayList) {
-            descTemaNatale.append("<b>- " + varCasa.descrizioneCasaGradiCasaMinutiCasa() +"</b>");
-            descTemaNatale.append("<ul>");
-            descTemaNatale.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
+            descSinastria.append("<b>- " + varCasa.descrizioneCasaGradiCasaMinutiCasa() +"</b>");
+            descSinastria.append("<ul>");
+            descSinastria.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
             boolean pianetaPresete = false;
             for (Pianeta varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa())){
                     pianetaPresete = true;
-                    descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
+                    descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
                             pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                 }
             }
@@ -124,17 +127,17 @@ public class ServizioTemaNatale {
                 for (int pianetaSign : pianetiSignori) {
                     for (Pianeta varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
-                            descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
+                            descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
                                 +" "+"</i>"+ pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                         }
                     }
                 }
             }
-            descTemaNatale.append("</ul>");
+            descSinastria.append("</ul>");
         }
 
         int size = pianetiTransiti.size(); int count = 0;
-        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Transiti dei Pianeti</h4><br>");
+        descSinastria.append("<h4 class=\"mt-5 mb-0\">Transiti dei Pianeti</h4><br>");
         for (Pianeta var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
@@ -146,67 +149,66 @@ public class ServizioTemaNatale {
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero()) {
-                descTemaNatale.append("- "+var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
-                if (count < size - 1) { descTemaNatale.append("<br>"); }
+                descSinastria.append("- "+var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
+                if (count < size - 1) { descSinastria.append("<br>"); }
             }
         }
 
         if (!aspetti.isEmpty()) {
-            descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Aspetti</h4><br>");
+            descSinastria.append("<h4 class=\"mt-5 mb-0\">Aspetti</h4><br>");
             size = aspetti.size(); count = 0;
             for (Aspetti var : aspetti) {
-                descTemaNatale.append("- "+var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName());
-                if (count < size - 1) { descTemaNatale.append("<br>"); }
+                descSinastria.append("- "+var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName());
+                if (count < size - 1) { descSinastria.append("<br>"); }
             }
         }
 
-
-        return descTemaNatale;
+        return descSinastria;
     }
 
 
 
-    public StringBuilder significatiTemaNataleDescrizione() {
+    public StringBuilder significatiSinastriaDescrizione() {
         Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
         Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
         Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
         Properties segniZodProperties = propertiesConfig.segniZodiacali();
 
-        StringBuilder significatiTemaNatale = new StringBuilder();
+        StringBuilder significatiSinastria = new StringBuilder();
 
-        significatiTemaNatale.append("<h4 class=\"mt-5 mb-0\">Significato dei Segni</h4><br>");
+        significatiSinastria.append("<h4 class=\"mt-5 mb-0\">Significato dei Segni</h4><br>");
         List<Constants.SegniZodiacali> segniZodiacaliList = Constants.SegniZodiacali.getAllSegniZodiacali();
         int size = segniZodiacaliList.size();
         for (int i = 0; i < size; i++) {
             Constants.SegniZodiacali segno = segniZodiacaliList.get(i);
-            significatiTemaNatale.append("- "+segno.getNome() +": "+ segniZodProperties.getProperty(String.valueOf(segno.getNumero())+"_min") );
-            if (i < size - 1) { significatiTemaNatale.append("<br>"); }
+            significatiSinastria.append("- "+segno.getNome() +": "+ segniZodProperties.getProperty(String.valueOf(segno.getNumero())+"_min") );
+            if (i < size - 1) { significatiSinastria.append("<br>"); }
         }
 
 
-        significatiTemaNatale.append("<h4 class=\"mt-5 mb-0\">Significato dei Pianeti</h4><br>");
+        significatiSinastria.append("<h4 class=\"mt-5 mb-0\">Significato dei Pianeti</h4><br>");
         List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianeti();
         size = pianetiList.size();
         for (int i = 0; i < size; i++) {
             Constants.Pianeti pianeta = pianetiList.get(i);
-            significatiTemaNatale.append("- "+pianeta.getNome() +": "+ pianetiOroscopoSignificatoProperties.getProperty( String.valueOf(pianeta.getNumero())+"_min") );
-            if (i < size - 1) { significatiTemaNatale.append("<br>"); }
+            significatiSinastria.append("- "+pianeta.getNome() +": "+ pianetiOroscopoSignificatoProperties.getProperty( String.valueOf(pianeta.getNumero())+"_min") );
+            if (i < size - 1) { significatiSinastria.append("<br>"); }
         }
 
 
-        significatiTemaNatale.append("<h4 class=\"mt-5 mb-0\">Significato Pianeta Retrogrado</h4><br>");
-        significatiTemaNatale.append("- "+pianetaRetrogradoProperties.getProperty( String.valueOf(0) ));
+        significatiSinastria.append("<h4 class=\"mt-5 mb-0\">Significato Pianeta Retrogrado</h4><br>");
+        significatiSinastria.append("- "+pianetaRetrogradoProperties.getProperty( String.valueOf(0) ));
 
-        significatiTemaNatale.append("<h4 class=\"mt-5 mb-0\">Significato degli Aspetti</h4><br>");
+        significatiSinastria.append("<h4 class=\"mt-5 mb-0\">Significato degli Aspetti</h4><br>");
         List<Constants.Aspetti> aspettiList = Constants.Aspetti.getAllAspetti();
         size = aspettiList.size();
         for (int i = 0; i < size; i++) {
             Constants.Aspetti aspetto = aspettiList.get(i);
-            significatiTemaNatale.append("- "+aspetto.getName() +": "+ aspettiPianetiProperties.getProperty(String.valueOf(aspetto.getCode())+"_min") );
-            if (i < size - 1) { significatiTemaNatale.append("<br>"); }
+            significatiSinastria.append("- "+aspetto.getName() +": "+ aspettiPianetiProperties.getProperty(String.valueOf(aspetto.getCode())+"_min") );
+            if (i < size - 1) { significatiSinastria.append("<br>"); }
         }
 
-        return significatiTemaNatale;
+        return significatiSinastria;
     }
 
 

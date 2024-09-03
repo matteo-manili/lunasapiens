@@ -47,8 +47,8 @@ public class BuildInfoAstrologiaAstroLib {
     */
 
 
-    public ArrayList<PianetaPosizTransito> getPianetiAspetti(){
-        ArrayList<PianetaPosizTransito> pianetaPosizTransito = null;
+    public ArrayList<Pianeta> getPianetiAspetti(){
+        ArrayList<Pianeta> pianetaArrayList = null;
         // Trova l'indice di inizio e fine di "Planets "AA0""
         int startIndex = horoscop.toString().indexOf("Planets \"AA0\"");
         if (startIndex != -1) {
@@ -60,7 +60,7 @@ public class BuildInfoAstrologiaAstroLib {
                 //System.out.println(planetsContent);
                 // Dividi la stringa in base ai punti e virgola per ottenere le informazioni sui pianeti
                 String[] planetInfos = planetsContent.split(";");
-                pianetaPosizTransito = new ArrayList<PianetaPosizTransito>();
+                pianetaArrayList = new ArrayList<Pianeta>();
                 // Per ogni informazione sul pianeta, estrai le informazioni
                 for (String planetInfo : planetInfos) {
                     if (planetInfo.contains(":")) {
@@ -82,13 +82,13 @@ public class BuildInfoAstrologiaAstroLib {
                         String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(null,0, entry.getKey());
 
                         // non valorizzo significatoTransitoPianetaSegno perchè non è implementato in questa classe. Ma solo nella clase BuildInfoAstrologiaSwiss
-                        PianetaPosizTransito aa = new PianetaPosizTransito(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
-                        pianetaPosizTransito.add(aa);
+                        Pianeta pianeta = new Pianeta(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
+                        pianetaArrayList.add( pianeta );
                     }
                 }
             }
         }
-        return pianetaPosizTransito;
+        return pianetaArrayList;
     }
 
     public ArrayList<CasePlacide> getCasePlacide(){

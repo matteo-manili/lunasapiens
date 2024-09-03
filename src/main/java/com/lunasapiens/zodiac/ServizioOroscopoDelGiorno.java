@@ -52,8 +52,8 @@ public class ServizioOroscopoDelGiorno {
 
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<PianetaPosizTransito> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
-        for (PianetaPosizTransito var : pianetiTransiti) {
+        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        for (Pianeta var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
@@ -68,7 +68,7 @@ public class ServizioOroscopoDelGiorno {
             }
         }
         descrizioneOggi += "</p>";
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.verificaAspetti(pianetiTransiti, propertiesConfig.aspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiPianeti());
         if(!aspetti.isEmpty()){
             descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
@@ -89,7 +89,7 @@ public class ServizioOroscopoDelGiorno {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<PianetaPosizTransito> pianetaPosizTransito = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<Pianeta> pianeta = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
         logger.info( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
@@ -114,7 +114,7 @@ public class ServizioOroscopoDelGiorno {
 
 
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
-        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.verificaAspetti(pianetaPosizTransito, aspettiPianetiProperties);
+        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.aspettiListPinaneti(pianeta, aspettiPianetiProperties);
         List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
         boolean presentePianetaRetrogrado = false; boolean presentiAspetti = false; int contaEventi = 1;
 
@@ -125,7 +125,7 @@ public class ServizioOroscopoDelGiorno {
         for (int pianetaSig : pianetiSignori) {
             ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
             if(aspettiDelSegnoList.isEmpty()) {
-                PianetaPosizTransito pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianetaPosizTransito, pianetaSig);
+                Pianeta pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianeta, pianetaSig);
                 domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                 domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta() + ": " + pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n");
                 pianetiCoinvoltiSet.add(pianetaSenzaAspetti.getNumeroPianeta());
@@ -138,8 +138,8 @@ public class ServizioOroscopoDelGiorno {
                 presentiAspetti = true;
                 for(Aspetti aspettodelSegno: aspettiDelSegnoList) {
                     aspettiPresentiNelSegno.add(aspettodelSegno.getTipoAspetto());
-                    PianetaPosizTransito pianetaTransito_1 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_1());
-                    PianetaPosizTransito pianetaTransito_2 = getPianetaPosizTransitoSegno(pianetaPosizTransito, aspettodelSegno.getNumeroPianeta_2());
+                    Pianeta pianetaTransito_1 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_1());
+                    Pianeta pianetaTransito_2 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_2());
                     domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                     pianetiCoinvoltiSet.add(pianetaTransito_1.getNumeroPianeta());
                     pianetiCoinvoltiSet.add(pianetaTransito_2.getNumeroPianeta());
@@ -201,21 +201,21 @@ public class ServizioOroscopoDelGiorno {
         return nomePianeta +" è Pianeta Retrogrado.";
     }
 
-    private ArrayList<PianetaPosizTransito> getPianetiPosizTransitoSegnoList(ArrayList<PianetaPosizTransito> pianetaPosizTransito, int[] pianetiSignor) {
-        ArrayList<PianetaPosizTransito> pianetaPosizTransitoList = new ArrayList<>();;
-        for(PianetaPosizTransito var : pianetaPosizTransito) {
+    private ArrayList<Pianeta> getPianetiPosizTransitoSegnoList(ArrayList<Pianeta> pianeta, int[] pianetiSignor) {
+        ArrayList<Pianeta> pianetaList = new ArrayList<>();;
+        for(Pianeta var : pianeta) {
             for (int pianetaSig : pianetiSignor) {
                 if(var.getNumeroPianeta() == pianetaSig){
-                    pianetaPosizTransitoList.add(var);
+                    pianetaList.add(var);
                 }
             }
         }
-        return pianetaPosizTransitoList;
+        return pianetaList;
     }
 
-    private PianetaPosizTransito getPianetaPosizTransitoSegno(ArrayList<PianetaPosizTransito> pianetaPosizTransitoTuttiList, int pianeta) {
-        PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito();
-        for(PianetaPosizTransito var : pianetaPosizTransitoTuttiList) {
+    private Pianeta getPianetaPosizTransitoSegno(ArrayList<Pianeta> pianetaTuttiList, int pianeta) {
+        Pianeta pianetaPosizTransito = new Pianeta();
+        for(Pianeta var : pianetaTuttiList) {
             if(var.getNumeroPianeta() == pianeta){
                 pianetaPosizTransito = var;
             }

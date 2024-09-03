@@ -10,6 +10,7 @@ import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
+import com.lunasapiens.zodiac.ServizioSinastria;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class SinastriaController {
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
-    ServizioTemaNatale servizioTemaNatale;
+    ServizioSinastria servizioSinastria;
 
     @Autowired
     private CacheManager cacheManager;
@@ -205,13 +206,13 @@ public class SinastriaController {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-        StringBuilder temaNatale_1 = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        StringBuilder temaNatale_1 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO_2 = new GiornoOraPosizioneDTO(hour_2, minute_2, day_2, month_2, year_2, Double.parseDouble(cityLat_2), Double.parseDouble(cityLng_2));
         CoordinateDTO coordinateDTO_2 = new CoordinateDTO(cityName_2, regioneName_2, statoName_2, statoCode_2);
-        StringBuilder temaNatale_2 = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO_2, coordinateDTO_2);
+        StringBuilder temaNatale_2 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO_2, coordinateDTO_2);
 
-        StringBuilder significatiTemaNatale = servizioTemaNatale.significatiTemaNataleDescrizione();
+        StringBuilder significatiTemaNatale = servizioSinastria.significatiSinastriaDescrizione();
 
 
         String descrizioneTemaNatalePage = new StringBuilder()

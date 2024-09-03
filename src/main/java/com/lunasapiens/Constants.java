@@ -75,27 +75,25 @@ public class Constants {
     public static final String USER = "USER";
 
 
-
-
-
     public enum Pianeti {
-        SOLE(0, "Sole", "Sun"),
-        LUNA(1, "Luna", "Moon"),
-        MERCURIO(2, "Mercurio", "Mercury"),
-        VENERE(3, "Venere", "Venus"),
-        MARTE(4, "Marte", "Mars"),
-        GIOVE(5, "Giove", "Jupiter"),
-        SATURNO(6, "Saturno", "Saturn"),
-        URANO(7, "Urano", "Uranus"),
-        NETTUNO(8, "Nettuno", "Neptune"),
-        PLUTONE(9, "Plutone", "Pluto");
+        SOLE(0, "Sole", "Sun", TipoPianeta.PERSONALE),
+        LUNA(1, "Luna", "Moon", TipoPianeta.PERSONALE),
+        MERCURIO(2, "Mercurio", "Mercury", TipoPianeta.PERSONALE),
+        VENERE(3, "Venere", "Venus", TipoPianeta.PERSONALE),
+        MARTE(4, "Marte", "Mars", TipoPianeta.PERSONALE),
+        GIOVE(5, "Giove", "Jupiter", TipoPianeta.TRANSPERSONALE),
+        SATURNO(6, "Saturno", "Saturn", TipoPianeta.TRANSPERSONALE),
+        URANO(7, "Urano", "Uranus", TipoPianeta.TRANSPERSONALE),
+        NETTUNO(8, "Nettuno", "Neptune", TipoPianeta.TRANSPERSONALE),
+        PLUTONE(9, "Plutone", "Pluto", TipoPianeta.TRANSPERSONALE);
 
         private final int numero;
         private final String nome;
         private final String nome_en;
+        private final TipoPianeta tipoPianeta;
 
-        Pianeti(int numero, String nome, String nome_en) {
-            this.numero = numero; this.nome = nome; this.nome_en = nome_en;
+        Pianeti(int numero, String nome, String nome_en, TipoPianeta tipoPianeta) {
+            this.numero = numero; this.nome = nome; this.nome_en = nome_en; this.tipoPianeta = tipoPianeta;
         }
         public int getNumero() {
             return numero;
@@ -106,6 +104,8 @@ public class Constants {
         public String getNomeEn() {
             return nome_en;
         }
+        public TipoPianeta getTipoPianeta() { return tipoPianeta; }
+
         public static Pianeti fromNumero(int numero) {
             for (Pianeti pianeta : Pianeti.values()) {
                 if (pianeta.getNumero() == numero) {
@@ -135,6 +135,36 @@ public class Constants {
         }
         public static List<Pianeti> getAllPianeti() {
             return Arrays.asList(Pianeti.values());
+        }
+    }
+
+
+
+    public enum TipoPianeta {
+        PERSONALE(0, "Personale"),
+        TRANSPERSONALE(1, "Transpersonale");
+        private final int code;
+        private final String name;
+        TipoPianeta(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+        public int getCode() {
+            return code;
+        }
+        public String getName() {
+            return name;
+        }
+        public static TipoPianeta fromCode(int code) {
+            for (TipoPianeta tipoPianeta : TipoPianeta.values()) {
+                if (tipoPianeta.getCode() == code) {
+                    return tipoPianeta;
+                }
+            }
+            throw new IllegalArgumentException("Elemento invalid code: " + code);
+        }
+        public static List<TipoPianeta> getAllElementi() {
+            return Arrays.asList(TipoPianeta.values());
         }
     }
 

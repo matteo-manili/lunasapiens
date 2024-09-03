@@ -2,36 +2,38 @@ package com.lunasapiens.zodiac;
 
 public class OmeopatiaAstrologia {
 
-    SegnoZodiacale ascendente;
-    SegnoZodiacale pianetaSole;
-    SegnoZodiacale pianetaLuna;
-    SegnoZodiacale pianetaMercurio;
-    SegnoZodiacale pianetaVenere;
-    SegnoZodiacale pianetaMarte;
-    SegnoZodiacale pianetaGiove;
-    SegnoZodiacale pianetaSaturno;
-    SegnoZodiacale pianetaUrano;
-    SegnoZodiacale pianetaNettuno;
-    SegnoZodiacale pianetaPlutone;
+    private SegnoZodiacale ascendente;
+    private SegnoZodiacale pianetaSole;
+    private SegnoZodiacale pianetaLuna;
+    private SegnoZodiacale pianetaMercurio;
+    private SegnoZodiacale pianetaVenere;
+    private SegnoZodiacale pianetaMarte;
+    private SegnoZodiacale pianetaGiove;
+    private SegnoZodiacale pianetaSaturno;
+    private SegnoZodiacale pianetaUrano;
+    private SegnoZodiacale pianetaNettuno;
+    private SegnoZodiacale pianetaPlutone;
 
-    int totElementoFuoco;
-    int totElementoAcqua;
-    int totElementoTerra;
-    int totElementoAria;
+    private int totElementoFuoco;
+    private int totElementoAcqua;
+    private int totElementoTerra;
+    private int totElementoAria;
+
+    private int totElementoFuocoTipoPianeta = 0;
+    private int totElementoAcquaTipoPianeta = 0;
+    private int totElementoTerraTipoPianeta = 0;
+    private int totElementoAriaTipoPianeta = 0;
 
 
     public OmeopatiaAstrologia() { }
 
-
-
+    // get...
 
     public SegnoZodiacale getAscendente() {
         return ascendente;
     }
 
-    public SegnoZodiacale getPianetaSole() {
-        return pianetaSole;
-    }
+    public SegnoZodiacale getPianetaSole() { return pianetaSole; }
 
     public SegnoZodiacale getPianetaLuna() {
         return pianetaLuna;
@@ -65,17 +67,11 @@ public class OmeopatiaAstrologia {
         return pianetaNettuno;
     }
 
-    public SegnoZodiacale getPianetaPlutone() {
-        return pianetaPlutone;
-    }
+    public SegnoZodiacale getPianetaPlutone() { return pianetaPlutone; }
 
-    public int getTotElementoFuoco() {
-        return totElementoFuoco;
-    }
+    public int getTotElementoFuoco() { return totElementoFuoco; }
 
-    public int getTotElementoAcqua() {
-        return totElementoAcqua;
-    }
+    public int getTotElementoAcqua() { return totElementoAcqua; }
 
     public int getTotElementoTerra() {
         return totElementoTerra;
@@ -85,6 +81,16 @@ public class OmeopatiaAstrologia {
         return totElementoAria;
     }
 
+    public int getTotElementoFuocoTipoPianeta() { return totElementoFuocoTipoPianeta; }
+
+    public int getTotElementoAcquaTipoPianeta() { return totElementoAcquaTipoPianeta; }
+
+    public int getTotElementoTerraTipoPianeta() { return totElementoTerraTipoPianeta; }
+
+    public int getTotElementoAriaTipoPianeta() { return totElementoAriaTipoPianeta; }
+
+
+    // set...
 
     public void setAscendente(SegnoZodiacale ascendente) {
         this.ascendente = ascendente;
@@ -145,4 +151,13 @@ public class OmeopatiaAstrologia {
     public void setTotElementoAria(int totElementoAria) {
         this.totElementoAria = totElementoAria;
     }
+
+    public void setTotElementoFuocoTipoPianeta(int totElementoFuocoTipoPianeta) { this.totElementoFuocoTipoPianeta = totElementoFuocoTipoPianeta; }
+
+    public void setTotElementoAcquaTipoPianeta(int totElementoAcquaTipoPianeta) { this.totElementoAcquaTipoPianeta = totElementoAcquaTipoPianeta; }
+
+    public void setTotElementoTerraTipoPianeta(int totElementoTerraTipoPianeta) { this.totElementoTerraTipoPianeta = totElementoTerraTipoPianeta; }
+
+    public void setTotElementoAriaTipoPianeta(int totElementoAriaTipoPianeta) { this.totElementoAriaTipoPianeta = totElementoAriaTipoPianeta; }
+
 }

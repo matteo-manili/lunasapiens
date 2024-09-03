@@ -33,71 +33,82 @@ public class ServizioOmeopatiaAstrologica {
     private CacheManager cacheManager;
 
 
+    private int totElementoFuoco = 0; private int totElementoAcqua = 0; private int totElementoTerra = 0; private int totElementoAria = 0;
+
+    private int totElementoFuocoTipoPianeta = 0; private int totElementoAcquaTipoPianeta = 0; private int totElementoTerraTipoPianeta = 0; private int totElementoAriaTipoPianeta = 0;
 
 
     public StringBuilder omeopatiaAstrologicaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
         BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
-
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
-
         return omeopatiaAstrologicaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
     }
 
 
+    private void setNumTotElementi(SegnoZodiacale segno){
+        if(segno.getElemento().getCode() == 0){
+            totElementoFuoco += 1;
+
+        }else if(segno.getElemento().getCode() == 1){
+            totElementoAcqua += 1;
+
+        }else if(segno.getElemento().getCode() == 2){
+            totElementoTerra += 1;
+
+        }else if(segno.getElemento().getCode() == 3){
+            totElementoAria += 1;
+        }
+    }
+
+    private void setNumTotElementiPianetiPersoanali(SegnoZodiacale segno){
+        if( segno.getElemento().getCode() == Constants.Elementi.FUOCO.getCode() ){
+            totElementoFuocoTipoPianeta += 1;
+
+        }else if( segno.getElemento().getCode() == Constants.Elementi.ACQUA.getCode() ){
+            totElementoAcquaTipoPianeta += 1;
+
+        }else if( segno.getElemento().getCode() == Constants.Elementi.TERRA.getCode() ){
+            totElementoTerraTipoPianeta += 1;
+
+        }else if( segno.getElemento().getCode() == Constants.Elementi.ARIA.getCode() ){
+            totElementoAriaTipoPianeta += 1;
+        }
+    }
 
 
+    // ############################ OMEOPATIA ASTROLOGIA ########################
 
-
-    public StringBuilder omeopatiaAstrologicaDescrizione(List<PianetaPosizTransito> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    public StringBuilder omeopatiaAstrologicaDescrizione(List<Pianeta> pianetiList, List<CasePlacide> casePlacideArrayList) {
 
         Properties omeopatiaElementiProperties = propertiesConfig.omeopatiaElementi();
-
-
-        // ############################ OMEOPATIA ASTROLOGIA ########################
         OmeopatiaAstrologia omeopatiaAstrologia = new OmeopatiaAstrologia();
-
-
-
-        int totElementoFuoco = 0; int totElementoAcqua = 0; int totElementoTerra = 0; int totElementoAria = 0;
-
-
         SegnoZodiacale ascendente = segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() );
         omeopatiaAstrologia.setAscendente( ascendente );
 
-        if(ascendente.getElemento().getCode() == 0){
-            totElementoFuoco = totElementoFuoco + 1;
-
-        }else if(ascendente.getElemento().getCode() == 1){
-            totElementoAcqua = totElementoAcqua + 1;
-
-        }else if(ascendente.getElemento().getCode() == 2){
-            totElementoTerra = totElementoTerra + 1;
-
-        }else if(ascendente.getElemento().getCode() == 3){
-            totElementoAria = totElementoAria + 1;
-        }
-
-
-        for( PianetaPosizTransito ite :pianetiTransiti ) {
+        for( Pianeta ite : pianetiList ) {
             SegnoZodiacale segno = segnoZodiacale.getSegnoZodiacale( ite.getNumeroSegnoZodiacale() );
 
-
-            if( ite.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ) {
+            if( ite.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaSole( segno );
+                setNumTotElementiPianetiPersoanali( segno );
 
-            }else if( ite.getNumeroPianeta() == Constants.Pianeti.LUNA.getNumero() ) {
+            }else if( ite.getNumeroPianeta() == Constants.Pianeti.LUNA.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaLuna( segno );
+                setNumTotElementiPianetiPersoanali( segno );
 
-            }else if( ite.getNumeroPianeta() == Constants.Pianeti.MERCURIO.getNumero() ) {
+            }else if( ite.getNumeroPianeta() == Constants.Pianeti.MERCURIO.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaMercurio( segno );
+                setNumTotElementiPianetiPersoanali( segno );
 
-            }else if( ite.getNumeroPianeta() == Constants.Pianeti.VENERE.getNumero() ) {
+            }else if( ite.getNumeroPianeta() == Constants.Pianeti.VENERE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaVenere( segno );
+                setNumTotElementiPianetiPersoanali( segno );
 
-            }else if( ite.getNumeroPianeta() == Constants.Pianeti.MARTE.getNumero() ) {
+            }else if( ite.getNumeroPianeta() == Constants.Pianeti.MARTE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaMarte( segno );
+                setNumTotElementiPianetiPersoanali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.GIOVE.getNumero() ) {
                 omeopatiaAstrologia.setPianetaGiove( segno );
@@ -115,18 +126,7 @@ public class ServizioOmeopatiaAstrologica {
                 omeopatiaAstrologia.setPianetaPlutone( segno );
             }
 
-            if(segno.getElemento().getCode() == 0){
-                totElementoFuoco = totElementoFuoco + 1;
-
-            }else if(segno.getElemento().getCode() == 1){
-                totElementoAcqua = totElementoAcqua + 1;
-
-            }else if(segno.getElemento().getCode() == 2){
-                totElementoTerra = totElementoTerra + 1;
-
-            }else if(segno.getElemento().getCode() == 3){
-                totElementoAria = totElementoAria + 1;
-            }
+            setNumTotElementi(segno);
 
         }
 
@@ -135,55 +135,66 @@ public class ServizioOmeopatiaAstrologica {
         omeopatiaAstrologia.setTotElementoTerra( totElementoTerra );
         omeopatiaAstrologia.setTotElementoAria( totElementoAria );
 
+        omeopatiaAstrologia.setTotElementoFuocoTipoPianeta( totElementoFuocoTipoPianeta );
+        omeopatiaAstrologia.setTotElementoAcquaTipoPianeta( totElementoAcquaTipoPianeta );
+        omeopatiaAstrologia.setTotElementoTerraTipoPianeta( totElementoTerraTipoPianeta );
+        omeopatiaAstrologia.setTotElementoAriaTipoPianeta( totElementoAriaTipoPianeta );
+
 
 
         // ############################ FINEEEEEEE ########################
-
 
         StringBuilder descTemaNatale = new StringBuilder();
 
 
         descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Pianeti Segno Elemento</h4><br>");
 
-        descTemaNatale.append("Ascendente in "+ omeopatiaAstrologia.getAscendente().getNomeSegnoZodiacale() +" Elemento: "
+        descTemaNatale.append("Ascendente in "+ omeopatiaAstrologia.getAscendente().getNomeSegnoZodiacale() +". Elemento: "
                 + omeopatiaAstrologia.getAscendente().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(0).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(0).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaSole().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(1).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(1).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaLuna().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(2).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(2).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaMercurio().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(3).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(3).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaVenere().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(4).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(4).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaMarte().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(5).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(5).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaGiove().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(6).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(6).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaSaturno().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(7).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(7).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaUrano().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(8).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(8).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaNettuno().getElemento().getName()+"<br>");
 
-        descTemaNatale.append(pianetiTransiti.get(9).descrizionePianeta() +" Elemento: "
+        descTemaNatale.append(pianetiList.get(9).descrizionePianetaTipoPianetaSegno() +". Elemento: "
                 + omeopatiaAstrologia.getPianetaPlutone().getElemento().getName()+"<br>");
 
 
         descTemaNatale.append("<br>");
-        descTemaNatale.append("Num totale elementi Fuoco: "+omeopatiaAstrologia.getTotElementoFuoco() +"<br>");
-        descTemaNatale.append("Num totale elementi Acqua: "+omeopatiaAstrologia.getTotElementoAcqua() +"<br>");
-        descTemaNatale.append("Num totale elementi Terra: "+omeopatiaAstrologia.getTotElementoTerra() +"<br>");
-        descTemaNatale.append("Num totale elementi Aria: "+omeopatiaAstrologia.getTotElementoAria() );
+        descTemaNatale.append("Totale elementi Fuoco: "+omeopatiaAstrologia.getTotElementoFuoco() +"<br>");
+        descTemaNatale.append("Totale elementi Acqua: "+omeopatiaAstrologia.getTotElementoAcqua() +"<br>");
+        descTemaNatale.append("Totale elementi Terra: "+omeopatiaAstrologia.getTotElementoTerra() +"<br>");
+        descTemaNatale.append("Totale elementi Aria: "+omeopatiaAstrologia.getTotElementoAria() +"<br>");
+
+
+        descTemaNatale.append("<br>");
+        descTemaNatale.append("Totale Pianeti Personali elemento Fuoco: "+omeopatiaAstrologia.getTotElementoFuocoTipoPianeta() +"<br>");
+        descTemaNatale.append("Totale Pianeti Personali elemento Acqua: "+omeopatiaAstrologia.getTotElementoAcquaTipoPianeta() +"<br>");
+        descTemaNatale.append("Totale Pianeti Personali elemento Terra: "+omeopatiaAstrologia.getTotElementoTerraTipoPianeta() +"<br>");
+        descTemaNatale.append("Totale Pianeti Personali elemento Aria: "+omeopatiaAstrologia.getTotElementoAriaTipoPianeta() );
 
 
         descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Descrizione delle 4 Costituzioni</h4><br>");

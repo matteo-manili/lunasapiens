@@ -1,5 +1,9 @@
 package com.lunasapiens.zodiac;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class CasePlacide {
 
     private int numeroCasa;
@@ -63,4 +67,8 @@ public class CasePlacide {
     public String toString() {
         return "Casa " + nomeCasa + " gradi: "+ gradi + " segno: "+ nomeSegnoZodiacale + " | ";
     }
+
+
+
+
 }

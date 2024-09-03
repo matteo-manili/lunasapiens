@@ -1,7 +1,9 @@
 package com.lunasapiens.zodiac;
 
 
-public class PianetaPosizTransito {
+import com.lunasapiens.Constants;
+
+public class Pianeta {
 
     private int numeroPianeta;
     private String nomePianeta;
@@ -18,8 +20,8 @@ public class PianetaPosizTransito {
     private String significatoPianetaSegno;
 
 
-    public PianetaPosizTransito(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
-                                String significatoPianetaSegno) {
+    public Pianeta(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
+                   String significatoPianetaSegno) {
         this.numeroPianeta = numeroPianeta;
         this.nomePianeta = nomePianeta;
         this.gradi = gradi;
@@ -31,7 +33,7 @@ public class PianetaPosizTransito {
         this.significatoPianetaSegno = significatoPianetaSegno;
     }
 
-    public PianetaPosizTransito() { }
+    public Pianeta() { }
 
     public int getNumeroPianeta() { return numeroPianeta; }
 
@@ -66,8 +68,12 @@ public class PianetaPosizTransito {
 
     // ---- descrizioni ----
 
-    public String descrizionePianeta() {
+    public String descrizionePianetaSegno() {
         return nomePianeta + " in " + nomeSegnoZodiacale + "";
+    }
+
+    public String descrizionePianetaTipoPianetaSegno() {
+        return nomePianeta + " (pianeta "+ Constants.Pianeti.fromNumero( numeroPianeta ).getTipoPianeta().getName() +")" + " in " + nomeSegnoZodiacale + "";
     }
 
     public String descrizione_Pianeta_Retrogrado() {

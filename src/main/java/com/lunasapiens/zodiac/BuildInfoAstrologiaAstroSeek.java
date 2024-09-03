@@ -93,17 +93,17 @@ public class BuildInfoAstrologiaAstroSeek {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaAstroSeek.class);
 
-    private final List<PianetaPosizTransito> pianetaPosizTransitoArrayList;
+    private final List<Pianeta> pianetaArrayList;
     private final List<CasePlacide> casePlacidesArrayList;
 
 
     public BuildInfoAstrologiaAstroSeek() {
-        this.pianetaPosizTransitoArrayList = Collections.emptyList();
+        this.pianetaArrayList = Collections.emptyList();
         this.casePlacidesArrayList = Collections.emptyList();
     }
 
-    public BuildInfoAstrologiaAstroSeek(List<PianetaPosizTransito> pianetaPosizTransitoArrayList, List<CasePlacide> casePlacidesArrayList) {
-        this.pianetaPosizTransitoArrayList = Collections.unmodifiableList(pianetaPosizTransitoArrayList);
+    public BuildInfoAstrologiaAstroSeek(List<Pianeta> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
+        this.pianetaArrayList = Collections.unmodifiableList(pianetaArrayList);
         this.casePlacidesArrayList = Collections.unmodifiableList(casePlacidesArrayList);
     }
 
@@ -116,8 +116,9 @@ public class BuildInfoAstrologiaAstroSeek {
          String luogoNascita, String luogoNascita_2){
 
         StringBuilder textSystemBuilder = new StringBuilder();
-        textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SULLA SINASTRIA DI 2 PERSONE: "+nome+" E "+nome_2+", " +
-                "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO I 2 TEMI NATALE SOTTO DESCRITTI RELATIVI ALLE 2 PERSONE. " +
+        textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SULLA SINASTRIA DI: "+nome+" E "+nome_2+", l'UTENTE CHE TI FA LE DOMANDE è "+nome+" " +
+                "LA LORO RELAZINE è DI TIPO "+ findRelationshipOptionByCode(relationshipString).getDescription()+". "+
+                "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO LA SINASTRIA. " +
                 "NON AGGIUNGERE E NON INVENTARE NIENTE OLTRE LE INFORMAZIONI FORNITE.\n\n")
 
                 .append("- LE CASE ED I PIANETI NELLE CASE, INDICANO IL FUTURO E LE INCLINAZIONI CHE AVRÀ L'UTENTE.\n")
@@ -134,11 +135,37 @@ public class BuildInfoAstrologiaAstroSeek {
                         "chirone.")
 
                 .append("\n\n")
+
+
+// TODO AGGIUNGERE
+/*
+La sinastria è una tecnica astrologica che confronta le carte natali di due persone per determinare la compatibilità e le dinamiche della loro relazione. Ecco le principali caratteristiche da tenere in considerazione per fare una sinastria tra le carte natali di una coppia:
+
+1. Posizioni dei Sole
+Segni Solari: La posizione del Sole nei due temi natali rappresenta la personalità di base e l'essenza del sé. I segni solari possono indicare affinità o differenze fondamentali nel modo di esprimere la propria energia vitale.
+Aspetti del Sole: Gli aspetti che i due Soli formano tra di loro (congiunzione, quadratura, trigono, opposizione, ecc.) forniscono indizi su quanto i partner siano in sintonia a livello di identità e volontà.
+2. Posizioni delle Lune
+Segni Lunari: La Luna rappresenta l'emotività, i bisogni più intimi e il modo di nutrire e ricevere supporto emotivo. La compatibilità delle Lune può indicare quanto i partner siano in sintonia sul piano emotivo.
+Aspetti della Luna: Gli aspetti tra le Lune e altri pianeti sono cruciali per valutare la compatibilità emotiva e il modo in cui i partner si comprendono a livello sentimentale.
+3. Ascendenti
+Segni Ascendenti: L'Ascendente rappresenta l'approccio alla vita, la personalità esteriore e il modo in cui ci si presenta al mondo. Gli Ascendenti in segni compatibili possono indicare una sintonia nella visione del mondo e nell'approccio agli eventi della vita.
+Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti o la compatibilità dei segni) possono indicare come i partner si percepiscono e si attraggono a livello esteriore.
+ */
+
+
+                //.append("----------------------------------------------\n")
+                //.append("- Posizioni dei soli di "+nome+" e "+nome_2)
+
+                //.append("- Posizioni delle Lune di "+nome+" e "+nome_2)
+
+                //.append("- Ascendenti "+nome+" e "+nome_2)
+
+
+
                 .append("----------------------------------------------\n")
 
-                .append("- Tipo di relazione tra "+nome+" e "+nome_2+": "+ findRelationshipOptionByCode(relationshipString).getDescription()+"\n\n")
 
-                .append("- Tema natale dell'Utente "+nome+":\n")
+                .append("- TEMA NATALE DELL'UTENTE "+nome+":\n\n")
                 .append("Data del Tema Natale e data nascita dell'Utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
                 .append("Anni dell'Utente: "+calculateAge(datetimeNascita)+"\n")
                 .append("Luogo di nascita dell'Utente: "+luogoNascita +"\n")
@@ -147,7 +174,7 @@ public class BuildInfoAstrologiaAstroSeek {
                 .append("\n\n")
                 .append("----------------------------------------------\n")
 
-                .append("- Tema natale dell'Utente "+nome_2+":\n")
+                .append("- TEMA NATALE DELL'UTENTE "+nome_2+":\n\n")
                 .append("Data del Tema Natale e data nascita dell'Utente: "+datetimeNascita_2.format(Constants.DATE_TIME_FORMATTER) +"\n")
                 .append("Anni dell'Utente: "+calculateAge(datetimeNascita_2)+"\n")
                 .append("Luogo di nascita dell'Utente: "+luogoNascita_2 +"\n")
@@ -253,7 +280,7 @@ public class BuildInfoAstrologiaAstroSeek {
         }else{
 
             logger.info( urlAstroSeek );
-            List<PianetaPosizTransito> pianetaPosizTransitoArrayList = new ArrayList<PianetaPosizTransito>();
+            List<Pianeta> pianetaArrayList = new ArrayList<Pianeta>();
             List<CasePlacide> casePlacidesArrayList = new ArrayList<CasePlacide>();
             String html = restTemplate.getForObject(urlAstroSeek, String.class);
 
@@ -282,16 +309,16 @@ public class BuildInfoAstrologiaAstroSeek {
                     //System.out.println();
 
 
-                    Constants.Pianeti pianeta = Constants.Pianeti.fromNomeEn( planetName );
-                    if (pianeta == null){
+                    Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeEn( planetName );
+                    if (pianetaConstant == null){
                         continue;
                     }
-                    Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
-                    double gradiTotali = segno.getGradi() + positionInDegrees;
-                    String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianeta.getNumero(), segno.getNumero());
-                    PianetaPosizTransito pianetaPosizTransito = new PianetaPosizTransito(pianeta.getNumero(), pianeta.getNome(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
-                            (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome(), isRetrograde, significatoTransitoPianetaSegno);
-                    pianetaPosizTransitoArrayList.add(pianetaPosizTransito);
+                    Constants.SegniZodiacali segnoConstant = Constants.SegniZodiacali.fromNomeEn( signName );
+                    double gradiTotali = segnoConstant.getGradi() + positionInDegrees;
+                    String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoConstant.getNumero());
+                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
+                            (int)dammiGradiEMinuti(position).getValue(), segnoConstant.getNumero(), segnoConstant.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+                    pianetaArrayList.add( pianeta );
                 }
 
 
@@ -324,7 +351,7 @@ public class BuildInfoAstrologiaAstroSeek {
                     }
                 });
 
-                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetaPosizTransitoArrayList, casePlacidesArrayList);
+                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetaArrayList, casePlacidesArrayList);
                 cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
 
                 return buildInfoAstrologiaAstroSeek;
@@ -364,7 +391,7 @@ public class BuildInfoAstrologiaAstroSeek {
     }
 
 
-    public List<PianetaPosizTransito> getPianetaPosizTransitoArrayList() { return pianetaPosizTransitoArrayList; }
+    public List<Pianeta> getPianetaPosizTransitoArrayList() { return pianetaArrayList; }
 
     public List<CasePlacide> getCasePlacidesArrayList() { return casePlacidesArrayList; }
 
