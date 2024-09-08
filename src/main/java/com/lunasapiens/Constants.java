@@ -16,6 +16,8 @@ public class Constants {
     public static final String INFO_MESSAGE = "infoMessage";
     public static final String INFO_ERROR = "infoError";
 
+    public static final String MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL  = "Autenticazione scaduta. Invia una nuova email per fare l'autenticazione.";
+
     public static final String JWT_WITH_ISSUER = "lunaSapiens_jwt_auth0";
     public static final String COOKIE_JWT_NAME = "jwtToken";
     public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "cookie_disable_google_analytics";

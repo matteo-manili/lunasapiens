@@ -54,12 +54,12 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public JwtElements.JwtKeys getJwtRsaKeys() {
+    public JwtElements.JwtRsaKeys jwtRsaKeys() {
         if (Utils.isLocalhost()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
-            return new JwtElements.JwtKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
+            return new JwtElements.JwtRsaKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
-            return new JwtElements.JwtKeys(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
+            return new JwtElements.JwtRsaKeys(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
         }
     }
 

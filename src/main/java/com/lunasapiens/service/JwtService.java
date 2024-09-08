@@ -32,7 +32,7 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Autowired
-    private JwtElements.JwtKeys getJwtRsaKeys;
+    private JwtElements.JwtRsaKeys jwtRsaKeys;
 
 
     // Variabili di cache per le chiavi
@@ -45,8 +45,8 @@ public class JwtService {
     @PostConstruct
     public void init() {
         try {
-            String publicKeyB64 = getJwtRsaKeys.getKeyPublic();
-            String privateKeyB64 = getJwtRsaKeys.getKeyPrivate();
+            String publicKeyB64 = jwtRsaKeys.getKeyPublic();
+            String privateKeyB64 = jwtRsaKeys.getKeyPrivate();
 
             // Decodifica e memorizza le chiavi in cache
             cachedPublicKey = decodificaChiaveJwtPublic(publicKeyB64);
@@ -76,6 +76,7 @@ public class JwtService {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 7);
             //calendar.add(Calendar.MINUTE, 1);
+
             Date expiresAt = calendar.getTime();
             JwtElements.JwtToken jwtConfigInfo = new JwtElements.JwtToken(
                     JWT.create()

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,7 +45,6 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
     private ProfiloUtenteRepository profiloUtenteRepository;
 
 
-
     /**
      * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip che richiama questi endpoint
      */
@@ -67,30 +65,27 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                         Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
                         if (profiloUtenteOpt.isPresent()) {
                             autenticaUtente(profiloUtenteOpt.get().getEmail(), request);
-                        }
-                        // controllo che la sessione attiva sia effettivamente quella dell'utente del token altrimenti la cancello
-                        Authentication authenticationNow = SecurityContextHolder.getContext().getAuthentication();
-                        if (authenticationNow != null && authenticationNow.isAuthenticated()
-                                && !authenticationNow.getName().equals(jwtDetails.getSubject())) {
-                            logger.warn("errore autenticazione utente, Jwt (getSubject()) e Authentication (getName()) non corrispondono. " +
-                                    "Cancello cookie e autienticazione: " + authenticationNow.getName());
+
+                        }else{
                             Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         }
+
                     } else {
+                        Utils.clearJwtCookie_ClearSecurityContext(request, response); // IMPORTANTE, cancellare il cookie altrimenti va il loop caricando sempre la pagina /register
                         if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
-                            request.getSession().setAttribute(Constants.INFO_ERROR, "Link di autenticazione scaduto. Ripetere l'autenticazione.");
+                            request.getSession().setAttribute(Constants.INFO_ERROR, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
+                            response.sendRedirect("/register");
+
                         } else {
                             request.getSession().setAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
+                            response.sendRedirect("/error");
                         }
-                        Utils.clearJwtCookie_ClearSecurityContext(request, response);
-                        response.sendRedirect("/register");
                     }
                     break;
                 }
             }
         }
-
 
 
         filterChain.doFilter(request, response);
@@ -103,8 +98,7 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                 .password("")
                 .authorities( Constants.USER )
                 .build();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         // Imposta l'autenticazione nel contesto di sicurezza
         SecurityContextHolder.getContext().setAuthentication(authentication);

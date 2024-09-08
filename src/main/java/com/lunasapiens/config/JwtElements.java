@@ -74,15 +74,6 @@ public class JwtElements {
         public String getToken() { return token; }
 
 
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -106,10 +97,10 @@ public class JwtElements {
     /**
      * Classe 3
      */
-    public static class JwtKeys {
+    public static class JwtRsaKeys {
         private String keyPublic;
         private String keyPrivate;
-        public JwtKeys(String keyPublic, String keyPrivate) {
+        public JwtRsaKeys(String keyPublic, String keyPrivate) {
             this.keyPublic = keyPublic;
             this.keyPrivate = keyPrivate;
         }

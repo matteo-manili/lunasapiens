@@ -77,47 +77,64 @@ public class WebSocket_e_ApiController {
         Map<String, Object> response = new HashMap<>(); final String keyJsonStandardContent = "content";
         CustomPrincipalWebSocketChatBot customPrincipalWebSocketChatBot = (CustomPrincipalWebSocketChatBot) principal;
         if( customPrincipalWebSocketChatBot != null ){
-            String domanda = message.get( keyJsonStandardContent );
-            String paginaChatId = message.get("paginaChatId");
+            String domanda = message.get( keyJsonStandardContent ); String paginaChatId = message.get("paginaChatId");
             String userSessionId = message.get(Constants.USER_SESSION_ID);
 
             logger.info("customPrincipal.getIpAddress(): "+ customPrincipalWebSocketChatBot.getIpAddress());
             logger.info("customPrincipal.getName(): "+ customPrincipalWebSocketChatBot.getName());
             logger.info("domanda: "+domanda);
 
-            if (domanda == null || domanda.isEmpty()) {
-                response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
-                return response;
-            }
-            if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ){
-                logger.info("User not logged in");
-                if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
-                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
-                            + "<br>" + "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
-                    return response;
-                }
-            }else{
-                if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
-                    response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
-                    return response;
-                }
-            }
 
-            Cache cache = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
-            if (cache != null ) {
+            Cache cacheMessageBot = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
+            if (cacheMessageBot != null ) {
                 // Recupera la lista di chat messages dalla cache
-                List<ChatMessage> chatMessageIa = cache.get(paginaChatId, List.class);
-                if (chatMessageIa == null) {
-                    chatMessageIa = new ArrayList<>();
+                List<ChatMessage> chatMessageIaList = cacheMessageBot.get(paginaChatId, List.class);
+                if (chatMessageIaList == null) {
+                    chatMessageIaList = new ArrayList<>();
+
+                }else if( chatMessageIaList.size() >= 2 ){
+                    ChatMessage ultimoMessaggioUser = chatMessageIaList.get(chatMessageIaList.size() - 2);
+                    if( ultimoMessaggioUser.getContent().equals(domanda) ){
+                        response.put(keyJsonStandardContent, "Hai già fatto questa domanda." );
+                        return response;
+                    }
                 }
-                chatMessageIa.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
-                cache.put(paginaChatId, chatMessageIa);
+
+                if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) && message.get("tipoServizio").equals("SINASTRIA") ){
+                    response.put(keyJsonStandardContent, "<a href=\"/register\">Iscriviti</a> per usare la ChatBot Sinastria IA");
+                    return response;
+                }
+
+                if (domanda == null || domanda.isEmpty()) {
+                    response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
+                    return response;
+                }
+
+                if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ){
+                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
+                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
+                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti(RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
+                                +" "+ "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
+                        return response;
+                    }
+
+                }else{
+                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
+                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
+                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
+                        return response;
+                    }
+                }
+
+
+                chatMessageIaList.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
+                cacheMessageBot.put(paginaChatId, chatMessageIaList);
                 try {
-                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIa);
+                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIaList);
                     //StringBuilder rispostaIA = new StringBuilder("risposta dalla iaaaaaaaaaaaaaaaaaaaa");
 
-                    chatMessageIa.add(new ChatMessage("assistant", rispostaIA.toString()));
-                    cache.put(paginaChatId, chatMessageIa);
+                    chatMessageIaList.add(new ChatMessage("assistant", rispostaIA.toString()));
+                    cacheMessageBot.put(paginaChatId, chatMessageIaList);
                     response.put(keyJsonStandardContent, rispostaIA.toString());
 
                     if ( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ) {
@@ -135,8 +152,6 @@ public class WebSocket_e_ApiController {
             response.put(keyJsonStandardContent, "Utente non riconosciuto");
         }
         return response;
-
-
     }
 
 

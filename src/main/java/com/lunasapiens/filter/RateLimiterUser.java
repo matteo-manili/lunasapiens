@@ -15,12 +15,7 @@ public class RateLimiterUser {
     public static final int MAX_MESSAGES_PER_DAY_UTENTE = 15; // 15 Limite di messaggi per giorno
     public static final int MAX_MESSAGES_PER_DAY_ANONYMOUS = 5; // 5 Limite di messaggi per giorno
 
-
     private static final long DAY_WINDOW_SIZE_MS = 86400000; // 1 giorno in millisecondi
-    private static final long WINDOW_SIZE_MS = 60000; // 1 minuto in millisecondi
-    private static final int MAX_MESSAGES_PER_MINUTE = 3; // 3 // Limite di messaggi per minuto
-
-
 
 
 
@@ -28,11 +23,21 @@ public class RateLimiterUser {
     private CacheManager cacheManager;
 
 
+    public int getRemainingMessages(String userId, int maxMessagePerDay) {
+        Cache cache = cacheManager.getCache(Constants.LIMITATORE_MESS_BOT_IA_USER_CACHE);
+        MessageTracker tracker = cache.get(userId, MessageTracker.class);
+        if (tracker == null) {
+            tracker = new MessageTracker();
+            cache.put(userId, tracker);
+        }
+        return tracker.getRemainingMessages(maxMessagePerDay);
+    }
+
+
+
 
     public static String numeroMessaggi_e_Minuti(int maxMessagePerDay) {
-        int windowSizeInMinutes = (int) (WINDOW_SIZE_MS / 60000); // Converti millisecondi in minuti
-        int windowSizeInDays = (int) (DAY_WINDOW_SIZE_MS / 86400000); // Converti millisecondi in giorni
-        return "Troppi messaggi! (" +MAX_MESSAGES_PER_MINUTE+ " messaggi al minuto"+ ", " + maxMessagePerDay + " messaggi al giorno).";
+        return "Hai superato il limite di "+maxMessagePerDay + " messaggi al giorno.";
     }
 
 
@@ -48,20 +53,14 @@ public class RateLimiterUser {
     }
 
     private class MessageTracker {
-        private final AtomicInteger messageCountPerMinute = new AtomicInteger(0);
+
         private final AtomicInteger messageCountPerDay = new AtomicInteger(0);
 
-        private long startMinuteTime = System.currentTimeMillis();
         private long startDayTime = System.currentTimeMillis();
 
         public synchronized boolean allowMessage( int maxMessagePerDay ) {
             long currentTime = System.currentTimeMillis();
 
-            // Controllo del limite per minuto
-            if (currentTime - startMinuteTime > WINDOW_SIZE_MS) {
-                startMinuteTime = currentTime;
-                messageCountPerMinute.set(0);
-            }
 
             // Controllo del limite giornaliero
             if (currentTime - startDayTime > DAY_WINDOW_SIZE_MS) {
@@ -69,16 +68,26 @@ public class RateLimiterUser {
                 messageCountPerDay.set(0);
             }
 
-            if (messageCountPerMinute.incrementAndGet() <= MAX_MESSAGES_PER_MINUTE
-                    && messageCountPerDay.incrementAndGet() <= maxMessagePerDay) {
+            if (messageCountPerDay.incrementAndGet() <= maxMessagePerDay) {
                 return true;
             } else {
-                // Se uno dei limiti è superato, diminuiamo i contatori rispettivi
-                messageCountPerMinute.decrementAndGet();
+                // Se uno dei limiti è superato, diminuiamo il contatore
                 messageCountPerDay.decrementAndGet();
                 return false;
             }
         }
+
+
+        public synchronized int getRemainingMessages(int maxMessagePerDay) {
+            long currentTime = System.currentTimeMillis();
+            // Controllo del limite giornaliero
+            if (currentTime - startDayTime > DAY_WINDOW_SIZE_MS) {
+                startDayTime = currentTime;
+                messageCountPerDay.set(0);
+            }
+            return maxMessagePerDay - messageCountPerDay.get() - 1;
+        }
+
     }
 
 

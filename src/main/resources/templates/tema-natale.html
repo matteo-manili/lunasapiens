@@ -290,6 +290,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 try {
                     var parsedMessage = JSON.parse(messageOutput.body);
                     showMessage(parsedMessage.content, true);
+                    showMessage('Domande Rimanenti: '+parsedMessage.numDomandeRimanenti, true);
                     hideLoadingIndicator(); // Nascondi l'indicatore quando ricevi un messaggio
                 } catch (e) {
                     console.error('Error parsing message:', e);
@@ -314,7 +315,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 var payload = {
                     content: message,
                     paginaChatId: paginaChatId,
-                    userSessionId: userSessionId
+                    userSessionId: userSessionId,
+                    tipoServizio: 'TEMA_NATALE'
                 };
                 stompClient.send("/app/message", {}, JSON.stringify(payload));
                 document.getElementById("userMessage").value = "";

@@ -1,5 +1,6 @@
 package com.lunasapiens;
 
+import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweDate;
 import jakarta.servlet.http.Cookie;
@@ -28,6 +29,19 @@ public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+    public static void creaCookieTokenJwt(HttpServletResponse response, JwtElements.JwtDetails jwtDetails){
+        // Creazione del cookie con il token JWT
+        Cookie cookie = new Cookie(Constants.COOKIE_JWT_NAME, jwtDetails.getToken());
+        cookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
+        cookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
+        cookie.setPath("/"); // Imposta il percorso del cookie
+        //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
+        //cookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
+        cookie.setMaxAge(365 * 24 * 60 * 60); // Imposta la durata del cookie a 1 anno (31536000 secondi)
+        // Aggiungi il cookie alla risposta HTTP
+        response.addCookie(cookie);
+        logger.info("creato cookie jwt per l'utente: "+jwtDetails.getSubject());
+    }
 
     public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
         logger.info("cancello Cookie JWT e ClearSecurityContext");

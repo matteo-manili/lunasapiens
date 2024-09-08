@@ -10,7 +10,6 @@ import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.JwtService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
@@ -58,11 +57,6 @@ public class JwtController {
 
 
 
-    //  TODO da togliere dopo i test
-    @Autowired
-    private JwtElements.JwtKeys jwtKeys;
-
-
 
 
 
@@ -98,7 +92,7 @@ public class JwtController {
                         false, false, UUID.randomUUID().toString() );
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
                 emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
-                infoMessage = "Ti abbiamo inviato un'email (" + email + ") con il link per accedere come utente autenticato.";
+                infoMessage = "Ti abbiamo inviato un'email all'indirizzo "+email+" con il link per accedere come utente autenticato.";
                 telegramBotClient.inviaMessaggio( "Profilo iscritto: "+newProfiloUtente.getEmail());
 
             } catch (DataIntegrityViolationException e) {
@@ -125,36 +119,37 @@ public class JwtController {
                                                        RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         logger.info("confirmRegistrazione");
         JwtElements.JwtDetails jwtDetails = jwtService.validateToken( codeTokenJwt );
-        HttpHeaders headers = new HttpHeaders(); String infoMessage = "";
+        HttpHeaders headers = new HttpHeaders(); String pageRegister = "/register";
         if( jwtDetails.isSuccess() ) {
             Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail( jwtDetails.getSubject() );
             if( profiloUtenteOpt.isPresent() ){
                 // Creazione del cookie con il token JWT
-                Cookie cookie = new Cookie(Constants.COOKIE_JWT_NAME, codeTokenJwt);
-                cookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
-                cookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
-                cookie.setPath("/"); // Imposta il percorso del cookie
-
-                //jwtCookie.setMaxAge(24 * 60 * 60); // Imposta la durata del cookie (es. 24 ore)
-                cookie.setMaxAge(7 * 24 * 60 * 60); // Imposta la durata del cookie a 7 giorni (604800 secondi)
-                // Aggiungi il cookie alla risposta HTTP
-                response.addCookie(cookie);
-
-                logger.info("creo cookie jwt per l'utente");
-
-
-                infoMessage = "Grazie per aver confermato la tua email. Ora sei un Utente iscritto con email: "+jwtDetails.getSubject();
-                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+                Utils.creaCookieTokenJwt(response, jwtDetails);
+                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Grazie per aver confermato la tua email. Sei un Utente iscritto con email: "+jwtDetails.getSubject());
                 headers.add("Location", "/private/privatePage");
+                return ResponseEntity.status(302).headers(headers).build();
+
+            }else{
+                Utils.clearJwtCookie_ClearSecurityContext(request, response);
+                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Email non riconosciuta nel sistema. Iscriviti di nuovo.");
+                headers.add("Location", pageRegister);
+                return ResponseEntity.status(302).headers(headers).build();
+            }
+
+        }else {
+            Utils.clearJwtCookie_ClearSecurityContext(request, response);
+            if (jwtDetails.isTokenScaduto()) {
+                logger.info("token scaduto");
+                redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
+                headers.add("Location", pageRegister);
+                return ResponseEntity.status(302).headers(headers).build();
+
+            } else {
+                redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
+                headers.add("Location", "/error");
                 return ResponseEntity.status(302).headers(headers).build();
             }
         }
-
-        Utils.clearJwtCookie_ClearSecurityContext(request, response);
-        infoMessage = "Email non riconosciuta. Iscriviti di nuovo.";
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
-        headers.add("Location", "/register");
-        return ResponseEntity.status(302).headers(headers).build();
     }
 
 
