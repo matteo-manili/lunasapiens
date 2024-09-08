@@ -3,20 +3,12 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.repository.ProfiloUtenteRepository;
-import com.lunasapiens.service.EmailService;
-import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioOmeopatiaAstrologica;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 
-import com.theokanning.openai.completion.chat.ChatMessage;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,10 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Controller
@@ -45,17 +34,6 @@ public class OmeopatiaAstrologicaController {
 
     @Autowired
     ServizioOmeopatiaAstrologica servizioOmeopatiaAstrologica;
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private ProfiloUtenteRepository profiloUtenteRepository;
-
-
 
 
     /**
@@ -74,7 +52,7 @@ public class OmeopatiaAstrologicaController {
                                        @AuthenticationPrincipal UserDetails userDetails
     ) {
 
-        logger.info("omeopatia astrologica");
+        logger.info("sono in omeopatia-astrologica");
 
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
@@ -110,7 +88,7 @@ public class OmeopatiaAstrologicaController {
                                    @RequestParam("statoCode") String statoCode,
                                    RedirectAttributes redirectAttributes) {
 
-        logger.info("sono in temaNataleSubmit");
+        logger.info("sono in omeopatiaAstrologicaSubmit");
 
         // Estrai le singole componenti della data e ora
         int hour = datetime.getHour();
