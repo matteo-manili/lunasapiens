@@ -38,14 +38,6 @@ public class ServizioOmeopatiaAstrologica {
     private int totElementoFuocoTipoPianeta = 0; private int totElementoAcquaTipoPianeta = 0; private int totElementoTerraTipoPianeta = 0; private int totElementoAriaTipoPianeta = 0;
 
 
-    public StringBuilder omeopatiaAstrologicaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
-        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
-        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
-                cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
-                propertiesConfig.transitiPianetiSegni_TemaNatale() );
-        return omeopatiaAstrologicaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
-    }
-
 
     private void setNumTotElementi(SegnoZodiacale segno){
         if(segno.getElemento().getCode() == 0){
@@ -78,9 +70,31 @@ public class ServizioOmeopatiaAstrologica {
     }
 
 
+
+
+    public StringBuilder omeopatiaAstrologicaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
+        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
+
+        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE),
+                giornoOraPosizioneDTO, coordinateDTO, propertiesConfig.transitiPianetiSegni_TemaNatale() );
+
+        return omeopatiaAstrologicaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+    }
+
     // ############################ OMEOPATIA ASTROLOGIA ########################
 
     public StringBuilder omeopatiaAstrologicaDescrizione(List<Pianeta> pianetiList, List<CasePlacide> casePlacideArrayList) {
+
+        // Resetta i contatori prima di calcolare
+        totElementoFuoco = 0;
+        totElementoAcqua = 0;
+        totElementoTerra = 0;
+        totElementoAria = 0;
+
+        totElementoFuocoTipoPianeta = 0;
+        totElementoAcquaTipoPianeta = 0;
+        totElementoTerraTipoPianeta = 0;
+        totElementoAriaTipoPianeta = 0;
 
         Properties omeopatiaElementiProperties = propertiesConfig.omeopatiaElementi();
         OmeopatiaAstrologia omeopatiaAstrologia = new OmeopatiaAstrologia();
