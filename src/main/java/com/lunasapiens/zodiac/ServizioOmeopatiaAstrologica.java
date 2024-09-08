@@ -54,7 +54,7 @@ public class ServizioOmeopatiaAstrologica {
         }
     }
 
-    private void setNumTotElementiPianetiPersoanali(SegnoZodiacale segno){
+    private void setNumTotElementiPianetiPersonali(SegnoZodiacale segno){
         if( segno.getElemento().getCode() == Constants.Elementi.FUOCO.getCode() ){
             totElementoFuocoTipoPianeta += 1;
 
@@ -98,31 +98,34 @@ public class ServizioOmeopatiaAstrologica {
 
         Properties omeopatiaElementiProperties = propertiesConfig.omeopatiaElementi();
         OmeopatiaAstrologia omeopatiaAstrologia = new OmeopatiaAstrologia();
+
+
         SegnoZodiacale ascendente = segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() );
         omeopatiaAstrologia.setAscendente( ascendente );
+        setNumTotElementi( ascendente );
 
         for( Pianeta ite : pianetiList ) {
             SegnoZodiacale segno = segnoZodiacale.getSegnoZodiacale( ite.getNumeroSegnoZodiacale() );
 
             if( ite.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaSole( segno );
-                setNumTotElementiPianetiPersoanali( segno );
+                setNumTotElementiPianetiPersonali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.LUNA.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaLuna( segno );
-                setNumTotElementiPianetiPersoanali( segno );
+                setNumTotElementiPianetiPersonali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.MERCURIO.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaMercurio( segno );
-                setNumTotElementiPianetiPersoanali( segno );
+                setNumTotElementiPianetiPersonali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.VENERE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaVenere( segno );
-                setNumTotElementiPianetiPersoanali( segno );
+                setNumTotElementiPianetiPersonali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.MARTE.getNumero() ) { // pianeta personale
                 omeopatiaAstrologia.setPianetaMarte( segno );
-                setNumTotElementiPianetiPersoanali( segno );
+                setNumTotElementiPianetiPersonali( segno );
 
             }else if( ite.getNumeroPianeta() == Constants.Pianeti.GIOVE.getNumero() ) {
                 omeopatiaAstrologia.setPianetaGiove( segno );
