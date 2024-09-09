@@ -65,16 +65,14 @@ public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
                         Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());
                         if (profiloUtenteOpt.isPresent()) {
                             autenticaUtente(profiloUtenteOpt.get().getEmail(), request);
-
                         }else{
                             Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         }
-
                     } else {
                         Utils.clearJwtCookie_ClearSecurityContext(request, response); // IMPORTANTE, cancellare il cookie altrimenti va il loop caricando sempre la pagina /register
                         if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
-                            request.getSession().setAttribute(Constants.INFO_ERROR, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
+                            request.getSession().setAttribute(Constants.INFO_ALERT, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
                             response.sendRedirect("/register");
 
                         } else {

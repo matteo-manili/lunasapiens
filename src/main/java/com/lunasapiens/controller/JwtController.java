@@ -72,7 +72,7 @@ public class JwtController {
         logger.info("sono in registrazioneUtente");
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Iscrizione negata.");
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Troppe richieste. Iscrizione negata.");
         }
         Optional<ProfiloUtente> profiloUteteOpt = profiloUtenteRepository.findByEmail( email ); //.orElse(null);
         JwtElements.JwtToken jwtConfigToken = jwtService.generateToken(email);
@@ -125,13 +125,14 @@ public class JwtController {
             if( profiloUtenteOpt.isPresent() ){
                 // Creazione del cookie con il token JWT
                 Utils.creaCookieTokenJwt(response, jwtDetails);
-                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Grazie per aver confermato la tua email. Sei un Utente iscritto con email: "+jwtDetails.getSubject());
+                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Autenticazione completata con successo. Hai effettuato l'accesso " +
+                        "con l'email: " + jwtDetails.getSubject());
                 headers.add("Location", "/private/privatePage");
                 return ResponseEntity.status(302).headers(headers).build();
 
             }else{
                 Utils.clearJwtCookie_ClearSecurityContext(request, response);
-                redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Email non riconosciuta nel sistema. Iscriviti di nuovo.");
+                redirectAttributes.addFlashAttribute(Constants.INFO_ALERT, "Email non riconosciuta nel sistema. Iscriviti di nuovo.");
                 headers.add("Location", pageRegister);
                 return ResponseEntity.status(302).headers(headers).build();
             }
@@ -140,7 +141,7 @@ public class JwtController {
             Utils.clearJwtCookie_ClearSecurityContext(request, response);
             if (jwtDetails.isTokenScaduto()) {
                 logger.info("token scaduto");
-                redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
+                redirectAttributes.addFlashAttribute(Constants.INFO_ALERT, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
                 headers.add("Location", pageRegister);
                 return ResponseEntity.status(302).headers(headers).build();
 

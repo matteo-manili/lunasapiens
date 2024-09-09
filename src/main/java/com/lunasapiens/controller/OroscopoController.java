@@ -71,7 +71,9 @@ public class OroscopoController {
      * servizio oroscopo giornaliero
      */
     @GetMapping("/oroscopo")
-    public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage) {
+    public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage,
+                                 @ModelAttribute(Constants.INFO_ALERT) String infoAlert,
+                                 @ModelAttribute(Constants.INFO_ERROR) String infoError) {
 
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
@@ -85,8 +87,15 @@ public class OroscopoController {
         model.addAttribute("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
         model.addAttribute("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
 
-        // Aggiungi infoMessage al modello per essere visualizzato nella vista
-        model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
+        if(infoMessage != null){
+            model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
+        }
+        if(infoAlert != null){
+            model.addAttribute(Constants.INFO_ALERT, infoAlert);
+        }
+        if(infoError != null){
+            model.addAttribute(Constants.INFO_ERROR, infoError);
+        }
         return "oroscopo";
     }
 
@@ -96,7 +105,7 @@ public class OroscopoController {
         logger.info("email: "+email);
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Troppe richieste. Sottoscrizione email negata.");
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Troppe richieste. Sottoscrizione email negata.");
         }else{
             Object[] result = emailService.salvaEmail( email, request.getRemoteAddr() );
             Boolean success = (Boolean) result[0];
@@ -118,12 +127,13 @@ public class OroscopoController {
         if(profiloUtente != null && profiloUtente.getConfirmationCode().trim().equals(code.trim())) {
             profiloUtente.setEmailOroscopoGiornaliero(true);
             profiloUtenteRepository.save(profiloUtente);
-            infoMessage = "Grazie per aver confermato la tua email. Sei ora iscritto al nostro servizio di oroscopo giornaliero con l'indirizzo "+profiloUtente.getEmail()+". " +
-                    "Presto riceverai il tuo primo oroscopo nella tua casella di posta.";
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Grazie per aver confermato la tua email. Sei ora iscritto " +
+                    "al nostro servizio di oroscopo giornaliero con l'indirizzo "+profiloUtente.getEmail()+". Presto riceverai il tuo primo " +
+                    "oroscopo nella tua casella di posta.");
         }else{
-            infoMessage = "Conferma email non riuscita. Iscriviti di nuovo";
+            redirectAttributes.addFlashAttribute(Constants.INFO_ALERT, "Conferma email non riuscita. Iscriviti di nuovo");
         }
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
+
         return "redirect:/oroscopo";
     }
 
@@ -131,16 +141,14 @@ public class OroscopoController {
     public String cancelEmailOroscGiorn(@RequestParam(name = "code", required = true) String code, RedirectAttributes redirectAttributes) {
         logger.info("cancelEmailOroscGiorn code: "+code);
         ProfiloUtente profiloUtente = profiloUtenteRepository.findByConfirmationCode( code ).orElse(null);
-        String infoMessage = "";
         if(profiloUtente != null && profiloUtente.getConfirmationCode().trim().equals(code.trim())) {
             profiloUtente.setEmailOroscopoGiornaliero(false);
             profiloUtenteRepository.save(profiloUtente);
-            infoMessage = "La tua cancellazione dall'Oroscopo del giorno è avvenuta con successo. Non riceverai più le nostre previsioni giornaliere. " +
-                    "Se desideri iscriverti nuovamente in futuro, visita il nostro sito.";
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "La tua cancellazione dall'Oroscopo del giorno è avvenuta con successo. Non riceverai più le nostre previsioni giornaliere. " +
+                    "Se desideri iscriverti nuovamente in futuro, visita il nostro sito.");
         }else{
-            infoMessage = "L'indirizzo email non è presente nel sistema.";
+            redirectAttributes.addFlashAttribute(Constants.INFO_ALERT, "L'indirizzo email non è presente nel sistema.");
         }
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/oroscopo";
     }
 

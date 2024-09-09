@@ -14,6 +14,7 @@ public class Constants {
 
 
     public static final String INFO_MESSAGE = "infoMessage";
+    public static final String INFO_ALERT = "infoAlert";
     public static final String INFO_ERROR = "infoError";
 
     public static final String MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL  = "Autenticazione scaduta. Invia una nuova email per fare l'autenticazione.";

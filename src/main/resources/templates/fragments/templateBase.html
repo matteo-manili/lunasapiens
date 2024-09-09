@@ -123,6 +123,20 @@
 </header>
 
 
+<!-- alert -->
+<div th:fragment="message_alerts">
+    <div th:if="${infoError != null and infoError != ''}" class="alert alert-danger mt-3" role="alert">
+        <p th:text="${infoError}"></p>
+    </div>
+    <div th:if="${infoAlert != null and infoAlert != ''}" class="alert alert-warning mt-3" role="alert">
+        <p th:text="${infoAlert}"></p>
+    </div>
+    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
+        <p th:text="${infoMessage}"></p>
+    </div>
+</div>
+
+
 <!-- pulsanti social -->
 <div th:fragment="pulsanti_social(linkEnding)" class="btn-group mt-4 d-flex flex-wrap justify-content-center" role="group">
     <!-- Pulsante Facebook -->

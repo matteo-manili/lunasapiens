@@ -17,11 +17,8 @@
     <h1 class="mb-4">Contatti</h1>
 
     <div class="bg-light p-4 rounded-3 mb-3 ">
-        <!-- Mostra il messaggio -->
-        <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-            <p th:text="${infoMessage}"></p>
-        </div>
 
+        <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
         <form th:action="@{/contattiSubmit}" th:object="${contactForm}" method="post" onsubmit="showLoadingOverlay()">
             <div class="row gy-3 gy-xl-4 p-xl-4 p-4">

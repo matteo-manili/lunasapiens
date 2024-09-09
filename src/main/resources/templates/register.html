@@ -17,17 +17,11 @@
 
     <h1 class="mb-4">Pagina di Iscrizione</h1>
 
+    <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
-    <div th:if="${infoError != null and infoError != ''}" class="alert alert-warning mt-3" role="alert">
-        <p th:text="${infoError}"></p>
-    </div>
-
-    <div th:if="${infoMessage != null and infoMessage != ''}" class="alert alert-success mt-3" role="alert">
-        <p th:text="${infoMessage}"></p>
-    </div>
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
-        <p>Iscrivendoti, riceverai un'email con un link per accedere.<br>
+        <p>Riceverai un'email con un link per accedere.<br>
             L'accesso sarà valido per 7 giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
         <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">

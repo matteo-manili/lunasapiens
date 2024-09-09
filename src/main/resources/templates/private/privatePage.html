@@ -14,7 +14,9 @@
 
     <h1 class="mb-4">Pagina Utente</h1>
 
-    <div class="alert alert-success mb-4">
+    <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
+
+    <div class="alert alert-primary mb-4">
         <p>Benvenuto, <b><span sec:authentication="name">NOT FOUND</span>!</b> Sei un utente iscritto su LunaSapiens.</p>
 
         <p>Ora puoi approfittare del vantaggio di porre più domande al <a href="/tema-natale">Tema Natale IA</a> e alla <a href="/sinastria">Sinastria IA</a>.</p>
@@ -27,16 +29,13 @@
 
     <!-- Sezione visibile solo per l'utente "matte.manili@gmail.com" -->
     <div sec:authorize="authentication.principal.username == 'matteo.manili@gmail.com'">
-        <div class="alert alert-dark mt-4">
+        <div class="alert alert-dark mb-4">
         <p th:text="${infoDisabledAnalyticsCookie}"></p>
         <p class="mt-2">
             <a href="/set-disable-analytics-cookie">Clicca qui per disabilitare il tracciamento di Google Analytics</a>
         </p>
         </div>
     </div>
-
-
-
 
 
     <!-- scerivi qui il codice -->
@@ -49,7 +48,7 @@
         </div>
         <div class="col-md-6">
             <div class="alert alert-danger mb-4">
-                <p class="mt-2">Vuoi eliminare il tuo account su LunaSapiens? Clicca qui sotto per procedere con la cancellazione.</p>
+                <p class="mt-2">Vuoi eliminare il tuo account da LunaSapiens? Clicca qui sotto per procedere con la cancellazione.</p>
                 <a href="/private/cancellaUtente" class="btn btn-danger">Elimina Account</a>
             </div>
         </div>

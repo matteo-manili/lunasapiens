@@ -83,12 +83,22 @@ public class IndexController {
     public String register(Model model, HttpServletRequest request) {
         // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
         // è per questo che qui raccolgo l'eventuale attributo
-        String messaggio = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
+        String infoError = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
+        String infoAlert = (String) request.getSession().getAttribute(Constants.INFO_ALERT);
+        String infoMessage = (String) request.getSession().getAttribute(Constants.INFO_MESSAGE);
 
         model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
         model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
-        if (messaggio != null) {
-            model.addAttribute(Constants.INFO_ERROR, messaggio);
+        if (infoError != null) {
+            model.addAttribute(Constants.INFO_ERROR, infoError);
+            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+        }
+        if (infoAlert != null) {
+            model.addAttribute(Constants.INFO_ALERT, infoAlert);
+            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+        }
+        if (infoMessage != null) {
+            model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
             request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
         }
         return "register";
@@ -161,9 +171,10 @@ public class IndexController {
     }
 
     @GetMapping("/logout")
-    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
+    public RedirectView logout(HttpServletRequest request, HttpServletResponse response, RedirectAttributes attributes) {
         logger.info( "sono in logout" );
         Utils.clearJwtCookie_ClearSecurityContext(request, response);
+        attributes.addFlashAttribute(Constants.INFO_MESSAGE, "Logout eseguito. Invia una nuova email per autenticarti.");
         RedirectView redirectView = new RedirectView("/register", true);
         return redirectView;
     }
