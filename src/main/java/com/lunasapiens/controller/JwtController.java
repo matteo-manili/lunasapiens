@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.service.EmailService;
-import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
@@ -53,7 +53,7 @@ public class JwtController {
     private JwtService jwtService;
 
     @Autowired
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
 
 
 
@@ -93,7 +93,7 @@ public class JwtController {
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
                 emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
                 infoMessage = "Ti abbiamo inviato un'email all'indirizzo "+email+" con il link per accedere come utente autenticato.";
-                telegramBotClient.inviaMessaggio( "Profilo iscritto: "+newProfiloUtente.getEmail());
+                telegramBotService.inviaMessaggio( "Profilo iscritto: "+newProfiloUtente.getEmail());
 
             } catch (DataIntegrityViolationException e) {
                 System.out.println("DataIntegrityViolationException: " + e.getMessage());

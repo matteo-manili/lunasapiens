@@ -1,4 +1,4 @@
-package com.lunasapiens;
+package com.lunasapiens.service;
 
 
 import com.lunasapiens.config.AppConfig;
@@ -26,7 +26,7 @@ risultato:
  */
 
 @Component
-public class TelegramBotClient extends TelegramLongPollingBot {
+public class TelegramBotService extends TelegramLongPollingBot {
 
 
     @Autowired

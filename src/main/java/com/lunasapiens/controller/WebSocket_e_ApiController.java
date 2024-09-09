@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.Constants;
-import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.config.CustomPrincipalWebSocketChatBot;
 import com.lunasapiens.config.WebSocketConfig;
@@ -55,7 +55,7 @@ public class WebSocket_e_ApiController {
     private RateLimiterUser rateLimiterUser;
 
     @Autowired
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
 
 
 
@@ -138,9 +138,9 @@ public class WebSocket_e_ApiController {
                     response.put(keyJsonStandardContent, rispostaIA.toString());
 
                     if ( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ) {
-                        telegramBotClient.inviaMessaggio("user: "+domanda);
+                        telegramBotService.inviaMessaggio("user: "+domanda);
                     }else{
-                        telegramBotClient.inviaMessaggio("utente: "+domanda);
+                        telegramBotService.inviaMessaggio("utente: "+domanda);
                     }
                 } catch (Exception e) {
                     response.put(keyJsonStandardContent, "Errore durante l'elaborazione: " + e.getMessage());

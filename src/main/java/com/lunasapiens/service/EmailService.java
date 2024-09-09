@@ -1,7 +1,6 @@
 package com.lunasapiens.service;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.TelegramBotClient;
 import com.lunasapiens.Utils;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -28,7 +27,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -50,7 +48,7 @@ public class EmailService {
     private ProfiloUtenteRepository profiloUtenteRepository;
 
     @Autowired
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
@@ -184,7 +182,7 @@ public class EmailService {
                         "Controlla la tua casella di posta per confermare la tua iscrizione.";
                 result[2] = newProfiloUtente;
             }
-            telegramBotClient.inviaMessaggio( "Email registrata: "+email);
+            telegramBotService.inviaMessaggio( "Email registrata: "+email);
 
         } catch (DataIntegrityViolationException e) {
             System.out.println("Duplicate email detected: " + e.getMessage());

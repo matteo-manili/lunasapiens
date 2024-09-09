@@ -7,6 +7,7 @@ import com.lunasapiens.entity.GestioneApplicazione;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.service.TikTokOperazioniDbService;
 import jakarta.servlet.ServletContext;
 import org.apache.http.NameValuePair;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class TikTokApiClient {
     private RestTemplate restTemplate;
 
     @Autowired
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
 
     @Value("${api.tiktok.clientKey}")
     private String clientKey;
@@ -238,7 +238,7 @@ public class TikTokApiClient {
                 .queryParam("state", csrfState)
                 .build().toUriString();
 
-        telegramBotClient.inviaMessaggio("link autenticazione tiktok: "+authorizationUri);
+        telegramBotService.inviaMessaggio("link autenticazione tiktok: "+authorizationUri);
 
         // Apertura dell'URL nel browser o integrazione con il tuo frontend
         System.out.println("Apri l'URL nel browser: " + authorizationUri);

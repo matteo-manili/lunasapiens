@@ -1,17 +1,11 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.TelegramBotClient;
-import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.filter.RateLimiterUser;
-import com.lunasapiens.repository.ProfiloUtenteRepository;
-import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioSinastria;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,7 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;

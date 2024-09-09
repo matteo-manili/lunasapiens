@@ -1,6 +1,6 @@
 package com.lunasapiens.controller;
 
-import com.lunasapiens.TelegramBotClient;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.TikTokApiClient;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
 import com.lunasapiens.service.TikTokOperazioniDbService;
@@ -101,18 +101,18 @@ public class ZZZ_TEST_Controller {
     private TikTokOperazioniDbService tikTokOperazioniDbService;
     private JdbcTemplate jdbcTemplate;
     private GestioneApplicazioneRepository gestioneApplicazioneRepository;
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
     private TikTokApiClient tikTokApiClient;
 
     @Autowired
     public ZZZ_TEST_Controller(ServletContext servletContext, JdbcTemplate jdbcTemplate, TikTokOperazioniDbService tikTokOperazioniDbService,
-                               GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBotClient telegramBotClient, TikTokApiClient tikTokApiClient) {
+                               GestioneApplicazioneRepository gestioneApplicazioneRepository, TelegramBotService telegramBotService, TikTokApiClient tikTokApiClient) {
 
         this.servletContext = servletContext;
         this.jdbcTemplate = jdbcTemplate;
         this.tikTokOperazioniDbService = tikTokOperazioniDbService;
         this.gestioneApplicazioneRepository = gestioneApplicazioneRepository;
-        this.telegramBotClient = telegramBotClient;
+        this.telegramBotService = telegramBotService;
         this.tikTokApiClient = tikTokApiClient;
     }
 

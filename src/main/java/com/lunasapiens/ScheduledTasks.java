@@ -5,6 +5,7 @@ import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class ScheduledTasks {
     private CacheManager cacheManager;
 
     @Autowired
-    private TelegramBotClient telegramBotClient;
+    private TelegramBotService telegramBotService;
 
     @Autowired
     private EmailService emailService;
@@ -49,7 +50,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
     public void executeTask_CreaOroscopoGiornaliero() {
         creaOroscopoGiornaliero();
-        telegramBotClient.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() "+ Utils.getNowRomeEurope());
+        telegramBotService.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() "+ Utils.getNowRomeEurope());
         logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Utils.getNowRomeEurope());
     }
 
