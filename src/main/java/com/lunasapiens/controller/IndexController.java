@@ -91,15 +91,15 @@ public class IndexController {
         model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
         if (infoError != null) {
             model.addAttribute(Constants.INFO_ERROR, infoError);
-            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
         }
         if (infoAlert != null) {
             model.addAttribute(Constants.INFO_ALERT, infoAlert);
-            request.getSession().removeAttribute(Constants.INFO_ALERT); // Rimuovi dalla sessione
+            request.getSession().removeAttribute(Constants.INFO_ALERT); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
         }
         if (infoMessage != null) {
             model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
-            request.getSession().removeAttribute(Constants.INFO_MESSAGE); // Rimuovi dalla sessione
+            request.getSession().removeAttribute(Constants.INFO_MESSAGE); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
         }
         return "register";
     }

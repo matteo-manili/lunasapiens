@@ -34,9 +34,9 @@ import java.util.UUID;
 
 @Component
 @Order(2) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
-public class FilterCheckJwtAuthentication extends OncePerRequestFilter {
+public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(FilterCheckJwtAuthentication.class);
+    private static final Logger logger = LoggerFactory.getLogger(FilterAuthenticationJwt.class);
 
     @Autowired
     JwtService jwtService;
