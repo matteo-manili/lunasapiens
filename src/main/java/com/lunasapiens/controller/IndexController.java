@@ -95,11 +95,11 @@ public class IndexController {
         }
         if (infoAlert != null) {
             model.addAttribute(Constants.INFO_ALERT, infoAlert);
-            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+            request.getSession().removeAttribute(Constants.INFO_ALERT); // Rimuovi dalla sessione
         }
         if (infoMessage != null) {
             model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
-            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione
+            request.getSession().removeAttribute(Constants.INFO_MESSAGE); // Rimuovi dalla sessione
         }
         return "register";
     }
