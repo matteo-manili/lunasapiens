@@ -241,6 +241,7 @@ public class IndexController {
      * document.getElementById("header-placeholder").innerHTML = html;
      * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
      */
+    @ResponseStatus(HttpStatus.GONE) // Imposta lo status 410
     @GetMapping("/header")
     public String header() { return "fragments/templateBase :: header"; }
 
