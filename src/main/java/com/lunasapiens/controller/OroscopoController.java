@@ -78,7 +78,7 @@ public class OroscopoController {
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        String jsonDataSchemaOrg = servizioOroscopoDelGiorno.creaJsonTransitiDelGiorno(giornoOraPosizioneDTO).toString();
+        String jsonSchemaOrg = servizioOroscopoDelGiorno.jsonSchemaOrgTransitiDelGiorno(giornoOraPosizioneDTO).toString();
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
@@ -86,7 +86,7 @@ public class OroscopoController {
             listOroscopoGiornoDTO.add(dto);
         }
 
-        model.addAttribute("jsonDataSchemaOrg", jsonDataSchemaOrg);
+        model.addAttribute("jsonSchemaOrg", jsonSchemaOrg);
         model.addAttribute("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
         model.addAttribute("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
 

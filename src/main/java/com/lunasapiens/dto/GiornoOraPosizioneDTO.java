@@ -18,8 +18,8 @@ public class GiornoOraPosizioneDTO {
     private String giornoMeseAnnoFormattato;
 
 
-    private String giornoCoperturaInizio;
-    private String giornoCoperturaFine;
+    private String jsonSchemaOrgGiornoInizio;
+    private String jsonSchemaOrgGiornoFine;
 
     // Costruttori, getter e setter
 
@@ -42,10 +42,10 @@ public class GiornoOraPosizioneDTO {
         DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         // Data e ora di inizio del giorno
         LocalDateTime startOfDay = LocalDateTime.of(anno, mese, giorno, 0, 0, 0);
-        giornoCoperturaInizio = startOfDay.format(customFormatter);
+        this.jsonSchemaOrgGiornoInizio = startOfDay.format(customFormatter);
         // Data e ora di fine del giorno (corretto a 23:59:59)
         LocalDateTime endOfDay = LocalDateTime.of(anno, mese, giorno, 23, 59, 59);
-        giornoCoperturaFine = endOfDay.format(customFormatter);
+        this.jsonSchemaOrgGiornoFine = endOfDay.format(customFormatter);
     }
 
     // Getter
@@ -104,8 +104,8 @@ public class GiornoOraPosizioneDTO {
 
     public String getGiornoMeseAnnoFormattato() { return giornoMeseAnnoFormattato; }
 
-    public String getGiornoCoperturaInizio() { return giornoCoperturaInizio; }
+    public String getJsonSchemaOrgGiornoInizio() { return jsonSchemaOrgGiornoInizio; }
 
-    public String getGiornoCoperturaFine() { return giornoCoperturaFine; }
+    public String getJsonSchemaOrgGiornoFine() { return jsonSchemaOrgGiornoFine; }
 }
 

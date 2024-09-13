@@ -85,7 +85,7 @@ public class ServizioOroscopoDelGiorno {
 
 
 
-    public JSONObject creaJsonTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public JSONObject jsonSchemaOrgTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Creazione dell'oggetto principale del dataset
         JSONObject dataset = new JSONObject();
         dataset.put("@context", "https://schema.org");
@@ -94,8 +94,8 @@ public class ServizioOroscopoDelGiorno {
         dataset.put("description", "Transiti astrologici giornalieri per ogni pianeta nel sistema solare, aggiornati quotidianamente.");
 
         // Assicurati che le date siano nel formato ISO 8601
-        String dataPubblicazione = giornoOraPosizioneDTO.getGiornoCoperturaInizio();  // Dovrebbe essere formato ISO 8601
-        String coperturaTemporale = giornoOraPosizioneDTO.getGiornoCoperturaFine();  // Dovrebbe essere formato ISO 8601
+        String dataPubblicazione = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoInizio();  // Dovrebbe essere formato ISO 8601
+        String coperturaTemporale = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoFine();  // Dovrebbe essere formato ISO 8601
         dataset.put("datePublished", dataPubblicazione);
         dataset.put("temporalCoverage", coperturaTemporale);
 
