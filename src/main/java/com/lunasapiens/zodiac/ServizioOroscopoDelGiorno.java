@@ -6,6 +6,8 @@ import com.lunasapiens.Utils;
 import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,74 @@ public class ServizioOroscopoDelGiorno {
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDesDTO = new OroscopoDelGiornoDescrizioneDTO(descrizioneOggi, giornoOraPosizioneDTO);
         return oroscDelGiornDesDTO;
     }
+
+
+
+    public JSONObject creaJsonTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        // Creazione dell'oggetto principale del dataset
+        JSONObject dataset = new JSONObject();
+        dataset.put("@context", "https://schema.org");
+        dataset.put("@type", "Dataset");
+        dataset.put("name", "Transiti Planetari del Giorno");
+        dataset.put("description", "Transiti astrologici giornalieri per ogni pianeta nel sistema solare, aggiornati quotidianamente.");
+
+        // Assicurati che le date siano nel formato ISO 8601
+        String dataPubblicazione = giornoOraPosizioneDTO.getGiornoCoperturaInizio();  // Dovrebbe essere formato ISO 8601
+        String coperturaTemporale = giornoOraPosizioneDTO.getGiornoCoperturaFine();  // Dovrebbe essere formato ISO 8601
+        dataset.put("datePublished", dataPubblicazione);
+        dataset.put("temporalCoverage", coperturaTemporale);
+
+        // Aggiunta del provider di dati
+        JSONObject dataProvider = new JSONObject();
+        dataProvider.put("@type", "Organization");
+        dataProvider.put("name", "Luna Sapiens");
+        dataset.put("dataProvider", dataProvider);
+
+        // Lista dei transiti
+        JSONArray transitiArray = new JSONArray();
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
+        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+
+        // Aggiungi i pianeti con descrizione e retrogradazione
+        for (Pianeta pianeta : pianetiTransiti) {
+            if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
+                JSONObject pianetaObject = new JSONObject();
+                pianetaObject.put("name", pianeta.getNomePianeta());
+                pianetaObject.put("sign", pianeta.getNomeSegnoZodiacale());
+                pianetaObject.put("gradi", String.format("%.0f", pianeta.getGradi()));  // Arrotonda a due decimali
+                pianetaObject.put("retrogrado", pianeta.isRetrogrado());  // Cambiato a booleano true/false
+                pianetaObject.put("significato", pianeta.getSignificatoPianetaSegno());
+                transitiArray.put(pianetaObject);
+            }
+        }
+
+        // Aggiungi l'array di transiti al dataset
+        dataset.put("variableMeasured", transitiArray);
+
+        return dataset;
+    }
+
+ /*
+        // Lista degli aspetti
+        JSONArray aspettiArray = new JSONArray();
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiPianeti());
+
+        // Aggiungi gli aspetti
+        for (Aspetti aspetto : aspetti) {
+            JSONObject aspettoObject = new JSONObject();
+            aspettoObject.put("pianeta1", aspetto.getNomePianeta_1());
+            aspettoObject.put("pianeta2", aspetto.getNomePianeta_2());
+            aspettoObject.put("aspetto", Constants.Aspetti.fromCode(aspetto.getTipoAspetto()).getName());
+            aspettiArray.put(aspettoObject);
+        }
+
+        // Aggiungi l'array di aspetti al dataset (se non è vuoto)
+        if (aspettiArray.length() > 0) {
+            dataset.put("aspetti", aspettiArray);
+        }
+*/
+
+
 
 
     public StringBuilder domanda_prompt(int numeroSegno) {

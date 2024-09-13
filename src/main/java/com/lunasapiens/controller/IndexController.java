@@ -9,6 +9,7 @@ import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.*;
+import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import com.restfb.*;
@@ -264,16 +265,24 @@ public class IndexController {
     public void getSitemap(HttpServletResponse response) throws IOException {
         // Crea il generatore di sitemap
         WebSitemapGenerator sitemapGenerator = WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
-
         // Aggiungi URL alla sitemap
         for (String url : Constants.URL_INDEX_LIST) {
-            WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url).build();
-            sitemapGenerator.addUrl(sitemapUrl);
+            if (url.equals("/oroscopo")) {
+                // Aggiungi la pagina oroscopo con lastmod, changefreq e priority
+                WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
+                        .lastMod ( Utils.OggiOre0() ) // Data di ultima modifica
+                        .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
+                        .priority(1.0)                // Priorità alta
+                        .build();
+                sitemapGenerator.addUrl(oroscopoUrl);
+            } else {
+                // Per tutte le altre pagine, aggiungi normalmente
+                WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url).build();
+                sitemapGenerator.addUrl(sitemapUrl);
+            }
         }
-
         // Genera la sitemap
         List<String> sitemapUrls = sitemapGenerator.writeAsStrings();
-
         // Imposta il tipo di contenuto e restituisci la sitemap
         response.setContentType("application/xml");
         response.getWriter().write(String.join("\n", sitemapUrls));

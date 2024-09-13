@@ -98,7 +98,6 @@ public class Utils {
     public static ZonedDateTime getNowRomeEurope() {
         ZoneId romaZone = ZoneId.of("Europe/Rome");
         ZonedDateTime now = ZonedDateTime.now(romaZone);
-        logger.info("ZonedDateTime Roma_:" +now);
         return now;
     }
 
@@ -109,6 +108,16 @@ public class Utils {
         calendar.set(Calendar.MONTH, now.getMonthValue()-1);
         calendar.set(Calendar.YEAR, now.getYear());
         calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    public static Date OggiOre0() {
+        ZonedDateTime now = getNowRomeEurope(); Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
+        calendar.set(Calendar.MONTH, now.getMonthValue()-1);
+        calendar.set(Calendar.YEAR, now.getYear());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }

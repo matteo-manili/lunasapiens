@@ -3,6 +3,7 @@ package com.lunasapiens.dto;
 import com.lunasapiens.Constants;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GiornoOraPosizioneDTO {
 
@@ -14,7 +15,11 @@ public class GiornoOraPosizioneDTO {
     private double lon;
     private double lat;
 
-    String giornoMeseAnnoFormattato;
+    private String giornoMeseAnnoFormattato;
+
+
+    private String giornoCoperturaInizio;
+    private String giornoCoperturaFine;
 
     // Costruttori, getter e setter
 
@@ -32,9 +37,18 @@ public class GiornoOraPosizioneDTO {
         this.lat = lat;
         this.lon = lon;
         this.giornoMeseAnnoFormattato = dateTime.format(Constants.FORMATTER_GIORNO_MESE_ANNO);
+
+
+        DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        // Data e ora di inizio del giorno
+        LocalDateTime startOfDay = LocalDateTime.of(anno, mese, giorno, 0, 0, 0);
+        giornoCoperturaInizio = startOfDay.format(customFormatter);
+        // Data e ora di fine del giorno (corretto a 23:59:59)
+        LocalDateTime endOfDay = LocalDateTime.of(anno, mese, giorno, 23, 59, 59);
+        giornoCoperturaFine = endOfDay.format(customFormatter);
     }
 
-    // Getter e setter
+    // Getter
 
     public int getOra() {
         return ora;
@@ -80,10 +94,6 @@ public class GiornoOraPosizioneDTO {
         return lon;
     }
 
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
     public double getLat() {
         return lat;
     }
@@ -92,14 +102,10 @@ public class GiornoOraPosizioneDTO {
         this.lat = lat;
     }
 
-    public String getGiornoMeseAnnoFormattato() {
-        return giornoMeseAnnoFormattato;
-    }
+    public String getGiornoMeseAnnoFormattato() { return giornoMeseAnnoFormattato; }
 
-    public void setGiornoMeseAnnoFormattato(String giornoMeseAnnoFormattato) {
-        this.giornoMeseAnnoFormattato = giornoMeseAnnoFormattato;
-    }
+    public String getGiornoCoperturaInizio() { return giornoCoperturaInizio; }
 
-
+    public String getGiornoCoperturaFine() { return giornoCoperturaFine; }
 }
 

@@ -39,9 +39,7 @@ public class Pianeta {
 
     public String getNomePianeta() { return nomePianeta;
     }
-    public double getGradi() {
-        return gradi;
-    }
+    public double getGradi() { return gradi; }
 
     public int getMinuti() {
         return minuti;

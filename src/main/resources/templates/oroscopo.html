@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
     <title th:fragment="title">Luna Sapiens | Oroscopo del Giorno</title>
     <th:block th:fragment="meta">
         <meta name="description" content="Scopri l'oroscopo del giorno su LunaSapiens.com! Leggi le previsioni astrologiche dettagliate per tutti i segni zodiacali e analizza i transiti planetari e gli aspetti celesti che influenzano la tua giornata. Iscriviti per ricevere l'oroscopo del giorno direttamente nella tua email e rimani aggiornato sulle influenze astrali quotidiane.">
@@ -21,6 +21,9 @@
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/oroscopo" />
         <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script type="application/ld+json" th:utext="${jsonDataSchemaOrg}"></script>
     </th:block>
 </head>
 <body>
