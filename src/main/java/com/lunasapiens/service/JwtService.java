@@ -1,6 +1,5 @@
 package com.lunasapiens.service;
 
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -34,7 +33,6 @@ public class JwtService {
     @Autowired
     private JwtElements.JwtRsaKeys jwtRsaKeys;
 
-
     // Variabili di cache per le chiavi
     private RSAPublicKey cachedPublicKey;
     private RSAPrivateKey cachedPrivateKey;
@@ -45,12 +43,9 @@ public class JwtService {
     @PostConstruct
     public void init() {
         try {
-            String publicKeyB64 = jwtRsaKeys.getKeyPublic();
-            String privateKeyB64 = jwtRsaKeys.getKeyPrivate();
-
             // Decodifica e memorizza le chiavi in cache
-            cachedPublicKey = decodificaChiaveJwtPublic(publicKeyB64);
-            cachedPrivateKey = decodificaChiaveJwtPrivate(privateKeyB64);
+            cachedPublicKey = decodificaChiaveJwtPublic( jwtRsaKeys.getKeyPublic() );
+            cachedPrivateKey = decodificaChiaveJwtPrivate( jwtRsaKeys.getKeyPrivate() );
 
             logger.info("Chiavi RSA decodificate e memorizzate in cache con successo.");
         } catch (Exception e) {
@@ -154,8 +149,6 @@ public class JwtService {
         }
         return publicKey;
     }
-
-
 
     private static RSAPrivateKey decodificaChiaveJwtPrivate(String privateKeyB64){
         byte[] privateKeyDecoded = Base64.getDecoder().decode(privateKeyB64);
