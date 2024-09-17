@@ -76,7 +76,7 @@ public class OroscopoController {
                                  @ModelAttribute(Constants.INFO_ERROR) String infoError) {
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
-        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {

@@ -57,36 +57,29 @@ public class ServizioOroscopoDelGiorno {
 
 
     public JSONObject jsonSchemaOrgTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        // Aggiungi il creatore (esempio: l'organizzazione che ha creato i dati)
+        JSONObject creator = new JSONObject();
+        creator.put("@type", "Person");creator.put("name", "Matteo Manili");
+        // Aggiunta del provider di dati
+        JSONObject dataProvider = new JSONObject();
+        dataProvider.put("@type", "Organization"); dataProvider.put("name", "LunaSapiens"); dataProvider.put("url", "https://www.lunasapiens.com");
         // Creazione dell'oggetto principale del dataset
         JSONObject dataset = new JSONObject();
         dataset.put("@context", "https://schema.org");
         dataset.put("@type", "Dataset");
+        dataset.put("dataProvider", dataProvider);
+        dataset.put("creator", creator);
         dataset.put("name", "Transiti Planetari del Giorno");
         dataset.put("description", "Transiti astrologici giornalieri per ogni pianeta, aggiornati quotidianamente.");
         dataset.put("license", "https://creativecommons.org/licenses/by/4.0/");
-
-        // Assicurati che le date siano nel formato ISO 8601
-        String dataPubblicazione = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoInizio();  // Dovrebbe essere formato ISO 8601
-        String coperturaTemporale = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoFine();  // Dovrebbe essere formato ISO 8601
-        dataset.put("datePublished", dataPubblicazione);
-        dataset.put("temporalCoverage", coperturaTemporale);
-
-        // Aggiunta del provider di dati
-        JSONObject dataProvider = new JSONObject();
-        dataProvider.put("@type", "Organization"); dataProvider.put("name", "LunaSapiens");
-        dataProvider.put("url", "https://www.lunasapiens.com"); dataset.put("dataProvider", dataProvider);
-
-        // Aggiungi il creatore (esempio: l'organizzazione che ha creato i dati)
-        JSONObject creator = new JSONObject();
-        creator.put("@type", "Person");creator.put("name", "Matteo Manili"); dataset.put("creator", creator);
+        dataset.put("datePublished", giornoOraPosizioneDTO.getJsonSchemaOrgGiornoInizio()); // Dovrebbe essere formato ISO 8601
+        dataset.put("temporalCoverage", giornoOraPosizioneDTO.getJsonSchemaOrgGiornoFine()); // Dovrebbe essere formato ISO 8601
 
         // Lista dei transiti
         JSONArray transitiArray = new JSONArray();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
-
         // Aggiungi i pianeti con descrizione e retrogradazione
-        for (Pianeta pianeta : pianetiTransiti) {
+        for (Pianeta pianeta : buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno())) {
             if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
                 JSONObject pianetaObject = new JSONObject();
                 pianetaObject.put("name", pianeta.getNomePianeta());
@@ -106,7 +99,7 @@ public class ServizioOroscopoDelGiorno {
     /**
      * questo va sulla pagina front-end
      */
-    public OroscopoDelGiornoDescrizioneDTO oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public OroscopoDelGiornoDescrizioneDTO descrizioneOroscopoDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
@@ -129,13 +122,12 @@ public class ServizioOroscopoDelGiorno {
         if(!aspetti.isEmpty()){
             descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
-                descrizioneOggi += var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"<br>";
+                descrizioneOggi += var.getNomePianeta_1()+ " e "+ var.getNomePianeta_2()+ " sono in "
+                        +Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"<br>";
             }
             descrizioneOggi += "</p>";
         }
-
-        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDesDTO = new OroscopoDelGiornoDescrizioneDTO(descrizioneOggi, giornoOraPosizioneDTO);
-        return oroscDelGiornDesDTO;
+        return new OroscopoDelGiornoDescrizioneDTO(descrizioneOggi, giornoOraPosizioneDTO);
     }
 
 

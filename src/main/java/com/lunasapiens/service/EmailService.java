@@ -135,7 +135,7 @@ public class EmailService {
 
     public void inviaEmailOroscopoGioraliero() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
-        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
         int totaleNumEmailInviate = 0;
