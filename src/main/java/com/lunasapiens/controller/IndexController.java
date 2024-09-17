@@ -88,6 +88,8 @@ public class IndexController {
         String infoAlert = (String) request.getSession().getAttribute(Constants.INFO_ALERT);
         String infoMessage = (String) request.getSession().getAttribute(Constants.INFO_MESSAGE);
 
+
+        model.addAttribute("JWT_EXPIRED_TOKEN_DAY_OF_YEAR", Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
         model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
         model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
         if (infoError != null) {
@@ -112,9 +114,9 @@ public class IndexController {
         // constrollo se è presente il cookie per disabilitare Google Analytics
         String disabledAnalyticsCookie = "infoDisabledAnalyticsCookie";
         if( Utils.isPresentCookieDisabledGoogleAnalytics(request) ) {
-            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'cookie_disable_google_analytics' è true. NON STA tracciando questo dispositivo.");
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'disable_google_analytics' è true. NON STA tracciando questo dispositivo.");
         }else {
-            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'cookie_disable_google_analytics' è false. STA tracciando questo dispositivo.");
+            model.addAttribute(disabledAnalyticsCookie, "Il cookie 'disable_google_analytics' è false. STA tracciando questo dispositivo.");
         }
         return "private/privatePage";
     }

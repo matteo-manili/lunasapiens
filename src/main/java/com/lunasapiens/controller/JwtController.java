@@ -147,7 +147,7 @@ public class JwtController {
 
             } else {
                 redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
-                headers.add("Location", "/error");
+                headers.add("Location", "/register");
                 return ResponseEntity.status(302).headers(headers).build();
             }
         }

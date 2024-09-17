@@ -22,7 +22,7 @@
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
         <p>Riceverai un'email con un link per accedere.<br>
-            L'accesso sarà valido per 7 giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
+            L'accesso sarà valido per <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni, dopo i quali potrai richiedere un nuovo link. Nessuna password è necessaria.</p>
         <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>

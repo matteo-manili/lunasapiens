@@ -19,10 +19,11 @@ public class Constants {
 
     public static final String MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL  = "Autenticazione scaduta. Invia una nuova email per fare l'autenticazione.";
 
-    public static final String JWT_WITH_ISSUER = "lunaSapiens_jwt_auth0";
-    public static final String COOKIE_JWT_NAME = "jwtToken";
-    public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "cookie_disable_google_analytics";
+    public static final String JWT_WITH_ISSUER = "lunaSapiens.com";
+    public static final int JWT_EXPIRED_TOKEN_DAY_OF_YEAR = 14;
 
+    public static final String COOKIE_LUNASAPIENS_AUTH_TOKEN = "lunaSapiens_auth_token";
+    public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "disable_google_analytics";
 
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";

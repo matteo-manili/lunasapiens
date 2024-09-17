@@ -58,7 +58,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (Constants.COOKIE_JWT_NAME.equals(cookie.getName()) && cookie.getValue() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN.equals(cookie.getName()) && cookie.getValue() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     logger.info("authenticationNow è null");
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
                     if (jwtDetails.isSuccess()) {
@@ -77,7 +77,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
                         } else {
                             request.getSession().setAttribute(Constants.INFO_ERROR, jwtDetails.getMessaggioErroreJwt());
-                            response.sendRedirect("/error");
+                            response.sendRedirect("/register");
                         }
                     }
                     break;

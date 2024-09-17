@@ -101,8 +101,8 @@ public class BuildInfoAstrologiaSwiss {
 
                 boolean retrogrado = position[3] < 0 ? true : false;
 
-                Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
-                String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
+                Map.Entry<Integer, String> entry = ZodiacUtils.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
+                String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
 
                 Pianeta pianeta = new Pianeta(i, Constants.Pianeti.fromNumero(i).getNome(), position[0], 0, 0,
                         entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
@@ -180,7 +180,7 @@ public class BuildInfoAstrologiaSwiss {
         if (result == SweConst.OK) {
             // Stampare le posizioni delle case
             for (int i = 1; i <= 12; i++) {
-                Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
+                Map.Entry<Integer, String> entry = ZodiacUtils.determinaSegnoZodiacale(cusps[i]).entrySet().iterator().next();
                 Constants.Case casa = Constants.Case.fromNumero( i );
                 CasePlacide aa = new CasePlacide(i, casa.getName(), cusps[i], 0, 0, entry.getKey(), entry.getValue());
                 casePlacides.add(aa);

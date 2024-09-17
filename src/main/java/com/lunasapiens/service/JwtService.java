@@ -74,7 +74,7 @@ public class JwtService {
             Algorithm algorithm = Algorithm.RSA256(cachedPublicKey, cachedPrivateKey);
             // Calcola la data di scadenza a 7 giorni da ora
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, 7);
+            calendar.add(Calendar.DAY_OF_YEAR, Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
             //calendar.add(Calendar.MINUTE, 1);
 
             Date expiresAt = calendar.getTime();

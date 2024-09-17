@@ -31,7 +31,7 @@ public class Utils {
 
     public static void creaCookieTokenJwt(HttpServletResponse response, JwtElements.JwtDetails jwtDetails){
         // Creazione del cookie con il token JWT
-        Cookie cookie = new Cookie(Constants.COOKIE_JWT_NAME, jwtDetails.getToken());
+        Cookie cookie = new Cookie(Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN, jwtDetails.getToken());
         cookie.setHttpOnly(true); // Imposta il cookie come HttpOnly per evitare accessi lato client
         cookie.setSecure(true); // Imposta il cookie come sicuro per inviarlo solo su HTTPS
         cookie.setPath("/"); // Imposta il percorso del cookie
@@ -46,7 +46,7 @@ public class Utils {
     public static void clearJwtCookie_ClearSecurityContext(HttpServletRequest request, HttpServletResponse response) {
         logger.info("cancello Cookie JWT e ClearSecurityContext");
         // Cancella il cookie JWT
-        Cookie jwtCookie = new Cookie(Constants.COOKIE_JWT_NAME, null);
+        Cookie jwtCookie = new Cookie(Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN, null);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
@@ -200,56 +200,6 @@ public class Utils {
                 .headers(headers)
                 .body(resource);
         return responseEntity;
-    }
-
-
-    /**
-     * Metodo per determinare il segno zodiacale in base al grado
-     * @param grado
-     * @return
-     */
-    public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
-        Map<Integer, String> segniZodiacali = new HashMap<>();
-        List<String> nomiSegni = Constants.SegniZodiacali.getAllNomi();
-        if (grado >= Constants.SegniZodiacali.ARIETE.getGradi() && grado < 30.0d) {                 // Ariete
-            segniZodiacali.put(0, nomiSegni.get(0));
-        } else if (grado >= Constants.SegniZodiacali.TORO.getGradi() && grado < 60.0d) {         // Toro
-            segniZodiacali.put(1, nomiSegni.get(1));
-        } else if (grado >= Constants.SegniZodiacali.GEMELLI.getGradi() && grado < 90.0d) {         // Gemelli
-            segniZodiacali.put(2, nomiSegni.get(2));
-        } else if (grado >= Constants.SegniZodiacali.CANCRO.getGradi() && grado < 120.0d) {        // Cancro
-            segniZodiacali.put(3, nomiSegni.get(3));
-        } else if (grado >= Constants.SegniZodiacali.LEONE.getGradi() && grado < 150.0d) {       // Leone
-            segniZodiacali.put(4, nomiSegni.get(4));
-        } else if (grado >= Constants.SegniZodiacali.VERGINE.getGradi() && grado < 180.0d) {       // Vergine
-            segniZodiacali.put(5, nomiSegni.get(5));
-        } else if (grado >= Constants.SegniZodiacali.BILANCIA.getGradi() && grado < 210.0d) {       // Bilancia
-            segniZodiacali.put(6, nomiSegni.get(6));
-        } else if (grado >= Constants.SegniZodiacali.SCORPIONE.getGradi() && grado < 240.0d) {       // Scorpione
-            segniZodiacali.put(7, nomiSegni.get(7));
-        } else if (grado >= Constants.SegniZodiacali.SAGITTARIO.getGradi() && grado < 270.0d) {       // Sagittario
-            segniZodiacali.put(8, nomiSegni.get(8));
-        } else if (grado >= Constants.SegniZodiacali.CAPRICORNO.getGradi() && grado < 300.0d) {       // Capricorno
-            segniZodiacali.put(9, nomiSegni.get(9));
-        } else if (grado >= Constants.SegniZodiacali.ACQUARIO.getGradi() && grado < 330.0d) {       // Acquario
-            segniZodiacali.put(10, nomiSegni.get(10));
-        } else if (grado >= Constants.SegniZodiacali.PESCI.getGradi() && grado < 360.0d) {       // Pesci
-            segniZodiacali.put(11, nomiSegni.get(11));
-        } else {
-            segniZodiacali.put(-1, "Grado non valido");
-        }
-        return segniZodiacali;
-    }
-
-
-
-
-    public static String significatoTransitoPianetaSegno(Properties properties, int numero1, int numero2) {
-        // Costruisci la chiave per recuperare il valore desiderato
-        String chiaveProperties = numero1 + "_" + numero2;
-        // Recupera il significato del pianeta
-        String significato = properties.getProperty(chiaveProperties);
-        return significato;
     }
 
 

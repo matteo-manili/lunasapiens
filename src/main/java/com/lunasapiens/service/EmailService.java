@@ -138,6 +138,7 @@ public class EmailService {
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
+        int totaleNumEmailInviate = 0;
         for(ProfiloUtente emailUtente: profiloUtenteList){
             if( emailUtente.isEmailOroscopoGiornaliero() ){
                 String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
@@ -152,10 +153,11 @@ public class EmailService {
                 context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
                 sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+                totaleNumEmailInviate += 1;
                 logger.info("inviaEmailOrosciopoGioraliero: "+emailUtente.getEmail());
             }
-
         }
+        telegramBotService.inviaMessaggio("totaleNumEmailInviate Oroscopo Giornaliero: "+totaleNumEmailInviate);
     }
 
 

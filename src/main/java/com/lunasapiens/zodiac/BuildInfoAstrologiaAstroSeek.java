@@ -5,7 +5,6 @@ import com.lunasapiens.Utils;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.RelationshipOption;
-import javafx.util.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -253,11 +252,11 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 "&narozeni_mesto_hidden=" + coordinateDTO.getCityName() +
                 "&narozeni_stat_hidden=" +coordinateDTO.getStatoCode() +
                 "&narozeni_podstat_kratky_hidden=" +
-                "&narozeni_sirka_stupne=" +convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
-                "&narozeni_sirka_minuty="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
+                "&narozeni_sirka_stupne=" +ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
+                "&narozeni_sirka_minuty="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
                 "&narozeni_sirka_smer=0" +
-                "&narozeni_delka_stupne="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
-                "&narozeni_delka_minuty="+convertCoordonataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
+                "&narozeni_delka_stupne="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
+                "&narozeni_delka_minuty="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
                 "&narozeni_delka_smer=0" +
                 "&narozeni_timezone_form=auto" +
                 "&narozeni_timezone_dst_form=auto" +
@@ -300,7 +299,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
 
                     Element retrogradeElement = planetElement.nextElementSibling().nextElementSibling().nextElementSibling().nextElementSibling();
                     boolean isRetrograde = retrogradeElement.text().trim().equals("R");
-                    double positionInDegrees = convertToDecimalDegrees(position);
+                    double positionInDegrees = ZodiacUtils.convertToDecimalDegrees(position);
 
                     //System.out.println("Pianeta: " + planetName);
                     //System.out.println("Segno: " + signName);
@@ -308,16 +307,15 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     //System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
                     //System.out.println();
 
-
                     Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeEn( planetName );
                     if (pianetaConstant == null){
                         continue;
                     }
                     Constants.SegniZodiacali segnoConstant = Constants.SegniZodiacali.fromNomeEn( signName );
                     double gradiTotali = segnoConstant.getGradi() + positionInDegrees;
-                    String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoConstant.getNumero());
-                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
-                            (int)dammiGradiEMinuti(position).getValue(), segnoConstant.getNumero(), segnoConstant.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+                    String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoConstant.getNumero());
+                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), gradiTotali, (int)ZodiacUtils.dammiGradiEMinuti(position).getKey(),
+                            (int)ZodiacUtils.dammiGradiEMinuti(position).getValue(), segnoConstant.getNumero(), segnoConstant.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                     pianetaArrayList.add( pianeta );
                 }
 
@@ -331,15 +329,15 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
 
                     Constants.Case casa = Constants.Case.fromCode( houseName );
                     Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
-                    double gradiTotali = segno.getGradi() + convertToDecimalDegrees(position);
+                    double gradiTotali = segno.getGradi() + ZodiacUtils.convertToDecimalDegrees(position);
 
                     //System.out.println("Casa: " + houseName);
                     //System.out.println("Segno: " + signName);
                     //System.out.println("valore: " + position + " "+" valore in decimali: "+gradiTotali);
                     //System.out.println();
 
-                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, (int)dammiGradiEMinuti(position).getKey(),
-                            (int)dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome());
+                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, (int)ZodiacUtils.dammiGradiEMinuti(position).getKey(),
+                            (int)ZodiacUtils.dammiGradiEMinuti(position).getValue(), segno.getNumero(), segno.getNome());
                     casePlacidesArrayList.add( casaPlacida );
                 }
 
@@ -363,32 +361,8 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
         }
     }
 
-    private double convertToDecimalDegrees(String position) {
-        Pair<Integer, Integer> pair = dammiGradiEMinuti(position);
-        return pair.getKey() + (pair.getValue() / 60.0);
-    }
-
-    private static Pair dammiGradiEMinuti(String position) {
-        String[] parts = position.split("°|'");
-        int degrees = Integer.parseInt(parts[0].trim());
-        int minutes = Integer.parseInt(parts[1].replace("’", "").trim());
-        Pair<Integer, Integer> pair = new Pair<>(degrees, minutes);
-        return pair;
-    }
 
 
-
-
-    private static Pair convertCoordonataToDegreesMinutes(double coordinata) {
-        int degrees = (int) coordinata;
-        double fractionalPart = coordinata - degrees;
-        // Convertire la parte decimale in minuti
-        double minutes = fractionalPart * 60;
-        int minutesInt = (int) minutes;
-        double seconds = (minutes - minutesInt) * 60;
-        Pair<Integer, Integer> pair = new Pair<>(degrees, minutesInt);
-        return pair;
-    }
 
 
     public List<Pianeta> getPianetaPosizTransitoArrayList() { return pianetaArrayList; }

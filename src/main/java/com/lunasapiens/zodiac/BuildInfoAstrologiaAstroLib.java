@@ -78,8 +78,8 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("Secondi: " + seconds);
                         //System.out.println("segno: " + Util.determinaSegnoZodiacale(degrees));
 
-                        Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale( degrees ).entrySet().iterator().next();
-                        String significatoTransitoPianetaSegno = Utils.significatoTransitoPianetaSegno(null,0, entry.getKey());
+                        Map.Entry<Integer, String> entry = ZodiacUtils.determinaSegnoZodiacale( degrees ).entrySet().iterator().next();
+                        String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(null,0, entry.getKey());
 
                         // non valorizzo significatoTransitoPianetaSegno perchè non è implementato in questa classe. Ma solo nella clase BuildInfoAstrologiaSwiss
                         Pianeta pianeta = new Pianeta(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
@@ -125,7 +125,7 @@ public class BuildInfoAstrologiaAstroLib {
                         //System.out.println("Secondi: " + seconds);
                         //System.out.println("segno: " + SegnoZodiacale.determinaSegnoZodiacale(degrees));
 
-                        Map.Entry<Integer, String> entry = Utils.determinaSegnoZodiacale(degrees).entrySet().iterator().next();
+                        Map.Entry<Integer, String> entry = ZodiacUtils.determinaSegnoZodiacale(degrees).entrySet().iterator().next();
 
 
                         Constants.Case casa = Constants.Case.fromNumero( Integer.parseInt(planetName) );
