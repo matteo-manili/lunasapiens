@@ -19,7 +19,7 @@ public class Constants {
 
     public static final String MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL  = "Autenticazione scaduta. Invia una nuova email per fare l'autenticazione.";
 
-    public static final String JWT_WITH_ISSUER = "lunaSapiens.com";
+    public static final String JWT_ISSUER = "lunaSapiens.com";
     public static final int JWT_EXPIRED_TOKEN_DAY_OF_YEAR = 14;
 
     public static final String COOKIE_LUNASAPIENS_AUTH_TOKEN = "lunaSapiens_auth_token";

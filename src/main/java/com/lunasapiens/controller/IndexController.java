@@ -232,7 +232,7 @@ public class IndexController {
     @GetMapping("/genera-video")
     public RedirectView gerneraVideo() {
         //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
-        scheduledTasks.creaOroscopoGiornaliero();
+        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
         // Restituisci una RedirectView per reindirizzare alla home page
         RedirectView redirectView = new RedirectView("/", true);
         redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410

@@ -1,19 +1,30 @@
 package com.lunasapiens.zodiac;
 
+import com.lunasapiens.GeneratorImage;
+import com.lunasapiens.GeneratorVideo;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;
+import com.lunasapiens.entity.OroscopoGiornaliero;
+import com.lunasapiens.repository.OroscopoGiornalieroRepository;
+import com.lunasapiens.service.OroscopoGiornalieroService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 @Component
 public class ServizioOroscopoDelGiorno {
@@ -29,29 +40,73 @@ public class ServizioOroscopoDelGiorno {
     @Autowired
     SegnoZodiacale segnoZodiacale;
 
+    @Autowired
+    private OroscopoGiornalieroService oroscopoGiornalieroService;
+
+    @Autowired
+    private OroscopoGiornalieroRepository oroscopoGiornalieroRepository;
+
+    @Autowired
+    private CacheManager cacheManager;
+
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
     private Double temperature = 0.3; private Integer tokensAggiuntiPerRisposta = 1000;
         private final Double finalcaratteriPerTokenStima = 10.0;
 
-    public StringBuilder oroscopoDelGiornoIA(int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        return oroscopoDelGiorno(temperature, segno, giornoOraPosizioneDTO);
-    }
 
 
-    public void Oroscopo_Segni_Transiti_Aspetti() {
-        for(int numeroSegno = 0; numeroSegno <= 0; numeroSegno++) {
-            domanda_prompt(numeroSegno);
+    public JSONObject jsonSchemaOrgTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+        // Creazione dell'oggetto principale del dataset
+        JSONObject dataset = new JSONObject();
+        dataset.put("@context", "https://schema.org");
+        dataset.put("@type", "Dataset");
+        dataset.put("name", "Transiti Planetari del Giorno");
+        dataset.put("description", "Transiti astrologici giornalieri per ogni pianeta, aggiornati quotidianamente.");
+        dataset.put("license", "https://creativecommons.org/licenses/by/4.0/");
+
+        // Assicurati che le date siano nel formato ISO 8601
+        String dataPubblicazione = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoInizio();  // Dovrebbe essere formato ISO 8601
+        String coperturaTemporale = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoFine();  // Dovrebbe essere formato ISO 8601
+        dataset.put("datePublished", dataPubblicazione);
+        dataset.put("temporalCoverage", coperturaTemporale);
+
+        // Aggiunta del provider di dati
+        JSONObject dataProvider = new JSONObject();
+        dataProvider.put("@type", "Organization"); dataProvider.put("name", "LunaSapiens");
+        dataProvider.put("url", "https://www.lunasapiens.com"); dataset.put("dataProvider", dataProvider);
+
+        // Aggiungi il creatore (esempio: l'organizzazione che ha creato i dati)
+        JSONObject creator = new JSONObject();
+        creator.put("@type", "Person");creator.put("name", "Matteo Manili"); dataset.put("creator", creator);
+
+        // Lista dei transiti
+        JSONArray transitiArray = new JSONArray();
+        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
+        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+
+        // Aggiungi i pianeti con descrizione e retrogradazione
+        for (Pianeta pianeta : pianetiTransiti) {
+            if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
+                JSONObject pianetaObject = new JSONObject();
+                pianetaObject.put("name", pianeta.getNomePianeta());
+                pianetaObject.put("sign", pianeta.getNomeSegnoZodiacale());
+                pianetaObject.put("gradi", String.format("%.0f", pianeta.getGradi()));  // Arrotonda a due decimali
+                pianetaObject.put("retrogrado", pianeta.isRetrogrado());  // Cambiato a booleano true/false
+                pianetaObject.put("significato", pianeta.getSignificatoPianetaSegno());
+                transitiArray.put(pianetaObject);
+            }
         }
+        // Aggiungi l'array di transiti al dataset
+        dataset.put("variableMeasured", transitiArray);
+        return dataset;
     }
+
 
     /**
      * questo va sulla pagina front-end
-     * @param giornoOraPosizioneDTO
-     * @return
      */
     public OroscopoDelGiornoDescrizioneDTO oroscopoDelGiornoDescrizioneOggi(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
@@ -85,49 +140,6 @@ public class ServizioOroscopoDelGiorno {
 
 
 
-    public JSONObject jsonSchemaOrgTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        // Creazione dell'oggetto principale del dataset
-        JSONObject dataset = new JSONObject();
-        dataset.put("@context", "https://schema.org");
-        dataset.put("@type", "Dataset");
-        dataset.put("name", "Transiti Planetari del Giorno");
-        dataset.put("description", "Transiti astrologici giornalieri per ogni pianeta nel sistema solare, aggiornati quotidianamente.");
-
-        // Assicurati che le date siano nel formato ISO 8601
-        String dataPubblicazione = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoInizio();  // Dovrebbe essere formato ISO 8601
-        String coperturaTemporale = giornoOraPosizioneDTO.getJsonSchemaOrgGiornoFine();  // Dovrebbe essere formato ISO 8601
-        dataset.put("datePublished", dataPubblicazione);
-        dataset.put("temporalCoverage", coperturaTemporale);
-
-        // Aggiunta del provider di dati
-        JSONObject dataProvider = new JSONObject();
-        dataProvider.put("@type", "Organization");
-        dataProvider.put("name", "Luna Sapiens");
-        dataset.put("dataProvider", dataProvider);
-
-        // Lista dei transiti
-        JSONArray transitiArray = new JSONArray();
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
-
-        // Aggiungi i pianeti con descrizione e retrogradazione
-        for (Pianeta pianeta : pianetiTransiti) {
-            if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
-                JSONObject pianetaObject = new JSONObject();
-                pianetaObject.put("name", pianeta.getNomePianeta());
-                pianetaObject.put("sign", pianeta.getNomeSegnoZodiacale());
-                pianetaObject.put("gradi", String.format("%.0f", pianeta.getGradi()));  // Arrotonda a due decimali
-                pianetaObject.put("retrogrado", pianeta.isRetrogrado());  // Cambiato a booleano true/false
-                pianetaObject.put("significato", pianeta.getSignificatoPianetaSegno());
-                transitiArray.put(pianetaObject);
-            }
-        }
-
-        // Aggiungi l'array di transiti al dataset
-        dataset.put("variableMeasured", transitiArray);
-
-        return dataset;
-    }
 
  /*
         // Lista degli aspetti
@@ -150,6 +162,32 @@ public class ServizioOroscopoDelGiorno {
 */
 
 
+
+    public StringBuilder oroscopoDelGiornoIA(Double temperature, int segno) {
+        //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
+        /*
+        OpenAIGptTheokanning we = new OpenAIGptTheokanning();
+        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+                appConfig.getParamOpenAi().getModelGpt4() );
+
+        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
+                appConfig.getParamOpenAi().getModelGpt3_5());
+         */
+
+        StringBuilder domanda = domanda_prompt(segno);
+        //logger.info("DOMANDA: " + domanda);
+
+        //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
+        //return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
+        //      appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
+
+        // return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
+        //                appConfig.getParamOpenAi().getModelGpt4() );
+
+        OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
+        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, finalcaratteriPerTokenStima,
+                appConfig.getParamOpenAi().getModelGpt4_Mini(), domanda.toString() );
+    }
 
 
     public StringBuilder domanda_prompt(int numeroSegno) {
@@ -234,15 +272,11 @@ public class ServizioOroscopoDelGiorno {
             }
         }
 
-
-        // significato dei pianeti......
         domandaBuilder.append("\n");
         domandaBuilder.append("- Significato dei Pianeti:\n");
         for (Integer numeroPianetq : pianetiCoinvoltiSet) {
             domandaBuilder.append(pianetiOroscopoSignificatoProperties.getProperty( String.valueOf(numeroPianetq)+"_min")+"\n" );
         }
-
-
 
         if(presentiAspetti){
             domandaBuilder.append("\n");
@@ -253,34 +287,17 @@ public class ServizioOroscopoDelGiorno {
                 }
             }
         }
-
         // Nella IA lo tratto come se fosse un aspetto.
         if(presentePianetaRetrogrado){
             domandaBuilder.append(pianetaRetrogradoProperties.getProperty( String.valueOf(0) ));
         }
-
-
-
         logger.info( domandaBuilder.toString() );
         logger.info( "---------- fine segno "+numeroSegno +" ----------" );
-
         return domandaBuilder;
     }
 
     private String pianetaRetrogradoString(String nomePianeta){
         return nomePianeta +" è Pianeta Retrogrado.";
-    }
-
-    private ArrayList<Pianeta> getPianetiPosizTransitoSegnoList(ArrayList<Pianeta> pianeta, int[] pianetiSignor) {
-        ArrayList<Pianeta> pianetaList = new ArrayList<>();;
-        for(Pianeta var : pianeta) {
-            for (int pianetaSig : pianetiSignor) {
-                if(var.getNumeroPianeta() == pianetaSig){
-                    pianetaList.add(var);
-                }
-            }
-        }
-        return pianetaList;
     }
 
     private Pianeta getPianetaPosizTransitoSegno(ArrayList<Pianeta> pianetaTuttiList, int pianeta) {
@@ -308,42 +325,109 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
-    public StringBuilder oroscopoDelGiorno(Double temperature, int segno, GiornoOraPosizioneDTO giornoOraPosizioneDTOaa) {
-        /*
-        domandaBuilder.append("\n").append("Case Placide: ");
-        for (CasePlacide var : buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO)) {
-            domandaBuilder.append(var.descrizioneCasaGradi());
-            System.out.println( var.toString() );
+
+    public void creaOroscopoGiornaliero() {
+        String pathOroscopoGiornalieroImmagini = Constants.PATH_STATIC + GeneratorImage.folderOroscopoGiornalieroImmagine;
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
+
+        Cache cache = cacheManager.getCache(Constants.VIDEO_CACHE);
+        cache.invalidate();
+
+        logger.info("elimino cartelle e file dal classpath...");
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        Utils.eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
+
+        for (int numeroSegno = 0; numeroSegno <= 11; numeroSegno++) {
+            OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+
+            if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
+                    || oroscopoGiornaliero.getTestoOroscopo() == null) {
+
+                if(oroscopoGiornaliero == null) {
+                    oroscopoGiornaliero = new OroscopoGiornaliero();
+                    oroscopoGiornaliero.setNumSegno(numeroSegno);
+                    oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                }
+                try {
+                    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    StringBuilder sBTestoOroscopoIA = null;
+                    if(oroscopoGiornaliero.getTestoOroscopo() == null || oroscopoGiornaliero.getTestoOroscopo().isEmpty()) {
+                        sBTestoOroscopoIA = oroscopoDelGiornoIA(temperature, numeroSegno);
+                        if(sBTestoOroscopoIA == null || sBTestoOroscopoIA.length() == 0) {
+                            logger.error("sBTestoOroscopo null: Risposta nulla dalla IA. Salto iterazione del ciclo della creazione del video");
+                            // l'istruzione continue viene eseguita, facendo saltare l'iterazione corrente e passando direttamente alla successiva.
+                            continue;
+                        }
+                    } else {
+                        sBTestoOroscopoIA = new StringBuilder( oroscopoGiornaliero.getTestoOroscopo() );
+                    }
+
+                    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    ArrayList<String> paragrafiTestoOroscopoIA = ServizioOroscopoDelGiorno.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
+
+
+                    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    String fontName = "Comic Sans MS"; // Arial
+                    int fontSize = 25; Color textColor = Color.BLUE;
+
+                    // Formattatore per la data
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    String dataOroscopoString = formatter.format( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+
+                    String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
+                    GeneratorImage igenerat = new GeneratorImage();
+                    // Itera su ogni pezzo della stringa
+                    for (int i = 0; i < paragrafiTestoOroscopoIA.size(); i++) {
+                        String fileName = i + ".png";
+                        String imagePathFileName = imagePath + fileName;
+                        igenerat.generateImage(paragrafiTestoOroscopoIA.get(i), fontName, fontSize, textColor, imagePathFileName);
+                    }
+
+                    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE VIDEO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    String nomeFileVideo = dataOroscopoString + "_" + numeroSegno;
+                    byte[] videoBytes = GeneratorVideo.createVideoFromImages(imagePath, nomeFileVideo );
+
+                    try{
+                        oroscopoGiornaliero = oroscopoGiornalieroService.salvaOroscoopoGiornaliero(numeroSegno, sBTestoOroscopoIA, giornoOraPosizioneDTO,
+                                videoBytes, nomeFileVideo + GeneratorVideo.formatoVideo());
+
+                    } catch (DataIntegrityViolationException e) {
+                        oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+                        oroscopoGiornaliero.setNumSegno(numeroSegno);
+                        oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopoIA.toString());
+                        oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                        oroscopoGiornaliero.setVideo(videoBytes);
+                        oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + GeneratorVideo.formatoVideo());
+                        oroscopoGiornalieroRepository.save(oroscopoGiornaliero);
+                    }
+                } catch (Exception e) {
+                    logger.info("Error in creaOroscopoGiornaliero(): " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         }
-         */
-        //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
-        /*
-        OpenAIGptTheokanning we = new OpenAIGptTheokanning();
-        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
-                appConfig.getParamOpenAi().getModelGpt4() );
+        logger.info("faccio pausa Thread.sleep......");
+        try{
+            // Faccio una pausa per smalite le operazioni fatte
+            Thread.sleep(10000); // 10000 = 10 secondi
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
 
-        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
-                appConfig.getParamOpenAi().getModelGpt3_5());
-         */
+        logger.info("elimino cartelle e file dal classpath...");
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ELIMINO LE CARTELLE E FILE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        Utils.eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
-        StringBuilder domanda = domanda_prompt(segno);
-        //logger.info("DOMANDA: " + domanda);
-
-        //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
-        //return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-          //      appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
-
-        // return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-        //                appConfig.getParamOpenAi().getModelGpt4() );
-
-        OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
-        return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, finalcaratteriPerTokenStima,
-                appConfig.getParamOpenAi().getModelGpt4_Mini(), domanda.toString() );
-
-
-
-
+        logger.info("metto i video in cache...");
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Utils.OggiOre12());
+        for (OroscopoGiornaliero oroscopoGiorno : listOroscopoGiorn) {
+            if(oroscopoGiorno.getVideo() != null){
+                cache.put(oroscopoGiorno.getNomeFileVideo(), Utils.VideoResponseEntityByteArrayResource(oroscopoGiorno.getVideo()));
+            }
+        }
+        logger.info("Fine Task creaOroscopoGiornaliero.");
     }
 
 
@@ -367,14 +451,20 @@ public class ServizioOroscopoDelGiorno {
                 paragrafiList.add(paragrafo.trim() + ".");
             }
         }
-
         for (String paragrafo : paragrafiList) {
             logger.info("Paragrafo: " + paragrafo);
         }
-
         return paragrafiList;
     }
+
+
+
+
+
 }
+
+
+
 
 
 

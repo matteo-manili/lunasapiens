@@ -74,19 +74,16 @@ public class OroscopoController {
     public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage,
                                  @ModelAttribute(Constants.INFO_ALERT) String infoAlert,
                                  @ModelAttribute(Constants.INFO_ERROR) String infoError) {
-
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.oroscopoDelGiornoDescrizioneOggi(giornoOraPosizioneDTO);
-        String jsonSchemaOrg = servizioOroscopoDelGiorno.jsonSchemaOrgTransitiDelGiorno(giornoOraPosizioneDTO).toString();
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
             OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
             listOroscopoGiornoDTO.add(dto);
         }
-
-        model.addAttribute("jsonSchemaOrg", jsonSchemaOrg);
+        model.addAttribute("jsonSchemaOrgTransitiDelGiorno", servizioOroscopoDelGiorno.jsonSchemaOrgTransitiDelGiorno(giornoOraPosizioneDTO).toString());
         model.addAttribute("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
         model.addAttribute("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
 

@@ -80,7 +80,7 @@ public class JwtService {
             Date expiresAt = calendar.getTime();
             JwtElements.JwtToken jwtConfigInfo = new JwtElements.JwtToken(
                     JWT.create()
-                    .withIssuer( Constants.JWT_WITH_ISSUER )
+                    .withIssuer( Constants.JWT_ISSUER )
                     .withSubject( emailUtente )
                     .withExpiresAt(expiresAt)  // Imposta la data di scadenza
                     .sign(algorithm));
@@ -104,7 +104,7 @@ public class JwtService {
             Algorithm algorithm = Algorithm.RSA256(cachedPublicKey, cachedPrivateKey);
             JWTVerifier verifier = JWT.require(algorithm)
                     // specify any specific claim validations
-                    .withIssuer( Constants.JWT_WITH_ISSUER )
+                    .withIssuer( Constants.JWT_ISSUER )
                     // reusable verifier instance
                     .build();
 
@@ -135,7 +135,7 @@ public class JwtService {
 
 
 
-    public static RSAPublicKey decodificaChiaveJwtPublic(String publicKeyB64){
+    private static RSAPublicKey decodificaChiaveJwtPublic(String publicKeyB64){
         // Decodifica Base64
         byte[] publicKeyDecoded = Base64.getDecoder().decode(publicKeyB64);
         // Crea la chiave pubblica da X.509
@@ -157,7 +157,7 @@ public class JwtService {
 
 
 
-    public static RSAPrivateKey decodificaChiaveJwtPrivate(String privateKeyB64){
+    private static RSAPrivateKey decodificaChiaveJwtPrivate(String privateKeyB64){
         byte[] privateKeyDecoded = Base64.getDecoder().decode(privateKeyB64);
         // Crea la chiave privata da PKCS#8
         KeyFactory keyFactory = null;
@@ -173,7 +173,6 @@ public class JwtService {
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
-
         return rSAPrivateKey;
     }
 

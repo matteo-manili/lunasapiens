@@ -62,11 +62,10 @@ public class BuildInfoAstrologiaSwiss {
         ArrayList<Pianeta> pianetaArrayList = new ArrayList<Pianeta>();
 
         double[] position = new double[6]; // Ecli
-
         // ptic position (x, y, z) and speed (dx, dy, dz)
         double julianDate = Utils.convertiGiornoOraPosizioneDTO_in_JulianDate(giornOraPosDTO);
 
-        logger.info("julianDate: " + julianDate);
+        //System.out.println("julianDate: " + julianDate);
 
         int[] planetIds = {
                 SweConst.SE_SUN, SweConst.SE_MOON, SweConst.SE_MERCURY, SweConst.SE_VENUS,
