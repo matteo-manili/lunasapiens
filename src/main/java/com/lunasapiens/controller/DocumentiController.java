@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 
 
 @Controller
-public class DocumentiController {
+public class DocumentiController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentiController.class);
 

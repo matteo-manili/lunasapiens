@@ -32,7 +32,7 @@ import java.util.*;
 
 
 @Controller
-public class WebSocket_e_ApiController {
+public class WebSocket_e_ApiController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocket_e_ApiController.class);
 

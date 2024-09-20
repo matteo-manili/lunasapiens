@@ -25,7 +25,7 @@ import java.util.Optional;
 
 
 @Controller
-public class OmeopatiaAstrologicaController {
+public class OmeopatiaAstrologicaController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OmeopatiaAstrologicaController.class);
 

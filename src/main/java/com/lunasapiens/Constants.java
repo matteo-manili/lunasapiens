@@ -23,7 +23,7 @@ public class Constants {
     public static final int JWT_EXPIRED_TOKEN_DAY_OF_YEAR = 14;
 
     public static final String COOKIE_LUNASAPIENS_AUTH_TOKEN = "lunaSapiens_auth_token";
-    public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "disable_google_analytics";
+    public static final String COOKIE_DISABLED_GOOGLE_ANALYTICS = "disabled_google_analytics";
 
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN = "subscribe";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_OROSC_GIORN = "confirm-email-subscription-orosc-giorn";

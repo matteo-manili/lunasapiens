@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Controller
-public class TikTokController {
+public class TikTokController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(TikTokController.class);
 

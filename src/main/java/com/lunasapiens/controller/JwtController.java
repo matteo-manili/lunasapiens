@@ -32,7 +32,7 @@ import java.util.UUID;
 
 
 @Controller
-public class JwtController {
+public class JwtController extends BaseController{
 
     private static final Logger logger = LoggerFactory.getLogger(JwtController.class);
 
@@ -54,10 +54,6 @@ public class JwtController {
 
     @Autowired
     private TelegramBotService telegramBotService;
-
-
-
-
 
 
 

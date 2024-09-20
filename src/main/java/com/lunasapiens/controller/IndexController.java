@@ -42,12 +42,9 @@ import java.util.Optional;
 
 
 @Controller
-public class IndexController {
+public class IndexController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
-
-    @Autowired
-    private ScheduledTasks scheduledTasks;
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
@@ -65,12 +62,12 @@ public class IndexController {
     private ProfiloUtenteRepository profiloUtenteRepository;
 
 
-
     @GetMapping("/")
     public String rootBase() {
         logger.info("sono in rootBase");
         return "index";
     }
+
 
     @GetMapping("/index")
     public RedirectView index() {
@@ -239,10 +236,11 @@ public class IndexController {
         return redirectView;
     }
 
+
     /**
      * restituisce il codice html del frammento "header menu", il quale ritorna dalla funziona javascript
      * document.getElementById("header-placeholder").innerHTML = html;
-     * E' necessario quando l'utente fa login e quindi serve visualizzare il nome utente nell'utente nell' header menu
+     * E' necessario quando il browser memorizza in cache alcune pagine (soprattuto la pagina root / ) e non visualizza il menu agguiornato.
      */
     @ResponseStatus(HttpStatus.GONE) // Imposta lo status 410
     @GetMapping("/header")

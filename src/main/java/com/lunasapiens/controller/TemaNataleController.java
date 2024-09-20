@@ -33,7 +33,7 @@ import java.util.*;
 
 
 @Controller
-public class TemaNataleController {
+public class TemaNataleController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(TemaNataleController.class);
 

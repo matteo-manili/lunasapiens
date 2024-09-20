@@ -1,6 +1,7 @@
 
     function isPresentCookieDisabledGoogleAnalytics() {
-        const targetCookieName = 'disable_google_analytics'; // Nome del cookie da verificare
+        const targetCookieName = cookieDisabledGoogleAnalytics; // Nome del cookie da verificare
+        //console.log( 'targetCookieName: '+targetCookieName );
         // Ottieni tutti i cookie come una stringa
         const cookies = document.cookie;
         // Dividi i cookie in un array usando il delimitatore "; "

@@ -31,7 +31,7 @@ import java.util.*;
 
 
 @Controller
-public class OroscopoController {
+public class OroscopoController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OroscopoController.class);
 

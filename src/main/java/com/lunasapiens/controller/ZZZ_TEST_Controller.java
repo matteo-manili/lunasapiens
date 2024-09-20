@@ -8,14 +8,14 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Controller
-public class ZZZ_TEST_Controller {
+public class ZZZ_TEST_Controller extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(TikTokApiClient.class);
 
@@ -60,12 +60,9 @@ public class ZZZ_TEST_Controller {
 
     @GetMapping("/test_4")
     public String ZZZ_TEST_4() {
-
         try {
-
             String accessToken = gestioneApplicazioneRepository.findByName("TOKEN_TIKTOK").getValueString();
             String openId = tikTokApiClient.getUserOpenId(accessToken);
-
             if (openId != null) {
                 logger.info("Open ID dell'utente TikTok: " + openId);
 
@@ -76,20 +73,10 @@ public class ZZZ_TEST_Controller {
                 logger.error("Impossibile ottenere l'open ID dell'utente TikTok.");
             }
 
-
-
-
-
-
-
         } catch (Exception e) {
             logger.error("Errore durante il recupero dell'open ID dell'utente TikTok: " + e.getMessage());
             e.printStackTrace();
         }
-
-
-
-
 
         return "ZZZ_TEST";
     }
@@ -115,11 +102,6 @@ public class ZZZ_TEST_Controller {
         this.telegramBotService = telegramBotService;
         this.tikTokApiClient = tikTokApiClient;
     }
-
-    @Autowired
-    private Environment env;
-
-
 
 
 

@@ -27,7 +27,7 @@ import java.util.*;
 
 
 @Controller
-public class SinastriaController {
+public class SinastriaController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(SinastriaController.class);
 
