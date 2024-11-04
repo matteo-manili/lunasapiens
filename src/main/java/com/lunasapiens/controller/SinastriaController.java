@@ -42,7 +42,7 @@ public class SinastriaController extends BaseController {
     private CacheManager cacheManager;
 
 
-    // #################################### TEMA NATALE #####################################
+    // #################################### SINATRIA #####################################
 
     /**
      * servizio tema natale
@@ -78,12 +78,14 @@ public class SinastriaController extends BaseController {
         logger.info("sono in sinastria");
 
         final LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
+
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
         optionalDateTime
                 .filter(dateTimeString -> !dateTimeString.isEmpty())
                 .ifPresentOrElse(
                         presentDateTime -> model.addAttribute("dateTime", presentDateTime),
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER)));
+
         Optional<String> optionalDateTime_2 = Optional.ofNullable(datetime_2);
         optionalDateTime_2
                 .filter(dateTimeString -> !dateTimeString.isEmpty())
@@ -199,18 +201,18 @@ public class SinastriaController extends BaseController {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-        StringBuilder temaNatale_1 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        StringBuilder sinastria_1 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO_2 = new GiornoOraPosizioneDTO(hour_2, minute_2, day_2, month_2, year_2, Double.parseDouble(cityLat_2), Double.parseDouble(cityLng_2));
         CoordinateDTO coordinateDTO_2 = new CoordinateDTO(cityName_2, regioneName_2, statoName_2, statoCode_2);
-        StringBuilder temaNatale_2 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO_2, coordinateDTO_2);
+        StringBuilder sinastria_2 = servizioSinastria.sinastriaDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO_2, coordinateDTO_2);
 
         StringBuilder significatiTemaNatale = servizioSinastria.significatiSinastriaDescrizione();
 
 
         String descrizioneTemaNatalePage = new StringBuilder()
-                .append(temaNatale_1.toString())  // Usa il valore attuale di temaNatale_1
-                .append(temaNatale_2.toString())  // Usa il valore attuale di temaNatale_2
+                .append(sinastria_1.toString())  // Usa il valore attuale di sinastria_1
+                .append(sinastria_2.toString())  // Usa il valore attuale di sinastria_2
                 .append(significatiTemaNatale).toString();
 
 
@@ -229,7 +231,7 @@ public class SinastriaController extends BaseController {
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
         StringBuilder sinastriaDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.sinastriaIstruzioneBOTSystem(relationship, nome, nome_2,
-                temaNatale_1.toString(), temaNatale_2.toString(), significatiTemaNatale.toString(), datetime, datetime_2, luogoNascita, luogoNascita_2);
+                sinastria_1.toString(), sinastria_2.toString(), significatiTemaNatale.toString(), datetime, datetime_2, luogoNascita, luogoNascita_2);
 
         logger.info( "sinastriaDescrizioneIstruzioneBOTSystem: "+sinastriaDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", sinastriaDescIstruzioniBOTSystem.toString() ));
