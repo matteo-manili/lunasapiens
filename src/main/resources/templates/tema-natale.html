@@ -285,7 +285,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 try {
                     var parsedMessage = JSON.parse(messageOutput.body);
                     showMessage(parsedMessage.content, true);
-                    showMessage('Domande Rimanenti: '+parsedMessage.numDomandeRimanenti, true);
+                    if (parsedMessage && typeof parsedMessage.numDomandeRimanenti !== 'undefined') {
+                        showMessage('Domande Rimanenti: ' + parsedMessage.numDomandeRimanenti, true);
+                    }
                     hideLoadingIndicator(); // Nascondi l'indicatore quando ricevi un messaggio
                 } catch (e) {
                     console.error('Error parsing message:', e);
