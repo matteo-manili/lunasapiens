@@ -21,9 +21,6 @@ public class ScheduledTasks {
     private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
-    private OroscopoGiornalieroRepository oroscopoGiornalieroRepository;
-
-    @Autowired
     private TelegramBotService telegramBotService;
 
     @Autowired
@@ -42,10 +39,9 @@ public class ScheduledTasks {
     }
 
     @Scheduled(cron = "0 15 0 * * *", zone = "Europe/Rome")
-    public void executeTask_PulisciTabellaOroscoGiornaliero() {
-        Date currentDate_MenoUnGiorno = Date.from( Utils.getNowRomeEurope().minusDays(1).toInstant() ); // diminuisce di un giorno
-        oroscopoGiornalieroRepository.deleteByDataOroscopoBefore(currentDate_MenoUnGiorno);
-        logger.info("executeTask_PulisciTabellaOroscoGiornaliero");
+    public void executeTask_PulisciOldRecordsOroscopoGiornaliero() {
+        servizioOroscopoDelGiorno.pulisciOldRecordsOroscopoGiornaliero();
+        logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
     }
 
     @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")

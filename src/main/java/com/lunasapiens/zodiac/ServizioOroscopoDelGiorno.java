@@ -450,7 +450,11 @@ public class ServizioOroscopoDelGiorno {
     }
 
 
+    public void pulisciOldRecordsOroscopoGiornaliero() {
+        Date currentDate_MenoUnGiorno = Date.from( Utils.getNowRomeEurope().minusDays(1).toInstant() ); // diminuisce di un giorno
+        oroscopoGiornalieroRepository.deleteByDataOroscopoBefore(currentDate_MenoUnGiorno);
 
+    }
 
 
 }
