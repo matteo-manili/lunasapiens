@@ -76,3 +76,15 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
 </body>
 </html>
+
+<script>
+
+    loadData();
+
+    function loadData() {
+        const email = localStorage.getItem('email');
+        // Imposta i valori sugli input
+        document.getElementById('email').value = email || "";
+    }
+
+</script>
