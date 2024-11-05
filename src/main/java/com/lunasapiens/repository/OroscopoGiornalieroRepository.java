@@ -2,9 +2,11 @@ package com.lunasapiens.repository;
 
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,12 @@ public interface OroscopoGiornalieroRepository extends JpaRepository<OroscopoGio
 
     @Query("SELECT o FROM OroscopoGiornaliero o WHERE o.dataOroscopo = :dataOroscopo ORDER BY o.numSegno ASC")
     List<OroscopoGiornaliero> findAllByDataOroscopo(@Param("dataOroscopo") Date dataOroscopo);
+
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM OroscopoGiornaliero o WHERE o.dataOroscopo < :currentDate")
+    void deleteByDataOroscopoBefore(@Param("currentDate") Date currentDate);
 
 
 

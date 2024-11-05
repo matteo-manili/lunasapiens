@@ -133,7 +133,7 @@ public class EmailService {
 
 
 
-    public void inviaEmailOroscopoGioraliero() {
+    public int inviaEmailOroscopoGioraliero() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiOre12());
@@ -157,7 +157,7 @@ public class EmailService {
                 logger.info("inviaEmailOrosciopoGioraliero: "+emailUtente.getEmail());
             }
         }
-        telegramBotService.inviaMessaggio("totaleNumEmailInviate Oroscopo Giornaliero: "+totaleNumEmailInviate);
+        return totaleNumEmailInviate;
     }
 
 
