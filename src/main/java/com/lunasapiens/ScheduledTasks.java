@@ -1,6 +1,5 @@
 package com.lunasapiens;
 
-import com.lunasapiens.repository.OroscopoGiornalieroRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
@@ -9,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 public class ScheduledTasks {
