@@ -83,12 +83,17 @@
 
 <script>
 
-    loadData();
+    $(document).ready(function() {
+        loadData();
 
-    function loadData() {
-        const email = localStorage.getItem('email');
-        // Imposta i valori sugli input
-        document.getElementById('email').value = email || "";
-    }
+        function loadData() {
+            const email = localStorage.getItem('email');
+            // Imposta i valori sugli input
+            document.getElementById('email').value = email || "";
+        }
+    });
+
+
+
 
 </script>
