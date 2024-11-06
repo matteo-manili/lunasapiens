@@ -41,7 +41,7 @@
         <h5 class="mb-4">Iscriviti per Ricevere l'Oroscopo del Giorno via email</h5>
         <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
 
-        <form id="subscribe-form" th:action="@{/subscribe-orosc-giorn}" method="post" class="row g-2 justify-content-center">
+        <form id="subscribe-form" action="" method="post" class="row g-2 justify-content-center">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
@@ -85,14 +85,16 @@
 </html>
 
 <script>
+    // Imposta il path del form dinamicamente
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("subscribe-form");
+        // Imposta l'azione del form con il path corretto
+        form.action = window.location.origin + "/subscribe-orosc-giorn";
 
-        loadData();
-
-        function loadData() {
-            const email = localStorage.getItem('email');
-            // Imposta i valori sugli input
-            document.getElementById('email').value = email || "";
+        // Memorizza l'email se presente
+        const email = localStorage.getItem('email');
+        if (email) {
+            document.getElementById('email').value = email;
         }
-
-
+    });
 </script>
