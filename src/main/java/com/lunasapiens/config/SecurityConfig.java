@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 
 @Configuration
@@ -31,6 +32,14 @@ public class SecurityConfig {
         logger.info("sono in SecurityConfig securityFilterChain");
 
         http
+            // Configura la protezione CSRF utilizzando un token memorizzato in un cookie.
+            // Il token è accessibile tramite JavaScript (HttpOnly=false) per poterlo includere nelle richieste AJAX.
+            // Questo aiuta a prevenire attacchi CSRF, garantendo che ogni richiesta di modifica dello stato
+            // contenga un token valido che viene verificato dal server.
+            .csrf(csrf -> csrf
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            )
+
             //  STATELESS - IF_REQUIRED (se uso STATELESS non funzionano i form perché spring non vede l'autienticazione)
             .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED )

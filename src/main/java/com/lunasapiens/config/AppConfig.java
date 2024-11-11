@@ -225,6 +225,7 @@ public class AppConfig implements WebMvcConfigurer {
         templateResolver.setSuffix(".html");
         // HTML è il valore predefinito, aggiunto qui per chiarezza.
         templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding("UTF-8");
         // La cache dei template è abilitata per impostazione predefinita. Impostare su false se si desidera
         // che i template vengano aggiornati automaticamente quando vengono modificati.
         templateResolver.setCacheable(false);

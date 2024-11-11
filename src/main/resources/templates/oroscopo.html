@@ -30,13 +30,10 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-4">
-
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
-
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Iscriviti per Ricevere l'Oroscopo del Giorno via email</h5>
         <p>Inserisci il tuo indirizzo email per ricevere l'oroscopo del giorno direttamente nella tua casella di posta.</p>
-
         <form id="subscribe-form" th:action="@{/subscribe-orosc-giorn}" method="post" class="row g-2 justify-content-center">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
@@ -45,9 +42,7 @@
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100" onclick="showLoadingOverlay()">Iscrivi Email</button>
             </div>
         </form>
-
     </div>
-
 
     <h1 class="mb-4">Oroscopo del giorno <span th:utext="${oroscDelGiornDescDTO.giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato}"></span></h1>
 
@@ -76,14 +71,13 @@
 
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
-<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+<div th:replace="~{fragments/templateBase :: link-js-util}"></div>
 
 </body>
 </html>
 
 <script>
-
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         loadData();
 
         function loadData() {
@@ -92,8 +86,4 @@
             document.getElementById('email').value = email || "";
         }
     });
-
-
-
-
 </script>
