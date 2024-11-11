@@ -1,9 +1,12 @@
 package com.lunasapiens.config;
 
-import com.lunasapiens.filter.CsrfLoggingFilter;
 import com.lunasapiens.filter.FilterAuthenticationJwt;
 
 import com.lunasapiens.filter.FilterCheckUrls;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 
 
 @Configuration
@@ -31,19 +38,16 @@ public class SecurityConfig {
     @Autowired
     private FilterCheckUrls filterCheckUrls;
 
-    @Autowired
-    CsrfLoggingFilter csrfLoggingFilter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         logger.info("sono in SecurityConfig securityFilterChain");
 
         http
-            // Configura la protezione CSRF utilizzando un token memorizzato in un cookie.
-            // Il token è accessibile tramite JavaScript (HttpOnly=false) per poterlo includere nelle richieste AJAX.
-            // Questo aiuta a prevenire attacchi CSRF, garantendo che ogni richiesta di modifica dello stato (cioè i form di tipo POST, PUT, DELETE)
-            // contenga un token valido che viene verificato dal server.
+
+            // Configura la protezione CSRF utilizzando un token memorizzato in un cookie accessibile da JavaScript (HttpOnly=false).
+            // Il token CSRF viene applicato solo alle richieste HTTP "non-idempotenti" (come POST, PUT, DELETE), che sono le più vulnerabili a questo tipo di attacco.
+            // Questo approccio è comune e limita la necessità del token CSRF alle richieste che effettivamente modificano lo stato dell'applicazione,
+            // evitando di richiederlo su richieste GET o HEAD che non sono solitamente soggette a CSRF.
             .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             )
@@ -81,7 +85,7 @@ public class SecurityConfig {
             // .frameOptions(frameOptions -> frameOptions): Imposta l'intestazione X-Frame-Options per controllare la visualizzazione delle pagine in iframe.
             // .sameOrigin(): Imposta X-Frame-Options su SAMEORIGIN, permettendo la visualizzazione solo da frame dello stesso dominio per prevenire il clickjacking.
             .headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permette solo il rendering dello stesso dominio
+                    .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permette solo il rendering dello stesso dominio
             )
 
 
@@ -95,7 +99,29 @@ public class SecurityConfig {
         // Aggiungi i filtri nell'ordine specificato
         .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)  // filterCheckUrls prima di JWT
         .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class) // JWT prima dell'autenticazione standard
-        .addFilterBefore(csrfLoggingFilter, UsernamePasswordAuthenticationFilter.class); // CSRF logging dopo i controlli principali
+
+
+        // Aggiunge un filtro personalizzato che estrae il token CSRF da ogni richiesta e lo inserisce nell'intestazione della risposta.
+        // Questo filtro viene eseguito una volta per ogni richiesta, subito dopo il filtro di autenticazione UsernamePasswordAuthenticationFilter.
+        // Recupera il token CSRF dall'attributo della richiesta e, se presente, lo aggiunge all'intestazione "X-CSRF-TOKEN" nella risposta HTTP.
+        // Questa soluzione consente alle applicazioni lato client di accedere facilmente al token CSRF nell'intestazione per includerlo nelle richieste successive,
+        // migliorando la protezione contro gli attacchi CSRF sulle chiamate AJAX o simili.
+        .addFilterAfter(new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                    throws ServletException, IOException {
+
+                // Recupera il token CSRF dall'attributo della richiesta
+                CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+
+                if (csrf != null) {
+                    // Imposta il token anche nelle intestazioni della risposta
+                    response.setHeader("X-CSRF-TOKEN", csrf.getToken());
+                }
+                filterChain.doFilter(request, response);
+            }
+        }, CsrfFilter.class);
+
 
         return http.build();
     }
