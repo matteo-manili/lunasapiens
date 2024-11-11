@@ -46,29 +46,26 @@
         </ul>
     </div>
 
-
-
-
-
 </div>
 
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
-<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+<div th:replace="~{fragments/templateBase :: link-js-util}"></div>
 
 
 <script>
 
-    loadData();
-
-    function loadData() {
-        const email = localStorage.getItem('email');
-        // Imposta i valori sugli input
-        document.getElementById('email').value = email || "";
-    }
-
-
     document.addEventListener("DOMContentLoaded", function() {
+
+        loadData();
+
+        function loadData() {
+            const email = localStorage.getItem('email');
+            // Imposta i valori sugli input
+            document.getElementById('email').value = email || "";
+        }
+
+
         // Ottieni il modulo
         const form = document.getElementById('register-submit');
         // Aggiungi un event listener per l'evento submit

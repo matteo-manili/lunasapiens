@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
             // Configura la protezione CSRF utilizzando un token memorizzato in un cookie.
             // Il token è accessibile tramite JavaScript (HttpOnly=false) per poterlo includere nelle richieste AJAX.
-            // Questo aiuta a prevenire attacchi CSRF, garantendo che ogni richiesta di modifica dello stato
+            // Questo aiuta a prevenire attacchi CSRF, garantendo che ogni richiesta di modifica dello stato (cioè i form di tipo POST, PUT, DELETE)
             // contenga un token valido che viene verificato dal server.
             .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
