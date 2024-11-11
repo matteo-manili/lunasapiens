@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 
 @Component
-@Order(2) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
+@Order(2)  // Imposta un ordine preferito
 public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterAuthenticationJwt.class);

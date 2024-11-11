@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @Component
-@Order(1) // Ordine di esecuzione del filtro, se necessario (se ci sono altre classi che fanno da filter)
+@Order(1)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
     //private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);

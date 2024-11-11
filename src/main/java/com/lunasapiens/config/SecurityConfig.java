@@ -1,7 +1,9 @@
 package com.lunasapiens.config;
 
+import com.lunasapiens.filter.CsrfLoggingFilter;
 import com.lunasapiens.filter.FilterAuthenticationJwt;
 
+import com.lunasapiens.filter.FilterCheckUrls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,6 +28,11 @@ public class SecurityConfig {
     @Autowired
     private FilterAuthenticationJwt filterAuthenticationJwt;
 
+    @Autowired
+    private FilterCheckUrls filterCheckUrls;
+
+    @Autowired
+    CsrfLoggingFilter csrfLoggingFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -83,9 +91,15 @@ public class SecurityConfig {
          * nome utente e password. Se hai un filtro che gestisce l'autenticazione tramite JWT (JSON Web Token), dovresti assicurarti che venga eseguito
          * prima del filtro che gestisce la logica di autenticazione tradizionale, altrimenti i token JWT potrebbero non essere validati correttamente.
          */
-        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class); // Aggiunge il filtro JWT
+
+        // Aggiungi i filtri nell'ordine specificato
+        .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)  // filterCheckUrls prima di JWT
+        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class) // JWT prima dell'autenticazione standard
+        .addFilterBefore(csrfLoggingFilter, UsernamePasswordAuthenticationFilter.class); // CSRF logging dopo i controlli principali
+
         return http.build();
     }
+
 
 }
 
