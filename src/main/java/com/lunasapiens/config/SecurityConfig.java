@@ -101,11 +101,17 @@ public class SecurityConfig {
         .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class) // JWT prima dell'autenticazione standard
 
 
-        // Aggiunge un filtro personalizzato che estrae il token CSRF da ogni richiesta e lo inserisce nell'intestazione della risposta.
-        // Questo filtro viene eseguito una volta per ogni richiesta, subito dopo il filtro di autenticazione UsernamePasswordAuthenticationFilter.
-        // Recupera il token CSRF dall'attributo della richiesta e, se presente, lo aggiunge all'intestazione "X-CSRF-TOKEN" nella risposta HTTP.
-        // Questa soluzione consente alle applicazioni lato client di accedere facilmente al token CSRF nell'intestazione per includerlo nelle richieste successive,
-        // migliorando la protezione contro gli attacchi CSRF sulle chiamate AJAX o simili.
+        /*
+         * Filtro per aggiungere il token CSRF alle intestazioni della risposta HTTP.
+         *
+         * Questo filtro viene eseguito dopo il filtro CSRF di Spring (CsrfFilter). Il token CSRF, che è stato precedentemente
+         * generato e associato alla richiesta, viene estratto e aggiunto all'intestazione della risposta come "X-CSRF-TOKEN".
+         * Questo permette al client (ad esempio, un'applicazione frontend) di accedere al token e includerlo nelle richieste future,
+         * garantendo che le richieste siano protette da attacchi di tipo Cross-Site Request Forgery (CSRF).
+         *
+         * Il filtro è progettato per essere eseguito una sola volta per ogni richiesta, come indicato dalla classe
+         * `OncePerRequestFilter`. Dopo aver aggiunto l'intestazione, la richiesta viene passata al filtro successivo nella catena.
+         */
         .addFilterAfter(new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
