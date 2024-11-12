@@ -40,7 +40,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-
 @Controller
 public class IndexController extends BaseController {
 
@@ -243,7 +242,12 @@ public class IndexController extends BaseController {
      * E' necessario quando il browser memorizza in cache alcune pagine (soprattuto la pagina root / ) e non visualizza il menu agguiornato.
      */
     @GetMapping("/header")
+    @ResponseStatus(HttpStatus.NOT_FOUND) // Impostiamo un codice 404
     public String header() { return "fragments/templateBase :: header"; }
+
+
+
+
 
     @GetMapping("/robots.txt")
     public void getRobotsTxt(HttpServletResponse response) throws IOException {
