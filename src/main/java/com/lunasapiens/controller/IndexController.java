@@ -242,7 +242,6 @@ public class IndexController extends BaseController {
      * document.getElementById("header-placeholder").innerHTML = html;
      * E' necessario quando il browser memorizza in cache alcune pagine (soprattuto la pagina root / ) e non visualizza il menu agguiornato.
      */
-    @ResponseStatus(HttpStatus.GONE) // Imposta lo status 410
     @GetMapping("/header")
     public String header() { return "fragments/templateBase :: header"; }
 
