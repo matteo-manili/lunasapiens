@@ -3,7 +3,7 @@
 /**
  * Questo script evidenzia dinamicamente il link del menu corrispondente alla pagina corrente.
  *
- * - Quando il documento è completamente caricato, ottiene l'URL della pagina attuale.
+ * - Quando il documento è completamente caricato,  ottiene l'URL della pagina attuale.
  * - Seleziona tutti i link nel menu di navigazione.
  * - Confronta l'URL della pagina corrente con l'URL di ciascun link nel menu.
  * - Aggiunge la classe 'active' al link corrispondente se l'URL coincide, evidenziandolo.
