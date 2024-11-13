@@ -62,7 +62,7 @@ public class Constants {
             "/forum",
             "/register",
             "/info-privacy",
-            "/curriculum",
+            "/matteo-manili-programmatore",
             "/contatti"));
 
     public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
