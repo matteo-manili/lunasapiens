@@ -68,6 +68,9 @@ public class IndexController extends BaseController {
     }
 
 
+
+
+
     @GetMapping("/index")
     public RedirectView index() {
         logger.info("sono in index");
