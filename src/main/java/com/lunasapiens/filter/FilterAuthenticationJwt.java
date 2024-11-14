@@ -58,7 +58,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN.equals(cookie.getName()) && cookie.getValue() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (cookie.getValue() != null && cookie.getName().equals(Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN) && SecurityContextHolder.getContext().getAuthentication() == null) {
                     logger.info("authenticationNow è null");
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
                     if (jwtDetails.isSuccess()) {
@@ -69,7 +69,8 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
                             Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         }
                     } else {
-                        Utils.clearJwtCookie_ClearSecurityContext(request, response); // IMPORTANTE, cancellare il cookie altrimenti va il loop caricando sempre la pagina /register
+                        // IMPORTANTE, cancellare il cookie altrimenti va il loop caricando sempre la pagina /register
+                        Utils.clearJwtCookie_ClearSecurityContext(request, response);
                         if (jwtDetails.isTokenScaduto()) {
                             logger.info("token scaduto");
                             request.getSession().setAttribute(Constants.INFO_ALERT, Constants.MESSAGE_AUTENTICAZIONE_SCADUTA_INVIA_NUOVA_EMAIL);
@@ -84,8 +85,6 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
                 }
             }
         }
-
-
         filterChain.doFilter(request, response);
     }
 
@@ -93,9 +92,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
     public void autenticaUtente(String email, HttpServletRequest request) {
         logger.info("eseguo la autenticazione: "+email);
         UserDetails userDetails = User.withUsername(email)
-                .password("")
-                .authorities( Constants.USER )
-                .build();
+                .password("").authorities( Constants.USER ).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         // Imposta l'autenticazione nel contesto di sicurezza
@@ -110,9 +107,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
         logger.info("eseguo la autenticazione: "+username);
         UserDetails userDetails = User.withUsername(username)
-                .password("")
-                .authorities( "CAZZO" )
-                .build();
+                .password("").authorities( "ANONIMUS_BASE" ).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
