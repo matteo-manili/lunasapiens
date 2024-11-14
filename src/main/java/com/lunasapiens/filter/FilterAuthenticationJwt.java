@@ -107,7 +107,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
         logger.info("eseguo la autenticazione: "+username);
         UserDetails userDetails = User.withUsername(username)
-                .password("").authorities( "ANONIMUS_BASE" ).build();
+                .password("").authorities( "USER_BASE" ).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
