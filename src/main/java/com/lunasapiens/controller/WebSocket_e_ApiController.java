@@ -8,7 +8,6 @@ import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.config.CustomPrincipalWebSocketChatBot;
 import com.lunasapiens.config.WebSocketConfig;
 import com.lunasapiens.filter.RateLimiterUser;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
@@ -41,9 +40,6 @@ public class WebSocket_e_ApiController extends BaseController {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
-
-    @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     ServizioTemaNatale servizioTemaNatale;

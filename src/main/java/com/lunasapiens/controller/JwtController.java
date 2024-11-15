@@ -8,8 +8,6 @@ import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.JwtService;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
@@ -35,13 +33,6 @@ import java.util.UUID;
 public class JwtController extends BaseController{
 
     private static final Logger logger = LoggerFactory.getLogger(JwtController.class);
-
-
-    @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
-
-    @Autowired
-    ServizioTemaNatale servizioTemaNatale;
 
     @Autowired
     private EmailService emailService;

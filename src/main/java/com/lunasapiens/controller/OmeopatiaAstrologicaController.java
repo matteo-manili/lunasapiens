@@ -4,7 +4,6 @@ import com.lunasapiens.Constants;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.zodiac.ServizioOmeopatiaAstrologica;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +27,6 @@ import java.util.Optional;
 public class OmeopatiaAstrologicaController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(OmeopatiaAstrologicaController.class);
-
-    @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     ServizioOmeopatiaAstrologica servizioOmeopatiaAstrologica;

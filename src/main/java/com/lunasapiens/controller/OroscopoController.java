@@ -8,7 +8,6 @@ import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,9 +36,6 @@ public class OroscopoController extends BaseController {
 
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
-
-    @Autowired
-    ServizioTemaNatale servizioTemaNatale;
 
     @Autowired
     private EmailService emailService;
@@ -168,6 +164,20 @@ public class OroscopoController extends BaseController {
         }
     }
 
+
+    /**
+     * lo uso solo per test
+     * Reindirizza alla home page e segnala che la risorsa non esiste più
+     */
+    @GetMapping("/genera-video")
+    public RedirectView gerneraVideo() {
+        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
+        // Restituisci una RedirectView per reindirizzare alla home page
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410
+        return redirectView;
+    }
 
 
 }

@@ -6,7 +6,6 @@ import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +35,6 @@ import java.util.*;
 public class TemaNataleController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(TemaNataleController.class);
-
-    @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     ServizioTemaNatale servizioTemaNatale;

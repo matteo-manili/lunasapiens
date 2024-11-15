@@ -4,7 +4,6 @@ import com.lunasapiens.Constants;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import com.lunasapiens.zodiac.ServizioSinastria;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +29,6 @@ import java.util.*;
 public class SinastriaController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(SinastriaController.class);
-
-
-    @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
     ServizioSinastria servizioSinastria;

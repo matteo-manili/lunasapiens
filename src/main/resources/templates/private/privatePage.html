@@ -26,6 +26,22 @@
     </div>
 
 
+    <div class="alert alert-dark mb-4">
+        <form th:action="@{/private/subscribe-oroscopo}" method="post">
+            <div class="form-check d-flex align-items-center">
+                <label class="form-check-label" for="oroscopoCheckbox">
+                    Riceveri l'Oroscopo del Giorno via email</label>
+                <input class="form-check-input ms-3" type="checkbox" id="oroscopoCheckbox" name="subscribedOroscGiorn"
+                       th:checked="${isSubscribedOroscGiorn}" onchange="this.form.submit()" onclick="showLoadingOverlay()">
+            </div>
+        </form>
+    </div>
+
+
+
+
+
+
 
     <!-- Sezione visibile solo per l'utente "matte.manili@gmail.com" -->
     <div sec:authorize="authentication.principal.username == 'matteo.manili@gmail.com'">
@@ -43,7 +59,7 @@
         <div class="col-md-6">
             <div class="alert alert-info mb-4 ">
                 <p class="mt-2">Una volta effettuato il logout, dovrai richiedere nuovamente l'email per autenticarti al prossimo accesso.</p>
-                <a href="/logout" class="btn btn-info">Esci dall'account</a>
+                <a href="/private/logout" class="btn btn-info">Esci dall'account</a>
             </div>
         </div>
         <div class="col-md-6">
@@ -56,6 +72,7 @@
 
 </div>
 
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 </body>
