@@ -2,11 +2,8 @@ package com.lunasapiens.config;
 
 import com.lunasapiens.filter.FilterAuthenticationJwt;
 
+import com.lunasapiens.filter.FilterCSRF;
 import com.lunasapiens.filter.FilterCheckUrls;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 
 @Configuration
@@ -96,10 +89,6 @@ public class SecurityConfig {
          * prima del filtro che gestisce la logica di autenticazione tradizionale, altrimenti i token JWT potrebbero non essere validati correttamente.
          */
 
-        // Aggiungi i filtri nell'ordine specificato
-        .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)  // filterCheckUrls prima di JWT
-        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class) // JWT prima dell'autenticazione standard
-
 
         /*
          * Filtro per aggiungere il token CSRF alle intestazioni della risposta HTTP.
@@ -112,21 +101,9 @@ public class SecurityConfig {
          * Il filtro è progettato per essere eseguito una sola volta per ogni richiesta, come indicato dalla classe
          * `OncePerRequestFilter`. Dopo aver aggiunto l'intestazione, la richiesta viene passata al filtro successivo nella catena.
          */
-        .addFilterAfter(new OncePerRequestFilter() {
-            @Override
-            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-                    throws ServletException, IOException {
-
-                // Recupera il token CSRF dall'attributo della richiesta
-                CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-
-                if (csrf != null) {
-                    // Imposta il token anche nelle intestazioni della risposta
-                    response.setHeader("X-CSRF-TOKEN", csrf.getToken());
-                }
-                filterChain.doFilter(request, response);
-            }
-        }, CsrfFilter.class);
+        .addFilterAfter(new FilterCSRF(), CsrfFilter.class)
+        .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)  // filterCheckUrls prima di JWT
+        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class); // JWT prima dell'autenticazione standard
 
 
         return http.build();

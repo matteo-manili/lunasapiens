@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @Component
-@Order(1)
+@Order(2)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
     //private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
