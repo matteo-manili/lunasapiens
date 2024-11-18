@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
+    <title th:fragment="title">Luna Sapiens | Editor</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content=".....">
+        <meta name="keywords" content=".....">
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+    </th:block>
+</head>
+
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4">
+
+
+    <form th:action="@{/private/saveArticle}" method="post">
+        <textarea id="editor" name="content"></textarea>
+        <button type="submit">Salva</button>
+    </form>
+
+
+
+
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                ckfinder: {
+                    uploadUrl: '/upload-image'
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+
+
+
+</div>
+
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+</body>
+</html>

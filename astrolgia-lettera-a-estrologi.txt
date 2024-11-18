@@ -1,0 +1,40 @@
+ciao Marcello.
+
+PREMESSA
+Questa email ha lo scopo per me, di ricevere le tue conoscenze ed esperienze nel campo astrologico. Farti conoscere i meccanisimi informatici, affinché tu mi possa trasmettere le informazioni in chiave idonea per l'implementazione informatica.
+Per te, sarà utile, per quando vorrai trasmettermi (a me o a un altro programmatore) particolari funzionalità, come per esempio la app che vuoi creare, la quale ha in comune con la mia, il tema natale e la sinastria. 
+Per te, sarà anche possibile copiare totalmente o parzialmente le funzionalità, nella tua app.
+
+La web application che ho creato LunaSapiens, per ora, ha queste funzionalità: Generazione e chatbotIA del Tema Natale e Sinastria, Oroscopo giornaliero e Generazione profilo omeopatico astrologico sulla base della data di nascita.
+
+Le mie conoscenze base astrologiche sono tratte da un libro standard comprato alla feltrinelli. E' un libro di qualche centinaio di pagine in cui spiega come fare il tema natale e da nozioni base sull'altrologia. 
+Altre conoscenze provengono da siti web trovati su google.
+Ho utilizzato molti contenuti statici copiati dal libro e dal web. 
+I contenuti sono "statici" nel senso che sono definizioni fine a se stesse. Cioè delle verità accertate. Per esempio la caratteristica di un segno, di un aspetto, di un pianeta, di una casa, il significato di pianeta retrogrado ecc.
+
+Questi contenuti statici insieme alle istruzioni sono utilizzati dalle funzionalità della applicazione sia come informazione in output per l'utente e soprattuto per "configurare il contesto di lavoro" del "modello linguistico" (GPT-4). Il modello linguistico è un sistema specifico di intelligenza artificiale progettato per comprendere e generare testo umano.
+
+Esattamente le informazioni inviati al modello eseguono questo processo:
+Si invia un "prompt" (insieme di istruzioni, contesto, contenuti) a un modello di intelligenza artificiale.
+Il modello elabora il prompt e risponde basandosi su:
+- Il contesto fornito.
+- Il suo addestramento pregresso, che consiste in una vasta quantità di dati testuali accumulati fino a una certa data.
+Quindi, si Riceve una risposta generata dinamicamente in base al prompt e alle capacità del modello.
+
+
+
+
+
+L'applicazione utilizza e combina i seguenti elementi per le funzionalità:
+aspetti, case, luna nei segni, pianeti nelle case, pianeti, segni sull'ascendente, segni, transiti sui segni e pianti, omeopatia in base a (segno, ascendete, pianeta, elemento). 
+
+
+Il mio obbiettivo è quello di: 
+Individuare elementi mancanti 
+Migliorare la interptratazione del tema natale
+combinare gli elementi
+
+
+
+
+
