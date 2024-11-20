@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Editor</title>
     <th:block th:fragment="meta">
         <meta name="description" content=".....">
@@ -8,9 +8,7 @@
     </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
-    </th:block>
-    <th:block th:fragment="scripts">
-        <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+        <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
     </th:block>
 </head>
 
@@ -19,29 +17,30 @@
 
 <div class="container mt-4">
 
-
-    <form th:action="@{/private/saveArticle}" method="post">
-        <textarea id="editor" name="content"></textarea>
-        <button type="submit">Salva</button>
-    </form>
-
-
-
+    <div class="mb-4">
+        <form th:action="@{/private/saveArticle}" method="post" >
+            <textarea id="editor" name="content" ></textarea>
+            <button type="submit">Salva</button>
+        </form>
+    </div>
 
 
-    <script>
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
-                ckfinder: {
-                    uploadUrl: '/upload-image'
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    </script>
 
-
+    <!-- Sezione per visualizzare gli articoli -->
+    <div class="mt-5">
+        <h2>Articoli salvati</h2>
+        <div th:if="${articles.isEmpty()}">
+            <p>Nessun articolo trovato.</p>
+        </div>
+        <div th:each="article : ${articles}">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
+                    <div class="card-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
@@ -49,5 +48,101 @@
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
+        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
+    }
+}
+</script>
+
+<script type="module">
+    import {
+        ClassicEditor,
+        Essentials,
+        // ---- immagine ----
+        Image,
+        ImageCaption,
+        ImageResize,
+        ImageStyle,
+        ImageToolbar,
+        LinkImage,
+        ImageInsert,
+        AutoImage,
+        SimpleUploadAdapter,
+        // ---- font ----
+        Bold,
+        Italic,
+        Font,
+        Paragraph
+
+    } from 'ckeditor5';
+
+    // Recupera il token CSRF dal campo
+    // hidden
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    //alert('csrfToken: '+csrfToken  );
+
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            plugins: [Essentials, Bold, Italic, Font, Paragraph,
+                Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, ImageInsert, AutoImage, SimpleUploadAdapter],
+
+            toolbar: [
+                'undo', 'redo', '|', 'bold', 'italic', '|',
+                'insertImage', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+            ],
+
+            image: {
+                toolbar: ['imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|', 'toggleImageCaption', 'linkImage'],
+                insert: {
+                    integrations: [ 'upload', 'assetManager', 'url' ]
+                }
+            },
+
+            simpleUpload: {
+                // The URL that the images are uploaded to.
+                uploadUrl: '/upload-image-article',
+                // Enable the XMLHttpRequest.withCredentials property.
+                withCredentials: true,
+                headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value }
+            }
+
+        })
+        .then(editor => {
+            console.log('Editor initialized successfully:', editor);
+        })
+        .catch(error => {
+            console.error('Error initializing editor:', error);
+        });
+
+
+</script>
+
+<script>
+//const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Recupera il CSRF token dal meta tag, se presente.
+//alert('csrfToken: '+csrfToken)
+
+/*
+ClassicEditor
+    .create(document.querySelector('#editor'), {
+        extraPlugins: [SimpleUploadAdapter], // Aggiungi il plugin esplicitamente
+        simpleUpload: {
+            uploadUrl: '/upload-image' // L'URL del tuo endpoint per l'upload delle immagini
+
+            headers: {
+                'X-CSRF-TOKEN': csrfToken // Aggiungi il CSRF token
+            }
+        }
+    })
+    .catch(error => {
+        console.error(error);
+    });
+*/
+</script>
+
 </body>
 </html>

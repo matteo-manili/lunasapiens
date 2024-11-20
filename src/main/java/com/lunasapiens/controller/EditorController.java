@@ -5,28 +5,18 @@ import com.lunasapiens.entity.Article;
 import com.lunasapiens.entity.Image;
 import com.lunasapiens.repository.ArticleRepository;
 import com.lunasapiens.repository.ImageRepository;
-import com.lunasapiens.repository.ProfiloUtenteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,15 +33,20 @@ public class EditorController extends BaseController {
     private ImageRepository imageRepository;
 
 
+
     @GetMapping("/private/editor")
-    public String editor() {
+    public String editor(Model model) {
+        List<Article> articles = articleRepository.findAll(); // Recupera tutti gli articoli dal database
+        model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
         return "private/editor";
     }
 
 
 
+
     @PostMapping("/private/saveArticle")
     public String saveArticle(@RequestParam("content") String content, Model model) {
+        logger.info("sono in saveArticle faccio salvataggio");
         Article article = new Article();
         article.setContent(content);
 
@@ -65,23 +60,13 @@ public class EditorController extends BaseController {
         return "redirect:/private/editor";
     }
 
-    private List<Image> extractImagesFromHtml(String content) {
-        // Trova ID delle immagini nell'HTML e recuperale dal database
-        List<Image> images = new ArrayList<>();
-        Matcher matcher = Pattern.compile("/images/(\\d+)").matcher(content);
-        while (matcher.find()) {
-            Long id = Long.valueOf(matcher.group(1));
-            imageRepository.findById(id).ifPresent(images::add);
-        }
-        return images;
-    }
 
 
-
-    @PostMapping("/upload-image")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("upload") MultipartFile file) {
+    @PostMapping("/upload-image-article")
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
         try {
-            logger.info("sono in uploadImage");
+            logger.info("sono in upload-image-article");
+
             // Validazione del tipo MIME
             if (!file.getContentType().startsWith("image/")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -105,26 +90,52 @@ public class EditorController extends BaseController {
             String imageUrl = "/images/" + image.getId();
 
             // Risposta con l'URL per CKEditor
-            Map<String, String> response = new HashMap<>();
-            response.put("url", imageUrl);
+            Map<String, Object> response = new HashMap<>();
+            response.put("url", imageUrl); // Campo richiesto da CKEditor
+            response.put("default", imageUrl); // Campo richiesto dal semplice adapter
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             // Gestione degli errori generici
+            logger.error("Errore durante l'upload dell'immagine", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Si è verificato un errore durante il caricamento dell'immagine."));
         }
-
     }
+
 
 
     @GetMapping("/images/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        Image image = imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
+
+        logger.info("sono in images/{id}");
+        Optional<Image> image = imageRepository.findById(id);
+
+        if (image.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
         return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .body(image.getData());
+                .header("Content-Type", image.get().getContentType())
+                .body(image.get().getData());
     }
+
+
+
+    private List<Image> extractImagesFromHtml(String content) {
+        // Trova ID delle immagini nell'HTML e recuperale dal database
+        List<Image> images = new ArrayList<>();
+        Matcher matcher = Pattern.compile("/images/(\\d+)").matcher(content);
+        while (matcher.find()) {
+            Long id = Long.valueOf(matcher.group(1));
+            imageRepository.findById(id).ifPresent(images::add);
+        }
+        return images;
+    }
+
+
+
+
 
 
 }

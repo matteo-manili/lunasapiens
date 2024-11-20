@@ -43,6 +43,8 @@ public class SecurityConfig {
             // evitando di richiederlo su richieste GET o HEAD che non sono solitamente soggette a CSRF.
             .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers("/upload-image-article")
+
             )
 
             //  STATELESS - IF_REQUIRED (se uso STATELESS non funzionano i form perché spring non vede l'autienticazione)
@@ -59,7 +61,7 @@ public class SecurityConfig {
             // "/*" = significa tutti gli url e anche i sotto url (esempio localhost:/private/privatePage)
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*",
-                            "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**" ).permitAll()    // Accesso pubblico alle risorse specificate
+                            "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**", "/images/*", "/upload-images/**" ).permitAll()    // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()     // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()     // Blocca tutte le altre richieste
             )
