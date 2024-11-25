@@ -44,7 +44,8 @@
 
                     <div class="mt-2">
                         <!-- Pulsante modifica -->
-                        <button class="btn btn-warning btn-sm" onclick="editArticle(${article.id})">Modifica</button>
+                        <button class="btn btn-warning btn-sm" th:onclick="|editArticle('${article.id}')|">Modifica</button>
+
                         <!-- Pulsante cancella -->
                         <form th:action="@{/private/deleteArticle/{id}(id=${article.id})}" method="post" onsubmit="return confirmDeletion()" class="d-inline">
                             <input type="hidden" name="_method" value="DELETE"/>
@@ -111,6 +112,7 @@
         })
         .then(editor => {
             console.log('Editor initialized successfully:', editor);
+            editorInstance = editor; // Salva l'istanza
         })
         .catch(error => {
             console.error('Error initializing editor:', error);
@@ -121,6 +123,8 @@
     function confirmDeletion() {
         return confirm("Sei sicuro di voler cancellare questo articolo?");
     }
+
+    let editorInstance; // Variabile globale per mantenere l'istanza dell'editor
 
     function editArticle(articleId) {
         // Recupera il contenuto tramite un'API (fetch o Ajax)
@@ -133,8 +137,9 @@
             })
             .then(data => {
                 // Imposta il contenuto dell'editor
-                const editorElement = document.querySelector('#editor');
-                editorElement.value = data.content;
+                if (editorInstance) {
+                    editorInstance.setData(data.content); // Aggiorna l'editor con il contenuto ricevuto
+                }
 
                 // Aggiungi un campo nascosto con l'ID dell'articolo da aggiornare
                 let articleIdInput = document.querySelector('#articleIdInput');
@@ -149,6 +154,7 @@
             })
             .catch(error => console.error('Errore durante il recupero dell\'articolo:', error));
     }
+
 
 </script>
 

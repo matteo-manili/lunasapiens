@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,23 +44,39 @@ public class ArticleController extends BaseController {
     }
 
 
+
     @PostMapping("/private/saveArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
-                                      @RequestParam("content") String content,
-                                      @RequestParam(value = "imageIds", required = false) List<Long> imageIds,
-                                      Model model) {
+                                      @RequestParam("content") String content, Model model) {
         try {
             ArticleContent articleContent;
+            List<Long> newImageIds = extractImageCodes(content); // Estrai le immagini dal nuovo contenuto
 
             if (id.isPresent()) {
                 // Aggiorna un articolo esistente
                 articleContent = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
+
+                // Trova le immagini attualmente associate
+                List<Long> oldImageIds = extractImageCodes(articleContent.getContent());
+
+                // Trova le immagini da eliminare (presenti prima ma non più utilizzate)
+                List<Long> imagesToDelete = new ArrayList<>(oldImageIds);
+                imagesToDelete.removeAll(newImageIds); // Rimuovi le immagini ancora presenti nel nuovo contenuto
+
+                // Elimina le immagini non più utilizzate
+                imagesToDelete.forEach(imageId -> {
+                    articleImageRepository.findById(imageId).ifPresent(image -> {
+                        articleImageRepository.delete(image);
+                        logger.info("Immagine con ID " + imageId + " cancellata.");
+                    });
+                });
             } else {
                 // Crea un nuovo articolo
                 articleContent = new ArticleContent();
             }
 
+            // Aggiorna il contenuto dell'articolo
             articleContent.setContent(content);
             articleContentRepository.save(articleContent);
 
@@ -75,21 +92,26 @@ public class ArticleController extends BaseController {
 
 
 
+
+
+
+
     /**
      * endpoint per restituire i dettagli di un articolo per l'editor.
      */
     @GetMapping("/private/article/{id}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getArticle(@PathVariable Long id) {
-        return articleContentRepository.findById(id)
-                .map(article -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("id", article.getId());
-                    response.put("content", article.getContent());
-                    return ResponseEntity.ok(response);
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Articolo non trovato")));
+        Optional<ArticleContent> article = articleContentRepository.findById(id);
+
+        if (article.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Articolo non trovato"));
+        }
+
+        return ResponseEntity.ok(Map.of("id", article.get().getId(), "content", article.get().getContent()));
     }
+
 
 
     /**
@@ -139,11 +161,12 @@ public class ArticleController extends BaseController {
     /**
      * images-article
      */
-    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{id}")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+    @Cacheable(value = Constants.IMAGES_ARTICLE, key = "#idImage")
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{idImage}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long idImage) {
 
         logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{id}");
-        Optional<ArticleImage> image = articleImageRepository.findById(id);
+        Optional<ArticleImage> image = articleImageRepository.findById(idImage);
 
         if (image.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
