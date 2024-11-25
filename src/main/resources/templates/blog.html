@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Blog | Riflessioni su Vita, Scienza e Spirito</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Un blog di riflessione dedicato a psicologia, filosofia, scienza, tecnologia, spiritualità e visione della società. Approfondisci temi di famiglia, mente e futuro." />
+        <meta name="keywords" content="psicologia, filosofia, scienza, tecnologia, famiglia, spiritualità, società, riflessioni, visione del mondo, idee, cultura, progresso" />
+        <meta property="og:title" content="Blog | Riflessioni su Vita, Scienza e Spirito" />
+        <meta property="og:description" content="Esplora le connessioni tra psicologia, filosofia, scienza e spiritualità. Scopri approfondimenti su famiglia, società e tecnologia in un dialogo tra mente e spirito." />
+        <meta property="og:image" content="/images/blog_cover.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://www.humanitasnova.com" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Blog - Psicologia, Filosofia e Tecnologia" />
+        <meta name="twitter:description" content="Un blog che riflette su temi fondamentali: mente, spirito, società, scienza, famiglia e futuro tecnologico." />
+        <meta name="twitter:image" content="/images/blog_cover.jpg" />
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.humanitasnova.com" />
+        <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+</head>
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4">
+
+
+    <!-- Sezione per visualizzare gli articoli -->
+    <div class="mt-5">
+        <h2>Articoli salvati</h2>
+        <div th:if="${articles.isEmpty()}">
+            <p>Nessun articolo trovato.</p>
+        </div>
+        <div th:each="article : ${articles}">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
+                    <div class="card-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div> <!-- fine container -->
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+</body>
+</html>

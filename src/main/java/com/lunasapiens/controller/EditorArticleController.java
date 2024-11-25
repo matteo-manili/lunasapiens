@@ -24,9 +24,9 @@ import java.util.regex.Pattern;
 
 
 @Controller
-public class ArticleController extends BaseController {
+public class EditorArticleController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EditorArticleController.class);
 
     @Autowired
     private ArticleContentRepository articleContentRepository;
@@ -36,11 +36,20 @@ public class ArticleController extends BaseController {
 
 
 
-    @GetMapping("/private/editor")
+    @GetMapping("/blog")
+    public String blog(Model model) {
+        List<ArticleContent> articles = articleContentRepository.findAllByOrderByIdDesc(); // Recupera tutti gli articoli dal database
+        model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
+        return "blog";
+    }
+
+
+
+    @GetMapping("/private/editorArticles")
     public String editor(Model model) {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByIdDesc(); // Recupera tutti gli articoli dal database
         model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
-        return "private/editor";
+        return "private/editorArticles";
     }
 
 
@@ -81,12 +90,12 @@ public class ArticleController extends BaseController {
             articleContentRepository.save(articleContent);
 
             model.addAttribute("message", "Articolo salvato con successo!");
-            return "redirect:/private/editor";
+            return "redirect:/private/editorArticles";
 
         } catch (Exception e) {
             logger.error("Errore durante il salvataggio dell'articolo", e);
             model.addAttribute("message", "Errore durante il salvataggio dell'articolo");
-            return "redirect:/private/editor";
+            return "redirect:/private/editorArticles";
         }
     }
 
@@ -203,7 +212,7 @@ public class ArticleController extends BaseController {
         });
 
         model.addAttribute("message", "Articolo e immagini cancellati con successo!");
-        return "redirect:/private/editor";
+        return "redirect:/private/editorArticles";
     }
 
 
