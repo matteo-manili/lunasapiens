@@ -16,6 +16,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -260,6 +261,22 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     // ----------------------------------------------------
+
+    /**
+     * Configura un filtro per abilitare i metodi HTTP non standard (PUT, DELETE) nei form HTML.
+     * Il filtro intercetta le richieste HTTP e, se trova un parametro `_method`, ne modifica il
+     * metodo (ad esempio, da POST a DELETE o PUT). Questo consente di utilizzare operazioni
+     * RESTful nei form tradizionali, che supportano solo GET e POST.
+     *
+     * Esempio:
+     * <input type="hidden" name="_method" value="DELETE" />
+     *
+     * @return un'istanza di HiddenHttpMethodFilter.
+     */
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
+    }
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {

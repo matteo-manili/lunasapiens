@@ -3,22 +3,19 @@ package com.lunasapiens.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
-public class Article implements Serializable {
+public class ArticleContent implements Serializable {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    private String content; // Per memorizzare il contenuto dell'editor
 
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Image> images; // Associazione con le immagini
 
 
 
@@ -38,11 +35,4 @@ public class Article implements Serializable {
         this.content = content;
     }
 
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
 }

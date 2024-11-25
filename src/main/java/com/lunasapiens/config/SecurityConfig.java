@@ -1,5 +1,6 @@
 package com.lunasapiens.config;
 
+import com.lunasapiens.Constants;
 import com.lunasapiens.filter.FilterAuthenticationJwt;
 
 import com.lunasapiens.filter.FilterCSRF;
@@ -43,7 +44,7 @@ public class SecurityConfig {
             // evitando di richiederlo su richieste GET o HEAD che non sono solitamente soggette a CSRF.
             .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers("/upload-image-article")
+                    .ignoringRequestMatchers("/"+ Constants.DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE)
 
             )
 
@@ -61,7 +62,8 @@ public class SecurityConfig {
             // "/*" = significa tutti gli url e anche i sotto url (esempio localhost:/private/privatePage)
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*",
-                            "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**", "/images/*" ).permitAll()    // Accesso pubblico alle risorse specificate
+                            "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**",
+                            "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*" ).permitAll()    // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()     // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()     // Blocca tutte le altre richieste
             )

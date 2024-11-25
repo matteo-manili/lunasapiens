@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class Image implements Serializable {
+public class ArticleImage implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,8 @@ public class Image implements Serializable {
     private byte[] data; // Contenuto binario dell'immagine
 
     private String contentType; // Tipo MIME dell'immagine (es., "image/png" o "image/jpeg")
+
+
 
     // Getters e Setters
     public Long getId() {
@@ -50,4 +52,6 @@ public class Image implements Serializable {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
+
 }

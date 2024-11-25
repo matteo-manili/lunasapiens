@@ -32,6 +32,9 @@ public class Constants {
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE = "subscribe-tema-natale";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE = "confirm-email-subscription-tema-natale";
 
+    public static final String DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE = "private/upload-image-article";
+    public static final String DOM_LUNA_SAPIENS_IMAGES_ARTICLE = "images-article";
+
     public static final DateTimeFormatter DATE_TIME_LOCAL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     public static final DateTimeFormatter FORMATTER_GIORNO_MESE_ANNO = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ITALIAN);
