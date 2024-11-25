@@ -19,15 +19,15 @@
         <meta name="twitter:image" content="/images/blog_cover.jpg" />
     </th:block>
     <th:block th:fragment="links">
-        <link rel="canonical" href="https://www.humanitasnova.com" />
+        <link rel="canonical" href="https://www.lunasapiens.com/blog" />
         <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/blog.css">
     </th:block>
 </head>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-4">
-
 
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
@@ -40,13 +40,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
                     <div class="card-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
-
                 </div>
             </div>
         </div>
     </div>
-
-
 
 </div> <!-- fine container -->
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>

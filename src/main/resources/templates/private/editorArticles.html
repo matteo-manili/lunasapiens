@@ -7,8 +7,9 @@
         <meta name="keywords" content=".....">
     </th:block>
     <th:block th:fragment="links">
-        <link rel="stylesheet" href="/css/style.css">
         <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/blog.css">
     </th:block>
 </head>
 <body>
@@ -40,12 +41,9 @@
                 <div class="card-body">
                     <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
                     <div class="card-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
-
-
                     <div class="mt-2">
                         <!-- Pulsante modifica -->
                         <button class="btn btn-warning btn-sm" th:onclick="|editArticle('${article.id}')|">Modifica</button>
-
                         <!-- Pulsante cancella -->
                         <form th:action="@{/private/deleteArticle/{id}(id=${article.id})}" method="post" onsubmit="return confirmDeletion()" class="d-inline">
                             <input type="hidden" name="_method" value="DELETE"/>
