@@ -1,0 +1,54 @@
+/* Questo è un commento in CSS */
+
+/* Selettore per tutte le immagini */
+img {
+    max-width: 100%;   /* Le immagini non supereranno mai la larghezza del loro contenitore */
+    height: auto;      /* La loro altezza sarà proporzionale alla larghezza */
+}
+
+/* CSS per le classi di dimensioni */
+.text-tiny {
+    font-size: 10px; /* Dimensione molto piccola */
+    line-height: 1.2; /* Regola l'interlinea per adattarsi */
+    color: #666; /* Colore opzionale per differenziare */
+}
+
+.text-small {
+    font-size: 12px; /* Dimensione piccola */
+    line-height: 1.4;
+    color: #333; /* Colore leggermente più scuro */
+}
+
+.text-default {
+    font-size: 16px; /* Dimensione normale */
+    line-height: 1.6;
+    color: #000; /* Colore standard */
+}
+
+.text-big {
+    font-size: 20px; /* Dimensione grande */
+    line-height: 1.8;
+    font-weight: bold; /* Grassetto opzionale */
+    color: #111; /* Colore leggermente più scuro */
+}
+
+.text-huge {
+    font-size: 24px; /* Dimensione molto grande */
+    line-height: 2;
+    font-weight: bold; /* Grassetto opzionale */
+    color: #000; /* Colore standard */
+}
+
+/* Opzionale: Aggiungere margini per separare i blocchi di testo */
+.text-tiny, .text-small, .text-default, .text-big, .text-huge {
+    margin-bottom: 1rem;
+}
+
+/* Utilità per combinare con altri stili */
+.text-tiny.center,
+.text-small.center,
+.text-default.center,
+.text-big.center,
+.text-huge.center {
+    text-align: center;
+}

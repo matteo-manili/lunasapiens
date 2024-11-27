@@ -1,6 +1,5 @@
 package com.lunasapiens.controller;
 
-
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.entity.ArticleImage;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -56,7 +56,7 @@ public class EditorArticleController extends BaseController {
 
     @PostMapping("/private/saveArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
-                                      @RequestParam("content") String content, Model model) {
+                                      @RequestParam("content") String content, RedirectAttributes redirectAttributes) {
         try {
             ArticleContent articleContent;
             List<Long> newImageIds = extractImageCodes(content); // Estrai le immagini dal nuovo contenuto
@@ -89,19 +89,15 @@ public class EditorArticleController extends BaseController {
             articleContent.setContent(content);
             articleContentRepository.save(articleContent);
 
-            model.addAttribute("message", "Articolo salvato con successo!");
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo salvato con successo!");
             return "redirect:/private/editorArticles";
 
         } catch (Exception e) {
             logger.error("Errore durante il salvataggio dell'articolo", e);
-            model.addAttribute("message", "Errore durante il salvataggio dell'articolo");
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Errore durante il salvataggio dell'articolo");
             return "redirect:/private/editorArticles";
         }
     }
-
-
-
-
 
 
 
@@ -112,12 +108,10 @@ public class EditorArticleController extends BaseController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getArticle(@PathVariable Long id) {
         Optional<ArticleContent> article = articleContentRepository.findById(id);
-
         if (article.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Articolo non trovato"));
         }
-
         return ResponseEntity.ok(Map.of("id", article.get().getId(), "content", article.get().getContent()));
     }
 
@@ -189,7 +183,7 @@ public class EditorArticleController extends BaseController {
 
 
     @DeleteMapping("/private/deleteArticle/{id}")
-    public String deleteArticle(@PathVariable Long id, Model model) {
+    public String deleteArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         logger.info("Cancello articolo con ID: " + id);
 
         // Trova l'articolo
@@ -211,9 +205,10 @@ public class EditorArticleController extends BaseController {
             logger.info("Articolo cancellato con successo.");
         });
 
-        model.addAttribute("message", "Articolo e immagini cancellati con successo!");
+        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo e immagini cancellati con successo!");
         return "redirect:/private/editorArticles";
     }
+
 
 
     private static List<Long> extractImageCodes(String html) {

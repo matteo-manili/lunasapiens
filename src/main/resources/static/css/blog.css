@@ -1,7 +1,0 @@
-/* Questo è un commento in CSS */
-
-/* Selettore per tutte le immagini */
-img {
-    max-width: 100%;   /* Le immagini non supereranno mai la larghezza del loro contenitore */
-    height: auto;      /* La loro altezza sarà proporzionale alla larghezza */
-}
