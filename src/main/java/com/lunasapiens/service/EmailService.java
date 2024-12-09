@@ -140,21 +140,26 @@ public class EmailService {
         List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
         int totaleNumEmailInviate = 0;
         for(ProfiloUtente emailUtente: profiloUtenteList){
-            if( emailUtente.isEmailOroscopoGiornaliero() ){
-                String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
-                Context context = new Context();
-                List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
-                for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
-                    OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
-                    listOroscopoGiornoDTO.add(dto);
-                }
-                context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
-                context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
-                context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
+            try{
+                if( emailUtente.isEmailOroscopoGiornaliero() ){
+                    String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
+                    Context context = new Context();
+                    List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+                    for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+                        OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
+                        listOroscopoGiornoDTO.add(dto);
+                    }
+                    context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
+                    context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
+                    context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
-                sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
-                totaleNumEmailInviate += 1;
-                logger.info("inviaEmailOrosciopoGioraliero: "+emailUtente.getEmail());
+                    sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+                    totaleNumEmailInviate += 1;
+                    logger.info("inviaEmailOrosciopoGioraliero Email inviata a: {}", emailUtente.getEmail());
+                }
+            } catch (Exception e) {
+                logger.error("inviaEmailOroscopoGioraliero Exception per utente {}: {}", emailUtente.getEmail(), e.getMessage(), e);
+                telegramBotService.inviaMessaggio("inviaEmailOroscopoGioraliero Exception: " + e.getMessage());
             }
         }
         return totaleNumEmailInviate;
@@ -202,7 +207,6 @@ public class EmailService {
     }
 
 
-
     public void inviaEmailContatti(ContactFormDTO contactForm) {
         String subject = "Luna Sapiens | messaggio inviato da: "+contactForm.getName() +" - "+contactForm.getEmail();
         Context context = new Context();
@@ -210,8 +214,6 @@ public class EmailService {
         context.setVariable(contenutoEmail, contenuto);
         sendHtmlEmail(defaultFromGmailMatteoManili, subject, emailSubscription, context);
     }
-
-
 
 
     public void sendHtmlEmail(String to, String subject, String templateName, Context context) {
@@ -223,13 +225,16 @@ public class EmailService {
             helper.setSubject(subject);
             String htmlContent = templateEngine.process(templateName, context);
             helper.setText(htmlContent, true);
-
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            e.printStackTrace();
-            // Gestisci l'eccezione in base alle tue necessità
+            logger.error("sendHtmlEmail MessagingException nell'invio email a {}: {}", to, e.getMessage(), e);
+            telegramBotService.inviaMessaggio("sendHtmlEmail MessagingException: "+e.getMessage());
+        } catch (Exception e) {
+            logger.error("sendHtmlEmail Exception nell'invio email a {}: {}", to, e.getMessage(), e);
+            telegramBotService.inviaMessaggio("sendHtmlEmail Exception: "+e.getMessage());
         }
     }
+
 
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
