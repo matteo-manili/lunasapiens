@@ -112,6 +112,9 @@
         </div>
 
 
+        <div class="alert alert-dark mb-4" th:if="${temaNataleDescIstruzioniBOTSystem != null and temaNataleDescIstruzioniBOTSystem != ''}">
+            <strong>PROMPT:</strong> <br> <div th:utext="${temaNataleDescIstruzioniBOTSystem}"></div>.
+        </div>
 
         <!-- descrizione tema natale -->
         <div class="d-flex align-items-center">
@@ -120,6 +123,7 @@
                 <a id="toggleLink" href="#" class="link-primary">Visualizza descrizione Tema Natale</a>
             </h7>
         </div>
+
 
 
         <div id="textSection" class="d-none mt-3">

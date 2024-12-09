@@ -30,22 +30,28 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
     public void executeTask_CreaOroscopoGiornaliero() {
-        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
-        telegramBotService.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() "+ Utils.getNowRomeEurope());
-        logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Utils.getNowRomeEurope());
+        if(Utils.isLocalhost() == false) {
+            servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
+            telegramBotService.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() " + Utils.getNowRomeEurope());
+            logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Utils.getNowRomeEurope());
+        }
     }
 
     @Scheduled(cron = "0 15 0 * * *", zone = "Europe/Rome")
     public void executeTask_PulisciOldRecordsOroscopoGiornaliero() {
-        servizioOroscopoDelGiorno.pulisciOldRecordsOroscopoGiornaliero();
-        logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
+        if(Utils.isLocalhost() == false) {
+            servizioOroscopoDelGiorno.pulisciOldRecordsOroscopoGiornaliero();
+            logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
+        }
     }
 
     @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")
     public void executeTask_InviaEmailOroscopoGioraliero() {
-        int totaleNumEmailInviate = emailService.inviaEmailOroscopoGioraliero();
-        telegramBotService.inviaMessaggio("totaleNumEmailInviate Oroscopo Giornaliero: "+totaleNumEmailInviate);
-        logger.info("executeTask_InviaEmailOroscopoGioraliero eseguito alle " + Utils.getNowRomeEurope());
+        if(Utils.isLocalhost() == false){
+            int totaleNumEmailInviate = emailService.inviaEmailOroscopoGioraliero();
+            telegramBotService.inviaMessaggio("totaleNumEmailInviate Oroscopo Giornaliero: "+totaleNumEmailInviate);
+            logger.info("executeTask_InviaEmailOroscopoGioraliero eseguito alle " + Utils.getNowRomeEurope());
+        }
     }
 
 

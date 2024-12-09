@@ -51,6 +51,17 @@ public class TemaNataleController extends BaseController {
     // #################################### TEMA NATALE #####################################
 
     /**
+     * questa pagina è indicizzata da google ma gli da errori, quindi va gestita e fatto redirect alla pagina canonica
+     * @return
+     */
+    @GetMapping("/tema")
+    public RedirectView tema() {
+        RedirectView redirectView = new RedirectView("/tema-natale", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+    /**
      * servizio tema natale
      */
     @GetMapping("/tema-natale")
@@ -63,14 +74,13 @@ public class TemaNataleController extends BaseController {
                              @ModelAttribute("cityLat") String cityLat,
                              @ModelAttribute("cityLng") String cityLng,
                              @ModelAttribute("temaNataleDescrizione") String temaNataleDescrizione,
+                             @ModelAttribute("temaNataleDescIstruzioniBOTSystem") String temaNataleDescIstruzioniBOTSystem,
                              @ModelAttribute("paginaChatId") String paginaChatId,
                              @ModelAttribute(Constants.USER_SESSION_ID) String userSessionId,
                              @AuthenticationPrincipal UserDetails userDetails
     ) {
-
         logger.info("sono in temaNatale");
         if( userDetails != null ){ logger.info("userDetails: "+userDetails.getUsername()); }
-
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
         Optional<String> optionalDateTime = Optional.ofNullable(datetime);
         optionalDateTime
@@ -78,7 +88,6 @@ public class TemaNataleController extends BaseController {
                 .ifPresentOrElse(
                         presentDateTime -> model.addAttribute("dateTime", presentDateTime),
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER)));
-
         // Only add attributes if they are not null or empty
         Optional.ofNullable(cityInput).filter(input -> !input.isEmpty()).ifPresent(input -> model.addAttribute("cityInput", input));
         Optional.ofNullable(cityName).filter(name -> !name.isEmpty()).ifPresent(name -> model.addAttribute("cityName", name));
@@ -88,23 +97,12 @@ public class TemaNataleController extends BaseController {
         Optional.ofNullable(cityLat).filter(lat -> !lat.isEmpty()).ifPresent(lat -> model.addAttribute("cityLat", lat));
         Optional.ofNullable(cityLng).filter(lng -> !lng.isEmpty()).ifPresent(lng -> model.addAttribute("cityLng", lng));
         Optional.ofNullable(temaNataleDescrizione).filter(description -> !description.isEmpty()).ifPresent(description -> model.addAttribute("temaNataleDescrizione", description));
+        Optional.ofNullable(temaNataleDescIstruzioniBOTSystem).filter(descriptionBOTSystem -> !descriptionBOTSystem.isEmpty()).ifPresent(descriptionBOTSystem -> model.addAttribute("temaNataleDescIstruzioniBOTSystem", descriptionBOTSystem));
         Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
-
-
         return "tema-natale";
     }
 
-    /**
-     * questa pagina è indicizzata da google ma gli da errori, quindi va gestita e fatto redirect alla pagina canonica
-     * @return
-     */
-    @GetMapping("/tema")
-    public RedirectView tema() {
-        RedirectView redirectView = new RedirectView("/tema-natale", true);
-        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
-        return redirectView;
-    }
 
     @GetMapping("/temaNataleSubmit")
     public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
@@ -114,7 +112,8 @@ public class TemaNataleController extends BaseController {
                                    @RequestParam("regioneName") String regioneName,
                                    @RequestParam("statoName") String statoName,
                                    @RequestParam("statoCode") String statoCode,
-                                   RedirectAttributes redirectAttributes, HttpServletRequest request) {
+                                   RedirectAttributes redirectAttributes, HttpServletRequest request,
+                                   @AuthenticationPrincipal UserDetails userDetails) {
 
         logger.info("sono in temaNataleSubmit");
         HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
@@ -167,16 +166,18 @@ public class TemaNataleController extends BaseController {
             logger.error("Cache not found: " + Constants.MESSAGE_BOT_CACHE);
             return "redirect:/tema-natale";
         }
-        List<ChatMessage> chatMessageIa = new ArrayList<>();
+
         StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), datetime, luogoNascita);
-        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
+        if( userDetails != null
+                && (userDetails.getUsername().equals("matteo.manili@gmail.com") || userDetails.getUsername().equals("benama75@gmail.com")) ){
+            redirectAttributes.addFlashAttribute("temaNataleDescIstruzioniBOTSystem", Utils.convertPlainTextToHtml(temaNataleDescIstruzioniBOTSystem.toString()));
+        }
+        List<ChatMessage> chatMessageIa = new ArrayList<>();
         chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
         cache.put(paginaChatId, chatMessageIa);
+        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
         return "redirect:/tema-natale";
     }
-
-
-
 
 
     @PostMapping("/"+Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE)

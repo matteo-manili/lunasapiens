@@ -16,17 +16,16 @@ public class MatteoManiliProgrammatoreController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(MatteoManiliProgrammatoreController.class);
 
+    private static final String URL_PAGE_MATTEO_MANILI_PROG = "matteo-manili-programmatore";
 
-
-    @GetMapping("/matteo-manili-programmatore")
+    @GetMapping("/"+URL_PAGE_MATTEO_MANILI_PROG)
     public String matteo_manili_programmatore(Model model, HttpServletRequest request) {
-        return "matteo-manili-programmatore";
+        return URL_PAGE_MATTEO_MANILI_PROG;
     }
-
 
     @GetMapping("/curriculum")
     public RedirectView curriculum_redirect_301() {
-        RedirectView redirectView = new RedirectView("/matteo-manili-programmatore", true);
+        RedirectView redirectView = new RedirectView("/"+URL_PAGE_MATTEO_MANILI_PROG, true);
         redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
         return redirectView;
     }
