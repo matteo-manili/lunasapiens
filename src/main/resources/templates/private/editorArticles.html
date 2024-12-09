@@ -71,21 +71,35 @@
 
 <script type="module">
     import {
-        ClassicEditor, Essentials, MediaEmbed,
-        // ---- immagine ----
-        Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, LinkImage, ImageInsert, AutoImage, SimpleUploadAdapter,
+        ClassicEditor, Essentials,
         // ---- font ----
-        Bold, Italic, Font, Paragraph
+        Bold, Italic, Font, Paragraph,
+        // ---- media ----
+        Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, LinkImage, ImageInsert, AutoImage, SimpleUploadAdapter,
+        MediaEmbed, Link, AutoLink
     } from 'ckeditor5';
 
     ClassicEditor
         .create(document.querySelector('#editor'), {
-            plugins: [Essentials, Bold, Italic, Font, Paragraph, MediaEmbed,
-                Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, ImageInsert, AutoImage, SimpleUploadAdapter],
+            plugins: [Essentials, Bold, Italic, Font, Paragraph,
+                Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, ImageInsert, AutoImage, SimpleUploadAdapter,
+                MediaEmbed, Link, AutoLink],
             toolbar: [
-                'undo', 'redo', '|', 'bold', 'italic', '|', 'insertImage', 'mediaEmbed', '|',
-                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                'undo', 'redo', '|', 'insertImage', 'mediaEmbed', 'link', '|',
+                'bold', 'italic', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
             ],
+            link: {
+                decorators: {
+                    addTargetToExternalLinks: {
+                        mode: 'automatic',
+                        callback: url => /^https?:\/\/.+$/.test(url), // Applica solo ai link con schema http/https
+                        attributes: {
+                            target: '_blank',
+                            rel: 'noopener noreferrer' // Sicurezza aggiuntiva per evitare accessi indesiderati
+                        }
+                    }
+                }
+            },
             mediaEmbed: {
                 previewsInData: true
             },
