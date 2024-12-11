@@ -169,7 +169,7 @@ public class TemaNataleController extends BaseController {
 
         StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), datetime, luogoNascita);
         if( userDetails != null
-                && (userDetails.getUsername().equals("matteo.manili@gmail.com") || userDetails.getUsername().equals("benama75@gmail.com")) ){
+                && (userDetails.getUsername().equals(Constants.MATTEO_MANILI_GMAIL) || userDetails.getUsername().equals("benama75@gmail.com")) ){
             redirectAttributes.addFlashAttribute("temaNataleDescIstruzioniBOTSystem", Utils.convertPlainTextToHtml(temaNataleDescIstruzioniBOTSystem.toString()));
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();

@@ -57,7 +57,7 @@ public class EmailService {
     OroscopoGiornalieroService oroscopoGiornalieroService;
 
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
-    private final String defaultFromGmailMatteoManili = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
+    private final String defaultFromGmailMatteoManili = "LunaSapiens <matteo.manili@gmail.com>"; // Imposta il mittente predefinito
 
     public static final String emailSubscription = "emailSubscription";
     public static final String emailOroscopo = "emailOroscopo";

@@ -9,6 +9,8 @@ public class Constants {
 
     public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com";
 
+    public static final String MATTEO_MANILI_GMAIL = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
+
     public static final String PATH_STATIC = "src/main/resources/static/";
     public static final String USER_SESSION_ID = "userSessionId";
 
