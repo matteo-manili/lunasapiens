@@ -37,7 +37,11 @@ public class EditorArticleController extends BaseController {
     private ArticleImageRepository articleImageRepository;
 
 
-
+    /**
+     * Pagina pubblca
+     * @param model
+     * @return
+     */
     @GetMapping("/blog")
     public String blog(Model model) {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByIdDesc(); // Recupera tutti gli articoli dal database
@@ -47,7 +51,7 @@ public class EditorArticleController extends BaseController {
 
 
     /**
-     * images-article
+     * Retrive Image Public e in Cache
      */
     @Cacheable(value = Constants.IMAGES_ARTICLE, key = "#idImage")
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{idImage}")
@@ -63,7 +67,7 @@ public class EditorArticleController extends BaseController {
     }
 
 
-    private boolean isMatteoManilidUser() {
+    private boolean isMatteoManilIdUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return false; // Nessun utente autenticato
@@ -75,7 +79,7 @@ public class EditorArticleController extends BaseController {
 
     @GetMapping("/private/editorArticles")
     public String editor(Model model, RedirectAttributes redirectAttributes) {
-        if (!isMatteoManilidUser()) {
+        if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
@@ -88,7 +92,7 @@ public class EditorArticleController extends BaseController {
     @PostMapping("/private/saveArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
                                       @RequestParam("content") String content, RedirectAttributes redirectAttributes) {
-        if (!isMatteoManilidUser()) {
+        if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato");
             return "redirect:/error";
         }
@@ -135,7 +139,7 @@ public class EditorArticleController extends BaseController {
     @GetMapping("/private/article/{id}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getArticle(@PathVariable Long id) {
-        if (!isMatteoManilidUser()) {
+        if (!isMatteoManilIdUser()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
         }
         Optional<ArticleContent> article = articleContentRepository.findById(id);
@@ -153,7 +157,7 @@ public class EditorArticleController extends BaseController {
      */
     @PostMapping("/" + Constants.DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE)
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
-        if (!isMatteoManilidUser()) {
+        if (!isMatteoManilIdUser()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
         }
         try {
@@ -192,7 +196,7 @@ public class EditorArticleController extends BaseController {
 
     @DeleteMapping("/private/deleteArticle/{id}")
     public String deleteArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        if (!isMatteoManilidUser()) {
+        if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato");
             return "redirect:/error";
         }

@@ -76,7 +76,10 @@ public class ServizioTemaNatale {
         Properties caseSignificato = propertiesConfig.caseSignificato();
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
-        Properties lunaSegniProperties = propertiesConfig.lunaSegni();
+        Properties lunaSegniProperties = propertiesConfig.lunaSegni(); // non lo uso....
+
+        Properties transitiPianetiSegniTMProperties = propertiesConfig.transitiPianetiSegni_TemaNatale();
+
 
         ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiPianeti());
@@ -101,7 +104,7 @@ public class ServizioTemaNatale {
         descTemaNatale.append(segnoSole.getDescrizioneMin()+"</p>");
 
         descTemaNatale.append("<p><b>- "+pianetiTransiti.get(1).descrizionePianetaSegno()+"</b></br>");
-        descTemaNatale.append( lunaSegniProperties.getProperty(String.valueOf(segnoLuna.getNumeroSegnoZodiacale())) +"</p>");
+        descTemaNatale.append( transitiPianetiSegniTMProperties.getProperty( "1_"+String.valueOf(segnoLuna.getNumeroSegnoZodiacale())) +"</p>");
 
         descTemaNatale.append("<p><b>- Ascendente in "+segnoAscendente.getNomeSegnoZodiacale()+"</b><br>");
         descTemaNatale.append( segniAscendenteProperties.getProperty(String.valueOf(segnoSole.getNumeroSegnoZodiacale())+"_"+segnoAscendente.getElemento().getCode())+"</p>");
