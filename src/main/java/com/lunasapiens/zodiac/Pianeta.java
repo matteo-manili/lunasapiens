@@ -75,30 +75,30 @@ public class Pianeta {
     }
 
     public String descrizione_Pianeta_Retrogrado() {
-        // Usa String.format per rimuovere i decimali
         return nomePianeta + (retrogrado ? " (Retrogrado)" : "");
     }
 
     public String descrizione_Pianeta_Segno_Gradi_Retrogrado() {
-        // Usa String.format per rimuovere i decimali
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + ". ";
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + ". ";
     }
 
     public String descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() {
-        // Usa String.format per rimuovere i decimali
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " in Casa "+nomeCasa+":";
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + " in Casa "+nomeCasa+":";
     }
 
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() {
-        // Usa String.format per rimuovere i decimali
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno;
+   }
+
+    /**
+     * deprecato perché i grandi si devono sempre intendere in minuti-secondi. E inoltre questi gradi provengono
+     * BuildInfoAstrologiaSwiss che è stata sostituita da BuildInfoAstrologiaAstroSeek
+     */
+    @Deprecated
+    public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno_OROSCOPO() {
         return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno;
     }
 
-    public String descrizione_Pianeta_Gradi_Retrogrado_Casa_SignificatoPianetaSegno() {
-        // Usa String.format per rimuovere i decimali
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + String.format("%.0f", gradi) + "°" + (retrogrado ? " (Retrogrado)" : "") +" Casa "+nomeCasa
-                + " "+significatoPianetaSegno;
-    }
 
 
     @Override
