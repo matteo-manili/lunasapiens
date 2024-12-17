@@ -92,7 +92,7 @@ public class Pianeta {
 
     /**
      * deprecato perché i grandi si devono sempre intendere in minuti-secondi. E inoltre questi gradi provengono
-     * BuildInfoAstrologiaSwiss che è stata sostituita da BuildInfoAstrologiaAstroSeek
+     * da BuildInfoAstrologiaSwiss che è stata sostituita da BuildInfoAstrologiaAstroSeek
      */
     @Deprecated
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno_OROSCOPO() {
