@@ -172,6 +172,7 @@ public class EditorArticleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("error", "File troppo grande. La dimensione massima è 2MB."));
             }
+
             // Creazione dell'immagine senza associare un articolo
             ArticleImage image = new ArticleImage();
             image.setFilename(file.getOriginalFilename());
