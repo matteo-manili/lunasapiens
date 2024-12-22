@@ -175,7 +175,7 @@ public class TemaNataleController extends BaseController {
         List<ChatMessage> chatMessageIa = new ArrayList<>();
         chatMessageIa.add(new ChatMessage("system", temaNataleDescIstruzioniBOTSystem.toString() ));
         cache.put(paginaChatId, chatMessageIa);
-        logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
+        //logger.info( "temaNataleDescrizioneIstruzioneBOTSystem: "+temaNataleDescIstruzioniBOTSystem );
         return "redirect:/tema-natale";
     }
 

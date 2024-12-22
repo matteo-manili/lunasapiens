@@ -62,10 +62,6 @@ public class FilterCheckUrls extends OncePerRequestFilter {
             handleMaxRequestRequest(request, response, ipAddress);
         }
 
-        if (request.getRequestURI().equals("/test") && request.getMethod().equals("GET")) {
-            handleMaxRequestRequest(request, response, ipAddress);
-        }
-
         if (request.getRequestURI().equals("/genera-video") && request.getMethod().equals("GET")) {
             handleMaxRequestRequest(request, response, ipAddress);
         }

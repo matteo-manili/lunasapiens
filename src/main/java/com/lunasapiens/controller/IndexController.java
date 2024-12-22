@@ -1,7 +1,6 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
-import com.lunasapiens.config.FacebookConfig;
 import com.lunasapiens.dto.*;
 
 import com.lunasapiens.filter.RateLimiterUser;
@@ -9,10 +8,7 @@ import com.lunasapiens.service.EmailService;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
-import com.restfb.*;
-import com.restfb.exception.FacebookOAuthException;
-import com.restfb.types.FacebookType;
-import com.restfb.types.Page;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -41,8 +37,7 @@ public class IndexController extends BaseController {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private FacebookConfig facebookConfig;
+
 
 
     @GetMapping("/")
@@ -239,41 +234,6 @@ public class IndexController extends BaseController {
      * Per impedire l'indicizzazione senza rimuovere: Usa noindex.
      * Per rimozione immediata da Google: Usa Google Search Console.
      */
-
-    // #######################################################################################
-    // ############################# TEST ####################################################
-    // #######################################################################################
-
-    @GetMapping("/test")
-    public String testFacebook(Model model) {
-        try {
-            String pageID = facebookConfig.getPageId();
-            String appId = facebookConfig.getAppId();
-            String appSecret = facebookConfig.getAppSecret();
-            // Ottieni il token di accesso dell'app
-            AccessToken appAccessToken = new DefaultFacebookClient(Version.LATEST)
-                    .obtainAppAccessToken(appId, appSecret);
-            // Crea un client Facebook con il token dell'app
-            FacebookClient facebookClient = new DefaultFacebookClient(appAccessToken.getAccessToken(), Version.LATEST);
-            logger.info("appAccessToken.getAccessToken(): "+appAccessToken. getAccessToken());
-            // Ottieni la pagina
-            Page page = facebookClient.fetchObject(pageID, Page.class, Parameter.with("fields", "access_token"));
-            // Ottieni il token di accesso della pagina
-            String pageAccessToken = page.getAccessToken();
-            // Crea un client Facebook per la pagina con il token della pagina
-            FacebookClient pageClient = new DefaultFacebookClient(pageAccessToken, Version.LATEST);
-            // Pubblica un messaggio sulla bacheca della pagina
-            pageClient.publish(pageID + "/feed", FacebookType.class, Parameter.with("message", "1: Hello, facebook World!"));
-            return "index";
-        } catch (FacebookOAuthException e) {
-            logger.error("FacebookOAuthException occurred: ", e);
-            return "error";
-        } catch (Exception e) {
-            logger.error("Exception occurred: ", e);
-            return "error";
-        }
-    }
-
 
 
 }

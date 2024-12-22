@@ -18,12 +18,12 @@ public class ZodiacUtils {
 
 
 
-    protected static double convertToDecimalDegrees(String position) {
-        Pair<Integer, Integer> pair = dammiGradiEMinuti(position);
+    protected static double convertDegreesToDecimal(String position) {
+        Pair<Integer, Integer> pair = dammiGradiEMinutiPair(position);
         return pair.getKey() + (pair.getValue() / 60.0);
     }
 
-    protected static Pair dammiGradiEMinuti(String position) {
+    protected static Pair dammiGradiEMinutiPair(String position) {
         String[] parts = position.split("°|'");
         int degrees = Integer.parseInt(parts[0].trim());
         int minutes = Integer.parseInt(parts[1].replace("’", "").trim());

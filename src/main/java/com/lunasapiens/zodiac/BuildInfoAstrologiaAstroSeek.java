@@ -293,54 +293,58 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 //System.out.println("Contenuto del div 'vypocty_id_nativ':");
                 //System.out.println(divElement.html());
                 // ############################ PIANETI POSIZIONE ########################
+                System.out.println("----- PIANETI -----");
                 for (Element planetElement : divElement.select("div[style^=float: left; width: 80px; margin-left: -5px;]")) {
                     String planetName = planetElement.select("a.tenky-modry").text();
                     String signName = planetElement.nextElementSibling().select("img.astro_symbol").attr("alt");
-                    String position = planetElement.nextElementSibling().nextElementSibling().text();
-
+                    String positionGradiString = planetElement.nextElementSibling().nextElementSibling().text();
                     Element retrogradeElement = planetElement.nextElementSibling().nextElementSibling().nextElementSibling().nextElementSibling();
                     boolean isRetrograde = retrogradeElement.text().trim().equals("R");
-                    double positionInDegrees = ZodiacUtils.convertToDecimalDegrees(position);
-                    Pair gradiMinuti = ZodiacUtils.dammiGradiEMinuti(position);
 
-                    //System.out.println("Pianeta: " + planetName);
-                    //System.out.println("Segno: " + signName);
-                    //System.out.println("Posizione: " + position + " (" + positionInDegrees + " gradi decimali)");
-                    //System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
-                    //System.out.println();
+                    double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
+                    Constants.SegniZodiacali segnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
+                    double positionInDecimalTotal = segnoZodiacale.getGradi() + positionInDecimal;
+
+                    System.out.println("Pianeta: " +planetName+ " Segno: " +signName);
+                    System.out.println("Posizione: "+positionGradiString+ " | decimali "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
+                    System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
+                    System.out.println();
 
                     Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeEn( planetName );
                     if (pianetaConstant == null){
                         continue;
                     }
-                    Constants.SegniZodiacali segnoConstant = Constants.SegniZodiacali.fromNomeEn( signName );
-                    double gradiTotali = segnoConstant.getGradi() + positionInDegrees;
-                    String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoConstant.getNumero());
-                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), gradiTotali, (int)gradiMinuti.getKey(),
-                            (int)gradiMinuti.getValue(), segnoConstant.getNumero(), segnoConstant.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+
+                    Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
+                    String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
+                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
+                            (int)gradiMinutiPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                     pianetaArrayList.add( pianeta );
                 }
 
 
                 // ############################ CASE PLACIDE ########################
+                System.out.println("----- CASE PLACIDE -----");
                 for (Element houseElement : divElement.select("div[style^=float: left; width: 23px; font-size: 1.1em], div[style^=float: left; width: 20px; font-size: 1.1em]")) {
                     String houseName = houseElement.text().replace(":", "");
                     Element siblingElement = houseElement.nextElementSibling();
                     String signName = siblingElement.select("img.astro_symbol").attr("alt");
-                    String position = siblingElement.nextElementSibling().text();
+                    String positionGradiString = siblingElement.nextElementSibling().text();
+
+
+                    double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
+                    Constants.SegniZodiacali SegnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
+                    double positionInDecimalTotal = SegnoZodiacale.getGradi() + positionInDecimal;
+
+                    System.out.println("Casa: " +houseName+ " Segno: " +signName);
+                    System.out.println("posizione: "+positionGradiString+ " | positionInDecimal "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
+                    System.out.println();
+
 
                     Constants.Case casa = Constants.Case.fromCode( houseName );
-                    Constants.SegniZodiacali segno = Constants.SegniZodiacali.fromNomeEn( signName );
-                    double gradiTotali = segno.getGradi() + ZodiacUtils.convertToDecimalDegrees(position);
-                    Pair gradiMinuti = ZodiacUtils.dammiGradiEMinuti(position);
-
-                    //System.out.println("Casa: " + houseName);
-                    //System.out.println("Segno: " + signName);
-                    //System.out.println("valore: " + position + " "+" valore in decimali: "+gradiTotali);
-                    //System.out.println();
-
-                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), gradiTotali, (int)gradiMinuti.getKey(),
-                            (int)gradiMinuti.getValue(), segno.getNumero(), segno.getNome());
+                    Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
+                    CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
+                            (int)gradiMinutiPair.getValue(), SegnoZodiacale.getNumero(), SegnoZodiacale.getNome());
                     casePlacidesArrayList.add( casaPlacida );
                 }
 
