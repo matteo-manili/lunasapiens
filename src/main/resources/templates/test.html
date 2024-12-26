@@ -34,7 +34,7 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
 
-<script>
+<script th:inline="javascript">
 
 
     /*
@@ -47,6 +47,7 @@
      */
 
     var data = {
+        /*
         "planets": {
             "Sun": [303.53333333333336],
             "Moon": [163.18333333333334],
@@ -63,7 +64,12 @@
             "Lilith": [212.75],
             "Chiron": [43.4],
             "Fortune": [330.18333333333334]
-        },
+        },*/
+
+        "planets": /*[[${planets}]]*/ 'default',
+
+
+
         "cusps": [
             110.53333333333333,
             129.8,
@@ -78,6 +84,9 @@
             37.81666666666666,
             77.0
         ]
+
+        // "cusps": /*[[${cusps}]]* 'default'/
+
     };
 
 

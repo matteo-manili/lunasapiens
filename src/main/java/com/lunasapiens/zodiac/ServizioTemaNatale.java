@@ -57,7 +57,7 @@ public class ServizioTemaNatale {
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        StringBuilder temaNataleDesc = temaNataleDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        StringBuilder temaNataleDesc = temaNataleDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
 
         return temaNataleDesc;
     }
@@ -188,7 +188,7 @@ public class ServizioTemaNatale {
 
 
         significatiTemaNatale.append("<h4 class=\"mt-5 mb-0\">Significato dei Pianeti</h4><br>");
-        List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianeti();
+        List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianetiNormali();
         size = pianetiList.size();
         for (int i = 0; i < size; i++) {
             Constants.Pianeti pianeta = pianetiList.get(i);

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Identifica gli Aspetti:
@@ -110,14 +111,35 @@ public class CalcoloAspetti {
 
 
 
+    private static List<Pianeta> rimuoviPianetiNonValidi(List<Pianeta> pianeti) {
+        // Crea una nuova lista con i pianeti che soddisfano i criteri
+        return pianeti.stream()
+                .filter(pianeta -> pianeta.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.LUNA.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.MERCURIO.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.VENERE.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.MARTE.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.GIOVE.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.SATURNO.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.URANO.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.NETTUNO.getNumero()
+                        || pianeta.getNumeroPianeta() == Constants.Pianeti.PLUTONE.getNumero())
+                .collect(Collectors.toList());
+    }
+
+
+
     public static ArrayList<Aspetti> aspettiListPinaneti(List<Pianeta> pianeti, Properties aspettiPianeti) {
+
+
+        List<Pianeta> pianetiFiltrati = rimuoviPianetiNonValidi(pianeti);
 
         ArrayList<Aspetti> aspettiArrayList = new ArrayList<>();
 
-        for (int i = 0; i < pianeti.size(); i++) {
-            for (int j = i + 1; j < pianeti.size(); j++) {
-                Pianeta p1 = pianeti.get(i);
-                Pianeta p2 = pianeti.get(j);
+        for (int i = 0; i < pianetiFiltrati.size(); i++) {
+            for (int j = i + 1; j < pianetiFiltrati.size(); j++) {
+                Pianeta p1 = pianetiFiltrati.get(i);
+                Pianeta p2 = pianetiFiltrati.get(j);
 
                 double angolo1 = p1.getGradi();
                 double angolo2 = p2.getGradi();

@@ -60,7 +60,7 @@ public class ServizioSinastria {
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
 
         return sinastriaDesc;
     }
@@ -187,7 +187,7 @@ public class ServizioSinastria {
 
 
         significatiSinastria.append("<h4 class=\"mt-5 mb-0\">Significato dei Pianeti</h4><br>");
-        List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianeti();
+        List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianetiNormali();
         size = pianetiList.size();
         for (int i = 0; i < size; i++) {
             Constants.Pianeti pianeta = pianetiList.get(i);

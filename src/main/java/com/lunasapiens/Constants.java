@@ -4,6 +4,7 @@ import com.lunasapiens.dto.RelationshipOption;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Constants {
 
@@ -91,34 +92,37 @@ public class Constants {
 
 
     public enum Pianeti {
-        SOLE(0, "Sole", "Sun", TipoPianeta.PERSONALE),
-        LUNA(1, "Luna", "Moon", TipoPianeta.PERSONALE),
-        MERCURIO(2, "Mercurio", "Mercury", TipoPianeta.PERSONALE),
-        VENERE(3, "Venere", "Venus", TipoPianeta.PERSONALE),
-        MARTE(4, "Marte", "Mars", TipoPianeta.PERSONALE),
-        GIOVE(5, "Giove", "Jupiter", TipoPianeta.TRANSPERSONALE),
-        SATURNO(6, "Saturno", "Saturn", TipoPianeta.TRANSPERSONALE),
-        URANO(7, "Urano", "Uranus", TipoPianeta.TRANSPERSONALE),
-        NETTUNO(8, "Nettuno", "Neptune", TipoPianeta.TRANSPERSONALE),
-        PLUTONE(9, "Plutone", "Pluto", TipoPianeta.TRANSPERSONALE);
+        SOLE(0, "Sole", "Sun", "Sun", TipoPianeta.PERSONALE),
+        LUNA(1, "Luna", "Moon", "Moon",TipoPianeta.PERSONALE),
+        MERCURIO(2, "Mercurio", "Mercury", "Mercury",TipoPianeta.PERSONALE),
+        VENERE(3, "Venere", "Venus", "Venus",TipoPianeta.PERSONALE),
+        MARTE(4, "Marte", "Mars", "Mars",TipoPianeta.PERSONALE),
+        GIOVE(5, "Giove", "Jupiter", "Jupiter",TipoPianeta.TRANSPERSONALE),
+        SATURNO(6, "Saturno", "Saturn", "Saturn",TipoPianeta.TRANSPERSONALE),
+        URANO(7, "Urano", "Uranus", "Uranus",TipoPianeta.TRANSPERSONALE),
+        NETTUNO(8, "Nettuno", "Neptune", "Neptune",TipoPianeta.TRANSPERSONALE),
+        PLUTONE(9, "Plutone", "Pluto", "Pluto",TipoPianeta.TRANSPERSONALE),
+
+        NODE_M(10, "Nodo Nord", "Node (M)", "NNode",TipoPianeta.TRANSPERSONALE),
+        NODE_S(11, "Nodo Sud", "", "SNode",TipoPianeta.TRANSPERSONALE),
+        LILITH(12, "Lilith Medio", "Lilith (M)", "Lilith",TipoPianeta.TRANSPERSONALE),
+        CHIRON(13, "Chiron", "Chiron", "Chiron",TipoPianeta.TRANSPERSONALE);
 
         private final int numero;
         private final String nome;
-        private final String nome_en;
+        private final String nomeAstroSeek;
+        private final String nomeAstroChart;
         private final TipoPianeta tipoPianeta;
 
-        Pianeti(int numero, String nome, String nome_en, TipoPianeta tipoPianeta) {
-            this.numero = numero; this.nome = nome; this.nome_en = nome_en; this.tipoPianeta = tipoPianeta;
+        Pianeti(int numero, String nome, String nomeAstroSeek, String nomeAstroChart, TipoPianeta tipoPianeta) {
+            this.numero = numero; this.nome = nome; this.nomeAstroSeek = nomeAstroSeek; this.nomeAstroChart = nomeAstroChart;
+            this.tipoPianeta = tipoPianeta;
         }
-        public int getNumero() {
-            return numero;
-        }
-        public String getNome() {
-            return nome;
-        }
-        public String getNomeEn() {
-            return nome_en;
-        }
+
+        public int getNumero() { return numero; }
+        public String getNome() { return nome; }
+        public String getNomeAstroSeek() { return nomeAstroSeek; }
+        public String getNomeAstroChart() { return nomeAstroChart; }
         public TipoPianeta getTipoPianeta() { return tipoPianeta; }
 
         public static Pianeti fromNumero(int numero) {
@@ -129,17 +133,10 @@ public class Constants {
             }
             throw new IllegalArgumentException("Indice Pianeta non valido: " + numero);
         }
-        public static List<String> getAllNomi() {
-            List<String> nomi = new ArrayList<>();
-            for (Pianeti pianeta : Pianeti.values()) {
-                nomi.add(pianeta.getNome());
-            }
-            return nomi;
-        }
-        public static Pianeti fromNomeEn(String nomeEn) {
+        public static Pianeti fromNomeAstroSeek(String nomeAstroSeek) {
             try {
                 for (Pianeti pianeta : Pianeti.values()) {
-                    if (pianeta.getNomeEn().equalsIgnoreCase(nomeEn)) {
+                    if (pianeta.getNomeAstroSeek().equalsIgnoreCase(nomeAstroSeek)) {
                         return pianeta;
                     }
                 }
@@ -150,6 +147,11 @@ public class Constants {
         }
         public static List<Pianeti> getAllPianeti() {
             return Arrays.asList(Pianeti.values());
+        }
+        public static List<Pianeti> getAllPianetiNormali() {
+            return Arrays.stream(Pianeti.values())
+                    .filter(pianeta -> pianeta.getNumero() <= 9)
+                    .collect(Collectors.toList());
         }
     }
 

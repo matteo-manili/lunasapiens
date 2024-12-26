@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -165,19 +164,7 @@ public class OroscopoController extends BaseController {
     }
 
 
-    /**
-     * lo uso solo per test
-     * Reindirizza alla home page e segnala che la risorsa non esiste più
-     */
-    @GetMapping("/genera-video")
-    public RedirectView gerneraVideo() {
-        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
-        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
-        // Restituisci una RedirectView per reindirizzare alla home page
-        RedirectView redirectView = new RedirectView("/", true);
-        redirectView.setStatusCode(HttpStatus.GONE); // Imposta il codice di stato 410
-        return redirectView;
-    }
+
 
 
 }

@@ -67,15 +67,6 @@ public class EditorArticleController extends BaseController {
     }
 
 
-    private boolean isMatteoManilIdUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false; // Nessun utente autenticato
-        }
-        String email = authentication.getName(); // Presupponendo che l'email sia l'username
-        return Constants.MATTEO_MANILI_GMAIL.equals(email);
-    }
-
 
     @GetMapping("/private/editorArticles")
     public String editor(Model model, RedirectAttributes redirectAttributes) {

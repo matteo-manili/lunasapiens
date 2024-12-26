@@ -78,7 +78,7 @@ public class ServizioOmeopatiaAstrologica {
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE),
                 giornoOraPosizioneDTO, coordinateDTO, propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        return omeopatiaAstrologicaDescrizione(result.getPianetaPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        return omeopatiaAstrologicaDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
     }
 
     // ############################ OMEOPATIA ASTROLOGIA ########################

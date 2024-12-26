@@ -204,16 +204,16 @@ public class SinastriaController extends BaseController {
 
         StringBuilder significatiTemaNatale = servizioSinastria.significatiSinastriaDescrizione();
 
-
         String descrizioneTemaNatalePage = new StringBuilder()
-                .append(sinastria_1.toString())  // Usa il valore attuale di sinastria_1
-                .append(sinastria_2.toString())  // Usa il valore attuale di sinastria_2
-                .append(significatiTemaNatale).toString();
+            .append("<hr class=\"flex-grow-1 border-3\"><span class=\"mx-2 fw-bold\">Tema Natale 1</span><hr class=\"flex-grow-1 border-3\">")
+            .append(sinastria_1.toString())  // Usa il valore attuale di sinastria_1
+            .append("<hr class=\"flex-grow-1 border-3\"><span class=\"mx-2 fw-bold\">Tema Natale 2</span><hr class=\"flex-grow-1 border-3\">")
+            .append(sinastria_2.toString())  // Usa il valore attuale di sinastria_2
+            .append("<hr class=\"flex-grow-1 border-3\"><span class=\"mx-2 fw-bold\">Significati</span><hr class=\"flex-grow-1 border-3\">")
+            .append(significatiTemaNatale).toString();
 
 
         redirectAttributes.addFlashAttribute("sinastriaDescrizione", descrizioneTemaNatalePage);
-
-
         String paginaChatId = UUID.randomUUID().toString();
         redirectAttributes.addFlashAttribute("paginaChatId", paginaChatId);
         redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);

@@ -32,6 +32,29 @@ public class ZodiacUtils {
     }
 
 
+    public static double calcolaPosizionePianetaNodoSud(double posizioneNodo) {
+        if (posizioneNodo < 0 || posizioneNodo >= 360) {
+            throw new IllegalArgumentException("La posizione del nodo deve essere compresa tra 0 e 360 gradi.");
+        }
+        return (posizioneNodo + 180) % 360;
+    }
+
+    public static Pair<Integer, Integer> calcolaPosizionePianetaNodoSudInGradiEMinuti(int gradi, int minuti) {
+        // Calcola la posizione in gradi decimali
+        double posizioneDecimale = gradi + (minuti / 60.0);
+
+        // Calcola la posizione opposta in gradi decimali
+        double posizioneOppostaDecimale = (posizioneDecimale + 180) % 360;
+
+        // Converte la posizione opposta in gradi e minuti
+        int gradiOpposti = (int) posizioneOppostaDecimale;
+        int minutiOpposti = (int) ((posizioneOppostaDecimale - gradiOpposti) * 60);
+
+        // Restituisce la posizione opposta come un oggetto Pair (gradi, minuti)
+        return new Pair<>(gradiOpposti, minutiOpposti);
+    }
+
+
     /**
      * Da decimalDegrees a Gradi e Minuti
      */

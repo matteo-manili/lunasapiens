@@ -93,17 +93,17 @@ public class BuildInfoAstrologiaAstroSeek {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaAstroSeek.class);
 
-    private final List<Pianeta> pianetaArrayList;
+    private final List<Pianeta> pianetiArrayList;
     private final List<CasePlacide> casePlacidesArrayList;
 
 
     public BuildInfoAstrologiaAstroSeek() {
-        this.pianetaArrayList = Collections.emptyList();
+        this.pianetiArrayList = Collections.emptyList();
         this.casePlacidesArrayList = Collections.emptyList();
     }
 
     public BuildInfoAstrologiaAstroSeek(List<Pianeta> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
-        this.pianetaArrayList = Collections.unmodifiableList(pianetaArrayList);
+        this.pianetiArrayList = Collections.unmodifiableList(pianetaArrayList);
         this.casePlacidesArrayList = Collections.unmodifiableList(casePlacidesArrayList);
     }
 
@@ -152,7 +152,6 @@ Segni Ascendenti: L'Ascendente rappresenta l'approccio alla vita, la personalit�
 Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti o la compatibilità dei segni) possono indicare come i partner si percepiscono e si attraggono a livello esteriore.
  */
 
-
                 //.append("----------------------------------------------\n")
                 //.append("- Posizioni dei soli di "+nome+" e "+nome_2)
 
@@ -160,10 +159,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
 
                 //.append("- Ascendenti "+nome+" e "+nome_2)
 
-
-
                 .append("----------------------------------------------\n")
-
 
                 .append("- TEMA NATALE DELL'UTENTE "+nome+":\n\n")
                 .append("Data del Tema Natale e data nascita dell'Utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
@@ -206,7 +202,6 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
         textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SUL TEMA NATALE DELL'UTENTE, " +
                 "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO IL TEMA NATALE SOTTO DESCRITTO. NON AGGIUNGERE E NON INVENTARE NIENTE " +
                 "OLTRE LE INFORMAZIONI FORNITE.\n\n")
-
 
                 .append("- LE CASE ED I PIANETI NELLE CASE, INDICANO IL FUTURO E LE INCLINAZIONI CHE AVRÀ L'UTENTE.\n")
                 .append("- le interpretazioni delle Case vanno declinate in base a: significato della Casa, ai Pianeti nella casa, " +
@@ -280,7 +275,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
         }else{
 
             logger.info( urlAstroSeek );
-            List<Pianeta> pianetaArrayList = new ArrayList<Pianeta>();
+            List<Pianeta> pianetiArrayList = new ArrayList<Pianeta>();
             List<CasePlacide> casePlacidesArrayList = new ArrayList<CasePlacide>();
             String html = restTemplate.getForObject(urlAstroSeek, String.class);
 
@@ -310,7 +305,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
                     System.out.println();
 
-                    Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeEn( planetName );
+                    Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeAstroSeek( planetName );
                     if (pianetaConstant == null){
                         continue;
                     }
@@ -319,7 +314,19 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
                     Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
                             (int)gradiMinutiPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
-                    pianetaArrayList.add( pianeta );
+                    pianetiArrayList.add( pianeta );
+
+
+                    // aggiungo pianeta Nodo Sud (sarebbe opposto al pianeta Nodo M, o anche chiamato Nodo N. Sono simili ma non proprio gli stessi)
+                    if( pianetaConstant.getNumero() == Constants.Pianeti.NODE_M.getNumero() ){
+                        pianetaConstant = Constants.Pianeti.NODE_S;
+                        Pair gradiMinutiNodoOppostoPair = ZodiacUtils.calcolaPosizionePianetaNodoSudInGradiEMinuti((int)gradiMinutiPair.getKey(), (int)gradiMinutiPair.getValue());
+                        double positionInDecimalTotalNodoSud = ZodiacUtils.calcolaPosizionePianetaNodoSud(positionInDecimalTotal);
+                        significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
+                        Pianeta pianetaNodeS = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotalNodoSud, (int)gradiMinutiNodoOppostoPair.getKey(),
+                                (int)gradiMinutiNodoOppostoPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+                        pianetiArrayList.add( pianetaNodeS );
+                    }
                 }
 
 
@@ -340,7 +347,6 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     System.out.println("posizione: "+positionGradiString+ " | positionInDecimal "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
                     System.out.println();
 
-
                     Constants.Case casa = Constants.Case.fromCode( houseName );
                     Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
                     CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
@@ -356,7 +362,10 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     }
                 });
 
-                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetaArrayList, casePlacidesArrayList);
+
+
+
+                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetiArrayList, casePlacidesArrayList);
                 cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
 
                 return buildInfoAstrologiaAstroSeek;
@@ -369,10 +378,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
     }
 
 
-
-
-
-    public List<Pianeta> getPianetaPosizTransitoArrayList() { return pianetaArrayList; }
+    public List<Pianeta> getPianetiPosizTransitoArrayList() { return pianetiArrayList; }
 
     public List<CasePlacide> getCasePlacidesArrayList() { return casePlacidesArrayList; }
 
