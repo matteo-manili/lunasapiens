@@ -4,7 +4,6 @@ import at.kugel.zodiac.TextHoroscop;
 import at.kugel.zodiac.house.*;
 import at.kugel.zodiac.planet.PlanetAA0;
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 
 import java.util.ArrayList;
@@ -47,8 +46,8 @@ public class BuildInfoAstrologiaAstroLib {
     */
 
 
-    public ArrayList<Pianeta> getPianetiAspetti(){
-        ArrayList<Pianeta> pianetaArrayList = null;
+    public ArrayList<Pianeti> getPianetiAspetti(){
+        ArrayList<Pianeti> pianetaArrayList = null;
         // Trova l'indice di inizio e fine di "Planets "AA0""
         int startIndex = horoscop.toString().indexOf("Planets \"AA0\"");
         if (startIndex != -1) {
@@ -60,7 +59,7 @@ public class BuildInfoAstrologiaAstroLib {
                 //System.out.println(planetsContent);
                 // Dividi la stringa in base ai punti e virgola per ottenere le informazioni sui pianeti
                 String[] planetInfos = planetsContent.split(";");
-                pianetaArrayList = new ArrayList<Pianeta>();
+                pianetaArrayList = new ArrayList<Pianeti>();
                 // Per ogni informazione sul pianeta, estrai le informazioni
                 for (String planetInfo : planetInfos) {
                     if (planetInfo.contains(":")) {
@@ -82,7 +81,7 @@ public class BuildInfoAstrologiaAstroLib {
                         String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(null,0, entry.getKey());
 
                         // non valorizzo significatoTransitoPianetaSegno perchè non è implementato in questa classe. Ma solo nella clase BuildInfoAstrologiaSwiss
-                        Pianeta pianeta = new Pianeta(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
+                        Pianeti pianeta = new Pianeti(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
                         pianetaArrayList.add( pianeta );
                     }
                 }

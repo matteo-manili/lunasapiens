@@ -3,7 +3,7 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
 
-public class Pianeta {
+public class Pianeti {
 
     private int numeroPianeta;
     private String nomePianeta;
@@ -20,7 +20,7 @@ public class Pianeta {
     private String significatoPianetaSegno;
 
 
-    public Pianeta(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
+    public Pianeti(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
                    String significatoPianetaSegno) {
         this.numeroPianeta = numeroPianeta;
         this.nomePianeta = nomePianeta;
@@ -33,7 +33,7 @@ public class Pianeta {
         this.significatoPianetaSegno = significatoPianetaSegno;
     }
 
-    public Pianeta() { }
+    public Pianeti() { }
 
     public int getNumeroPianeta() { return numeroPianeta; }
 

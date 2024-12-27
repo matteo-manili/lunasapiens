@@ -3,6 +3,7 @@ package com.lunasapiens.zodiac;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.config.PropertiesConfig;
+import com.lunasapiens.dto.AstroChartDTO;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -52,27 +53,96 @@ public class ServizioTemaNatale {
 
     public StringBuilder temaNataleDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
         BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
+        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
+                cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
+                propertiesConfig.transitiPianetiSegni_TemaNatale() );
+        StringBuilder temaNataleDesc = temaNataleDescrizione(result.getPianetiPosizTransitoList(), result.getCasePlacidesList());
+        return temaNataleDesc;
+    }
 
+
+    public AstroChartDTO astroChart_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
+        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        StringBuilder temaNataleDesc = temaNataleDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        Map<String, Object[]> planets = new HashMap<>();
+        for(Pianeti pianetaIte: result.getPianetiPosizTransitoList() ){
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ){
+                planets.put(Constants.Pianeti.SOLE.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.LUNA.getNumero() ){
+                planets.put(Constants.Pianeti.LUNA.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.MERCURIO.getNumero() ){
+                planets.put(Constants.Pianeti.MERCURIO.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.VENERE.getNumero() ){
+                planets.put(Constants.Pianeti.VENERE.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.MARTE.getNumero() ){
+                planets.put(Constants.Pianeti.MARTE.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.GIOVE.getNumero() ){
+                planets.put(Constants.Pianeti.GIOVE.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.SATURNO.getNumero() ){
+                planets.put(Constants.Pianeti.SATURNO.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.URANO.getNumero() ){
+                planets.put(Constants.Pianeti.URANO.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.NETTUNO.getNumero() ){
+                planets.put(Constants.Pianeti.NETTUNO.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.PLUTONE.getNumero() ){
+                planets.put(Constants.Pianeti.PLUTONE.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.NODE_M.getNumero() ){
+                planets.put(Constants.Pianeti.NODE_M.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.NODE_S.getNumero() ){
+                planets.put(Constants.Pianeti.NODE_S.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.LILITH.getNumero() ){
+                planets.put(Constants.Pianeti.LILITH.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+            if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.CHIRON.getNumero() ){
+                planets.put(Constants.Pianeti.CHIRON.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
+            }
+        }
 
-        return temaNataleDesc;
+
+        // Estrai i valori di gradi in una nuova lista
+        List<Integer> cusps = new ArrayList<>();
+        for (CasePlacide casePlacide : result.getCasePlacidesList()) {
+            cusps.add( (int)casePlacide.getGradi() );
+        }
+
+        return new AstroChartDTO(planets, cusps);
+    }
+
+    private Object[] gradiPianetaAstroChart(boolean retrogrado, double gradi){
+        long rounded = Math.round(gradi);
+        if (retrogrado){
+            return new Object[]{rounded, -0.2};
+        }else{
+            return new Object[]{rounded};
+        }
     }
 
 
     public StringBuilder temaNataleDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
+        ArrayList<Pianeti> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
         ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
         return temaNataleDescrizione(pianetiList, casePlacideArrayList);
     }
 
 
 
-    public StringBuilder temaNataleDescrizione(List<Pianeta> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    public StringBuilder temaNataleDescrizione(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         Properties caseSignificato = propertiesConfig.caseSignificato();
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
@@ -115,7 +185,7 @@ public class ServizioTemaNatale {
             descTemaNatale.append("<ul>");
             descTemaNatale.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
             boolean pianetaPresete = false;
-            for (Pianeta varPianeta : pianetiTransiti) {
+            for (Pianeti varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa())){
                     pianetaPresete = true;
                     descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
@@ -125,7 +195,7 @@ public class ServizioTemaNatale {
             if( !pianetaPresete ){
                 int[] pianetiSignori = segnoZodiacale.getSegnoZodiacale( varCasa.getNumeroSegnoZodiacale() ).getPianetiSignoreDelSegno();
                 for (int pianetaSign : pianetiSignori) {
-                    for (Pianeta varPianeta : pianetiTransiti) {
+                    for (Pianeti varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
                             descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
                                 +" "+"</i>"+ pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
@@ -138,7 +208,7 @@ public class ServizioTemaNatale {
 
         int size = pianetiTransiti.size(); int count = 0;
         descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Transiti dei Pianeti</h4><br>");
-        for (Pianeta var : pianetiTransiti) {
+        for (Pianeti var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||

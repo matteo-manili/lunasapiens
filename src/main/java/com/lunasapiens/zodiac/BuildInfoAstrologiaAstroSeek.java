@@ -93,18 +93,18 @@ public class BuildInfoAstrologiaAstroSeek {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaAstroSeek.class);
 
-    private final List<Pianeta> pianetiArrayList;
-    private final List<CasePlacide> casePlacidesArrayList;
+    private final List<Pianeti> pianetiList; private final List<CasePlacide> casePlacidesList;
 
+    public List<Pianeti> getPianetiPosizTransitoList() { return pianetiList; }
+    public List<CasePlacide> getCasePlacidesList() { return casePlacidesList; }
 
     public BuildInfoAstrologiaAstroSeek() {
-        this.pianetiArrayList = Collections.emptyList();
-        this.casePlacidesArrayList = Collections.emptyList();
+        this.pianetiList = Collections.emptyList(); this.casePlacidesList = Collections.emptyList();
     }
 
-    public BuildInfoAstrologiaAstroSeek(List<Pianeta> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
-        this.pianetiArrayList = Collections.unmodifiableList(pianetaArrayList);
-        this.casePlacidesArrayList = Collections.unmodifiableList(casePlacidesArrayList);
+    public BuildInfoAstrologiaAstroSeek(List<Pianeti> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
+        this.pianetiList = Collections.unmodifiableList(pianetaArrayList);
+        this.casePlacidesList = Collections.unmodifiableList(casePlacidesArrayList);
     }
 
     public static String pianetaDomicioSegnoCasa = "(Pianeta governatore della Casa)";
@@ -275,8 +275,8 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
         }else{
 
             logger.info( urlAstroSeek );
-            List<Pianeta> pianetiArrayList = new ArrayList<Pianeta>();
-            List<CasePlacide> casePlacidesArrayList = new ArrayList<CasePlacide>();
+            List<Pianeti> pianetiList = new ArrayList<Pianeti>();
+            List<CasePlacide> casePlacidesList = new ArrayList<CasePlacide>();
             String html = restTemplate.getForObject(urlAstroSeek, String.class);
 
             Document document = Jsoup.parse(html);
@@ -294,38 +294,37 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     String signName = planetElement.nextElementSibling().select("img.astro_symbol").attr("alt");
                     String positionGradiString = planetElement.nextElementSibling().nextElementSibling().text();
                     Element retrogradeElement = planetElement.nextElementSibling().nextElementSibling().nextElementSibling().nextElementSibling();
-                    boolean isRetrograde = retrogradeElement.text().trim().equals("R");
 
+                    if ( planetName.trim().isEmpty() ){
+                        continue;
+                    }
+
+                    boolean isRetrograde = retrogradeElement.text().trim().equals("R");
                     double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
                     Constants.SegniZodiacali segnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
                     double positionInDecimalTotal = segnoZodiacale.getGradi() + positionInDecimal;
 
-                    System.out.println("Pianeta: " +planetName+ " Segno: " +signName);
-                    System.out.println("Posizione: "+positionGradiString+ " | decimali "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
-                    System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
-                    System.out.println();
+                    //System.out.println("Pianeta: " +planetName+ " Segno: " +signName);
+                    //System.out.println("Posizione: "+positionGradiString+ " | decimali "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
+                    //System.out.println("Retrogrado: " + (isRetrograde ? "Sì" : "No"));
+                    //System.out.println();
 
                     Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeAstroSeek( planetName );
-                    if (pianetaConstant == null){
-                        continue;
-                    }
-
                     Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
                     String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
-                    Pianeta pianeta = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
+                    Pianeti pianeta = new Pianeti(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
                             (int)gradiMinutiPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
-                    pianetiArrayList.add( pianeta );
+                    pianetiList.add( pianeta );
 
 
                     // aggiungo pianeta Nodo Sud (sarebbe opposto al pianeta Nodo M, o anche chiamato Nodo N. Sono simili ma non proprio gli stessi)
-                    if( pianetaConstant.getNumero() == Constants.Pianeti.NODE_M.getNumero() ){
-                        pianetaConstant = Constants.Pianeti.NODE_S;
-                        Pair gradiMinutiNodoOppostoPair = ZodiacUtils.calcolaPosizionePianetaNodoSudInGradiEMinuti((int)gradiMinutiPair.getKey(), (int)gradiMinutiPair.getValue());
-                        double positionInDecimalTotalNodoSud = ZodiacUtils.calcolaPosizionePianetaNodoSud(positionInDecimalTotal);
-                        significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
-                        Pianeta pianetaNodeS = new Pianeta(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotalNodoSud, (int)gradiMinutiNodoOppostoPair.getKey(),
-                                (int)gradiMinutiNodoOppostoPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
-                        pianetiArrayList.add( pianetaNodeS );
+                    if( pianeta.getNumeroPianeta() == Constants.Pianeti.NODE_M.getNumero()){
+                        Pair gradiMinutiNodoOppostoPair = ZodiacUtils.calcolaPosizionePianetaOppostoInGradiEMinuti((int)gradiMinutiPair.getKey(), (int)gradiMinutiPair.getValue());
+                        double positionInDecimalTotalNodoSud = ZodiacUtils.calcolaPosizionePianetaOpposto(positionInDecimalTotal);
+                        Constants.SegniZodiacali segnoOpposto = ZodiacUtils.calcolaSegnoOpposto(segnoZodiacale);
+                        Pianeti pianetaNodeS = new Pianeti(Constants.Pianeti.NODE_S.getNumero(), Constants.Pianeti.NODE_S.getNome(), positionInDecimalTotalNodoSud, (int)gradiMinutiNodoOppostoPair.getKey(),
+                                (int)gradiMinutiNodoOppostoPair.getValue(), segnoOpposto.getNumero(), segnoOpposto.getNome(), isRetrograde, significatoTransitoPianetaSegno);
+                        pianetiList.add( pianetaNodeS );
                     }
                 }
 
@@ -338,24 +337,23 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     String signName = siblingElement.select("img.astro_symbol").attr("alt");
                     String positionGradiString = siblingElement.nextElementSibling().text();
 
-
                     double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
                     Constants.SegniZodiacali SegnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
                     double positionInDecimalTotal = SegnoZodiacale.getGradi() + positionInDecimal;
 
-                    System.out.println("Casa: " +houseName+ " Segno: " +signName);
-                    System.out.println("posizione: "+positionGradiString+ " | positionInDecimal "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
-                    System.out.println();
+                    //System.out.println("Casa: " +houseName+ " Segno: " +signName);
+                    //System.out.println("posizione: "+positionGradiString+ " | positionInDecimal "+positionInDecimal+ " | positionInDecimalTotal "+positionInDecimalTotal);
+                    //System.out.println();
 
                     Constants.Case casa = Constants.Case.fromCode( houseName );
                     Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
                     CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
                             (int)gradiMinutiPair.getValue(), SegnoZodiacale.getNumero(), SegnoZodiacale.getNome());
-                    casePlacidesArrayList.add( casaPlacida );
+                    casePlacidesList.add( casaPlacida );
                 }
 
                 // Ordinamento della lista in base all'attributo nomeCasa
-                Collections.sort(casePlacidesArrayList, new Comparator<CasePlacide>() {
+                Collections.sort(casePlacidesList, new Comparator<CasePlacide>() {
                     @Override
                     public int compare(CasePlacide c1, CasePlacide c2) {
                         return Double.compare(c1.getNumeroCasa(), c2.getNumeroCasa());
@@ -363,9 +361,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 });
 
 
-
-
-                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetiArrayList, casePlacidesArrayList);
+                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetiList, casePlacidesList);
                 cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
 
                 return buildInfoAstrologiaAstroSeek;
@@ -378,22 +374,10 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
     }
 
 
-    public List<Pianeta> getPianetiPosizTransitoArrayList() { return pianetiArrayList; }
-
-    public List<CasePlacide> getCasePlacidesArrayList() { return casePlacidesArrayList; }
-
-
-
-        /*
-    public void setPianetaPosizTransitoArrayList(ArrayList<PianetaPosizTransito> pianetaPosizTransitoArrayList) {
-        this.pianetaPosizTransitoArrayList = pianetaPosizTransitoArrayList;
+    public static boolean contieneCaratteriAnomali(String str) {
+        // Controlla se la stringa contiene caratteri di controllo, invisibili o non stampabili
+        return str.matches(".*[\\p{C}\\P{Print}].*");
     }
-
-        public void setCasePlacidesArrayList(ArrayList<CasePlacide> casePlacidesArrayList) {
-        this.casePlacidesArrayList = casePlacidesArrayList;
-    }
-*/
-
 
 
 

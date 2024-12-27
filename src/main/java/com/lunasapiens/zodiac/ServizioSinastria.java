@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -55,27 +54,24 @@ public class ServizioSinastria {
 
     public StringBuilder sinastriaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
         BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
-
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
-
-        StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
-
+        StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetiPosizTransitoList(), result.getCasePlacidesList());
         return sinastriaDesc;
     }
 
 
     public StringBuilder sinastriaDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
+        ArrayList<Pianeti> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
         ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
         return sinastriaDescrizione(pianetiList, casePlacideArrayList);
     }
 
 
 
-    public StringBuilder sinastriaDescrizione(List<Pianeta> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    public StringBuilder sinastriaDescrizione(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         Properties caseSignificato = propertiesConfig.caseSignificato();
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
@@ -115,7 +111,7 @@ public class ServizioSinastria {
             descSinastria.append("<ul>");
             descSinastria.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
             boolean pianetaPresete = false;
-            for (Pianeta varPianeta : pianetiTransiti) {
+            for (Pianeti varPianeta : pianetiTransiti) {
                 if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa())){
                     pianetaPresete = true;
                     descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() +" "+
@@ -125,7 +121,7 @@ public class ServizioSinastria {
             if( !pianetaPresete ){
                 int[] pianetiSignori = segnoZodiacale.getSegnoZodiacale( varCasa.getNumeroSegnoZodiacale() ).getPianetiSignoreDelSegno();
                 for (int pianetaSign : pianetiSignori) {
-                    for (Pianeta varPianeta : pianetiTransiti) {
+                    for (Pianeti varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
                             descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
                                 +" "+"</i>"+ pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
@@ -138,7 +134,7 @@ public class ServizioSinastria {
 
         int size = pianetiTransiti.size(); int count = 0;
         descSinastria.append("<h4 class=\"mt-5 mb-0\">Transiti dei Pianeti</h4><br>");
-        for (Pianeta var : pianetiTransiti) {
+        for (Pianeti var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||

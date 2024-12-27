@@ -153,6 +153,12 @@ public class TemaNataleController extends BaseController {
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
         StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
         StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatiTemaNataleDescrizione();
+
+        AstroChartDTO astroChartDTO = servizioTemaNatale.astroChart_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        redirectAttributes.addFlashAttribute("planets", astroChartDTO.getPlanets());
+        redirectAttributes.addFlashAttribute("cusps", astroChartDTO.getCusps());
+
+
         temaNataleDescrizione.append( significatiTemaNataleDescrizione );
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione.toString());
 

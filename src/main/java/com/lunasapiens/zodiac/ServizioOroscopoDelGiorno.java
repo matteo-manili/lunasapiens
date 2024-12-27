@@ -79,7 +79,7 @@ public class ServizioOroscopoDelGiorno {
         JSONArray transitiArray = new JSONArray();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         // Aggiungi i pianeti con descrizione e retrogradazione
-        for (Pianeta pianeta : buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno())) {
+        for (Pianeti pianeta : buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno())) {
             if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
                 JSONObject pianetaObject = new JSONObject();
                 pianetaObject.put("name", pianeta.getNomePianeta());
@@ -102,8 +102,8 @@ public class ServizioOroscopoDelGiorno {
     public OroscopoDelGiornoDescrizioneDTO descrizioneOroscopoDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
-        for (Pianeta var : pianetiTransiti) {
+        ArrayList<Pianeti> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        for (Pianeti var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
@@ -189,7 +189,7 @@ public class ServizioOroscopoDelGiorno {
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeta> pianeta = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<Pianeti> pianeta = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
         logger.info( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 
@@ -225,7 +225,7 @@ public class ServizioOroscopoDelGiorno {
         for (int pianetaSig : pianetiSignori) {
             ArrayList<Aspetti> aspettiDelSegnoList = getAspettiPianetaList(aspettiTuttiList, pianetaSig);
             if(aspettiDelSegnoList.isEmpty()) {
-                Pianeta pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianeta, pianetaSig);
+                Pianeti pianetaSenzaAspetti = getPianetaPosizTransitoSegno(pianeta, pianetaSig);
                 domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                 domandaBuilder.append(pianetaSenzaAspetti.getNomePianeta() + ": " + pianetaSenzaAspetti.getSignificatoPianetaSegno()+"\n");
                 pianetiCoinvoltiSet.add(pianetaSenzaAspetti.getNumeroPianeta());
@@ -238,8 +238,8 @@ public class ServizioOroscopoDelGiorno {
                 presentiAspetti = true;
                 for(Aspetti aspettodelSegno: aspettiDelSegnoList) {
                     aspettiPresentiNelSegno.add(aspettodelSegno.getTipoAspetto());
-                    Pianeta pianetaTransito_1 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_1());
-                    Pianeta pianetaTransito_2 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_2());
+                    Pianeti pianetaTransito_1 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_1());
+                    Pianeti pianetaTransito_2 = getPianetaPosizTransitoSegno(pianeta, aspettodelSegno.getNumeroPianeta_2());
                     domandaBuilder.append("Evento numero "+contaEventi+":\n"); contaEventi++;
                     pianetiCoinvoltiSet.add(pianetaTransito_1.getNumeroPianeta());
                     pianetiCoinvoltiSet.add(pianetaTransito_2.getNumeroPianeta());
@@ -292,9 +292,9 @@ public class ServizioOroscopoDelGiorno {
         return nomePianeta +" è Pianeta Retrogrado.";
     }
 
-    private Pianeta getPianetaPosizTransitoSegno(ArrayList<Pianeta> pianetaTuttiList, int pianeta) {
-        Pianeta pianetaPosizTransito = new Pianeta();
-        for(Pianeta var : pianetaTuttiList) {
+    private Pianeti getPianetaPosizTransitoSegno(ArrayList<Pianeti> pianetaTuttiList, int pianeta) {
+        Pianeti pianetaPosizTransito = new Pianeti();
+        for(Pianeti var : pianetaTuttiList) {
             if(var.getNumeroPianeta() == pianeta){
                 pianetaPosizTransito = var;
             }

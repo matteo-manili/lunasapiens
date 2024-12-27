@@ -111,7 +111,7 @@ public class CalcoloAspetti {
 
 
 
-    private static List<Pianeta> rimuoviPianetiNonValidi(List<Pianeta> pianeti) {
+    private static List<Pianeti> rimuoviPianetiNonValidi(List<Pianeti> pianeti) {
         // Crea una nuova lista con i pianeti che soddisfano i criteri
         return pianeti.stream()
                 .filter(pianeta -> pianeta.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero()
@@ -129,17 +129,15 @@ public class CalcoloAspetti {
 
 
 
-    public static ArrayList<Aspetti> aspettiListPinaneti(List<Pianeta> pianeti, Properties aspettiPianeti) {
+    public static ArrayList<Aspetti> aspettiListPinaneti(List<Pianeti> pianeti, Properties aspettiPianeti) {
 
-
-        List<Pianeta> pianetiFiltrati = rimuoviPianetiNonValidi(pianeti);
-
+        List<Pianeti> pianetiFiltrati = rimuoviPianetiNonValidi(pianeti);
         ArrayList<Aspetti> aspettiArrayList = new ArrayList<>();
 
         for (int i = 0; i < pianetiFiltrati.size(); i++) {
             for (int j = i + 1; j < pianetiFiltrati.size(); j++) {
-                Pianeta p1 = pianetiFiltrati.get(i);
-                Pianeta p2 = pianetiFiltrati.get(j);
+                Pianeti p1 = pianetiFiltrati.get(i);
+                Pianeti p2 = pianetiFiltrati.get(j);
 
                 double angolo1 = p1.getGradi();
                 double angolo2 = p2.getGradi();
@@ -187,7 +185,7 @@ public class CalcoloAspetti {
 
 
     // Metodo per calcolare l'aspetto tra due pianeti
-    public static Aspetti aspettoTraDuePianeti(Pianeta p1, Pianeta p2, Properties aspettiPianeti) {
+    public static Aspetti aspettoTraDuePianeti(Pianeti p1, Pianeti p2, Properties aspettiPianeti) {
 
         double angolo1 = p1.getGradi();
         double angolo2 = p2.getGradi();

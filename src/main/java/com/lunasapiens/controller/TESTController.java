@@ -62,16 +62,15 @@ public class TESTController extends BaseController {
         planets.put("SNode", new Object[]{311.3});
         planets.put("Lilith", new Object[]{212.75});
         planets.put("Chiron", new Object[]{43.4});
-        //planets.put("Fortune", new Object[]{330.18333333333334});
+        //planets.put("Fortune", new Object[]{330.18333333333334}); // non lo uso
 
 
         model.addAttribute("planets", planets);
 
 
 
-        List<Double> cusps = Arrays.asList(
-                110.53333333333333, 129.8, 152.35, 181.2, 217.81666666666666,
-                257.0, 290.53333333333336, 309.8, 332.35, 1.2, 37.81666666666666, 77.0
+        List<Integer> cusps = Arrays.asList(
+                110, 129
         );
         model.addAttribute("cusps", cusps);
 

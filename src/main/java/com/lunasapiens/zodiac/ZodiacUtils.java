@@ -32,14 +32,14 @@ public class ZodiacUtils {
     }
 
 
-    public static double calcolaPosizionePianetaNodoSud(double posizioneNodo) {
+    public static double calcolaPosizionePianetaOpposto(double posizioneNodo) {
         if (posizioneNodo < 0 || posizioneNodo >= 360) {
             throw new IllegalArgumentException("La posizione del nodo deve essere compresa tra 0 e 360 gradi.");
         }
         return (posizioneNodo + 180) % 360;
     }
 
-    public static Pair<Integer, Integer> calcolaPosizionePianetaNodoSudInGradiEMinuti(int gradi, int minuti) {
+    public static Pair<Integer, Integer> calcolaPosizionePianetaOppostoInGradiEMinuti(int gradi, int minuti) {
         // Calcola la posizione in gradi decimali
         double posizioneDecimale = gradi + (minuti / 60.0);
 
@@ -54,6 +54,12 @@ public class ZodiacUtils {
         return new Pair<>(gradiOpposti, minutiOpposti);
     }
 
+    public static Constants.SegniZodiacali calcolaSegnoOpposto(Constants.SegniZodiacali segnoZodiacale) {
+        // Calcola il numero del segno opposto
+        int numeroOpposto = (segnoZodiacale.getNumero() + 6) % 12;
+        // Usa il metodo `fromNumero` per ottenere il segno opposto
+        return Constants.SegniZodiacali.fromNumero(numeroOpposto);
+    }
 
     /**
      * Da decimalDegrees a Gradi e Minuti
@@ -91,12 +97,12 @@ public class ZodiacUtils {
 
 
 
-    protected static void assegnaCaseAiPianeti(List<Pianeta> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    protected static void assegnaCaseAiPianeti(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         // Creare una copia della lista delle case per ordinarla
         List<CasePlacide> caseOrdinate = new ArrayList<>(casePlacideArrayList);
         caseOrdinate.sort(Comparator.comparingDouble(CasePlacide::getGradi));
 
-        for (Pianeta pianeta : pianetiTransiti) {
+        for (Pianeti pianeta : pianetiTransiti) {
             double gradiPianeta = pianeta.getGradi();
             for (int i = 0; i < caseOrdinate.size(); i++) {
                 CasePlacide casaCorrente = caseOrdinate.get(i);

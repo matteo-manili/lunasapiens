@@ -78,12 +78,12 @@ public class ServizioOmeopatiaAstrologica {
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE),
                 giornoOraPosizioneDTO, coordinateDTO, propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
-        return omeopatiaAstrologicaDescrizione(result.getPianetiPosizTransitoArrayList(), result.getCasePlacidesArrayList());
+        return omeopatiaAstrologicaDescrizione(result.getPianetiPosizTransitoList(), result.getCasePlacidesList());
     }
 
     // ############################ OMEOPATIA ASTROLOGIA ########################
 
-    public StringBuilder omeopatiaAstrologicaDescrizione(List<Pianeta> pianetiList, List<CasePlacide> casePlacideArrayList) {
+    public StringBuilder omeopatiaAstrologicaDescrizione(List<Pianeti> pianetiList, List<CasePlacide> casePlacideArrayList) {
 
         // Resetta i contatori prima di calcolare
         totElementoFuoco = 0;
@@ -104,7 +104,7 @@ public class ServizioOmeopatiaAstrologica {
         omeopatiaAstrologia.setAscendente( ascendente );
         setNumTotElementi( ascendente );
 
-        for( Pianeta ite : pianetiList ) {
+        for( Pianeti ite : pianetiList ) {
             SegnoZodiacale segno = segnoZodiacale.getSegnoZodiacale( ite.getNumeroSegnoZodiacale() );
 
             if( ite.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ) { // pianeta personale

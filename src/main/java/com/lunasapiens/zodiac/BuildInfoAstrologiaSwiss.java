@@ -55,11 +55,11 @@ public class BuildInfoAstrologiaSwiss {
      * @param giornOraPosDTO
      * @return
      */
-    public ArrayList<Pianeta> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO, Properties transitiPianetiSegniProperties) {
+    public ArrayList<Pianeti> getPianetiTransiti(GiornoOraPosizioneDTO giornOraPosDTO, Properties transitiPianetiSegniProperties) {
 
         SwissEph swissEph = new SwissEph();
         //System.out.println("Versione SwissEph: " + swissEph.swe_java_version());
-        ArrayList<Pianeta> pianetaArrayList = new ArrayList<Pianeta>();
+        ArrayList<Pianeti> pianetaArrayList = new ArrayList<Pianeti>();
 
         double[] position = new double[6]; // Ecli
         // ptic position (x, y, z) and speed (dx, dy, dz)
@@ -103,7 +103,7 @@ public class BuildInfoAstrologiaSwiss {
                 Map.Entry<Integer, String> entry = ZodiacUtils.determinaSegnoZodiacale(position[0]).entrySet().iterator().next();
                 String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, i, entry.getKey());
 
-                Pianeta pianeta = new Pianeta(i, Constants.Pianeti.fromNumero(i).getNome(), position[0], 0, 0,
+                Pianeti pianeta = new Pianeti(i, Constants.Pianeti.fromNumero(i).getNome(), position[0], 0, 0,
                         entry.getKey(), entry.getValue(), retrogrado, significatoTransitoPianetaSegno);
 
                 pianetaArrayList.add(pianeta);
