@@ -66,7 +66,6 @@ public class ServizioTemaNatale {
         BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
-
         Map<String, Object[]> planets = new HashMap<>();
         for(Pianeti pianetaIte: result.getPianetiPosizTransitoList() ){
             if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.SOLE.getNumero() ){
@@ -112,14 +111,10 @@ public class ServizioTemaNatale {
                 planets.put(Constants.Pianeti.CHIRON.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
             }
         }
-
-
-        // Estrai i valori di gradi in una nuova lista
         List<Integer> cusps = new ArrayList<>();
         for (CasePlacide casePlacide : result.getCasePlacidesList()) {
             cusps.add( (int)casePlacide.getGradi() );
         }
-
         return new AstroChartDTO(planets, cusps);
     }
 
