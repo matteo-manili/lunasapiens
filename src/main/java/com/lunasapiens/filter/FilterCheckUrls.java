@@ -31,8 +31,8 @@ public class FilterCheckUrls extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
 
 
-    // TODO ricorda di rimettere MAX_REQUESTS a 10
-    private static final int MAX_REQUESTS = 10; // Limite massimo di richieste per IP
+    // TODO ricorda di rimettere MAX_REQUESTS a 5
+    private static final int MAX_REQUESTS = 5; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
 
     private Set<String> blockedIps = new HashSet<>();

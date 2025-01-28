@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
     <title th:fragment="title">Luna Sapiens | Contatti</title>
     <th:block th:fragment="meta">
     <meta name="description" content="Contatta il team di LunaSapiens.com per qualsiasi domanda o richiesta. Compila il modulo con il tuo nome, email e messaggio e ricevi assistenza per le tue esigenze astrologiche e servizi offerti. Siamo qui per aiutarti e rispondere alle tue domande!">
@@ -9,6 +9,10 @@
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
+    <th:block th:fragment="scripts">
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
+    </th:block>
+
 </head>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
@@ -20,7 +24,7 @@
 
         <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
-        <form th:action="@{/contattiSubmit}" th:object="${contactForm}" method="post" onsubmit="showLoadingOverlay()">
+        <form th:action="@{/contattiSubmit}" th:object="${contactForm}" id="contact-form" method="post" onsubmit="showLoadingOverlay()">
             <div class="row gy-3 gy-xl-4 p-xl-4 p-4">
 
                 <div class="col-12">
@@ -45,6 +49,15 @@
                     <textarea class="form-control" id="message" th:field="*{message}" rows="3" required></textarea>
                 </div>
 
+                <!-- Aggiungi il widget di reCAPTCHA -->
+                <div class="col-12">
+                    <div class="g-recaptcha"
+                         data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
+                         data-callback="onSubmit"
+                         data-action="submit">
+                    </div>
+                </div>
+
                 <div class="col-12">
                     <div class="d-grid">
                         <button class="btn btn-primary btn-lg" type="submit">Invia Messaggio</button>
@@ -60,5 +73,13 @@
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+
+<script>
+    // Funzione di callback per gestire il token
+    function onSubmit(token) {
+        document.getElementById("contact-form").submit(); // Sostituisci "contact-form" con l'ID effettivo del form
+    }
+</script>
+
 </body>
 </html>
