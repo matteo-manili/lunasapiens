@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -227,13 +228,27 @@ public class EmailService {
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            logger.error("sendHtmlEmail MessagingException nell'invio email a {}: {}", to, e.getMessage(), e);
+            logger.error("Errore specifico JavaMail (MessagingException) durante l'invio email a {}: {}", to, e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail MessagingException: "+e.getMessage());
+
+        } catch (MailException e) {
+            logger.error("Errore generico di Spring Mail (MailException): {}", e.getMessage(), e);
+            // Gestione alternativa (es. notifiche di fallback)
+
         } catch (Exception e) {
-            logger.error("sendHtmlEmail Exception nell'invio email a {}: {}", to, e.getMessage(), e);
+            logger.error("Errore inaspettato (Exception): {}", e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail Exception: "+e.getMessage());
         }
     }
+
+
+
+    /*
+    logger.error
+logger.error
+logger.error
+
+     */
 
 
     public void sendTextEmail(String to, String subject, String text) {

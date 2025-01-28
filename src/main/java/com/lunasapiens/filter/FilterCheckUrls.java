@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -12,7 +14,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -24,12 +28,14 @@ import java.util.Map;
 @Order(2)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
-    //private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
+    private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
 
 
     // TODO ricorda di rimettere MAX_REQUESTS a 10
-    private static final int MAX_REQUESTS = 20; // Limite massimo di richieste per IP
+    private static final int MAX_REQUESTS = 10; // Limite massimo di richieste per IP
     private Map<String, Integer> requestCounts = new HashMap<>();
+
+    private Set<String> blockedIps = new HashSet<>();
 
 
     /**
@@ -40,6 +46,14 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         String ipAddress = request.getRemoteAddr();
 
         //logger.info("sono in FilterCheckUrls doFilterInternal");
+        logger.info("Richiesta da IP: {} per URI: {}", ipAddress, request.getRequestURI());
+
+        if (blockedIps.contains(ipAddress)) {
+            logger.warn("Bloccato IP: {} per URI: {}", ipAddress, request.getRequestURI());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return;
+        }
+
 
         // ######################### Controllo MaxRequest #########################
         if (request.getRequestURI().equals("/"+ Constants.DOM_LUNA_SAPIENS_SUBSCRIBE_OROSC_GIORN) && request.getMethod().equals("POST")) {
@@ -59,6 +73,8 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         }
 
         if (request.getRequestURI().equals("/contattiSubmit") && request.getMethod().equals("POST")) {
+            logger.info("Richiesta sospetta da IP: {} per URI: {} - User Agent: {}",
+                    ipAddress, request.getRequestURI(), request.getHeader("User-Agent"));
             handleMaxRequestRequest(request, response, ipAddress);
         }
 
@@ -82,12 +98,14 @@ public class FilterCheckUrls extends OncePerRequestFilter {
 
 
     private void handleMaxRequestRequest(HttpServletRequest request, HttpServletResponse response, String ipAddress) throws IOException {
-
+        logger.info("Richiesta da IP: {} per URI: {}", ipAddress, request.getRequestURI());
         if (!requestCounts.containsKey(ipAddress)) {
             requestCounts.put(ipAddress, 1);
         } else {
             int count = requestCounts.get(ipAddress);
             if (count >= MAX_REQUESTS) {
+                blockedIps.add(ipAddress);
+                logger.warn("IP aggiunto alla blacklist: {}", ipAddress);
                 // Imposta un flash attribute per indicare al controller di non salvare l'email
                 request.setAttribute(Constants.SKIP_EMAIL_SAVE, true);
                 response.setStatus(Constants.TOO_MANY_REQUESTS_STATUS_CODE);
