@@ -102,7 +102,7 @@ public class IndexController extends BaseController {
 
     private static final String RECAPTCHA_SECRET_KEY = "6Ld0P8YqAAAAACshPmI-ppFvIl7Av6EO6yuqPErg"; // Usa la tua chiave segreta
 
-    // segreta: 6Ld0P8YqAAAAACshPmI-ppFvIl7Av6EO6yuqPErg
+    // segreta: vedere: lunasapiens-application-db.properties (in C:\intellij_work)
     // publica: 6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR
 
 
