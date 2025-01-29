@@ -98,9 +98,10 @@ public class IndexController extends BaseController {
 
 
 
+
     @PostMapping("/contattiSubmit")
     public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                 @RequestParam("g-recaptcha-response") String recaptchaResponse) {
+                                 @RequestParam("recaptchaResponse") String recaptchaResponse) {
         logger.info("sono in contattiSubmit");
 
         // 1. Verifica il token reCAPTCHA
