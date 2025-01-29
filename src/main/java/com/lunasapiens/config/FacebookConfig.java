@@ -8,7 +8,6 @@ public class FacebookConfig {
     private String pageId;
 
 
-
     public FacebookConfig(String appId, String appSecret, String pageId) {
         this.appId = appId;
         this.appSecret = appSecret;
@@ -16,14 +15,11 @@ public class FacebookConfig {
     }
 
 
-
     public String getAppId() {
         return appId;
     }
-
     public String getAppSecret() {
         return appSecret;
     }
-
     public String getPageId() { return pageId; }
 }

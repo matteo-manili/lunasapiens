@@ -74,13 +74,27 @@ public class AppConfig implements WebMvcConfigurer {
 
 
     @Bean
+    public GoogleRecaptchaConfig getRecaptchaKeys() {
+        GoogleRecaptchaConfig googleRecaptchaConfig;
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
+                    "recaptcha.secret.key", "recaptcha.public.key")) );
+            googleRecaptchaConfig = new GoogleRecaptchaConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
+        }else{
+            googleRecaptchaConfig = new GoogleRecaptchaConfig( env.getProperty("recaptcha.secret.key"), env.getProperty("recaptcha.public.key") );
+        }
+        return googleRecaptchaConfig;
+    }
+
+
+
+
+    @Bean
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
         if (Utils.isLocalhost()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
-                    "api.facebook.appid",
-                    "api.facebook.appsecret",
-                    "api.facebook.idpage" )) );
+                    "api.facebook.appid", "api.facebook.appsecret", "api.facebook.idpage" )) );
             facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
             facebookConfig = new FacebookConfig( env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"), env.getProperty("api.facebook.idpage") );

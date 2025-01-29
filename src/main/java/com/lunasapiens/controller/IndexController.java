@@ -1,6 +1,8 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
+import com.lunasapiens.config.ApiGeonamesConfig;
+import com.lunasapiens.config.GoogleRecaptchaConfig;
 import com.lunasapiens.dto.*;
 
 import com.lunasapiens.filter.RateLimiterUser;
@@ -41,6 +43,9 @@ public class IndexController extends BaseController {
     @Autowired
     private EmailService emailService;
 
+
+    @Autowired
+    private GoogleRecaptchaConfig getRecaptchaKeys;
 
 
 
@@ -100,12 +105,6 @@ public class IndexController extends BaseController {
 
 
 
-    private static final String RECAPTCHA_SECRET_KEY = "6Ld0P8YqAAAAACshPmI-ppFvIl7Av6EO6yuqPErg"; // Usa la tua chiave segreta
-
-    // segreta: vedere: lunasapiens-application-db.properties (in C:\intellij_work)
-    // publica: 6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR
-
-
     @PostMapping("/contattiSubmit")
     public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                  @RequestParam("g-recaptcha-response") String recaptchaResponse) {
@@ -133,7 +132,7 @@ public class IndexController extends BaseController {
     // Metodo per verificare il token reCAPTCHA
     private boolean verifyRecaptcha(String recaptchaResponse) {
         String url = "https://www.google.com/recaptcha/api/siteverify";
-        String params = "secret=" + RECAPTCHA_SECRET_KEY + "&response=" + recaptchaResponse;
+        String params = "secret=" + getRecaptchaKeys.getSecretKey() + "&response=" + recaptchaResponse;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url + "?" + params, HttpMethod.POST, HttpEntity.EMPTY, String.class);
