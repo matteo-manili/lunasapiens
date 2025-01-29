@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
     <th:block th:fragment="scripts">
-        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
+        <script src="https://www.google.com/recaptcha/api.js"></script>
     </th:block>
 </head>
 <body>
@@ -58,32 +58,17 @@
 
             </div>
         </form>
-
-
     </div>
 </div>
-
 <!-- Finestra di attesa -->
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
-
-
 <script>
-
-
     function onSubmit(token) {
         showLoadingOverlay(); // Mostra l'animazione di caricamento
         document.getElementById("contact-form").submit();
     }
-
-
-
-
-
 </script>
-
-
-
 </body>
 </html>
