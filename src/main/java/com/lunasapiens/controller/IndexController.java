@@ -112,7 +112,7 @@ public class IndexController extends BaseController {
         // 2. Verifica se ci sono errori di validazione nel form
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
-            return "redirect:/error";
+            return "redirect:/contatti";
         }
 
         // 3. Se la verifica è passata, invia l'email
