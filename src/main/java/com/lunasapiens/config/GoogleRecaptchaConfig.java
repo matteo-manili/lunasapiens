@@ -3,7 +3,6 @@ package com.lunasapiens.config;
 public class GoogleRecaptchaConfig {
 
 
-
     private String secretKey;
     private String publicKey;
 

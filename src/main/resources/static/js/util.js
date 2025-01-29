@@ -36,6 +36,11 @@ function showLoadingOverlay() {
     document.getElementById('loadingOverlay').style.display = 'flex';
 }
 
+function hideLoadingOverlay() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+
 
 <!-- per fare la WPA -->
 if ('serviceWorker' in navigator) {

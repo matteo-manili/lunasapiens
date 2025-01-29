@@ -17,10 +17,10 @@
     <h1 class="mb-4">Contatti</h1>
 
     <div class="bg-light p-4 rounded-3 mb-3 ">
-
         <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
-        <form th:action="@{/contattiSubmit}" th:object="${contactForm}" id="contact-form" method="post" onsubmit="showLoadingOverlay()">
+        <form th:action="@{/contattiSubmit}" th:object="${contactForm}" id="contact-form" method="post">
+
             <div class="row gy-3 gy-xl-4 p-xl-4 p-4">
 
                 <div class="col-12">
@@ -45,23 +45,18 @@
                     <textarea class="form-control" id="message" th:field="*{message}" rows="3" required></textarea>
                 </div>
 
+
                 <div class="col-12">
                     <div class="d-grid">
-                        <button class="btn btn-primary btn-lg" type="submit">Invia Messaggio</button>
+                        <button class="btn btn-primary btn-lg" type="button" onclick="submitForm()">Invia Messaggio</button>
                     </div>
                 </div>
-
                 <input type="hidden" id="recaptchaResponse" name="recaptchaResponse">
+
 
             </div>
         </form>
-        <script>
-            // Funzione di callback per gestire il token
-            function onSubmit(token) {
-                alert(token)
-                document.getElementById("contact-form").submit(); // Sostituisci "contact-form" con l'ID effettivo del form
-            }
-        </script>
+
 
     </div>
 </div>
@@ -72,22 +67,22 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
 
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
+<!-- Script reCAPTCHA -->
+<script src="https://www.google.com/recaptcha/enterprise.js?render='6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
 <script>
-    // Funzione che invia il token di reCAPTCHA al server quando l'utente invia il form
-    function onSubmit(token) {
-        alert("Token: " + token);  // Mostra il token per il debug
-        document.getElementById("contact-form").submit();  // Invia il form al server
-    }
-
-    // Richiama reCAPTCHA al momento dell'invio del form
     function submitForm() {
+        showLoadingOverlay(); // Mostra l'animazione di caricamento
+
         grecaptcha.execute('6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR', {action: 'submit'}).then(function(token) {
-            document.getElementById('recaptchaResponse').value = token;  // Memorizza il token nel form
+            document.getElementById('recaptchaResponse').value = token;  // Memorizza il token reCAPTCHA
             document.getElementById("contact-form").submit();  // Invia il form
+        }).catch(function(error) {
+            console.error("Errore reCAPTCHA:", error);
+            hideLoadingOverlay(); // Nasconde l'animazione se c'è un errore
         });
     }
 </script>
+
 
 
 </body>
