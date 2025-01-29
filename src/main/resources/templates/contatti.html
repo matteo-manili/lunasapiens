@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Contatti</title>
     <th:block th:fragment="meta">
     <meta name="description" content="Contatta il team di LunaSapiens.com per qualsiasi domanda o richiesta. Compila il modulo con il tuo nome, email e messaggio e ricevi assistenza per le tue esigenze astrologiche e servizi offerti. Siamo qui per aiutarti e rispondere alle tue domande!">
@@ -9,10 +9,6 @@
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
-    <th:block th:fragment="scripts">
-        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
-    </th:block>
-
 </head>
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
@@ -49,22 +45,23 @@
                     <textarea class="form-control" id="message" th:field="*{message}" rows="3" required></textarea>
                 </div>
 
-                <!-- Aggiungi il widget di reCAPTCHA -->
-                <div class="col-12">
-                    <div class="g-recaptcha"
-                         data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
-                         data-callback="onSubmit"
-                         data-action="submit">
-                    </div>
-                </div>
-
                 <div class="col-12">
                     <div class="d-grid">
                         <button class="btn btn-primary btn-lg" type="submit">Invia Messaggio</button>
                     </div>
                 </div>
+
+                <input type="hidden" id="recaptchaResponse" name="recaptchaResponse">
+
             </div>
         </form>
+        <script>
+            // Funzione di callback per gestire il token
+            function onSubmit(token) {
+                alert(token)
+                document.getElementById("contact-form").submit(); // Sostituisci "contact-form" con l'ID effettivo del form
+            }
+        </script>
 
     </div>
 </div>
@@ -74,12 +71,24 @@
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
+
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
 <script>
-    // Funzione di callback per gestire il token
+    // Funzione che invia il token di reCAPTCHA al server quando l'utente invia il form
     function onSubmit(token) {
-        document.getElementById("contact-form").submit(); // Sostituisci "contact-form" con l'ID effettivo del form
+        alert("Token: " + token);  // Mostra il token per il debug
+        document.getElementById("contact-form").submit();  // Invia il form al server
+    }
+
+    // Richiama reCAPTCHA al momento dell'invio del form
+    function submitForm() {
+        grecaptcha.execute('6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR', {action: 'submit'}).then(function(token) {
+            document.getElementById('recaptchaResponse').value = token;  // Memorizza il token nel form
+            document.getElementById("contact-form").submit();  // Invia il form
+        });
     }
 </script>
+
 
 </body>
 </html>

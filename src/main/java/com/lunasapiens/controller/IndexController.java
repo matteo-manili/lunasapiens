@@ -1,12 +1,11 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
-import com.lunasapiens.config.ApiGeonamesConfig;
-import com.lunasapiens.config.GoogleRecaptchaConfig;
 import com.lunasapiens.dto.*;
 
 import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.service.EmailService;
+import com.lunasapiens.service.RecaptchaVerificationService;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
@@ -17,15 +16,11 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -43,10 +38,8 @@ public class IndexController extends BaseController {
     @Autowired
     private EmailService emailService;
 
-
     @Autowired
-    private GoogleRecaptchaConfig getRecaptchaKeys;
-
+    private RecaptchaVerificationService recaptchaVerificationService;
 
 
     @GetMapping("/")
@@ -110,17 +103,16 @@ public class IndexController extends BaseController {
                                  @RequestParam("g-recaptcha-response") String recaptchaResponse) {
         logger.info("sono in contattiSubmit");
 
+        // 1. Verifica il token reCAPTCHA
+        if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
+            return "redirect:/contatti";
+        }
 
-        // 1. Verifica se ci sono errori di validazione nel form
+        // 2. Verifica se ci sono errori di validazione nel form
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
             return "redirect:/error";
-        }
-
-        // 2. Verifica il token reCAPTCHA
-        if (!verifyRecaptcha(recaptchaResponse)) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Verifica reCAPTCHA fallita. Riprova.");
-            return "redirect:/contatti"; // Torna al form se la verifica fallisce
         }
 
         // 3. Se la verifica è passata, invia l'email
@@ -129,17 +121,7 @@ public class IndexController extends BaseController {
         return "redirect:/contatti";
     }
 
-    // Metodo per verificare il token reCAPTCHA
-    private boolean verifyRecaptcha(String recaptchaResponse) {
-        String url = "https://www.google.com/recaptcha/api/siteverify";
-        String params = "secret=" + getRecaptchaKeys.getSecretKey() + "&response=" + recaptchaResponse;
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(url + "?" + params, HttpMethod.POST, HttpEntity.EMPTY, String.class);
-
-        // Controlla se la risposta contiene "success": true
-        return response.getBody().contains("\"success\": true");
-    }
 
 
     @GetMapping("/info-privacy")
