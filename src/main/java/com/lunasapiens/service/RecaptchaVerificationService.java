@@ -6,6 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
+/**
+ * Andare su https://www.google.com/recaptcha/about/
+ * Andare su v3 Admin Console il quale porta a: https://www.google.com/recaptcha/admin/site/717635444
+ *
+ * Il settaggio domini e chiavi si trovano su
+ * https://www.google.com/recaptcha/admin/site/717635444/settings
+ *
+ * Panoramica e codice di integrazione
+ * https://console.cloud.google.com/security/recaptcha/6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR/edit?authuser=0&inv=1&invt=AboGjg&project=lunasapiensconta-1738104677613
+ */
+
 @Service
 public class RecaptchaVerificationService {
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
     <title th:fragment="title">Luna Sapiens | Contatti</title>
     <th:block th:fragment="meta">
     <meta name="description" content="Contatta il team di LunaSapiens.com per qualsiasi domanda o richiesta. Compila il modulo con il tuo nome, email e messaggio e ricevi assistenza per le tue esigenze astrologiche e servizi offerti. Siamo qui per aiutarti e rispondere alle tue domande!">
@@ -8,6 +8,9 @@
     </th:block>
     <th:block th:fragment="links">
         <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
     </th:block>
 </head>
 <body>
@@ -20,7 +23,6 @@
         <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
         <form th:action="@{/contattiSubmit}" th:object="${contactForm}" id="contact-form" method="post">
-
             <div class="row gy-3 gy-xl-4 p-xl-4 p-4">
 
                 <div class="col-12">
@@ -45,14 +47,14 @@
                     <textarea class="form-control" id="message" th:field="*{message}" rows="3" required></textarea>
                 </div>
 
-
                 <div class="col-12">
                     <div class="d-grid">
-                        <button class="btn btn-primary btn-lg" type="button" onclick="submitForm()">Invia Messaggio</button>
+                        <button class="g-recaptcha btn btn-primary btn-lg"
+                                data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
+                                data-callback="onSubmit"
+                                data-action="submit">Invia Messaggio</button>
                     </div>
                 </div>
-                <input type="hidden" id="recaptchaResponse" name="recaptchaResponse">
-
 
             </div>
         </form>
@@ -67,21 +69,18 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
 
-<!-- Script reCAPTCHA -->
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"></script>
-
 <script>
-    function submitForm() {
-        showLoadingOverlay(); // Mostra l'animazione di caricamento
 
-        grecaptcha.execute('6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR', {action: 'submit'}).then(function(token) {
-            document.getElementById('recaptchaResponse').value = token;  // Memorizza il token reCAPTCHA
-            document.getElementById("contact-form").submit();  // Invia il form
-        }).catch(function(error) {
-            console.error("Errore reCAPTCHA:", error);
-            hideLoadingOverlay(); // Nasconde l'animazione se c'è un errore
-        });
+
+    function onSubmit(token) {
+        showLoadingOverlay(); // Mostra l'animazione di caricamento
+        document.getElementById("contact-form").submit();
     }
+
+
+
+
+
 </script>
 
 
