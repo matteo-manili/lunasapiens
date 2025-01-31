@@ -87,9 +87,6 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
-
-
-
     @Bean
     public S3ClientConfig s3ClientConfig() {
         if(Utils.isLocalhost()) {
@@ -100,16 +97,7 @@ public class AppConfig implements WebMvcConfigurer {
             return new S3ClientConfig(env.getProperty("aws.access.key.id"), env.getProperty("aws.secret.access.key"),
                     env.getProperty("aws.region"), env.getProperty("aws.s3.bucket.name"));
         }
-
     }
-
-
-
-
-
-
-
-
 
 
     @Bean

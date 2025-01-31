@@ -48,6 +48,8 @@ public class S3Controller extends BaseController {
 
     /**
      * Endpoint per ottenere l'URL presigned per il download di un file
+     * sarebbe la creazione di un url che ha una validità temporanea definita e che è usato per scaricare un'immagine (o un file)
+     * del bucket dall'esterno senza autenticazione.
      */
     @GetMapping("/s3-generate-presigned-url/{fileName}")
     public ResponseEntity<String> generatePresignedUrl(@PathVariable String fileName) {

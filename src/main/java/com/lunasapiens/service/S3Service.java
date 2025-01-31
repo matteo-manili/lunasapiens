@@ -29,7 +29,6 @@ public class S3Service {
     private final String bucketName;
 
 
-
     @Autowired
     public S3Service(S3ClientConfig s3ClientConfig) {
 
