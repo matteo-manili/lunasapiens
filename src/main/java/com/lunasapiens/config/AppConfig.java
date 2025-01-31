@@ -2,6 +2,7 @@ package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.lunasapiens.Utils;
+import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -50,6 +51,14 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * Imposta la dimensione massima di un file caricato su 5 MB (per l'upload delle immagini in EditorArticleController)
+     */
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement("", 6 * 1024 * 1024, 6 * 1024 * 1024, 0); // 6MB
+        return multipartConfigElement;
+    }
 
     @Bean
     public JwtElements.JwtRsaKeys jwtRsaKeys() {

@@ -44,8 +44,7 @@ public class SecurityConfig {
             // evitando di richiederlo su richieste GET o HEAD che non sono solitamente soggette a CSRF.
             .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers("/"+ Constants.DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE)
-
+                    .ignoringRequestMatchers("/private/"+ Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
             )
 
             //  STATELESS - IF_REQUIRED (se uso STATELESS non funzionano i form perché spring non vede l'autienticazione)

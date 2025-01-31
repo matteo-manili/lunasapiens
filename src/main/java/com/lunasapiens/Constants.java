@@ -35,7 +35,7 @@ public class Constants {
     public static final String DOM_LUNA_SAPIENS_SUBSCRIBE_TEMA_NATALE = "subscribe-tema-natale";
     public static final String DOM_LUNA_SAPIENS_CONFIRM_EMAIL_TEMA_NATALE = "confirm-email-subscription-tema-natale";
 
-    public static final String DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE = "private/upload-image-article";
+    public static final String DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE = "upload-image-article";
     public static final String DOM_LUNA_SAPIENS_IMAGES_ARTICLE = "images-article";
 
     public static final DateTimeFormatter DATE_TIME_LOCAL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -46,7 +46,7 @@ public class Constants {
     public static final String SKIP_EMAIL_SAVE = "skipEmailSave";
 
     public static final String VIDEO_CACHE = "videoCache";
-    public static final String IMAGES_ARTICLE = "imagesArticleCache";
+    public static final String IMAGES_ARTICLE_CACHE = "imagesArticleCache";
 
 
 

@@ -16,6 +16,7 @@ import org.springframework.core.io.InputStreamResource;
 
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -66,6 +67,32 @@ public class S3Service {
             throw new IOException("Errore durante il caricamento del file: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
+
+
+    public FileWithMetadata getImageFromS3(String fileName) throws IOException {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+
+        try (ResponseInputStream<GetObjectResponse> s3ObjectInputStream = s3Client.getObject(getObjectRequest);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = s3ObjectInputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+            // Ottieni il Content-Type dai metadati della risposta
+            String contentType = s3ObjectInputStream.response().contentType();
+            return new FileWithMetadata(byteArrayOutputStream.toByteArray(), contentType);
+        } catch (S3Exception e) {
+            return null;
+        }
+    }
+
+
+
+
 
     // Scarica un file da S3
     public InputStreamResource downloadFile(String fileName) throws IOException {

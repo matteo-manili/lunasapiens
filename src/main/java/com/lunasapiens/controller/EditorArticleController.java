@@ -2,24 +2,29 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.ArticleContent;
-import com.lunasapiens.entity.ArticleImage;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.repository.ArticleImageRepository;
+import com.lunasapiens.service.FileWithMetadata;
+import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +39,7 @@ public class EditorArticleController extends BaseController {
     private ArticleContentRepository articleContentRepository;
 
     @Autowired
-    private ArticleImageRepository articleImageRepository;
+    private S3Service s3Service;
 
 
     /**
@@ -49,23 +54,69 @@ public class EditorArticleController extends BaseController {
         return "blog";
     }
 
+    /**
+     * private/upload-image-article
+     */
+    @PostMapping("/private/" + Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
+        if (!isMatteoManilIdUser()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
+        }
+        try {
+            logger.info("Sono in upload-image-article");
+            // Validazione del tipo MIME
+            if (!file.getContentType().startsWith("image/")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Formato file non supportato. Carica un'immagine valida."));
+            }
+            // Validazione della dimensione del file (massimo 6 MB)
+            if (file.getSize() > 6_000_000) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "File troppo grande. La dimensione massima è 6MB."));
+            }
+
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date());
+            // Trova l'estensione del file originale
+            int lastDotIndex = file.getOriginalFilename().lastIndexOf(".");
+            String extension = (lastDotIndex != -1) ? file.getOriginalFilename().substring(lastDotIndex) : "";
+            // Crea il nuovo nome file con il timestamp
+            String fileName = "image_" + timestamp + extension;
+
+            s3Service.uploadFile(fileName, file.getInputStream());
+
+            // Creazione dell'URL per recuperare l'immagine
+            String imageUrl = "/" + Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE + "/" + fileName;
+            // Risposta con l'URL per CKEditor
+            Map<String, Object> response = new HashMap<>();
+            response.put("url", imageUrl);
+            response.put("default", imageUrl);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Errore durante l'upload dell'immagine", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Si è verificato un errore durante il caricamento dell'immagine."));
+        }
+    }
+
 
     /**
      * Retrive Image Public e in Cache
      */
-    @Cacheable(value = Constants.IMAGES_ARTICLE, key = "#idImage")
-    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{idImage}")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long idImage) {
-        logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{id}");
-        Optional<ArticleImage> image = articleImageRepository.findById(idImage);
-        if (image.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    @Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String nameImage) {
+        logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
+        try {
+            // Recupera i byte dell'immagine dal bucket S3
+            FileWithMetadata fileWithMetadata = s3Service.getImageFromS3(nameImage);
+            return ResponseEntity.ok()
+                    .header("Content-Type", fileWithMetadata.getContentType())
+                    .body(fileWithMetadata.getData());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok()
-                .header("Content-Type", image.get().getContentType())
-                .body(image.get().getData());
     }
-
 
 
     @GetMapping("/private/editorArticles")
@@ -89,23 +140,24 @@ public class EditorArticleController extends BaseController {
         }
         try {
             ArticleContent articleContent;
-            List<Long> newImageIds = extractImageCodes(content); // Estrai le immagini dal nuovo contenuto
+            List<String> newImageNames = extractImageNames(content); // Estrai le immagini dal nuovo contenuto
             if (id.isPresent()) {
                 // Aggiorna un articolo esistente
                 articleContent = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
                 // Trova le immagini attualmente associate
-                List<Long> oldImageIds = extractImageCodes(articleContent.getContent());
+                List<String> oldImageNames = extractImageNames(articleContent.getContent());
                 // Trova le immagini da eliminare (presenti prima ma non più utilizzate)
-                List<Long> imagesToDelete = new ArrayList<>(oldImageIds);
-                imagesToDelete.removeAll(newImageIds); // Rimuovi le immagini ancora presenti nel nuovo contenuto
+                List<String> imagesToDelete = new ArrayList<>(oldImageNames);
+                imagesToDelete.removeAll(newImageNames); // Rimuovi le immagini ancora presenti nel nuovo contenuto
                 // Elimina le immagini non più utilizzate
-                imagesToDelete.forEach(imageId -> {
-                    articleImageRepository.findById(imageId).ifPresent(image -> {
-                        articleImageRepository.delete(image);
-                        logger.info("Immagine con ID " + imageId + " cancellata.");
-                    });
-                });
+
+                for( String imgDelete : imagesToDelete ){
+                    Optional<FileWithMetadata> imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
+                    if(imageOptional.isPresent()){
+                        s3Service.deleteFile(imgDelete);
+                    }
+                }
             } else {
                 // Crea un nuovo articolo
                 articleContent = new ArticleContent();
@@ -143,47 +195,6 @@ public class EditorArticleController extends BaseController {
 
 
 
-    /**
-     * private/upload-image-article
-     */
-    @PostMapping("/" + Constants.DOM_LUNA_SAPIENS_PRIVATE_UPLOAD_IMAGE_ARTICLE)
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
-        if (!isMatteoManilIdUser()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
-        }
-        try {
-            logger.info("Sono in upload-image-article");
-            // Validazione del tipo MIME
-            if (!file.getContentType().startsWith("image/")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Formato file non supportato. Carica un'immagine valida."));
-            }
-            // Validazione della dimensione del file (massimo 2 MB)
-            if (file.getSize() > 2_000_000) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "File troppo grande. La dimensione massima è 2MB."));
-            }
-            // Creazione dell'immagine senza associare un articolo
-            ArticleImage image = new ArticleImage();
-            image.setFilename(file.getOriginalFilename());
-            image.setData(file.getBytes());
-            image.setContentType(file.getContentType());
-            articleImageRepository.save(image);
-            // Creazione dell'URL per recuperare l'immagine
-            String imageUrl = "/" + Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE + "/" + image.getId();
-            // Risposta con l'URL per CKEditor
-            Map<String, Object> response = new HashMap<>();
-            response.put("url", imageUrl);
-            response.put("default", imageUrl);
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            logger.error("Errore durante l'upload dell'immagine", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Si è verificato un errore durante il caricamento dell'immagine."));
-        }
-    }
-
 
     @DeleteMapping("/private/deleteArticle/{id}")
     public String deleteArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
@@ -195,45 +206,95 @@ public class EditorArticleController extends BaseController {
         // Trova l'articolo
         articleContentRepository.findById(id).ifPresent(article -> {
             // Estrai i codici immagine dal contenuto
-            List<Long> imageIds = extractImageCodes(article.getContent());
-            logger.info("Codici immagine trovati nell'articolo: " + imageIds);
-
-            // Cancella le immagini associate
-            imageIds.forEach(imageId -> {
-                articleImageRepository.findById(imageId).ifPresent(image -> {
-                    articleImageRepository.delete(image);
-                    logger.info("Immagine con ID " + imageId + " cancellata.");
-                });
-            });
-
+            List<String> imagesNames = extractImageNames(article.getContent());
+            logger.info("Nomi immagine trovati nell'articolo: " + imagesNames);
+            try {
+                for(String imgDelete : imagesNames){
+                    Optional<FileWithMetadata> imageOptional = null;
+                        imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
+                    if(imageOptional.isPresent()){
+                        s3Service.deleteFile(imgDelete);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             // Cancella l'articolo
             articleContentRepository.delete(article);
             logger.info("Articolo cancellato con successo.");
         });
-
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo e immagini cancellati con successo!");
         return "redirect:/private/editorArticles";
     }
 
 
 
-    private static List<Long> extractImageCodes(String html) {
+    private static List<String> extractImageNames(String html) {
         // Lista per memorizzare i codici trovati
-        List<Long> imageCodes = new ArrayList<>();
+        List<String> imageCodes = new ArrayList<>();
         // Regex per trovare i codici nelle sorgenti delle immagini
-        String regex = "src=\"/images-article/(\\d+)\"";
+        String regex = "src=\"/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/(\\d+)\"";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(html);
         // Trova tutti i match e aggiungi i codici alla lista
         while (matcher.find()) {
             String code = matcher.group(1); // Il codice è il primo gruppo catturato
-            imageCodes.add(Long.parseLong(code)); // Converte il codice in Long e lo aggiunge
+            imageCodes.add(code); // Aggiungi direttamente il codice come String
         }
         return imageCodes;
     }
 
 
+    /************** NON USO ******************* */
+    /************** NON USO ******************* */
+    /************** NON USO ******************* */
+    /************** NON USO ******************* */
 
+
+
+    /**
+     * Endpoint per il download di un file direttamente
+     */
+    @GetMapping("/s3-download/{fileName}")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) {
+        try {
+            // Recupera il contenuto del file dal bucket S3
+            InputStreamResource resource = s3Service.downloadFile(fileName);
+
+            // Restituisci il file con il giusto Content-Type
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)  // O altre tipologie se conosci il tipo di file
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .body(resource);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+
+    /**
+     * Endpoint per ottenere l'URL presigned per il download di un file
+     * sarebbe la creazione di un url che ha una validità temporanea definita e che è usato per scaricare un'immagine (o un file)
+     * del bucket dall'esterno senza autenticazione.
+     */
+    @GetMapping("/s3-generate-presigned-url/{fileName}")
+    public ResponseEntity<String> generatePresignedUrl(@PathVariable String fileName) {
+        try {
+            // Genera l'URL presigned per il download del file
+            URL presignedUrl = s3Service.generatePresignedUrl(fileName, Duration.ofMinutes(15));
+
+            if (presignedUrl != null) {
+                return ResponseEntity.ok(presignedUrl.toString());
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Errore nella generazione dell'URL presigned");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore interno: " + e.getMessage());
+        }
+    }
 
 
 
