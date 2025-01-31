@@ -43,7 +43,9 @@ public class S3Service {
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
 
-        // Creazione del presigner con regione e credenziali
+        // Creazione del presigner con regione e credenziali.
+        // Cioè la creazione di un url che ha una validità temporanea definita e che è usato per scaricare un'immagine (o un file)
+        // del bucket dall'esterno senza autenticazione
         this.s3Presigner = S3Presigner.builder()
                 .region(Region.of(s3ClientConfig.getRegion()))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))

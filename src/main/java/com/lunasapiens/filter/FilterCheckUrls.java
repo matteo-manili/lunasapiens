@@ -109,8 +109,11 @@ public class FilterCheckUrls extends OncePerRequestFilter {
                 // Imposta un flash attribute per indicare al controller di non salvare l'email
                 request.setAttribute(Constants.SKIP_EMAIL_SAVE, true);
                 response.setStatus(Constants.TOO_MANY_REQUESTS_STATUS_CODE);
-                response.getWriter().write("Too many requests from this IP");
-                response.getWriter().flush();
+                // Verifica se la risposta è già stata commessa prima di scrivere sulla risposta
+                if (!response.isCommitted()) {
+                    response.getWriter().write("Too many requests from this IP");
+                    response.getWriter().flush();
+                }
                 return; // Termina il filtro senza tentare il redirect
             }
             // Incrementa il conteggio delle richieste per quell'indirizzo IP di 1
