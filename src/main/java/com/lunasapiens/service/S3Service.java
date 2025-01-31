@@ -32,18 +32,14 @@ public class S3Service {
 
     @Autowired
     public S3Service(S3ClientConfig s3ClientConfig) {
-
         this.bucketName = s3ClientConfig.getBucketName();
-
         AwsCredentials credentials = AwsBasicCredentials.create(
                 s3ClientConfig.getAccessKey(), s3ClientConfig.getSecretKey());
-
         // Creazione del client S3 con credenziali statiche
         this.s3Client = S3Client.builder()
                 .region(Region.of(s3ClientConfig.getRegion()))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
-
         // Creazione del presigner con regione e credenziali.
         // Cioè la creazione di un url che ha una validità temporanea definita e che è usato per scaricare un'immagine (o un file)
         // del bucket dall'esterno senza autenticazione
@@ -60,7 +56,6 @@ public class S3Service {
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
-
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
         } catch (S3Exception e) {
@@ -74,7 +69,6 @@ public class S3Service {
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
-
         try (ResponseInputStream<GetObjectResponse> s3ObjectInputStream = s3Client.getObject(getObjectRequest);
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
@@ -91,6 +85,18 @@ public class S3Service {
     }
 
 
+    // Elimina un file da S3
+    public void deleteFile(String fileName) throws IOException {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+        try {
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            throw new IOException("Errore durante l'eliminazione del file: " + e.awsErrorDetails().errorMessage(), e);
+        }
+    }
 
 
 
@@ -112,19 +118,7 @@ public class S3Service {
         }
     }
 
-    // Elimina un file da S3
-    public void deleteFile(String fileName) throws IOException {
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
 
-        try {
-            s3Client.deleteObject(deleteObjectRequest);
-        } catch (S3Exception e) {
-            throw new IOException("Errore durante l'eliminazione del file: " + e.awsErrorDetails().errorMessage(), e);
-        }
-    }
 
     // Genera un URL presigned per il download di un file
     public URL generatePresignedUrl(String fileName, Duration duration) throws IOException {
@@ -132,7 +126,6 @@ public class S3Service {
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
-
         try {
             // Creazione della richiesta per ottenere l'URL presigned
             PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(
