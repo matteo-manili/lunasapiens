@@ -106,7 +106,7 @@ public class IndexController extends BaseController {
 
         // 1. Verifica il token reCAPTCHA
         if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
-            logger.info("verifica reCAPTCHA non valida");
+            logger.warn("verifica reCAPTCHA non valida");
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
             return "redirect:/contatti";
         }
