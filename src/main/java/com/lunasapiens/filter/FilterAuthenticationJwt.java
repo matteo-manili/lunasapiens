@@ -45,9 +45,6 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
     private ProfiloUtenteRepository profiloUtenteRepository;
 
 
-    /**
-     * se questi link vengono chiamati per più di Tot volte (MAX_REQUESTS) la applicazione blocca l'ip che richiama questi endpoint
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
