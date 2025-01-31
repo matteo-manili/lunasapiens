@@ -63,7 +63,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*",
                             "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**",
-                            "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*" ).permitAll()    // Accesso pubblico alle risorse specificate
+                            "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*", "/s3-download/*" ).permitAll()    // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()     // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()     // Blocca tutte le altre richieste
             )

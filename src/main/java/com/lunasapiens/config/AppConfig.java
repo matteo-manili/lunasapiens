@@ -89,6 +89,29 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
+
+    @Bean
+    public S3ClientConfig s3ClientConfig() {
+        if(Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
+                    "aws.access.key.id", "aws.secret.access.key", "aws.region", "aws.s3.bucket.name" )) );
+            return new S3ClientConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2), loadPorpoerty.get(3));
+        }else{
+            return new S3ClientConfig(env.getProperty("aws.access.key.id"), env.getProperty("aws.secret.access.key"),
+                    env.getProperty("aws.region"), env.getProperty("aws.s3.bucket.name"));
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
     @Bean
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
