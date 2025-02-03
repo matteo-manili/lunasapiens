@@ -17,13 +17,14 @@
 <div class="container mt-4">
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
     <div class="mb-4">
-        <form th:action="@{/private/saveArticle}" method="post" onsubmit="showLoadingOverlay()">
+        <form th:action="@{/private/saveOrUpdateArticle}" method="post" onsubmit="showLoadingOverlay()">
             <div class="mb-3">
                 <label for="editor" class="form-label">Contenuto dell'articolo</label>
                 <textarea id="editor" name="content" class="form-control" rows="10" placeholder="Inserisci il contenuto qui..."></textarea>
             </div>
             <div class="d-flex justify-content-start">
                 <button type="submit" class="btn btn-primary">Salva</button>
+                <button type="button" class="btn btn-secondary ms-2" onclick="cancelEdit()">Cancella</button>
             </div>
         </form>
     </div>
@@ -129,8 +130,13 @@
 
 <script>
     function confirmDeletion() {
-        return confirm("Sei sicuro di voler cancellare questo articolo?");
+        if (confirm("Sei sicuro di voler cancellare questo articolo?")) {
+            showLoadingOverlay(); // Mostra l'overlay di caricamento
+            return true;  // Permette l'invio del form
+        }
+        return false; // Impedisce l'invio del form se l'utente annulla
     }
+
 
     let editorInstance; // Variabile globale per mantenere l'istanza dell'editor
 
@@ -159,9 +165,24 @@
                     document.querySelector('form').appendChild(articleIdInput);
                 }
                 articleIdInput.value = articleId;
+                // Scorri la pagina in cima al form
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(error => console.error('Errore durante il recupero dell\'articolo:', error));
     }
+
+
+    function cancelEdit() {
+        let articleIdInput = document.querySelector('#articleIdInput');
+        if (articleIdInput) {
+            articleIdInput.remove(); // Rimuove l'ID dell'articolo per non modificarlo
+        }
+        if (editorInstance) {
+            editorInstance.setData(''); // Resetta l'editor
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Torna in cima alla pagina
+    }
+
 </script>
 
 

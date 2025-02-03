@@ -5,6 +5,10 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +30,13 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
+/**
+ * TODO
+ * c'è un problema. Quando creo o modifico un articolo, se faccio l'upload di una immagine, questa rimane nel server S3 se decido
+ * di non salvare l'articolo.
+ */
 @Controller
 public class EditorArticleController extends BaseController {
 
@@ -49,7 +56,7 @@ public class EditorArticleController extends BaseController {
      */
     @GetMapping("/blog")
     public String blog(Model model) {
-        List<ArticleContent> articles = articleContentRepository.findAllByOrderByIdDesc(); // Recupera tutti gli articoli dal database
+        List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc(); // Recupera tutti gli articoli dal database
         model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
         return "blog";
     }
@@ -74,16 +81,15 @@ public class EditorArticleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("error", "File troppo grande. La dimensione massima è 6MB."));
             }
-
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date());
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
+            // Genera una parte randomica di 3 caratteri (mix di lettere e numeri) usando UUID
+            String randomString = UUID.randomUUID().toString().substring(0, 3);  // Prendi i primi 3 caratteri
             // Trova l'estensione del file originale
             int lastDotIndex = file.getOriginalFilename().lastIndexOf(".");
             String extension = (lastDotIndex != -1) ? file.getOriginalFilename().substring(lastDotIndex) : "";
             // Crea il nuovo nome file con il timestamp
-            String fileName = "image_" + timestamp + extension;
-
+            String fileName = "image_" + timestamp + "_" + randomString + extension;
             s3Service.uploadFile(fileName, file.getInputStream());
-
             // Creazione dell'URL per recuperare l'immagine
             String imageUrl = "/" + Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE + "/" + fileName;
             // Risposta con l'URL per CKEditor
@@ -125,13 +131,13 @@ public class EditorArticleController extends BaseController {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
-        List<ArticleContent> articles = articleContentRepository.findAllByOrderByIdDesc(); // Recupera tutti gli articoli dal database
+        List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc(); // Recupera tutti gli articoli dal database
         model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
         return "private/editorArticles";
     }
 
 
-    @PostMapping("/private/saveArticle")
+    @PostMapping("/private/saveOrUpdateArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
                                       @RequestParam("content") String content, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
@@ -151,11 +157,14 @@ public class EditorArticleController extends BaseController {
                 List<String> imagesToDelete = new ArrayList<>(oldImageNames);
                 imagesToDelete.removeAll(newImageNames); // Rimuovi le immagini ancora presenti nel nuovo contenuto
                 // Elimina le immagini non più utilizzate
-
                 for( String imgDelete : imagesToDelete ){
-                    Optional<FileWithMetadata> imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
-                    if(imageOptional.isPresent()){
-                        s3Service.deleteFile(imgDelete);
+                    try{
+                        Optional<FileWithMetadata> imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
+                        if(imageOptional.isPresent()){
+                            s3Service.deleteFile(imgDelete);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             } else {
@@ -208,16 +217,16 @@ public class EditorArticleController extends BaseController {
             // Estrai i codici immagine dal contenuto
             List<String> imagesNames = extractImageNames(article.getContent());
             logger.info("Nomi immagine trovati nell'articolo: " + imagesNames);
-            try {
-                for(String imgDelete : imagesNames){
+            for(String imgDelete : imagesNames){
+                try {
                     Optional<FileWithMetadata> imageOptional = null;
                         imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
                     if(imageOptional.isPresent()){
                         s3Service.deleteFile(imgDelete);
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             // Cancella l'articolo
             articleContentRepository.delete(article);
@@ -228,7 +237,31 @@ public class EditorArticleController extends BaseController {
     }
 
 
+    public List<String> extractImageNames(String htmlContent) {
+        List<String> imageNames = new ArrayList<>();
+        try {
+            // Analizza l'HTML
+            Document document = Jsoup.parse(htmlContent);
+            // Seleziona tutti gli elementi <img> nel documento
+            Elements imgElements = document.select("img");
 
+            for (Element img : imgElements) {
+                // Estrai il valore dell'attributo "src"
+                String imgSrc = img.attr("src");
+                // Estrai solo il nome del file (senza il percorso)
+                String fileName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1);
+                // Aggiungi il nome del file alla lista
+                imageNames.add(fileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imageNames;
+    }
+
+
+
+/*
     private static List<String> extractImageNames(String html) {
         // Lista per memorizzare i codici trovati
         List<String> imageCodes = new ArrayList<>();
@@ -244,6 +277,8 @@ public class EditorArticleController extends BaseController {
         return imageCodes;
     }
 
+
+ */
 
     /************** NON USO ******************* */
     /************** NON USO ******************* */

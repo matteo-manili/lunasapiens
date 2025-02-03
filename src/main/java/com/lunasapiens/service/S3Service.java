@@ -80,7 +80,8 @@ public class S3Service {
             String contentType = s3ObjectInputStream.response().contentType();
             return new FileWithMetadata(byteArrayOutputStream.toByteArray(), contentType);
         } catch (S3Exception e) {
-            return null;
+            throw new IOException("Errore durante l'eliminazione del file: " + e.awsErrorDetails().errorMessage(), e);
+            //return null;
         }
     }
 

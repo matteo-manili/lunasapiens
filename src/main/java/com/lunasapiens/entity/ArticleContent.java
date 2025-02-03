@@ -3,6 +3,7 @@ package com.lunasapiens.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 public class ArticleContent implements Serializable {
@@ -17,6 +18,14 @@ public class ArticleContent implements Serializable {
     private String content;
 
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+
+    @PrePersist
+    protected void prePersist() {
+        this.createdAt = LocalDateTime.now(); // Imposta la data attuale quando l'articolo viene salvato per la prima volta
+    }
 
 
     public Long getId() {
@@ -35,4 +44,7 @@ public class ArticleContent implements Serializable {
         this.content = content;
     }
 
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
