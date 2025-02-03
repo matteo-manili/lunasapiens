@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * TODO
  * c'è un problema. Quando creo o modifico un articolo, se faccio l'upload di una immagine, questa rimane nel server S3 se decido
- * di non salvare l'articolo.
+ * di non salvare più l'articolo.
  */
 @Controller
 public class EditorArticleController extends BaseController {
