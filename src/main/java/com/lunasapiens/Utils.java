@@ -6,6 +6,8 @@ import de.thmac.swisseph.SweDate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -28,6 +30,29 @@ import java.util.*;
 public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
+
+    public static List<String> extractImageNames(String htmlContent) {
+        List<String> imageNames = new ArrayList<>();
+        try {
+            // Analizza l'HTML
+            Document document = Jsoup.parse(htmlContent);
+            // Seleziona tutti gli elementi <img> nel documento
+            Elements imgElements = document.select("img");
+            for (Element img : imgElements) {
+                // Estrai il valore dell'attributo "src"
+                String imgSrc = img.attr("src");
+                // Estrai solo il nome del file (senza il percorso)
+                String fileName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1);
+                // Aggiungi il nome del file alla lista
+                imageNames.add(fileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imageNames;
+    }
+
 
     public static void creaCookieTokenJwt(HttpServletResponse response, JwtElements.JwtDetails jwtDetails){
         // Creazione del cookie con il token JWT

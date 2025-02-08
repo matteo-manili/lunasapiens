@@ -1,6 +1,7 @@
 package com.lunasapiens;
 
 import com.lunasapiens.service.EmailService;
+import com.lunasapiens.service.S3Service;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import org.slf4j.Logger;
@@ -16,6 +17,9 @@ public class ScheduledTasks {
 
     @Autowired
     private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     private TelegramBotService telegramBotService;
@@ -42,6 +46,14 @@ public class ScheduledTasks {
         if(Utils.isLocalhost() == false) {
             servizioOroscopoDelGiorno.pulisciOldRecordsOroscopoGiornaliero();
             logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
+        }
+    }
+
+    @Scheduled(cron = "0 17 0 * * *", zone = "Europe/Rome")
+    public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {
+        if(Utils.isLocalhost() == false) {
+            s3Service.eliminaImmaginiArticoloNonUtilizzateBucketS3();
+            logger.info("executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3");
         }
     }
 

@@ -1,6 +1,11 @@
 package com.lunasapiens.service;
 
+import com.lunasapiens.Utils;
 import com.lunasapiens.config.S3ClientConfig;
+import com.lunasapiens.entity.ArticleContent;
+import com.lunasapiens.repository.ArticleContentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -21,9 +26,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class S3Service {
+
+    private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
+
+    @Autowired
+    private ArticleContentRepository articleContentRepository;
 
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
@@ -85,6 +98,29 @@ public class S3Service {
         }
     }
 
+    /**
+     * Ritorna la lista di tutte le immagini presenti nel bucket
+     * @return
+     * @throws IOException
+     */
+    public List<String> listAllImagesName() throws IOException {
+        try {
+            ListObjectsV2Request listObjectsRequest = ListObjectsV2Request.builder()
+                    .bucket(bucketName)
+                    .build();
+
+            ListObjectsV2Response listObjectsResponse = s3Client.listObjectsV2(listObjectsRequest);
+
+            return listObjectsResponse.contents().stream()
+                    .map(S3Object::key)
+                    .collect(Collectors.toList());
+
+        } catch (S3Exception e) {
+            throw new IOException("Errore durante il recupero dei file dal bucket: " + e.awsErrorDetails().errorMessage(), e);
+        }
+    }
+
+
 
     // Elimina un file da S3
     public void deleteFile(String fileName) throws IOException {
@@ -98,6 +134,40 @@ public class S3Service {
             throw new IOException("Errore durante l'eliminazione del file: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
+
+
+
+
+    /**
+     * Elimina le immagini presenti nel bucket che non sono usate negli articoli.
+     * Quando faccio l'upload delle immagini e poi non salvo l'articolo, le immagini rimangono nel bucket.
+     */
+    public void eliminaImmaginiArticoloNonUtilizzateBucketS3(){
+        try {
+            // Tutti gli articoli
+            List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
+            List<String> totaliImmaginiArticoli = new ArrayList<>();
+            for(ArticleContent articolo : articles){
+                totaliImmaginiArticoli.addAll( Utils.extractImageNames(articolo.getContent()) );
+            }
+            // lista nomi di tutte le immagini presenti nel bucket
+            List<String> listAllImagesName = listAllImagesName();
+            for( String imageBucket: listAllImagesName ){
+                if ( ! totaliImmaginiArticoli.contains(imageBucket)) {
+                    logger.info("rimuovo l'immagine dal bucket perché non è presente negli articoli: "+imageBucket);
+                    deleteFile(imageBucket);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
 
 
 

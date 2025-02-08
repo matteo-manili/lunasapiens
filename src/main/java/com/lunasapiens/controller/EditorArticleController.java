@@ -1,23 +1,17 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.*;
 
 
@@ -60,6 +52,7 @@ public class EditorArticleController extends BaseController {
         model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
         return "blog";
     }
+
 
     /**
      * private/upload-image-article
@@ -146,13 +139,13 @@ public class EditorArticleController extends BaseController {
         }
         try {
             ArticleContent articleContent;
-            List<String> newImageNames = extractImageNames(content); // Estrai le immagini dal nuovo contenuto
+            List<String> newImageNames = Utils.extractImageNames(content); // Estrai le immagini dal nuovo contenuto
             if (id.isPresent()) {
                 // Aggiorna un articolo esistente
                 articleContent = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
                 // Trova le immagini attualmente associate
-                List<String> oldImageNames = extractImageNames(articleContent.getContent());
+                List<String> oldImageNames = Utils.extractImageNames(articleContent.getContent());
                 // Trova le immagini da eliminare (presenti prima ma non più utilizzate)
                 List<String> imagesToDelete = new ArrayList<>(oldImageNames);
                 imagesToDelete.removeAll(newImageNames); // Rimuovi le immagini ancora presenti nel nuovo contenuto
@@ -168,7 +161,7 @@ public class EditorArticleController extends BaseController {
                     }
                 }
             } else {
-                // Crea un nuovo articolo
+                // Crea un nuovo articolo, MA NON impostare manualmente l'ID
                 articleContent = new ArticleContent();
             }
             // Aggiorna il contenuto dell'articolo
@@ -203,8 +196,6 @@ public class EditorArticleController extends BaseController {
     }
 
 
-
-
     @DeleteMapping("/private/deleteArticle/{id}")
     public String deleteArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
@@ -215,17 +206,17 @@ public class EditorArticleController extends BaseController {
         // Trova l'articolo
         articleContentRepository.findById(id).ifPresent(article -> {
             // Estrai i codici immagine dal contenuto
-            List<String> imagesNames = extractImageNames(article.getContent());
+            List<String> imagesNames = Utils.extractImageNames(article.getContent());
             logger.info("Nomi immagine trovati nell'articolo: " + imagesNames);
             for(String imgDelete : imagesNames){
                 try {
-                    Optional<FileWithMetadata> imageOptional = null;
-                        imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
-                    if(imageOptional.isPresent()){
+                    Optional<FileWithMetadata> imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
+                    if (imageOptional.isPresent()) {
                         s3Service.deleteFile(imgDelete);
+                        logger.info("Immagine eliminata: " + imgDelete);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("Errore nell'eliminazione dell'immagine: " + imgDelete + " - " + e.getMessage(), e);
                 }
             }
             // Cancella l'articolo
@@ -237,59 +228,18 @@ public class EditorArticleController extends BaseController {
     }
 
 
-    public List<String> extractImageNames(String htmlContent) {
-        List<String> imageNames = new ArrayList<>();
-        try {
-            // Analizza l'HTML
-            Document document = Jsoup.parse(htmlContent);
-            // Seleziona tutti gli elementi <img> nel documento
-            Elements imgElements = document.select("img");
-
-            for (Element img : imgElements) {
-                // Estrai il valore dell'attributo "src"
-                String imgSrc = img.attr("src");
-                // Estrai solo il nome del file (senza il percorso)
-                String fileName = imgSrc.substring(imgSrc.lastIndexOf("/") + 1);
-                // Aggiungi il nome del file alla lista
-                imageNames.add(fileName);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return imageNames;
-    }
 
 
 
-/*
-    private static List<String> extractImageNames(String html) {
-        // Lista per memorizzare i codici trovati
-        List<String> imageCodes = new ArrayList<>();
-        // Regex per trovare i codici nelle sorgenti delle immagini
-        String regex = "src=\"/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/(\\d+)\"";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(html);
-        // Trova tutti i match e aggiungi i codici alla lista
-        while (matcher.find()) {
-            String code = matcher.group(1); // Il codice è il primo gruppo catturato
-            imageCodes.add(code); // Aggiungi direttamente il codice come String
-        }
-        return imageCodes;
-    }
-
-
- */
 
     /************** NON USO ******************* */
     /************** NON USO ******************* */
     /************** NON USO ******************* */
     /************** NON USO ******************* */
-
-
 
     /**
      * Endpoint per il download di un file direttamente
-     */
+
     @GetMapping("/s3-download/{fileName}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) {
         try {
@@ -306,13 +256,13 @@ public class EditorArticleController extends BaseController {
                     .body(null);
         }
     }
-
+     */
 
     /**
      * Endpoint per ottenere l'URL presigned per il download di un file
      * sarebbe la creazione di un url che ha una validità temporanea definita e che è usato per scaricare un'immagine (o un file)
      * del bucket dall'esterno senza autenticazione.
-     */
+
     @GetMapping("/s3-generate-presigned-url/{fileName}")
     public ResponseEntity<String> generatePresignedUrl(@PathVariable String fileName) {
         try {
@@ -330,7 +280,7 @@ public class EditorArticleController extends BaseController {
                     .body("Errore interno: " + e.getMessage());
         }
     }
-
+     */
 
 
 }
