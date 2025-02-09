@@ -21,8 +21,6 @@ public class S3ClientConfig {
     public String getSecretKey() {
         return secretKey;
     }
-    public String getRegion() {
-        return region;
-    }
+    public String getRegion() { return region; }
     public String getBucketName() { return bucketName; }
 }
