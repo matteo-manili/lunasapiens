@@ -142,12 +142,17 @@ public class ServizioTemaNatale {
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
         Properties lunaSegniProperties = propertiesConfig.lunaSegni(); // non lo uso....
-
         Properties transitiPianetiSegniTMProperties = propertiesConfig.transitiPianetiSegni_TemaNatale();
-
 
         ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
+
+        Properties aspettiCongiunzione = propertiesConfig.aspettiCongiunzione();
+        Properties aspettiQuadrato = propertiesConfig.aspettiQuadrato();
+        Properties aspettiTrigono = propertiesConfig.aspettiTrigono();
+        Properties aspettiSestile = propertiesConfig.aspettiSestile();
+        Properties aspettiOpposizione = propertiesConfig.aspettiOpposizione();
+
 
         //for(Aspetti var: aspetti) {
         //    logger.info( var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName() );
@@ -223,19 +228,46 @@ public class ServizioTemaNatale {
             descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Aspetti</h4><br>");
             size = aspetti.size(); count = 0;
             for (Aspetti var : aspetti) {
-                descTemaNatale.append("- "+var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName());
+                descTemaNatale.append("- "+var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"<br>");
+
+                //logger.info("TIPO ASPETTO: "+var.getTipoAspetto() + " valore prop: "+var.getNumeroPianeta_1()+"_"+var.getNumeroPianeta_2());
+
+                if( Constants.Aspetti.CONGIUNZIONE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiCongiunzione, var) +"<br>");
+
+                }if( Constants.Aspetti.QUADRATO.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiQuadrato, var) +"<br>");
+
+                }if( Constants.Aspetti.TRIGONO.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiTrigono, var) +"<br>");
+
+                }if( Constants.Aspetti.SESTILE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiSestile, var) +"<br>");
+
+                }if( Constants.Aspetti.OPPOSIZIONE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiOpposizione, var) +"<br>");
+                }
                 if (count < size - 1) { descTemaNatale.append("<br>"); }
             }
         }
 
-
         return descTemaNatale;
+    }
+
+    public String getAspettoDescrizione(Properties aspettiProperties, Aspetti var) {
+        String key1 = var.getNumeroPianeta_1() + "_" + var.getNumeroPianeta_2();
+        String value = aspettiProperties.getProperty(key1);
+        if (value == null) {
+            String key2 = var.getNumeroPianeta_2() + "_" + var.getNumeroPianeta_1();
+            value = aspettiProperties.getProperty(key2);
+        }
+        return value;
     }
 
 
 
     public StringBuilder significatiTemaNataleDescrizione() {
-        Properties aspettiPianetiProperties = propertiesConfig.aspettiSignificato();
+        Properties aspettiSignificatoProperties = propertiesConfig.aspettiSignificato();
         Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
         Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
         Properties segniZodProperties = propertiesConfig.segniZodiacali();
@@ -270,7 +302,7 @@ public class ServizioTemaNatale {
         size = aspettiList.size();
         for (int i = 0; i < size; i++) {
             Constants.Aspetti aspetto = aspettiList.get(i);
-            significatiTemaNatale.append("- "+aspetto.getName() +": "+ aspettiPianetiProperties.getProperty(String.valueOf(aspetto.getCode())+"_min") );
+            significatiTemaNatale.append("- "+aspetto.getName() +": "+ aspettiSignificatoProperties.getProperty(String.valueOf(aspetto.getCode())+"_min") );
             if (i < size - 1) { significatiTemaNatale.append("<br>"); }
         }
 

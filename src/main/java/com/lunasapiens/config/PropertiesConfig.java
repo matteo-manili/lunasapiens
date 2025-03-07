@@ -50,6 +50,21 @@ public class PropertiesConfig {
     @Bean
     public Properties transitiPianetiSegni_TemaNatale() { return getProperties("transiti-pianeti-segni_TN.properties"); }
 
+    @Bean
+    public Properties aspettiCongiunzione() { return getProperties("aspetti-congiunzione.properties"); }
+
+    @Bean
+    public Properties aspettiQuadrato() { return getProperties("aspetti-quadrato.properties"); }
+
+    @Bean
+    public Properties aspettiTrigono() { return getProperties("aspetti-trigono.properties"); }
+
+    @Bean
+    public Properties aspettiSestile() { return getProperties("aspetti-sestile.properties"); }
+
+    @Bean
+    public Properties aspettiOpposizione() { return getProperties("aspetti-opposizione.properties"); }
+
 
 
     private Properties getProperties(String fileNameProperties) {
