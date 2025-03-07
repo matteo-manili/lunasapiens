@@ -1,45 +1,31 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.*;
-import com.lunasapiens.dto.*;
 
 import com.lunasapiens.filter.RateLimiterUser;
-import com.lunasapiens.service.EmailService;
-import com.lunasapiens.service.RecaptchaVerificationService;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class IndexController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private RecaptchaVerificationService recaptchaVerificationService;
 
 
     @GetMapping("/")
@@ -82,47 +68,6 @@ public class IndexController extends BaseController {
         }
         return "register";
     }
-
-
-    @GetMapping("/contatti")
-    public String contatti(Model model, Principal principal) {
-        if (principal != null) {
-            ContactFormDTO contactFormDTO = new ContactFormDTO();
-            contactFormDTO.setEmail( principal.getName() );
-            model.addAttribute("contactForm", contactFormDTO);
-        }else{
-            model.addAttribute("contactForm", new ContactFormDTO());
-        }
-        return "contatti";
-    }
-
-
-
-
-    @PostMapping("/contattiSubmit")
-    public String contattiSubmit(@Valid ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                 @RequestParam("g-recaptcha-response") String recaptchaResponse) {
-        logger.info("sono in contattiSubmit");
-
-        // 1. Verifica il token reCAPTCHA
-        if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
-            logger.warn("verifica reCAPTCHA non valida");
-            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
-            return "redirect:/contatti";
-        }
-
-        // 2. Verifica se ci sono errori di validazione nel form
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore invio messaggio!");
-            return "redirect:/contatti";
-        }
-
-        // 3. Se la verifica è passata, invia l'email
-        emailService.inviaEmailContatti(contactForm);
-        redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Messaggio inviato con successo!");
-        return "redirect:/contatti";
-    }
-
 
 
 

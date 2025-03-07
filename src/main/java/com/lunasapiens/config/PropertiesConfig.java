@@ -37,7 +37,7 @@ public class PropertiesConfig {
     }
 
     @Bean
-    public Properties aspettiPianeti() { return getProperties("aspetti-pianeti.properties"); }
+    public Properties aspettiSignificato() { return getProperties("aspetti-significato.properties"); }
 
     @Bean
     public Properties segniZodiacali() { return getProperties("segni-zodiacali.properties"); }

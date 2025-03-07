@@ -118,7 +118,7 @@ public class ServizioOroscopoDelGiorno {
             }
         }
         descrizioneOggi += "</p>";
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
         if(!aspetti.isEmpty()){
             descrizioneOggi += "<p><b>Aspetti:</b><br>";
             for(Aspetti var: aspetti) {
@@ -183,7 +183,7 @@ public class ServizioOroscopoDelGiorno {
 
 
     public StringBuilder domanda_prompt(int numeroSegno) {
-        Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
+        Properties aspettiSignProperties = propertiesConfig.aspettiSignificato();
         Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
         Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
 
@@ -214,7 +214,7 @@ public class ServizioOroscopoDelGiorno {
 
 
         int[] pianetiSignori = segnoZod.getPianetiSignoreDelSegno();
-        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.aspettiListPinaneti(pianeta, aspettiPianetiProperties);
+        ArrayList<Aspetti> aspettiTuttiList = CalcoloAspetti.aspettiListPinaneti(pianeta, aspettiSignProperties);
         List<Integer> aspettiPresentiNelSegno = new ArrayList<>();
         boolean presentePianetaRetrogrado = false; boolean presentiAspetti = false; int contaEventi = 1;
 
@@ -275,7 +275,7 @@ public class ServizioOroscopoDelGiorno {
             domandaBuilder.append("- Significato degli Aspetti:\n");
             for (Constants.Aspetti aspetti : Constants.Aspetti.values()) {
                 if(aspettiPresentiNelSegno.contains(aspetti.getCode())) {
-                    domandaBuilder.append(aspetti.getName()+": "+aspettiPianetiProperties.getProperty( String.valueOf(aspetti.getCode())+"_min")+"\n" );
+                    domandaBuilder.append(aspetti.getName()+": "+aspettiSignProperties.getProperty( String.valueOf(aspetti.getCode())+"_min")+"\n" );
                 }
             }
         }

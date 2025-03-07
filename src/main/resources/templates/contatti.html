@@ -64,11 +64,18 @@
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+
+
 <script>
     function onSubmit(token) {
+        let form = document.getElementById("contact-form");
         showLoadingOverlay(); // Mostra l'animazione di caricamento
-        document.getElementById("contact-form").submit();
+        form.submit();
     }
+
 </script>
+
+
+
 </body>
 </html>

@@ -220,7 +220,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 .append("- Anni dell'Utente: "+calculateAge(datetimeNascita)+"\n")
                 .append("- Luogo di nascita dell'Utente: "+luogoNascita +"\n\n\n")
 
-                .append("- Tema natale dell'Utente:")
+                .append("- Tema natale dell'Utente:"+"\n")
                 .append( Utils.convertHtmlToPlainText(temaNataleDescrizione) );
         return textSystemBuilder;
     }

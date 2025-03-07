@@ -78,7 +78,7 @@ public class ServizioSinastria {
         Properties lunaSegniProperties = propertiesConfig.lunaSegni();
 
         ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
-        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiPianeti());
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
 
         //for(Aspetti var: aspetti) {
         //    logger.info( var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName() );
@@ -165,7 +165,7 @@ public class ServizioSinastria {
 
 
     public StringBuilder significatiSinastriaDescrizione() {
-        Properties aspettiPianetiProperties = propertiesConfig.aspettiPianeti();
+        Properties aspettiPianetiProperties = propertiesConfig.aspettiSignificato();
         Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
         Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
         Properties segniZodProperties = propertiesConfig.segniZodiacali();

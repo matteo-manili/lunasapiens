@@ -1,20 +1,23 @@
 package com.lunasapiens.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 public class ContactFormDTO {
 
 
-    @NotEmpty
+
+    @NotBlank(message = "Il nome è obbligatorio")
     private String name;
 
-    @Email
-    @NotEmpty
+    @NotBlank(message = "L'email è obbligatoria")
+    @Email(message = "Inserisci un'email valida")
     private String email;
 
-    @NotEmpty
+    @NotBlank(message = "Il messaggio è obbligatorio")
     private String message;
+
 
 
     public String getName() {
