@@ -41,16 +41,13 @@ public class OpenAIGptTheokanning {
      */
     public static int calculateTokenCount(List<ChatMessage> messages, int tokensRisposta, Double finalcaratteriPerTokenStima) {
         int totalCharacterCount = 0;
-
         // Calcola il numero totale di caratteri in tutti i messaggi
         for (ChatMessage message : messages) {
             if (message.getContent() != null) {
                 totalCharacterCount += message.getContent().length();
             }
         }
-
         // Applica la regola empirica: 1 token = 4.0 caratteri e aggiungo i tokens per la risposta
-
         int tokensTotali = (int) Math.ceil(totalCharacterCount / finalcaratteriPerTokenStima) + tokensRisposta;
         logger.info( "totalCharacterCount: "+totalCharacterCount + " | tokensTotali: "+tokensTotali );
         return tokensTotali;
@@ -66,14 +63,12 @@ public class OpenAIGptTheokanning {
 
 
     public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensAggiuntiPerRisposta, Double caratteriPerTokenStima, final String modelGpt, String domanda) {
-
         // Inizializza il servizio OpenAI con il client configurato
         OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
         // Inizializza la lista dei messaggi
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new ChatMessage("system", domanda /*"Sei un astrologo che genera."*/ ));
         //messages.add(new ChatMessage("user", domanda));
-
 
         return eseguiOpenAIGptTheokanning(service, temperature, tokensAggiuntiPerRisposta, caratteriPerTokenStima, modelGpt, messages ) ;
     }
@@ -119,12 +114,6 @@ public class OpenAIGptTheokanning {
 
         return risposta;
     }
-
-
-
-
-
-
 
 
 }
