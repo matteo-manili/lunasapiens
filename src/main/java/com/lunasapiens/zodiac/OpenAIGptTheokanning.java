@@ -93,7 +93,7 @@ public class OpenAIGptTheokanning {
 
         // Costruisci la richiesta di completamento
         ChatCompletionRequest request = ChatCompletionRequest.builder()
-                .model( modelGpt ) // Assicurati di utilizzare il modello corretto
+                .model( modelGpt.trim() ) // Assicurati di utilizzare il modello corretto
                 .messages(chatMessageList)
                 .maxTokens(maxTokens)
                 .temperature(temperature)
