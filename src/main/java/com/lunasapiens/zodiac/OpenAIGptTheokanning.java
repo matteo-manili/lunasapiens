@@ -89,6 +89,9 @@ public class OpenAIGptTheokanning {
 
         System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
+
+        System.out.println("Utilizzando il modello: " + modelGpt);
+
         int maxTokens = calculateTokenCount(chatMessageList, tokensAggiuntiPerRisposta, caratteriPerTokenStima);
 
         // Costruisci la richiesta di completamento
