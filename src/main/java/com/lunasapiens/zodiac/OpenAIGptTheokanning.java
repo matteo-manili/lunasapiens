@@ -87,10 +87,7 @@ public class OpenAIGptTheokanning {
      */
     private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, double temperature, int tokensAggiuntiPerRisposta, double caratteriPerTokenStima, String modelGpt, List<ChatMessage> chatMessageList) {
 
-        System.out.println("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
-
-
-        System.out.println("Utilizzando il modello: " + modelGpt);
+        logger.info("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
         int maxTokens = calculateTokenCount(chatMessageList, tokensAggiuntiPerRisposta, caratteriPerTokenStima);
 
