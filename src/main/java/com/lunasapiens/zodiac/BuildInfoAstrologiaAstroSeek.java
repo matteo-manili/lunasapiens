@@ -196,8 +196,8 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
     }
 
 
-
-    public static StringBuilder temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
+    @Deprecated
+    public static StringBuilder temaNataleIstruzioneBOTSystem_OLD(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
         StringBuilder textSystemBuilder = new StringBuilder();
         textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SUL TEMA NATALE DELL'UTENTE, " +
                 "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO IL TEMA NATALE SOTTO DESCRITTO. NON AGGIUNGERE E NON INVENTARE NIENTE " +
@@ -221,6 +221,32 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 .append("- Luogo di nascita dell'Utente: "+luogoNascita +"\n\n\n")
 
                 .append("- Tema natale dell'Utente:"+"\n")
+                .append( Utils.convertHtmlToPlainText(temaNataleDescrizione) );
+        return textSystemBuilder;
+    }
+
+    public static StringBuilder temaNataleIstruzioneBOTSystem(String temaNataleDescrizione, LocalDateTime datetimeNascita, String luogoNascita){
+        StringBuilder textSystemBuilder = new StringBuilder();
+        textSystemBuilder.append("SEI UN ASTROLOGO INFORMATO SUL TEMA NATALE DELL'UTENTE, " +
+                "RISPONDI ALLE DOMANDE DELL'UTENTE RIGUARDO IL TEMA NATALE SOTTO DESCRITTO. " +
+                "NON AGGIUNGERE E NON INVENTARE NIENTE OLTRE LE INFORMAZIONI FORNITE.\n\n")
+
+                .append("- LE CASE ED I PIANETI NELLE CASE, INDICANO LE INCLINAZIONI.\n")
+                .append("Le interpretazioni delle Case vanno fatte in base a: il significato del Segno della Casa, " +
+                        "il significato dei Pianeti nella casa e al significato di Pianeta Retrogrado se il Pianeta è retrogrado.\n\n")
+
+                .append("- GLI ASPETTI INDICANO LE INFLUENZE SULLA PERSONALITA', LE DINAMICHE INTERIORI E LE ESPERIENZE DI VITA.\n\n")
+
+                .append("- I TRANSITI DEI PIANETI INDICANO LE CARATTERISTICHE DELLA PERSONALITÀ.\n\n")
+
+                .append("- Non puoi creare un Tema Natale. Non puoi sapere e interpretare i transiti attuali o di un'altra data. " +
+                        "In astrologia non conosci gli argomenti di: stellium, luna piena, rivoluzione solare.\n\n")
+
+                .append("- Data del Tema Natale e data nascita dell'Utente: "+datetimeNascita.format(Constants.DATE_TIME_FORMATTER) +"\n")
+                .append("- Anni dell'Utente: "+calculateAge(datetimeNascita)+"\n")
+                .append("- Luogo di nascita dell'Utente: "+luogoNascita +"\n\n")
+
+                .append("- TEMA NATALE:"+"\n\n")
                 .append( Utils.convertHtmlToPlainText(temaNataleDescrizione) );
         return textSystemBuilder;
     }

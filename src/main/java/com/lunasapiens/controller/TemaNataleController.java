@@ -152,14 +152,16 @@ public class TemaNataleController extends BaseController {
         final GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
         StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
-        StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatiTemaNataleDescrizione();
+
+        //StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatiTemaNataleDescrizione();
+        StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatoTemaNatalePianeti();
+        temaNataleDescrizione.append( significatiTemaNataleDescrizione );
 
         AstroChartDTO astroChartDTO = servizioTemaNatale.astroChart_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
         redirectAttributes.addFlashAttribute("planets", astroChartDTO.getPlanets());
         redirectAttributes.addFlashAttribute("cusps", astroChartDTO.getCusps());
 
 
-        temaNataleDescrizione.append( significatiTemaNataleDescrizione );
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione.toString());
 
         String paginaChatId = UUID.randomUUID().toString();

@@ -135,9 +135,8 @@ public class ServizioTemaNatale {
         return temaNataleDescrizione(pianetiList, casePlacideArrayList);
     }
 
-
-
-    public StringBuilder temaNataleDescrizione(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    @Deprecated
+    public StringBuilder temaNataleDescrizione_OLD(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         Properties caseSignificato = propertiesConfig.caseSignificato();
         Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
@@ -207,6 +206,34 @@ public class ServizioTemaNatale {
         }
 
         int size = pianetiTransiti.size(); int count = 0;
+        if (!aspetti.isEmpty()) {
+            descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Aspetti</h4><br>");
+            size = aspetti.size(); count = 0;
+            for (Aspetti var : aspetti) {
+                descTemaNatale.append("- "+var.getNomePianeta_1() + " e " + var.getNomePianeta_2() + " sono in " + Constants.Aspetti.fromCode(var.getTipoAspetto()).getName()+"<br>");
+
+                //logger.info("TIPO ASPETTO: "+var.getTipoAspetto() + " valore prop: "+var.getNumeroPianeta_1()+"_"+var.getNumeroPianeta_2());
+
+                if( Constants.Aspetti.CONGIUNZIONE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiCongiunzione, var));
+
+                }if( Constants.Aspetti.QUADRATO.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiQuadrato, var));
+
+                }if( Constants.Aspetti.TRIGONO.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiTrigono, var));
+
+                }if( Constants.Aspetti.SESTILE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiSestile, var));
+
+                }if( Constants.Aspetti.OPPOSIZIONE.getCode() == var.getTipoAspetto() ){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiOpposizione, var));
+                }
+                if (count < size - 1) { descTemaNatale.append("<br>"); }
+            }
+        }
+
+
         descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Transiti dei Pianeti</h4><br>");
         for (Pianeti var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
@@ -224,6 +251,80 @@ public class ServizioTemaNatale {
             }
         }
 
+        return descTemaNatale;
+    }
+
+
+    public StringBuilder temaNataleDescrizione(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+        Properties caseSignificato = propertiesConfig.caseSignificato();
+        Properties pianetiCaseSignificatoProperties = propertiesConfig.pianetiCaseSignificato();
+        Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
+        Properties lunaSegniProperties = propertiesConfig.lunaSegni(); // non lo uso....
+        Properties transitiPianetiSegniTMProperties = propertiesConfig.transitiPianetiSegni_TemaNatale();
+
+        ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
+        ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
+
+        Properties aspettiCongiunzione = propertiesConfig.aspettiCongiunzione();
+        Properties aspettiQuadrato = propertiesConfig.aspettiQuadrato();
+        Properties aspettiTrigono = propertiesConfig.aspettiTrigono();
+        Properties aspettiSestile = propertiesConfig.aspettiSestile();
+        Properties aspettiOpposizione = propertiesConfig.aspettiOpposizione();
+
+
+        //for(Aspetti var: aspetti) {
+        //    logger.info( var.getNomePianeta_1() + " e "+ var.getNomePianeta_2() + " sono in "+ Constants.Aspetti.fromCode(var.getTipoAspetto()).getName() );
+        //}
+
+        //Sole: Indica l'ego, l'identità e il percorso di vita. Il segno zodiacale in cui si trova il Sole è quello comunemente noto come "segno zodiacale" di una persona.
+        //Luna: Rappresenta le emozioni, i bisogni emotivi e l'inconscio. Il segno in cui si trova la Luna riflette come una persona vive e esprime le proprie emozioni.
+        //Ascendente: È il segno che sorge all'orizzonte orientale al momento della nascita. Rappresenta l'immagine esterna, la prima impressione che si dà agli altri e il modo in cui si affronta la vita.
+
+        // Se non sono presenti pianeti nella prima casa bisognerà tenere presente del segno che occupa la casa e dei pianeti domiciliati in quel segno per l'interpretazione.
+        // Quindi nel prompt mostrare i segni coi suoi pianeti domiciliati
+
+        StringBuilder descTemaNatale = new StringBuilder();
+        SegnoZodiacale segnoSole = segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(0).getNumeroSegnoZodiacale() );
+        SegnoZodiacale segnoLuna = segnoZodiacale.getSegnoZodiacale( pianetiTransiti.get(1).getNumeroSegnoZodiacale() );
+        SegnoZodiacale segnoAscendente = segnoZodiacale.getSegnoZodiacale( casePlacideArrayList.get(0).getNumeroSegnoZodiacale() );
+
+        descTemaNatale.append("<p><b>- "+pianetiTransiti.get(0).descrizionePianetaSegno()+"</b><br>");
+        descTemaNatale.append(segnoSole.getDescrizioneMin()+"</p>");
+
+        descTemaNatale.append("<p><b>- "+pianetiTransiti.get(1).descrizionePianetaSegno()+"</b></br>");
+        descTemaNatale.append( transitiPianetiSegniTMProperties.getProperty( "1_"+String.valueOf(segnoLuna.getNumeroSegnoZodiacale())) +"</p>");
+
+        descTemaNatale.append("<p><b>- Ascendente in "+segnoAscendente.getNomeSegnoZodiacale()+"</b><br>");
+        descTemaNatale.append( segniAscendenteProperties.getProperty(String.valueOf(segnoSole.getNumeroSegnoZodiacale())+"_"+segnoAscendente.getElemento().getCode())+"</p>");
+
+        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Case</h4><br>");
+        for (CasePlacide varCasa : casePlacideArrayList) {
+            descTemaNatale.append("<b>- " + varCasa.descrizioneCasaGradiCasaMinutiCasa() +"</b>");
+            descTemaNatale.append("<ul>");
+            descTemaNatale.append("<li>Desc. Casa: "+caseSignificato.getProperty(String.valueOf(varCasa.getNumeroCasa())) + "</li>");
+            boolean pianetaPresete = false;
+            for (Pianeti varPianeta : pianetiTransiti) {
+                if(varPianeta.getNomeCasa().equals(varCasa.getNomeCasa())){
+                    pianetaPresete = true;
+                    descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Segno_Gradi_Retrogrado() + "</li>");
+                }
+            }
+            if( !pianetaPresete ){
+                int[] pianetiSignori = segnoZodiacale.getSegnoZodiacale( varCasa.getNumeroSegnoZodiacale() ).getPianetiSignoreDelSegno();
+                for (int pianetaSign : pianetiSignori) {
+                    for (Pianeti varPianeta : pianetiTransiti) {
+                        if(varPianeta.getNumeroPianeta() == pianetaSign ){
+                            descTemaNatale.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
+                                    + "</i>" + "</li>");
+                        }
+                    }
+                }
+            }
+            descTemaNatale.append("</ul>");
+        }
+
+        int size = pianetiTransiti.size(); int count = 0;
+
         if (!aspetti.isEmpty()) {
             descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Aspetti</h4><br>");
             size = aspetti.size(); count = 0;
@@ -232,21 +333,39 @@ public class ServizioTemaNatale {
 
                 //logger.info("TIPO ASPETTO: "+var.getTipoAspetto() + " valore prop: "+var.getNumeroPianeta_1()+"_"+var.getNumeroPianeta_2());
 
-                if( Constants.Aspetti.CONGIUNZIONE.getCode() == var.getTipoAspetto() ){
-                    descTemaNatale.append(getAspettoDescrizione(aspettiCongiunzione, var) +"<br>");
+                if( Constants.Aspetti.CONGIUNZIONE.getCode() == var.getTipoAspetto()){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiCongiunzione, var));
 
-                }if( Constants.Aspetti.QUADRATO.getCode() == var.getTipoAspetto() ){
-                    descTemaNatale.append(getAspettoDescrizione(aspettiQuadrato, var) +"<br>");
+                }if( Constants.Aspetti.QUADRATO.getCode() == var.getTipoAspetto()){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiQuadrato, var));
 
-                }if( Constants.Aspetti.TRIGONO.getCode() == var.getTipoAspetto() ){
-                    descTemaNatale.append(getAspettoDescrizione(aspettiTrigono, var) +"<br>");
+                }if( Constants.Aspetti.TRIGONO.getCode() == var.getTipoAspetto()){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiTrigono, var));
 
-                }if( Constants.Aspetti.SESTILE.getCode() == var.getTipoAspetto() ){
-                    descTemaNatale.append(getAspettoDescrizione(aspettiSestile, var) +"<br>");
+                }if( Constants.Aspetti.SESTILE.getCode() == var.getTipoAspetto()){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiSestile, var));
 
-                }if( Constants.Aspetti.OPPOSIZIONE.getCode() == var.getTipoAspetto() ){
-                    descTemaNatale.append(getAspettoDescrizione(aspettiOpposizione, var) +"<br>");
+                }if( Constants.Aspetti.OPPOSIZIONE.getCode() == var.getTipoAspetto()){
+                    descTemaNatale.append(getAspettoDescrizione(aspettiOpposizione, var));
                 }
+                if (count < size - 1) { descTemaNatale.append("<br>"); }
+            }
+        }
+
+
+        descTemaNatale.append("<h4 class=\"mt-5 mb-0\">Transiti</h4><br>");
+        for (Pianeti var : pianetiTransiti) {
+            if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(2).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(3).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(4).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(5).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(6).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(7).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(8).getNumero() ||
+                    var.getNumeroPianeta() == Constants.Pianeti.fromNumero(9).getNumero()) {
+                descTemaNatale.append("- "+var.descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno());
                 if (count < size - 1) { descTemaNatale.append("<br>"); }
             }
         }
@@ -309,6 +428,29 @@ public class ServizioTemaNatale {
         return significatiTemaNatale;
     }
 
+
+    public StringBuilder significatoTemaNatalePianeti() {
+        Properties aspettiSignificatoProperties = propertiesConfig.aspettiSignificato();
+        Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
+        Properties pianetaRetrogradoProperties = propertiesConfig.pianetaRetrogrado();
+        Properties segniZodProperties = propertiesConfig.segniZodiacali();
+
+        StringBuilder significatoTemaNatalePianeti = new StringBuilder();
+
+        significatoTemaNatalePianeti.append("<h4 class=\"mt-5 mb-0\">Significato dei Pianeti</h4><br>");
+        List<Constants.Pianeti> pianetiList = Constants.Pianeti.getAllPianetiNormali();
+        int size = pianetiList.size();
+        for (int i = 0; i < size; i++) {
+            Constants.Pianeti pianeta = pianetiList.get(i);
+            significatoTemaNatalePianeti.append("- "+pianeta.getNome() +": "+ pianetiOroscopoSignificatoProperties.getProperty( String.valueOf(pianeta.getNumero())+"_min") );
+            if (i < size - 1) { significatoTemaNatalePianeti.append("<br>"); }
+        }
+
+        significatoTemaNatalePianeti.append("<h4 class=\"mt-5 mb-0\">Significato Pianeta Retrogrado</h4><br>");
+        significatoTemaNatalePianeti.append("- "+pianetaRetrogradoProperties.getProperty( String.valueOf(0) ));
+
+        return significatoTemaNatalePianeti;
+    }
 
 
 
