@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ArticleContentRepository extends JpaRepository<ArticleContent, Long> {
-
-
+public interface ArticleContentRepository extends JpaRepository<ArticleContent, Long>, ArticleContentCustomRepository {
 
     // Query personalizzata per trovare un articolo per id
     @Query("SELECT o FROM ArticleContent o WHERE o.id = :id")

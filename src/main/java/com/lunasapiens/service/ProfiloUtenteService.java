@@ -50,7 +50,7 @@ public class ProfiloUtenteService {
 
         ProfiloUtente profiloUtente = new ProfiloUtente(email, password, ruolo, dataCreazione, dataUltimoAccesso, indirizzoIp,
                 emailOroscopoGiornaliero, emailAggiornamentiTemaNatale, confirmationCode);
-
+        profiloUtenteRepository.updateSequence();
         return profiloUtenteRepository.save(profiloUtente);
     }
 

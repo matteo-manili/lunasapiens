@@ -163,6 +163,7 @@ public class EditorArticleController extends BaseController {
             } else {
                 // Crea un nuovo articolo, MA NON impostare manualmente l'ID
                 articleContent = new ArticleContent();
+                articleContentRepository.updateSequence();
             }
             // Aggiorna il contenuto dell'articolo
             articleContent.setContent(content);

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ProfiloUtenteRepository extends JpaRepository<ProfiloUtente, Long> {
+public interface ProfiloUtenteRepository extends JpaRepository<ProfiloUtente, Long>, ProfiloUtenteCustomRepository {
 
 
     Optional<ProfiloUtente> findFirstByOrderByIdDesc();

@@ -77,6 +77,7 @@ public class JwtController extends BaseController{
             try{
                 ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
                         false, false, UUID.randomUUID().toString() );
+                profiloUtenteRepository.updateSequence();
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );
                 emailService.inviaemailRegistrazioneUtente(newProfiloUtente, codeTokenJwt);
                 infoMessage = "Ti abbiamo inviato un'email all'indirizzo "+email+" con il link per accedere come utente autenticato.";
