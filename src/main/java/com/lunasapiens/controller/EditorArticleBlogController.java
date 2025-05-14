@@ -28,9 +28,9 @@ import java.util.*;
 
 
 @Controller
-public class EditorArticleController extends BaseController {
+public class EditorArticleBlogController extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EditorArticleController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EditorArticleBlogController.class);
 
     @Autowired
     private ArticleContentRepository articleContentRepository;
