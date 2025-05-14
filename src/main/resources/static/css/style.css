@@ -83,3 +83,14 @@
 .autocomplete-results div:hover {
     background-color: #f0f0f0;
 }
+
+/* Evita overflow orizzontale su mobile per la paginazione */
+.pagination {
+    flex-wrap: wrap; /* Permette ai link di andare a capo */
+    overflow-x: auto; /* Scroll orizzontale se necessario */
+    -webkit-overflow-scrolling: touch;
+}
+
+.pagination .page-link {
+    white-space: nowrap; /* Evita che il testo vada a capo */
+}
