@@ -34,22 +34,45 @@
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
         <h2>Articoli salvati</h2>
-        <div th:if="${articles.isEmpty()}">
+        <div th:if="${articlePage.isEmpty()}">
             <p>Nessun articolo trovato.</p>
         </div>
-        <div th:each="article : ${articles}">
+
+        <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
-                    <div class="card-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
+                    <div class="card-text collapsible-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
+                    <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>
                 </div>
             </div>
         </div>
+        <!-- PAGINAZIONE -->
+        <div th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
+
+
     </div>
 
 </div> <!-- fine container -->
 <div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButtons = document.querySelectorAll(".toggle-button");
+
+        toggleButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const content = button.previousElementSibling;
+                content.classList.toggle("expanded");
+                button.textContent = content.classList.contains("expanded") ? "Leggi meno" : "Leggi tutto";
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>

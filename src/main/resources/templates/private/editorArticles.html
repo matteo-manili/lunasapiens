@@ -33,10 +33,10 @@
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
         <h2>Articoli salvati</h2>
-        <div th:if="${articles.isEmpty()}">
+        <div th:if="${articlePage.isEmpty()}">
             <p>Nessun articolo trovato.</p>
         </div>
-        <div th:each="article : ${articles}">
+        <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
@@ -53,6 +53,9 @@
                 </div>
             </div>
         </div>
+        <!-- PAGINAZIONE -->
+        <div th:replace="~{fragments/templateBase :: paginationArticles('/private/editorArticles')}"></div>
+
     </div>
 
 

@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,11 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-/**
- * TODO
- * c'è un problema. Quando creo o modifico un articolo, se faccio l'upload di una immagine, questa rimane nel server S3 se decido
- * di non salvare più l'articolo.
- */
 @Controller
 public class EditorArticleController extends BaseController {
 
@@ -47,88 +45,29 @@ public class EditorArticleController extends BaseController {
      * @return
      */
     @GetMapping("/blog")
-    public String blog(Model model) {
-        List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc(); // Recupera tutti gli articoli dal database
-        model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
+    public String blog(@RequestParam(defaultValue = "0") int page, Model model) {
+        loadPagedArticles(page, model);
         return "blog";
     }
 
 
-    /**
-     * private/upload-image-article
-     */
-    @PostMapping("/private/" + Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
-        if (!isMatteoManilIdUser()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
-        }
-        try {
-            logger.info("Sono in upload-image-article");
-            // Validazione del tipo MIME
-            if (!file.getContentType().startsWith("image/")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Formato file non supportato. Carica un'immagine valida."));
-            }
-            // Validazione della dimensione del file (massimo 6 MB)
-            if (file.getSize() > 6_000_000) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "File troppo grande. La dimensione massima è 6MB."));
-            }
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
-            // Genera una parte randomica di 3 caratteri (mix di lettere e numeri) usando UUID
-            String randomString = UUID.randomUUID().toString().substring(0, 3);  // Prendi i primi 3 caratteri
-            // Trova l'estensione del file originale
-            int lastDotIndex = file.getOriginalFilename().lastIndexOf(".");
-            String extension = (lastDotIndex != -1) ? file.getOriginalFilename().substring(lastDotIndex) : "";
-            // Crea il nuovo nome file con il timestamp
-            String fileName = "image_" + timestamp + "_" + randomString + extension;
-            s3Service.uploadFile(fileName, file.getInputStream());
-            // Creazione dell'URL per recuperare l'immagine
-            String imageUrl = "/" + Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE + "/" + fileName;
-            // Risposta con l'URL per CKEditor
-            Map<String, Object> response = new HashMap<>();
-            response.put("url", imageUrl);
-            response.put("default", imageUrl);
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            logger.error("Errore durante l'upload dell'immagine", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Si è verificato un errore durante il caricamento dell'immagine."));
-        }
-    }
-
-
-    /**
-     * Retrive Image Public e in Cache
-     */
-    @Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
-    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String nameImage) {
-        logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
-        try {
-            // Recupera i byte dell'immagine dal bucket S3
-            FileWithMetadata fileWithMetadata = s3Service.getImageFromS3(nameImage);
-            return ResponseEntity.ok()
-                    .header("Content-Type", fileWithMetadata.getContentType())
-                    .body(fileWithMetadata.getData());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-
     @GetMapping("/private/editorArticles")
-    public String editor(Model model, RedirectAttributes redirectAttributes) {
+    public String editor(@RequestParam(defaultValue = "0") int page, Model model, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
-        List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc(); // Recupera tutti gli articoli dal database
-        model.addAttribute("articles", articles); // Aggiungi la lista degli articoli al modello
+        loadPagedArticles(page, model);
         return "private/editorArticles";
     }
 
+    private void loadPagedArticles(int page, Model model) {
+        int pageSize = 10;
+        Page<ArticleContent> articlePage = articleContentRepository
+                .findAll(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
+        model.addAttribute("articlePage", articlePage);
+        model.addAttribute("currentPage", page);
+    }
 
     @PostMapping("/private/saveOrUpdateArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
@@ -229,7 +168,68 @@ public class EditorArticleController extends BaseController {
     }
 
 
+    /**
+     * private/upload-image-article
+     */
+    @PostMapping("/private/" + Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
+        if (!isMatteoManilIdUser()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
+        }
+        try {
+            logger.info("Sono in upload-image-article");
+            // Validazione del tipo MIME
+            if (!file.getContentType().startsWith("image/")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Formato file non supportato. Carica un'immagine valida."));
+            }
+            // Validazione della dimensione del file (massimo 6 MB)
+            if (file.getSize() > 6_000_000) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "File troppo grande. La dimensione massima è 6MB."));
+            }
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
+            // Genera una parte randomica di 3 caratteri (mix di lettere e numeri) usando UUID
+            String randomString = UUID.randomUUID().toString().substring(0, 3);  // Prendi i primi 3 caratteri
+            // Trova l'estensione del file originale
+            int lastDotIndex = file.getOriginalFilename().lastIndexOf(".");
+            String extension = (lastDotIndex != -1) ? file.getOriginalFilename().substring(lastDotIndex) : "";
+            // Crea il nuovo nome file con il timestamp
+            String fileName = "image_" + timestamp + "_" + randomString + extension;
+            s3Service.uploadFile(fileName, file.getInputStream());
+            // Creazione dell'URL per recuperare l'immagine
+            String imageUrl = "/" + Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE + "/" + fileName;
+            // Risposta con l'URL per CKEditor
+            Map<String, Object> response = new HashMap<>();
+            response.put("url", imageUrl);
+            response.put("default", imageUrl);
+            return ResponseEntity.ok(response);
 
+        } catch (Exception e) {
+            logger.error("Errore durante l'upload dell'immagine", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Si è verificato un errore durante il caricamento dell'immagine."));
+        }
+    }
+
+
+    /**
+     * Retrive Image Public e in Cache
+     */
+    @Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String nameImage) {
+        logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
+        try {
+            // Recupera i byte dell'immagine dal bucket S3
+            FileWithMetadata fileWithMetadata = s3Service.getImageFromS3(nameImage);
+            return ResponseEntity.ok()
+                    .header("Content-Type", fileWithMetadata.getContentType())
+                    .body(fileWithMetadata.getData());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 
 

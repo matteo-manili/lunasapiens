@@ -30,9 +30,9 @@ import java.util.UUID;
 
 
 @Controller
-public class JwtController extends BaseController{
+public class RegisterController extends BaseController{
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtController.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     @Autowired
     private EmailService emailService;

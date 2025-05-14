@@ -52,3 +52,15 @@ img {
 .text-huge.center {
     text-align: center;
 }
+
+/* Limita a 20 righe e nasconde l'overflow: */
+.collapsible-text {
+    max-height: 30em; /* circa 20 righe di testo 30em; */
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.3s ease;
+}
+
+.collapsible-text.expanded {
+    max-height: none;
+}
