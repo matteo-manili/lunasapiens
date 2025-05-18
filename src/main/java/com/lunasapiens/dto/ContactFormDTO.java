@@ -2,11 +2,9 @@ package com.lunasapiens.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+
 
 public class ContactFormDTO {
-
-
 
     @NotBlank(message = "Il nome è obbligatorio")
     private String name;
@@ -17,7 +15,6 @@ public class ContactFormDTO {
 
     @NotBlank(message = "Il messaggio è obbligatorio")
     private String message;
-
 
 
     public String getName() {

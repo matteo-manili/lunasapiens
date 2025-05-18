@@ -28,6 +28,7 @@
                 <div class="col-12">
                     <label for="name" class="form-label">Nome <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" th:field="*{name}" required />
+                    <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                 </div>
 
                 <div class="col-12">
@@ -40,11 +41,13 @@
                         </span>
                         <input type="email" class="form-control" id="email" th:field="*{email}" required />
                     </div>
+                    <div class="text-danger mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                 </div>
 
                 <div class="col-12">
                     <label for="message" class="form-label">Messaggio <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="message" th:field="*{message}" rows="3" required></textarea>
+                    <div class="text-danger" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                 </div>
 
                 <div class="col-12">

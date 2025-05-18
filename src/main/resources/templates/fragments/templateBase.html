@@ -188,9 +188,7 @@
         <li class="page-item" th:classappend="${articlePage.first} ? 'disabled'">
             <a class="page-link" th:href="@{${baseUrl}(page=${currentPage - 1})}">Precedente</a>
         </li>
-        <li class="page-item"
-            th:each="i : ${#numbers.sequence(0, articlePage.totalPages - 1)}"
-            th:classappend="${i == currentPage} ? 'active'">
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, articlePage.totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
             <a class="page-link" th:href="@{${baseUrl}(page=${i})}" th:text="${i + 1}">1</a>
         </li>
         <li class="page-item" th:classappend="${articlePage.last} ? 'disabled'">
