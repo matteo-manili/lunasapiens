@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 
@@ -44,7 +45,7 @@ public class SinastriaController extends BaseController {
      */
     @GetMapping("/sinastria")
     public String sinastria(Model model,
-                            @ModelAttribute("dateTime") String datetime,
+                            @ModelAttribute("dateTime") String dateTime,
                             @ModelAttribute("cityInput") String cityInput,
                             @ModelAttribute("cityName") String cityName,
                             @ModelAttribute("regioneName") String regioneName,
@@ -54,7 +55,7 @@ public class SinastriaController extends BaseController {
                             @ModelAttribute("cityLng") String cityLng,
                             @ModelAttribute("nome") String nome,
 
-                            @ModelAttribute("dateTime_2") String datetime_2,
+                            @ModelAttribute("dateTime_2") String dateTime_2,
                             @ModelAttribute("cityInput_2") String cityInput_2,
                             @ModelAttribute("cityName_2") String cityName_2,
                             @ModelAttribute("regioneName_2") String regioneName_2,
@@ -74,14 +75,14 @@ public class SinastriaController extends BaseController {
 
         final LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
 
-        Optional<String> optionalDateTime = Optional.ofNullable(datetime);
+        Optional<String> optionalDateTime = Optional.ofNullable(dateTime);
         optionalDateTime
                 .filter(dateTimeString -> !dateTimeString.isEmpty())
                 .ifPresentOrElse(
                         presentDateTime -> model.addAttribute("dateTime", presentDateTime),
                         () -> model.addAttribute("dateTime", defaultDateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER)));
 
-        Optional<String> optionalDateTime_2 = Optional.ofNullable(datetime_2);
+        Optional<String> optionalDateTime_2 = Optional.ofNullable(dateTime_2);
         optionalDateTime_2
                 .filter(dateTimeString -> !dateTimeString.isEmpty())
                 .ifPresentOrElse(
@@ -121,7 +122,7 @@ public class SinastriaController extends BaseController {
     @GetMapping("/sinastriaSubmit")
     public String sinastriaSubmit(
             RedirectAttributes redirectAttributes, HttpServletRequest request, @RequestParam("relationship") String relationship,
-            @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+            @RequestParam("dateTime") String dateTimeStr,
             @RequestParam("cityLat") String cityLat,
             @RequestParam("cityLng") String cityLng,
             @RequestParam("cityName") String cityName,
@@ -130,7 +131,7 @@ public class SinastriaController extends BaseController {
             @RequestParam("statoCode") String statoCode,
             @RequestParam("nome") String nome,
 
-            @RequestParam("dateTime_2") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime_2,
+            @RequestParam("dateTime_2") String dateTimeStr_2,
             @RequestParam("cityLat_2") String cityLat_2,
             @RequestParam("cityLng_2") String cityLng_2,
             @RequestParam("cityName_2") String cityName_2,
@@ -139,8 +140,33 @@ public class SinastriaController extends BaseController {
             @RequestParam("statoCode_2") String statoCode_2,
             @RequestParam("nome_2") String nome_2) {
 
-
         logger.info("sono in sinastriaSubmit");
+
+        // VALIDAZIONE DATE TIME
+        if (dateTimeStr == null || dateTimeStr.isEmpty() || dateTimeStr_2 == null || dateTimeStr_2.isEmpty()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Inserisci una data e ora di nascita valide.");
+            return "redirect:/sinastria";
+        }
+        LocalDateTime dateTime; LocalDateTime dateTime_2;
+        try {
+            dateTime = LocalDateTime.parse(dateTimeStr);
+            dateTime_2 = LocalDateTime.parse(dateTimeStr_2);
+        } catch (DateTimeParseException e) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Formato data non valido.");
+            return "redirect:/sinastria";
+        }
+        // VALIDAZIONE CITTA' (latitudine e longitudine vuote)
+        if (cityLat == null || cityLat.isEmpty() || cityLng == null || cityLng.isEmpty() || cityName == null || cityName.isEmpty() ||
+                cityLat_2 == null || cityLat_2.isEmpty() || cityLng_2 == null || cityLng_2.isEmpty() || cityName_2 == null || cityName_2.isEmpty()
+        ) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Seleziona una città valida dal suggerimento automatico.");
+            return "redirect:/sinastria";
+        }
+
+
+
+
+
         HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
         String userId = (String) session.getAttribute(Constants.USER_SESSION_ID);
         if (userId == null) {
@@ -149,17 +175,17 @@ public class SinastriaController extends BaseController {
         }
 
         // Estrai le singole componenti della data e ora
-        int hour = datetime.getHour();
-        int minute = datetime.getMinute();
-        int day = datetime.getDayOfMonth();
-        int month = datetime.getMonthValue();
-        int year = datetime.getYear();
+        int hour = dateTime.getHour();
+        int minute = dateTime.getMinute();
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
 
-        int hour_2 = datetime_2.getHour();
-        int minute_2 = datetime_2.getMinute();
-        int day_2 = datetime_2.getDayOfMonth();
-        int month_2 = datetime_2.getMonthValue();
-        int year_2 = datetime_2.getYear();
+        int hour_2 = dateTime_2.getHour();
+        int minute_2 = dateTime_2.getMinute();
+        int day_2 = dateTime_2.getDayOfMonth();
+        int month_2 = dateTime_2.getMonthValue();
+        int year_2 = dateTime_2.getYear();
 
 
         String luogoNascita = String.join(", ", cityName, regioneName, statoName);
@@ -177,8 +203,8 @@ public class SinastriaController extends BaseController {
         redirectAttributes.addFlashAttribute("statoCode", statoCode);
         redirectAttributes.addFlashAttribute("cityLat", cityLat);
         redirectAttributes.addFlashAttribute("cityLng", cityLng);
-        redirectAttributes.addFlashAttribute("dateTime", datetime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
-        redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format(Constants.DATE_TIME_FORMATTER));
+        redirectAttributes.addFlashAttribute("dateTime", dateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
+        redirectAttributes.addFlashAttribute("dataOraNascita", dateTime.format(Constants.DATE_TIME_FORMATTER));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
         redirectAttributes.addFlashAttribute("nome", nome);
 
@@ -189,8 +215,8 @@ public class SinastriaController extends BaseController {
         redirectAttributes.addFlashAttribute("statoCode_2", statoCode_2);
         redirectAttributes.addFlashAttribute("cityLat_2", cityLat_2);
         redirectAttributes.addFlashAttribute("cityLng_2", cityLng_2);
-        redirectAttributes.addFlashAttribute("dateTime_2", datetime_2.format(Constants.DATE_TIME_LOCAL_FORMATTER));
-        redirectAttributes.addFlashAttribute("dataOraNascita_2", datetime_2.format(Constants.DATE_TIME_FORMATTER));
+        redirectAttributes.addFlashAttribute("dateTime_2", dateTime_2.format(Constants.DATE_TIME_LOCAL_FORMATTER));
+        redirectAttributes.addFlashAttribute("dataOraNascita_2", dateTime_2.format(Constants.DATE_TIME_FORMATTER));
         redirectAttributes.addFlashAttribute("luogoNascita_2", cityName_2 + ", " + regioneName_2 + ", " + statoName_2);
         redirectAttributes.addFlashAttribute("nome_2", nome_2);
 
@@ -226,7 +252,7 @@ public class SinastriaController extends BaseController {
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
         StringBuilder sinastriaDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.sinastriaIstruzioneBOTSystem(relationship, nome, nome_2,
-                sinastria_1.toString(), sinastria_2.toString(), significatiTemaNatale.toString(), datetime, datetime_2, luogoNascita, luogoNascita_2);
+                sinastria_1.toString(), sinastria_2.toString(), significatiTemaNatale.toString(), dateTime, dateTime_2, luogoNascita, luogoNascita_2);
 
         logger.info( "sinastriaDescrizioneIstruzioneBOTSystem: "+sinastriaDescIstruzioniBOTSystem );
         chatMessageIa.add(new ChatMessage("system", sinastriaDescIstruzioniBOTSystem.toString() ));

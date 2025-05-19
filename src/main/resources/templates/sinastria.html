@@ -34,12 +34,12 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
+    <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
     <div class="container my-4 p-3 shadow-lg rounded bg-light">
         <h1 class="display-4  mb-3 text-center">Sinastria IA</h1>
         <p class="fs-4 text-center mb-2">Dopo aver generato la Sinastria, utilizza la Chat IA per porre domande e approfondire i significati.
             Scorrendo in basso troverai una descrizione dettagliata dei 2 Temi Natale.</p>
-
 
         <form id="sinastria-submit" th:action="@{/sinastriaSubmit}" method="GET" class="p-4 border rounded">
             <div class="row">
@@ -125,13 +125,10 @@
                 </div>
             </div>
 
-
             <div class="text-center">
                 <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Genera Sinastria</button>
             </div>
         </form>
-
-
 
     </div>
 

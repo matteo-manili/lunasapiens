@@ -28,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 
@@ -65,7 +66,7 @@ public class TemaNataleController extends BaseController {
      * servizio tema natale
      */
     @GetMapping("/tema-natale")
-    public String temaNatale(Model model, @ModelAttribute("dateTime") String datetime,
+    public String temaNatale(Model model, @ModelAttribute("dateTime") String dateTime,
                              @ModelAttribute("cityInput") String cityInput,
                              @ModelAttribute("cityName") String cityName,
                              @ModelAttribute("regioneName") String regioneName,
@@ -82,7 +83,7 @@ public class TemaNataleController extends BaseController {
         logger.info("sono in temaNatale");
         if( userDetails != null ){ logger.info("userDetails: "+userDetails.getUsername()); }
         LocalDateTime defaultDateTime = LocalDateTime.of(1980, 1, 1, 0, 0);
-        Optional<String> optionalDateTime = Optional.ofNullable(datetime);
+        Optional<String> optionalDateTime = Optional.ofNullable(dateTime);
         optionalDateTime
                 .filter(dateTimeString -> !dateTimeString.isEmpty())
                 .ifPresentOrElse(
@@ -105,7 +106,7 @@ public class TemaNataleController extends BaseController {
 
 
     @GetMapping("/temaNataleSubmit")
-    public String temaNataleSubmit(@RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,
+    public String temaNataleSubmit(@RequestParam("dateTime") String dateTimeStr,
                                    @RequestParam("cityLat") String cityLat,
                                    @RequestParam("cityLng") String cityLng,
                                    @RequestParam("cityName") String cityName,
@@ -116,6 +117,26 @@ public class TemaNataleController extends BaseController {
                                    @AuthenticationPrincipal UserDetails userDetails) {
 
         logger.info("sono in temaNataleSubmit");
+
+        // VALIDAZIONE DATE TIME
+        if (dateTimeStr == null || dateTimeStr.isEmpty()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Inserisci una data e ora di nascita valide.");
+            return "redirect:/tema-natale";
+        }
+        LocalDateTime dateTime;
+        try {
+            dateTime = LocalDateTime.parse(dateTimeStr);
+        } catch (DateTimeParseException e) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Formato data non valido.");
+            return "redirect:/tema-natale";
+        }
+        // VALIDAZIONE CITTA' (latitudine e longitudine vuote)
+        if (cityLat == null || cityLat.isEmpty() || cityLng == null || cityLng.isEmpty() || cityName == null || cityName.isEmpty()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Seleziona una città valida dal suggerimento automatico.");
+            return "redirect:/tema-natale";
+        }
+
+
         HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
         String userId = (String) session.getAttribute(Constants.USER_SESSION_ID);
         if (userId == null) {
@@ -124,11 +145,11 @@ public class TemaNataleController extends BaseController {
         }
 
         // Estrai le singole componenti della data e ora
-        int hour = datetime.getHour();
-        int minute = datetime.getMinute();
-        int day = datetime.getDayOfMonth();
-        int month = datetime.getMonthValue();
-        int year = datetime.getYear();
+        int hour = dateTime.getHour();
+        int minute = dateTime.getMinute();
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
 
         String luogoNascita = String.join(", ", cityName, regioneName, statoName);
 
@@ -144,8 +165,8 @@ public class TemaNataleController extends BaseController {
         redirectAttributes.addFlashAttribute("statoCode", statoCode);
         redirectAttributes.addFlashAttribute("cityLat", cityLat);
         redirectAttributes.addFlashAttribute("cityLng", cityLng);
-        redirectAttributes.addFlashAttribute("dateTime", datetime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
-        redirectAttributes.addFlashAttribute("dataOraNascita", datetime.format(Constants.DATE_TIME_FORMATTER));
+        redirectAttributes.addFlashAttribute("dateTime", dateTime.format(Constants.DATE_TIME_LOCAL_FORMATTER));
+        redirectAttributes.addFlashAttribute("dataOraNascita", dateTime.format(Constants.DATE_TIME_FORMATTER));
         redirectAttributes.addFlashAttribute("luogoNascita", cityName + ", " + regioneName + ", " + statoName);
         redirectAttributes.addFlashAttribute(Constants.USER_SESSION_ID, userId);
 
@@ -175,7 +196,7 @@ public class TemaNataleController extends BaseController {
             return "redirect:/tema-natale";
         }
 
-        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), datetime, luogoNascita);
+        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), dateTime, luogoNascita);
         if( userDetails != null
                 && (userDetails.getUsername().equals(Constants.MATTEO_MANILI_GMAIL) || userDetails.getUsername().equals("benama75@gmail.com")) ){
             redirectAttributes.addFlashAttribute("temaNataleDescIstruzioniBOTSystem", Utils.convertPlainTextToHtml(temaNataleDescIstruzioniBOTSystem.toString()));
