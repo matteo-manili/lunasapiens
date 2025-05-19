@@ -176,9 +176,9 @@ $(document).ready(function() {
     });
 
     // ############################# ASTRO CHART #############################
-    var data = { "planets": /*[[${planets}]]*/ 'default', "cusps": /*[[${cusps}]]*/ 'default' };
+    const data = { "planets": /*[[${planets}]]*/ 'default', "cusps": /*[[${cusps}]]*/ 'default' };
     if(data.planets != null && data.cusps != null) {
-        var radix = new astrochart.Chart('paper', 600, 600).radix( data );
+        const radix = new astrochart.Chart('paper', 600, 600).radix( data );
         // Aspect calculation
         radix.addPointsOfInterest( {"As":[data.cusps[0]],"Ic":[data.cusps[3]],"Ds":[data.cusps[6]],"Mc":[data.cusps[9]]});
         radix.aspects();
