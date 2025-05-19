@@ -189,7 +189,6 @@ $(document).ready(function() {
     // ############################# VALIDAZIONE SINASTRIA SUBMIT #############################
     $("#sinastria-submit").submit(function(event) {
         var isValid = true; // Se il modulo è valido, mostra l'overlay e consenti l'invio
-
         if ($("#cityName").val().trim() === "" || $("#cityLat").val().trim() === "" || $("#cityLng").val().trim() === "") {
             $("#cityError").show(); // Mostra il messaggio di errore
             $("#cityInput").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
@@ -206,8 +205,6 @@ $(document).ready(function() {
             $("#dateTimeError").hide(); // Nascondi il messaggio di errore se il campo è compilato
             $("#dateTime").removeClass("is-invalid"); // Rimuovi classe di errore se presente
         }
-
-
         if ($("#cityName_2").val().trim() === "" || $("#cityLat_2").val().trim() === "" || $("#cityLng_2").val().trim() === "") {
             $("#cityError_2").show(); // Mostra il messaggio di errore
             $("#cityInput_2").addClass("is-invalid"); // Aggiungi classe per evidenziare il campo
@@ -224,7 +221,6 @@ $(document).ready(function() {
             $("#dateTimeError_2").hide(); // Nascondi il messaggio di errore se il campo è compilato
             $("#dateTime_2").removeClass("is-invalid"); // Rimuovi classe di errore se presente
         }
-
         if (isValid) {
             showLoadingOverlay(); // Chiamata alla funzione per mostrare l'overlay
             googleTrackFormSubmit('sinastria-submit');
