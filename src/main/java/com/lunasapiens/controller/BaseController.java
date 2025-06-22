@@ -24,6 +24,11 @@ public class BaseController {
         return Constants.MATTEO_MANILI_GMAIL.equals(email);
     }
 
+    /**
+     * con questo metodo se la string
+     * ..blog/page=-1 il page viene convertito in ..blog/page=1
+     * oppure ..blog/page=XXX viene convertito in ..blog/page=0
+     */
     protected int parsePositivePage(String pageParam) {
         try {
             int page = Integer.parseInt(pageParam);
