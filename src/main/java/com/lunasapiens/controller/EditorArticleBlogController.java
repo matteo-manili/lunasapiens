@@ -45,18 +45,20 @@ public class EditorArticleBlogController extends BaseController {
      * @return
      */
     @GetMapping("/blog")
-    public String blog(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam, Model model) {
+        int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);
         return "blog";
     }
 
 
     @GetMapping("/private/editorArticles")
-    public String editor(@RequestParam(defaultValue = "0") int page, Model model, RedirectAttributes redirectAttributes) {
+    public String editor(@RequestParam(name = "page", defaultValue = "0") String pageParam, Model model, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
+        int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);
         return "private/editorArticles";
     }

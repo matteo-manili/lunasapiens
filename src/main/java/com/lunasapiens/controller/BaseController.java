@@ -24,4 +24,13 @@ public class BaseController {
         return Constants.MATTEO_MANILI_GMAIL.equals(email);
     }
 
+    protected int parsePositivePage(String pageParam) {
+        try {
+            int page = Integer.parseInt(pageParam);
+            return Math.abs(page); // Converte i numeri negativi in positivi
+        } catch (NumberFormatException e) {
+            return 0; // Se non è un numero valido, torna 0
+        }
+    }
+
 }
