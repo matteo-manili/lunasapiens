@@ -2,6 +2,7 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.config.FacebookConfig;
+import com.lunasapiens.repository.DatabaseMaintenanceRepository;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.TikTokApiClient;
 import com.lunasapiens.repository.GestioneApplicazioneRepository;
@@ -43,9 +44,28 @@ public class TESTController extends BaseController {
     @Autowired
     ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
+    @Autowired
+    private DatabaseMaintenanceRepository databaseMaintenanceRepository;
+
+
+
+
+    @GetMapping("/database-clear-oroscopo-video")
+    public String databaseClearOrosocpoVideo(RedirectAttributes redirectAttributes) {
+        if (!isMatteoManilIdUser()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
+            return "redirect:/error";
+        }
+        logger.info("eseguo databaseMaintenanceRepository.deleteOldOroscopoRecords()...");
+        databaseMaintenanceRepository.deleteOldOroscopoRecords();
+        logger.info("fine esecuzione databaseMaintenanceRepository.deleteOldOroscopoRecords()");
+        return "redirect:/";
+    }
+
+
+
     @GetMapping("/test")
     public String test(Model model) {
-
 
         Map<String, Object[]> planets = new HashMap<>();
         planets.put("Sun", new Object[]{303.53333333333336});
@@ -64,10 +84,7 @@ public class TESTController extends BaseController {
         planets.put("Chiron", new Object[]{43.4});
         //planets.put("Fortune", new Object[]{330.18333333333334}); // non lo uso
 
-
         model.addAttribute("planets", planets);
-
-
 
         List<Integer> cusps = Arrays.asList(
                 110, 129

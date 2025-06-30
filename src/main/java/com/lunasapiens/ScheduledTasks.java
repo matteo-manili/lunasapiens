@@ -1,5 +1,6 @@
 package com.lunasapiens;
 
+import com.lunasapiens.repository.DatabaseMaintenanceRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.S3Service;
 import com.lunasapiens.service.TelegramBotService;
@@ -19,6 +20,9 @@ public class ScheduledTasks {
     private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
+    private DatabaseMaintenanceRepository databaseMaintenanceRepository;
+
+    @Autowired
     private S3Service s3Service;
 
     @Autowired
@@ -32,6 +36,14 @@ public class ScheduledTasks {
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
     // settato per le 00:05 ogni giorno: "0 5 0 * * *"
 
+    @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Rome")
+    public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {
+        if(Utils.isLocalhost() == false) {
+            s3Service.eliminaImmaginiArticoloNonUtilizzateBucketS3();
+            logger.info("executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3");
+        }
+    }
+
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
     public void executeTask_CreaOroscopoGiornaliero() {
         if(Utils.isLocalhost() == false) {
@@ -44,16 +56,9 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 15 0 * * *", zone = "Europe/Rome")
     public void executeTask_PulisciOldRecordsOroscopoGiornaliero() {
         if(Utils.isLocalhost() == false) {
-            servizioOroscopoDelGiorno.pulisciOldRecordsOroscopoGiornaliero();
+            databaseMaintenanceRepository.deleteOldOroscopoRecords();
+            databaseMaintenanceRepository.vacuumFullOroscopoGiornaliero();
             logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
-        }
-    }
-
-    @Scheduled(cron = "0 17 0 * * *", zone = "Europe/Rome")
-    public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {
-        if(Utils.isLocalhost() == false) {
-            s3Service.eliminaImmaginiArticoloNonUtilizzateBucketS3();
-            logger.info("executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3");
         }
     }
 
