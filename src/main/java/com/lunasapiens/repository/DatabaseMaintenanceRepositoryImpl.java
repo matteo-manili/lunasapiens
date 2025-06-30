@@ -26,7 +26,6 @@ import java.util.List;
  *   • Utile per operazioni che richiedono esecuzione fuori transazioni (es. comandi
  *     di manutenzione, operazioni batch, procedure SQL).
  *   • Più leggero e semplice per comandi speciali o query native.
- *
  */
 
 @Repository
