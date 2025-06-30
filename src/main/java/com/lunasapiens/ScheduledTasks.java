@@ -47,7 +47,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
     public void executeTask_CreaOroscopoGiornaliero() {
         if(Utils.isLocalhost() == false) {
-            servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
+            servizioOroscopoDelGiorno.creaOroscopoGiornaliero(); // per fare questo processo ci mette circa 7 minuti (su server)
             telegramBotService.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() " + Utils.getNowRomeEurope());
             logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Utils.getNowRomeEurope());
         }
