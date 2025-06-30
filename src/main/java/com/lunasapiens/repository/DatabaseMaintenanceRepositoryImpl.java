@@ -11,25 +11,6 @@ import java.util.List;
 /**
  * Repository per operazioni di manutenzione sul database PostgreSQL.
  *
- * Contiene metodi per eseguire i comandi VACUUM e VACUUM FULL, utili per mantenere il database efficiente
- * e ottimizzato in termini di spazio e prestazioni.
- *
- * - vacuum(): Esegue il comando VACUUM standard, che:
- *      • Ripulisce tuple obsolete causate da aggiornamenti e cancellazioni.
- *      • Non blocca le normali operazioni di lettura/scrittura.
- *      • Libera spazio interno nelle tabelle per futuri dati senza ridurre la dimensione fisica del database.
- *      • È consigliato eseguirlo periodicamente per evitare il bloat (spazio sprecato).
- *
- * - vacuumFull(): Esegue il comando VACUUM FULL, che:
- *      • Rimuove tuple obsolete e ricompone completamente la tabella liberando spazio fisico su disco.
- *      • Blocca la tabella durante l'esecuzione, impedendo letture e scritture.
- *      • Può richiedere tempi più lunghi a seconda della dimensione delle tabelle.
- *      • Va eseguito in momenti di bassa attività o manutenzione programmata per evitare interruzioni.
- *
- * Per eseguire questi comandi usiamo JdbcTemplate per eseguire query SQL native fuori dal contesto
- * transazionale, poiché comandi come VACUUM non possono essere eseguiti all'interno di un blocco di
- * transazione, che invece è il comportamento predefinito di EntityManager/JPA.
- *
  * Differenze tra EntityManager e JdbcTemplate:
  *
  * - EntityManager (JPA):
@@ -46,8 +27,6 @@ import java.util.List;
  *     di manutenzione, operazioni batch, procedure SQL).
  *   • Più leggero e semplice per comandi speciali o query native.
  *
- * In questo repository, l'uso di JdbcTemplate garantisce che i comandi VACUUM vengano eseguiti
- * correttamente senza errori dovuti a blocchi transazionali.
  */
 
 @Repository
