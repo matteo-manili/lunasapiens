@@ -413,7 +413,7 @@ public class ServizioOroscopoDelGiorno {
 
         logger.info("metto i video in cache...");
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SALVA VIDEO SU NELLA CACHE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Utils.OggiOre12());
+        java.util.List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopo(Utils.OggiRomaOre12());
         for (OroscopoGiornaliero oroscopoGiorno : listOroscopoGiorn) {
             if(oroscopoGiorno.getVideo() != null){
                 cache.put(oroscopoGiorno.getNomeFileVideo(), Utils.VideoResponseEntityByteArrayResource(oroscopoGiorno.getVideo()));

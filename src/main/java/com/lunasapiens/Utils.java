@@ -127,25 +127,25 @@ public class Utils {
     }
 
 
-    public static Date OggiOre12() {
-        ZonedDateTime now = getNowRomeEurope(); Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
-        calendar.set(Calendar.MONTH, now.getMonthValue()-1);
-        calendar.set(Calendar.YEAR, now.getYear());
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+
+    public static Date OggiRomaOre12() {
+        ZonedDateTime nowRome = getNowRomeEurope();
+        // Crea ZonedDateTime di oggi ore 12:00 a Roma
+        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
+        // Converte a java.util.Date
+        return Date.from(todayAt12Rome.toInstant());
     }
 
-    public static Date OggiOre0() {
-        ZonedDateTime now = getNowRomeEurope(); Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
-        calendar.set(Calendar.MONTH, now.getMonthValue()-1);
-        calendar.set(Calendar.YEAR, now.getYear());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+
+    public static Date OggiRomaOre0() {
+        ZonedDateTime nowRome = getNowRomeEurope();
+        // Crea ZonedDateTime di oggi ore 0:00 a Roma
+        ZonedDateTime todayAt0Rome = nowRome.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        // Converte a java.util.Date
+        return Date.from(todayAt0Rome.toInstant());
     }
+
+
 
     /**
      * Roma LAT 41.89 e LONG 12.48

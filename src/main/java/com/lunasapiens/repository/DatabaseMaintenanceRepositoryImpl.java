@@ -1,10 +1,11 @@
 package com.lunasapiens.repository;
 
 import com.lunasapiens.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -31,6 +32,7 @@ import java.util.List;
 @Repository
 public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseMaintenanceRepositoryImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -62,9 +64,9 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
     @Override
     public void deleteOldOroscopoRecords() {
 
-        Date currentDate_MenoUnGiorno = Date.from( Utils.getNowRomeEurope().minusDays(1).toInstant() ); // diminuisce di un giorno
 
-        java.sql.Date currentDate_MenoUnGiorno_Sql = new java.sql.Date(currentDate_MenoUnGiorno.getTime());
+
+        java.sql.Date currentDate_MenoUnGiorno_Sql = new java.sql.Date(Utils.OggiRomaOre12().getTime());
 
         //Esegue una query che prende tutti i valori della colonna video (che contiene gli OID del Large Object) per tutte le righe con data_oroscopo precedente alla data limite.
         //oids è una lista degli identificatori OID (Long) dei Large Object associati ai video vecchi.
@@ -80,6 +82,9 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
         //Dopo aver eliminato i Large Object fisici, cancella tutte le righe dalla tabella che corrispondono ai dati oroscopo vecchi (data precedente alla data limite).
         String deleteSql = "DELETE FROM oroscopo_giornaliero WHERE data_oroscopo < ?";
         jdbcTemplate.update(deleteSql, currentDate_MenoUnGiorno_Sql);
+
+
+
     }
 
 

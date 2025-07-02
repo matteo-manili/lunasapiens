@@ -57,7 +57,7 @@ public class ScheduledTasks {
     public void executeTask_PulisciOldRecordsOroscopoGiornaliero() {
         if(Utils.isLocalhost() == false) {
             databaseMaintenanceRepository.deleteOldOroscopoRecords();
-            databaseMaintenanceRepository.vacuumFullOroscopoGiornaliero();
+            databaseMaintenanceRepository.vacuumFull();
             logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
         }
     }
