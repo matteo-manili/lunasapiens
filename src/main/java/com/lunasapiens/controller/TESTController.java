@@ -61,7 +61,7 @@ public class TESTController extends BaseController {
         logger.info("fine databaseMaintenanceRepository.deleteOldOroscopoRecords()");
 
         logger.info("eseguo databaseMaintenanceRepository.vacuumFull()...");
-        databaseMaintenanceRepository.vacuumFull();
+        databaseMaintenanceRepository.vacuum();
         logger.info("fine databaseMaintenanceRepository.vacuumFull()");
         return "redirect:/";
     }
