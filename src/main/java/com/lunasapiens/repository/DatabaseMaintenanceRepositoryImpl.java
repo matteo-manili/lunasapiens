@@ -63,9 +63,6 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
      */
     @Override
     public void deleteOldOroscopoRecords() {
-
-
-
         java.sql.Date currentDate_MenoUnGiorno_Sql = new java.sql.Date(Utils.OggiRomaOre12().getTime());
 
         //Esegue una query che prende tutti i valori della colonna video (che contiene gli OID del Large Object) per tutte le righe con data_oroscopo precedente alla data limite.
@@ -82,9 +79,6 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
         //Dopo aver eliminato i Large Object fisici, cancella tutte le righe dalla tabella che corrispondono ai dati oroscopo vecchi (data precedente alla data limite).
         String deleteSql = "DELETE FROM oroscopo_giornaliero WHERE data_oroscopo < ?";
         jdbcTemplate.update(deleteSql, currentDate_MenoUnGiorno_Sql);
-
-
-
     }
 
 
