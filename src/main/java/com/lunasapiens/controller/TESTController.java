@@ -67,6 +67,25 @@ public class TESTController extends BaseController {
     }
 
 
+    /**
+     * lo uso solo per test
+     * Reindirizza alla home page e segnala che la risorsa non esiste più
+     */
+    @GetMapping("/crea-oroscopo-giornaliero")
+    public String creaOroscopoGiornaliero(RedirectAttributes redirectAttributes) {
+        if (!isMatteoManilIdUser()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
+            return "redirect:/error";
+        }
+        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
+        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
+
+        return "redirect:/";
+    }
+
+
+
+
 
     @GetMapping("/test")
     public String test(Model model) {
@@ -99,21 +118,7 @@ public class TESTController extends BaseController {
     }
 
 
-    /**
-     * lo uso solo per test
-     * Reindirizza alla home page e segnala che la risorsa non esiste più
-     */
-    @GetMapping("/crea-oroscopo-giornaliero")
-    public String creaOroscopoGiornaliero(RedirectAttributes redirectAttributes) {
-        if (!isMatteoManilIdUser()) {
-            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
-            return "redirect:/error";
-        }
-        //scheduledTasks.test_Oroscopo_Segni_Transiti_Aspetti();
-        servizioOroscopoDelGiorno.creaOroscopoGiornaliero();
 
-        return "redirect:/";
-    }
 
     @GetMapping("/test_facebook")
     public String testFacebook(RedirectAttributes redirectAttributes) {
