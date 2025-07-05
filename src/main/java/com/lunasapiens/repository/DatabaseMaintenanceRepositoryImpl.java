@@ -68,9 +68,6 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
         LocalDateTime oggiRomaOre12 = Utils.OggiRomaOre12();
         java.sql.Timestamp oggiRomaOre12_SqlTimestamp = java.sql.Timestamp.valueOf(oggiRomaOre12);
 
-
-
-
         //Esegue una query che prende tutti i valori della colonna video (che contiene gli OID del Large Object) per tutte le righe con data_oroscopo precedente alla data limite.
         //oids è una lista degli identificatori OID (Long) dei Large Object associati ai video vecchi.
         String selectSql = "SELECT video FROM oroscopo_giornaliero WHERE data_oroscopo < ?";
