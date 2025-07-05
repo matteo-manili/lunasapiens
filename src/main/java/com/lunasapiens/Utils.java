@@ -174,6 +174,10 @@ public class Utils {
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
                 giornoOraPosizioneDTO.getMinuti());
         calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
+
+
+        logger.info("convertiGiornoOraPosizioneDTOInDate: "+calendar.getTime());
+
         // Ottenere l'oggetto Date dal Calendar
         return calendar.getTime();
     }

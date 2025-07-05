@@ -72,6 +72,10 @@ public class OroscopoController extends BaseController {
         logger.info("oroscopo endpoint");
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
+
+
+        logger.info( "data oroscopoooo: "+Utils.OggiRomaOre12() );
+
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
         for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
