@@ -172,8 +172,7 @@ public class Utils {
         Calendar calendar = Calendar.getInstance();
         calendar.clear(); // per azzerare tutti i campi, importante!
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
-                giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
-        // Impostare i millisecondi e secondi a 0
+                giornoOraPosizioneDTO.getMinuti());
         calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
         // Ottenere l'oggetto Date dal Calendar
         return calendar.getTime();
