@@ -170,7 +170,7 @@ public class Utils {
     public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Creare un oggetto Calendar vuoto e impostare i valori
         Calendar calendar = Calendar.getInstance();
-        calendar.clear(); // per azzerare tutti i campi, importante!
+        //calendar.clear(); // per azzerare tutti i campi, importante!
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
                 giornoOraPosizioneDTO.getMinuti());
         calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
