@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -363,8 +365,9 @@ public class ServizioOroscopoDelGiorno {
                     int fontSize = 25; Color textColor = Color.BLUE;
 
                     // Formattatore per la data
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    String dataOroscopoString = formatter.format( Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO) );
+                    LocalDateTime ldt = Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String dataOroscopoString = ldt.format(formatter);
 
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     GeneratorImage igenerat = new GeneratorImage();
