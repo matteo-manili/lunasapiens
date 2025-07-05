@@ -330,7 +330,7 @@ public class ServizioOroscopoDelGiorno {
         Utils.eliminaCartelleEFile(pathOroscopoGiornalieroImmagini);
 
         for (int numeroSegno = 0; numeroSegno <= 11; numeroSegno++) {
-            OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+            OroscopoGiornaliero oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO));
 
             if (oroscopoGiornaliero == null || oroscopoGiornaliero.getVideo() == null || oroscopoGiornaliero.getNomeFileVideo() == null
                     || oroscopoGiornaliero.getTestoOroscopo() == null) {
@@ -338,7 +338,7 @@ public class ServizioOroscopoDelGiorno {
                 if(oroscopoGiornaliero == null) {
                     oroscopoGiornaliero = new OroscopoGiornaliero();
                     oroscopoGiornaliero.setNumSegno(numeroSegno);
-                    oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                    oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO) );
                 }
                 try {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE CONTENUTO IA @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -364,7 +364,7 @@ public class ServizioOroscopoDelGiorno {
 
                     // Formattatore per la data
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    String dataOroscopoString = formatter.format( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                    String dataOroscopoString = formatter.format( Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO) );
 
                     String imagePath = pathOroscopoGiornalieroImmagini + dataOroscopoString + "/" + numeroSegno + "/";
                     GeneratorImage igenerat = new GeneratorImage();
@@ -384,10 +384,10 @@ public class ServizioOroscopoDelGiorno {
                                 videoBytes, nomeFileVideo + GeneratorVideo.formatoVideo());
 
                     } catch (DataIntegrityViolationException e) {
-                        oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO));
+                        oroscopoGiornaliero = oroscopoGiornalieroService.findByNumSegnoAndDataOroscopo(numeroSegno, Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO));
                         oroscopoGiornaliero.setNumSegno(numeroSegno);
                         oroscopoGiornaliero.setTestoOroscopo(sBTestoOroscopoIA.toString());
-                        oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO) );
+                        oroscopoGiornaliero.setDataOroscopo( Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO) );
                         oroscopoGiornaliero.setVideo(videoBytes);
                         oroscopoGiornaliero.setNomeFileVideo(nomeFileVideo + GeneratorVideo.formatoVideo());
                         oroscopoGiornalieroRepository.save(oroscopoGiornaliero);

@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -130,6 +131,7 @@ public class Utils {
     }
 
 
+    /*
     public static Date OggiRomaOre12() {
         ZonedDateTime nowRome = getNowRomeEurope();
         // Crea ZonedDateTime di oggi ore 12:00 a Roma
@@ -137,14 +139,47 @@ public class Utils {
         // Converte a java.util.Date
         return Date.from(todayAt12Rome.toInstant());
     }
+*/
 
+    public static LocalDateTime OggiRomaOre12() {
+        ZonedDateTime zdtRome = ZonedDateTime.now( getZoneIdRomeEurope() )
+                .withHour(12).withMinute(0).withSecond(0).withNano(0);
+        return zdtRome.toLocalDateTime();
+    }
 
+    /*
+    public static Timestamp OggiRomaOre12_OK() {
+        ZonedDateTime nowRome = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
+        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
+
+        // Questa parte è fondamentale: usi l'orario LOCALE di Roma senza offset.
+        LocalDateTime localDateTimeRome = todayAt12Rome.toLocalDateTime();
+
+        // Timestamp è coerente con `timestamp without time zone` in PostgreSQL.
+        return Timestamp.valueOf(localDateTimeRome);
+    }
+*/
+
+    /*
     public static Date OggiRomaOre0() {
         ZonedDateTime nowRome = getNowRomeEurope();
         // Crea ZonedDateTime di oggi ore 0:00 a Roma
         ZonedDateTime todayAt0Rome = nowRome.withHour(0).withMinute(0).withSecond(0).withNano(0);
         // Converte a java.util.Date
         return Date.from(todayAt0Rome.toInstant());
+    }
+
+     */
+
+    public static LocalDateTime OggiRomaOre0() {
+        ZonedDateTime zdtRome = ZonedDateTime.now( getZoneIdRomeEurope() )
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+        return zdtRome.toLocalDateTime();
+    }
+
+
+    public static Date toDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone( getZoneIdRomeEurope() ).toInstant());
     }
 
 
@@ -167,10 +202,25 @@ public class Utils {
     }
 
 
+
+    public static LocalDateTime convertiGiornoOraPosizioneDTOInLocalDateTime(GiornoOraPosizioneDTO dto) {
+        LocalDateTime localDateTime = LocalDateTime.of(
+                dto.getAnno(),
+                dto.getMese(),
+                dto.getGiorno(),
+                dto.getOra(),
+                dto.getMinuti(),
+                0  // secondi
+        );
+        logger.info("convertiGiornoOraPosizioneDTOInLocalDateTime: " + localDateTime);
+        return localDateTime;
+    }
+
+    /*
     public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Creare un oggetto Calendar vuoto e impostare i valori
         Calendar calendar = Calendar.getInstance();
-        //calendar.clear(); // per azzerare tutti i campi, importante!
+        calendar.clear(); // per azzerare tutti i campi, importante!
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
                 giornoOraPosizioneDTO.getMinuti());
         calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
@@ -181,7 +231,7 @@ public class Utils {
         // Ottenere l'oggetto Date dal Calendar
         return calendar.getTime();
     }
-
+    */
 
     /**
      * Converte l'HTML in testo normale con formattazione specifica:

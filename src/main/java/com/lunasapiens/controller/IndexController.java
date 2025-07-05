@@ -136,7 +136,7 @@ public class IndexController extends BaseController {
             if (url.equals("/oroscopo")) {
                 // Aggiungi la pagina oroscopo con lastmod, changefreq e priority
                 WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
-                        .lastMod( Utils.OggiRomaOre0() ) // Data di ultima modifica
+                        .lastMod( Utils.toDate(Utils.OggiRomaOre0())  ) // Data di ultima modifica
                         .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
                         .priority(1.0)                // Priorità alta
                         .build();

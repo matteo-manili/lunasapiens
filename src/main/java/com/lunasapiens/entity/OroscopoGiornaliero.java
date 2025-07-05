@@ -2,7 +2,7 @@ package com.lunasapiens.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -12,7 +12,7 @@ public class OroscopoGiornaliero implements Serializable {
     private Long id;
 
     private Integer numSegno;
-    private Date dataOroscopo;
+    private LocalDateTime dataOroscopo;
     private String testoOroscopo;
     private byte[] video;
     private String nomeFileVideo;
@@ -51,10 +51,10 @@ public class OroscopoGiornaliero implements Serializable {
     }
 
     @Column(name = "data_oroscopo", nullable = false)
-    public Date getDataOroscopo() {
+    public LocalDateTime getDataOroscopo() {
         return dataOroscopo;
     }
-    public void setDataOroscopo(Date dataOroscopo) {
+    public void setDataOroscopo(LocalDateTime dataOroscopo) {
         this.dataOroscopo = dataOroscopo;
     }
 
@@ -78,7 +78,7 @@ public class OroscopoGiornaliero implements Serializable {
 
 
 
-    public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, Date dataOroscopo, byte[] video, String nomeFileVideo) {
+    public OroscopoGiornaliero(Integer numSegno, String testoOroscopo, LocalDateTime dataOroscopo, byte[] video, String nomeFileVideo) {
         this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;
         this.dataOroscopo = dataOroscopo;
@@ -86,7 +86,7 @@ public class OroscopoGiornaliero implements Serializable {
         this.nomeFileVideo = nomeFileVideo;
     }
 
-    public OroscopoGiornaliero(Long id, Integer numSegno, String testoOroscopo, Date dataOroscopo, String nomeFileVideo) {
+    public OroscopoGiornaliero(Long id, Integer numSegno, String testoOroscopo, LocalDateTime dataOroscopo, String nomeFileVideo) {
         this.id = id;
         this.numSegno = numSegno;
         this.testoOroscopo = testoOroscopo;

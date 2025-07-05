@@ -7,7 +7,6 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
 import com.lunasapiens.config.JwtElements;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -25,7 +24,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 @Service
 public class JwtService {
@@ -70,7 +68,7 @@ public class JwtService {
              */
             Algorithm algorithm = Algorithm.RSA256(cachedPublicKey, cachedPrivateKey);
             // Calcola la data di scadenza a 7 giorni da ora
-            Calendar calendar = Calendar.getInstance( TimeZone.getTimeZone(Utils.getZoneIdRomeEurope()) );
+            Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
             //calendar.add(Calendar.MINUTE, 1);
 

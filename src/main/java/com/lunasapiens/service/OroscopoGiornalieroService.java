@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ public class OroscopoGiornalieroService {
 
 
     @Transactional(readOnly = true)
-    public OroscopoGiornaliero findByNumSegnoAndDataOroscopo(Integer numSegno, Date dataOroscopo) {
+    public OroscopoGiornaliero findByNumSegnoAndDataOroscopo(Integer numSegno, LocalDateTime dataOroscopo) {
         return oroscopoGiornalieroRepository.findByNumSegnoAndDataOroscopo(numSegno, dataOroscopo);
     }
 
@@ -39,7 +39,7 @@ public class OroscopoGiornalieroService {
     }
 
     @Transactional(readOnly = true)
-    public List<OroscopoGiornaliero> findAllByDataOroscopo(Date dataOroscopo) {
+    public List<OroscopoGiornaliero> findAllByDataOroscopo(LocalDateTime dataOroscopo) {
         return oroscopoGiornalieroRepository.findAllByDataOroscopo(dataOroscopo);
     }
 
@@ -57,7 +57,7 @@ public class OroscopoGiornalieroService {
 
 
     @Transactional(readOnly = true)
-    public List<OroscopoGiornaliero> findAllByDataOroscopoWithoutVideo(Date dataOroscopo) {
+    public List<OroscopoGiornaliero> findAllByDataOroscopoWithoutVideo(LocalDateTime dataOroscopo) {
         return oroscopoGiornalieroRepository.findAllByDataOroscopoWithoutVideo(dataOroscopo);
     }
 
@@ -69,7 +69,7 @@ public class OroscopoGiornalieroService {
                                                          byte[] video, String nomeFileVideo) throws Exception {
 
         // Ottenere l'oggetto Date dal Calendar
-        Date date = Utils.convertiGiornoOraPosizioneDTOInDate(giornoOraPosizioneDTO);
+        LocalDateTime date = Utils.convertiGiornoOraPosizioneDTOInLocalDateTime(giornoOraPosizioneDTO);
 
         OroscopoGiornaliero oroscopoGiornaliero = new OroscopoGiornaliero(segnoNumero, sB.toString(), date, video, nomeFileVideo);
 

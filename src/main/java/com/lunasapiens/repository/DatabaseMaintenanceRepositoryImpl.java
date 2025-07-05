@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -63,12 +64,17 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
      */
     @Override
     public void deleteOldOroscopoRecords() {
-        java.sql.Date oggiRomaOre12_Sql = new java.sql.Date(Utils.OggiRomaOre12().getTime());
+        // Converti LocalDateTime in java.sql.Timestamp
+        LocalDateTime oggiRomaOre12 = Utils.OggiRomaOre12();
+        java.sql.Timestamp oggiRomaOre12_SqlTimestamp = java.sql.Timestamp.valueOf(oggiRomaOre12);
+
+
+
 
         //Esegue una query che prende tutti i valori della colonna video (che contiene gli OID del Large Object) per tutte le righe con data_oroscopo precedente alla data limite.
         //oids è una lista degli identificatori OID (Long) dei Large Object associati ai video vecchi.
         String selectSql = "SELECT video FROM oroscopo_giornaliero WHERE data_oroscopo < ?";
-        List<Long> oids = jdbcTemplate.queryForList(selectSql, Long.class, oggiRomaOre12_Sql);
+        List<Long> oids = jdbcTemplate.queryForList(selectSql, Long.class, oggiRomaOre12_SqlTimestamp);
 
         //Per ogni OID in lista, esegue il comando SQL lo_unlink(oid).
         //lo_unlink è una funzione di PostgreSQL che elimina il Large Object corrispondente all’OID, liberando lo spazio occupato nel sistema pg_largeobject.
@@ -78,7 +84,7 @@ public class DatabaseMaintenanceRepositoryImpl implements DatabaseMaintenanceRep
 
         //Dopo aver eliminato i Large Object fisici, cancella tutte le righe dalla tabella che corrispondono ai dati oroscopo vecchi (data precedente alla data limite).
         String deleteSql = "DELETE FROM oroscopo_giornaliero WHERE data_oroscopo < ?";
-        jdbcTemplate.update(deleteSql, oggiRomaOre12_Sql);
+        jdbcTemplate.update(deleteSql, oggiRomaOre12_SqlTimestamp);
     }
 
 

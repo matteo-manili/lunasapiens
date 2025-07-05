@@ -2,14 +2,15 @@ package com.lunasapiens.dto;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.OroscopoGiornaliero;
-import java.util.Date;
+
+import java.time.LocalDateTime;
 
 public class OroscopoGiornalieroDTO {
 
     private Long id;
     private Integer numSegno;
     private String testoOroscopo;
-    private Date dataOroscopo;
+    private LocalDateTime dataOroscopo;
     private String nomeFileVideo;
 
     String nomeSegnoZodiacale;
@@ -61,11 +62,11 @@ public class OroscopoGiornalieroDTO {
         this.testoOroscopo = testoOroscopo;
     }
 
-    public Date getDataOroscopo() {
+    public LocalDateTime getDataOroscopo() {
         return dataOroscopo;
     }
 
-    public void setDataOroscopo(Date dataOroscopo) {
+    public void setDataOroscopo(LocalDateTime dataOroscopo) {
         this.dataOroscopo = dataOroscopo;
     }
 
