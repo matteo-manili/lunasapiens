@@ -130,8 +130,6 @@ public class Utils {
     }
 
 
-
-
     public static Date OggiRomaOre12() {
         ZonedDateTime nowRome = getNowRomeEurope();
         // Crea ZonedDateTime di oggi ore 12:00 a Roma
@@ -141,23 +139,6 @@ public class Utils {
     }
 
 
-    /*
-    public static Date OggiRomaOre12() {
-        ZonedDateTime now = getNowRomeEurope();
-        Calendar calendar = Calendar.getInstance(); // ERRORE, prende l'orario del computer dove gira (su server è diverso)
-        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
-        calendar.set(Calendar.MONTH, now.getMonthValue() - 1);
-        calendar.set(Calendar.YEAR, now.getYear());
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-*/
-
-
-
     public static Date OggiRomaOre0() {
         ZonedDateTime nowRome = getNowRomeEurope();
         // Crea ZonedDateTime di oggi ore 0:00 a Roma
@@ -165,25 +146,6 @@ public class Utils {
         // Converte a java.util.Date
         return Date.from(todayAt0Rome.toInstant());
     }
-
-
-    /*
-    public static Date OggiRomaOre0() {
-        ZonedDateTime now = getNowRomeEurope();
-        Calendar calendar = Calendar.getInstance(); // ERRORE, prende l'orario del computer dove gira (su server è diverso)
-        calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
-        calendar.set(Calendar.MONTH, now.getMonthValue() - 1);
-        calendar.set(Calendar.YEAR, now.getYear());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-     */
-
-
-
 
 
     /**
@@ -206,8 +168,9 @@ public class Utils {
 
 
     public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        // Creare un oggetto Calendar e impostare i valori
-        Calendar calendar = Calendar.getInstance( TimeZone.getTimeZone(getZoneIdRomeEurope()) );
+        // Creare un oggetto Calendar vuoto e impostare i valori
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear(); // per azzerare tutti i campi, importante!
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
                 giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
         // Impostare i millisecondi e secondi a 0
