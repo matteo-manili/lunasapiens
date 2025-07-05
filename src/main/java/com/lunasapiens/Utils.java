@@ -120,16 +120,31 @@ public class Utils {
     }
 
 
+
+    public static ZoneId getZoneIdRomeEurope() {
+        return ZoneId.of("Europe/Rome");
+    }
+
     public static ZonedDateTime getNowRomeEurope() {
-        ZoneId romaZone = ZoneId.of("Europe/Rome");
-        ZonedDateTime now = ZonedDateTime.now(romaZone);
-        return now;
+        return ZonedDateTime.now( getZoneIdRomeEurope() );
     }
 
 
+
+
+    public static Date OggiRomaOre12() {
+        ZonedDateTime nowRome = getNowRomeEurope();
+        // Crea ZonedDateTime di oggi ore 12:00 a Roma
+        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
+        // Converte a java.util.Date
+        return Date.from(todayAt12Rome.toInstant());
+    }
+
+
+    /*
     public static Date OggiRomaOre12() {
         ZonedDateTime now = getNowRomeEurope();
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(); // ERRORE, prende l'orario del computer dove gira (su server è diverso)
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
         calendar.set(Calendar.MONTH, now.getMonthValue() - 1);
         calendar.set(Calendar.YEAR, now.getYear());
@@ -139,23 +154,23 @@ public class Utils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
-
-/*
-    public static Date OggiRomaOre12() {
-        ZonedDateTime nowRome = getNowRomeEurope();
-        // Crea ZonedDateTime di oggi ore 12:00 a Roma
-        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
-        // Converte a java.util.Date
-        return Date.from(todayAt12Rome.toInstant());
-    }
 */
 
 
 
+    public static Date OggiRomaOre0() {
+        ZonedDateTime nowRome = getNowRomeEurope();
+        // Crea ZonedDateTime di oggi ore 0:00 a Roma
+        ZonedDateTime todayAt0Rome = nowRome.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        // Converte a java.util.Date
+        return Date.from(todayAt0Rome.toInstant());
+    }
 
+
+    /*
     public static Date OggiRomaOre0() {
         ZonedDateTime now = getNowRomeEurope();
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(); // ERRORE, prende l'orario del computer dove gira (su server è diverso)
         calendar.set(Calendar.DAY_OF_MONTH, now.getDayOfMonth());
         calendar.set(Calendar.MONTH, now.getMonthValue() - 1);
         calendar.set(Calendar.YEAR, now.getYear());
@@ -165,16 +180,9 @@ public class Utils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
+     */
 
-        /*
-    public static Date OggiRomaOre0() {
-        ZonedDateTime nowRome = getNowRomeEurope();
-        // Crea ZonedDateTime di oggi ore 0:00 a Roma
-        ZonedDateTime todayAt0Rome = nowRome.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        // Converte a java.util.Date
-        return Date.from(todayAt0Rome.toInstant());
-    }
-*/
+
 
 
 
@@ -199,7 +207,7 @@ public class Utils {
 
     public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Creare un oggetto Calendar e impostare i valori
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance( TimeZone.getTimeZone(getZoneIdRomeEurope()) );
         calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
                 giornoOraPosizioneDTO.getMinuti()); // I secondi sono impostati a 0
         // Impostare i millisecondi e secondi a 0
