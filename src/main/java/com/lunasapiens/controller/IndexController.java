@@ -20,6 +20,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -135,8 +138,9 @@ public class IndexController extends BaseController {
         for (String url : Constants.URL_INDEX_LIST) {
             if (url.equals("/oroscopo")) {
                 // Aggiungi la pagina oroscopo con lastmod, changefreq e priority
+                Date lastModDate = Utils.toDate((Utils.OggiRomaOre0()));
                 WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
-                        .lastMod( Utils.toDate(Utils.OggiRomaOre0())  ) // Data di ultima modifica
+                        .lastMod( lastModDate  ) // Data di ultima modifica
                         .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
                         .priority(1.0)                // Priorità alta
                         .build();

@@ -30,6 +30,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class EmailService {
@@ -131,10 +136,98 @@ public class EmailService {
         }
     }
 
-
-
-
+    /**
+     * Limite invio email GoDaddy
+     * Gli account di hosting standard di GoDaddy sono limitati a 250 destinatari email al giorno.
+     * 300 messaggi all'ora
+     * @return
+     */
     public int inviaEmailOroscopoGioraliero() {
+        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO =
+                servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
+        List<OroscopoGiornaliero> listOroscopoGiorn =
+                oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
+
+        // 🧾 Converte la lista in DTO per usarla nelle email (conversione una sola volta)
+        List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = listOroscopoGiorn.stream()
+                .map(OroscopoGiornalieroDTO::new)
+                .collect(Collectors.toList());
+
+        // 👥 Recupera tutti gli utenti
+        List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
+
+        // 🧵 CREA UN POOL DI THREAD per eseguire invii in parallelo ma limitati
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        // 📦 Lista dei task asincroni (futures) per attendere che finiscano tutti
+        List<Future<?>> futures = new ArrayList<>();
+
+        // 🔢 Variabile sicura per conteggiare le email inviate (Atomic = thread-safe)
+        AtomicInteger totaleNumEmailInviate = new AtomicInteger(0);
+
+        // 🔁 Ciclo su tutti gli utenti
+        for (ProfiloUtente emailUtente : profiloUtenteList) {
+            // ✅ Invia solo se l’utente ha attivato le email giornaliere
+            if (emailUtente.isEmailOroscopoGiornaliero()) {
+
+                // 🧵 INVIO ASINCRONO (nuova parte)
+                // Invece di inviare l’email subito, lo affidiamo al pool di thread
+                futures.add(executor.submit(() -> {
+                    try {
+                        // 📨 Componi l’oggetto dell’email
+                        String subject = "Orosocpo " +
+                                giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +
+                                " - LunaSapiens";
+
+                        // ✏️ Prepara il contesto Thymeleaf con le variabili necessarie
+                        Context context = new Context();
+                        context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
+                        context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
+                        context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
+
+                        // Pausa per evitare limiti SMTP GoDaddy
+                        // Pausa di 1 secondo per non sovraccaricare il server SMTP
+                        Thread.sleep(1000);
+
+                        // 📤 Invio dell’email
+                        sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+
+                        // 📈 Incrementa il conteggio email inviate (in modo sicuro)
+                        totaleNumEmailInviate.incrementAndGet();
+
+                        // 📝 Log positivo
+                        logger.info("Email inviata a: {}", emailUtente.getEmail());
+
+                    } catch (Exception e) {
+                        // ❌ Se qualcosa va storto, logga e avvisa su Telegram
+                        logger.error("Errore invio email a {}: {}", emailUtente.getEmail(), e.getMessage(), e);
+                        telegramBotService.inviaMessaggio("Errore invio email oroscopo: " + e.getMessage());
+                    }
+                }));
+            }
+        }
+
+        // 🕒 ASPETTA CHE TUTTI I TASK FINISCANO (nuova parte)
+        // Serve per assicurarci che tutte le email siano state inviate prima di chiudere
+        for (Future<?> f : futures) {
+            try {
+                f.get(); // blocca finché il singolo invio è completato (oppure usa timeout se vuoi)
+            } catch (Exception e) {
+                logger.error("Errore durante l'attesa dei task: {}", e.getMessage(), e);
+            }
+        }
+
+        // 🔚 Chiude il pool di thread in modo ordinato
+        executor.shutdown();
+
+        // 🔢 Ritorna il numero totale di email inviate correttamente
+        return totaleNumEmailInviate.get();
+    }
+
+
+
+    public int inviaEmailOroscopoGioraliero_OLD() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
