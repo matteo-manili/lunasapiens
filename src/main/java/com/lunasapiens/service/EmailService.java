@@ -142,7 +142,7 @@ public class EmailService {
      * 300 messaggi all'ora
      * @return
      */
-    public int inviaEmailOroscopoGioraliero() {
+    public int inviaEmailOroscopoGioraliero_MULTI_THREAD() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO =
                 servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
@@ -227,7 +227,7 @@ public class EmailService {
 
 
 
-    public int inviaEmailOroscopoGioraliero_OLD() {
+    public int inviaEmailOroscopoGioraliero() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
