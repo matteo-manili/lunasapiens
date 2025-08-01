@@ -147,7 +147,7 @@ public class EmailService {
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
 
-        // 🧾 Converte la lista in DTO per usarla nelle email (conversione una sola volta)
+        // 🧾 Converte la lista in DTO per usarla nelle email
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = listOroscopoGiorn.stream()
                 .map(OroscopoGiornalieroDTO::new)
                 .collect(Collectors.toList());
