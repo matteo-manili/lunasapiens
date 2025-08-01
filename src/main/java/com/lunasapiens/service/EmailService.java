@@ -137,7 +137,7 @@ public class EmailService {
     }
 
     /**
-     * Limite invio email GoDaddy
+     * Limite invio email GoDaddy piano base
      * Gli account di hosting standard di GoDaddy sono limitati a 250 destinatari email al giorno.
      * 300 messaggi all'ora e 200 messaggi al minuto.
      * @return
