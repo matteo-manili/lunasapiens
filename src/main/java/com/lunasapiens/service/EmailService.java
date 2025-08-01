@@ -173,14 +173,13 @@ public class EmailService {
                     // 📨 Componi l’oggetto dell’email
                     String subject = "Orosocpo " + giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() + " - LunaSapiens";
 
-                    // ✏️ Prepara il contesto Thymeleaf con le variabili necessarie
+                    // ✏️Prepara il contesto Thymeleaf con le variabili necessarie
                     Context context = new Context();
                     context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
                     context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
                     context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
-                    // Pausa per evitare limiti SMTP GoDaddy
-                    // Pausa di 1 secondo per non sovraccaricare il server SMTP
+                    // Pausa 1 secondo per evitare limiti SMTP GoDaddy
                     Thread.sleep(1000);
 
                     // 📤 Invio dell’email
