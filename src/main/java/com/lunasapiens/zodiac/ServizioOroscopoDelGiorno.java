@@ -61,7 +61,7 @@ public class ServizioOroscopoDelGiorno {
     public JSONObject jsonSchemaOrgTransitiDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         // Aggiungi il creatore (esempio: l'organizzazione che ha creato i dati)
         JSONObject creator = new JSONObject();
-        creator.put("@type", "Person");creator.put("name", "Matteo Manili");
+        creator.put("@type", "Person");creator.put("name", "Org. LunaSapiens");
         // Aggiunta del provider di dati
         JSONObject dataProvider = new JSONObject();
         dataProvider.put("@type", "Organization"); dataProvider.put("name", "LunaSapiens"); dataProvider.put("url", "https://www.lunasapiens.com");
