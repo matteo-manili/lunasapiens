@@ -152,7 +152,7 @@ public class EmailService {
                 .map(OroscopoGiornalieroDTO::new)
                 .collect(Collectors.toList());
 
-        // 👥 Recupera tutti gli utenti
+        // 👥 Recupera tutti gli utenti con oroscopo giornaliero attivo
         List<ProfiloUtente> utentiConOroscopoAttivoList = profiloUtenteService.getUtentiConOroscopoAttivo();
 
         // 🧵 CREA UN POOL DI THREAD per eseguire invii in parallelo ma limitati
