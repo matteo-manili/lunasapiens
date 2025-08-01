@@ -153,7 +153,7 @@ public class EmailService {
                 .collect(Collectors.toList());
 
         // 👥 Recupera tutti gli utenti
-        List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
+        List<ProfiloUtente> utentiConOroscopoAttivoList = profiloUtenteService.getUtentiConOroscopoAttivo();
 
         // 🧵 CREA UN POOL DI THREAD per eseguire invii in parallelo ma limitati
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -165,43 +165,39 @@ public class EmailService {
         AtomicInteger totaleNumEmailInviate = new AtomicInteger(0);
 
         // 🔁 Ciclo su tutti gli utenti
-        for (ProfiloUtente emailUtente : profiloUtenteList) {
-            // ✅ Invia solo se l’utente ha attivato le email giornaliere
-            if (emailUtente.isEmailOroscopoGiornaliero()) {
+        for (ProfiloUtente emailUtente : utentiConOroscopoAttivoList) {
+            // 🧵 INVIO ASINCRONO (nuova parte)
+            // Invece di inviare l’email subito, lo affidiamo al pool di thread
+            futures.add(executor.submit(() -> {
+                try {
+                    // 📨 Componi l’oggetto dell’email
+                    String subject = "Orosocpo " + giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() + " - LunaSapiens";
 
-                // 🧵 INVIO ASINCRONO (nuova parte)
-                // Invece di inviare l’email subito, lo affidiamo al pool di thread
-                futures.add(executor.submit(() -> {
-                    try {
-                        // 📨 Componi l’oggetto dell’email
-                        String subject = "Orosocpo " + giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() + " - LunaSapiens";
+                    // ✏️ Prepara il contesto Thymeleaf con le variabili necessarie
+                    Context context = new Context();
+                    context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
+                    context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
+                    context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
 
-                        // ✏️ Prepara il contesto Thymeleaf con le variabili necessarie
-                        Context context = new Context();
-                        context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
-                        context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
-                        context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
+                    // Pausa per evitare limiti SMTP GoDaddy
+                    // Pausa di 1 secondo per non sovraccaricare il server SMTP
+                    Thread.sleep(1000);
 
-                        // Pausa per evitare limiti SMTP GoDaddy
-                        // Pausa di 1 secondo per non sovraccaricare il server SMTP
-                        Thread.sleep(1000);
+                    // 📤 Invio dell’email
+                    sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
 
-                        // 📤 Invio dell’email
-                        sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+                    // 📈 Incrementa il conteggio email inviate (in modo sicuro)
+                    totaleNumEmailInviate.incrementAndGet();
 
-                        // 📈 Incrementa il conteggio email inviate (in modo sicuro)
-                        totaleNumEmailInviate.incrementAndGet();
+                    // 📝 Log positivo
+                    logger.info("Email inviata a: {}", emailUtente.getEmail());
 
-                        // 📝 Log positivo
-                        logger.info("Email inviata a: {}", emailUtente.getEmail());
-
-                    } catch (Exception e) {
-                        // ❌ Se qualcosa va storto, logga e avvisa su Telegram
-                        logger.error("Errore invio email a {}: {}", emailUtente.getEmail(), e.getMessage(), e);
-                        telegramBotService.inviaMessaggio("Errore invio email oroscopo: " + e.getMessage());
-                    }
-                }));
-            }
+                } catch (Exception e) {
+                    // ❌ Se qualcosa va storto, logga e avvisa su Telegram
+                    logger.error("Errore invio email a {}: {}", emailUtente.getEmail(), e.getMessage(), e);
+                    telegramBotService.inviaMessaggio("Errore invio email oroscopo: " + e.getMessage());
+                }
+            }));
         }
 
         // 🕒 ASPETTA CHE TUTTI I TASK FINISCANO (nuova parte)
@@ -226,26 +222,25 @@ public class EmailService {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
-        List<ProfiloUtente> profiloUtenteList = profiloUtenteService.findAll();
+        List<ProfiloUtente> utentiConOroscopoAttivoList = profiloUtenteService.getUtentiConOroscopoAttivo();
         int totaleNumEmailInviate = 0;
-        for(ProfiloUtente emailUtente: profiloUtenteList){
+        for(ProfiloUtente emailUtente: utentiConOroscopoAttivoList){
             try{
-                if( emailUtente.isEmailOroscopoGiornaliero() ){
-                    String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
-                    Context context = new Context();
-                    List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
-                    for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
-                        OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
-                        listOroscopoGiornoDTO.add(dto);
-                    }
-                    context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
-                    context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
-                    context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
-
-                    sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
-                    totaleNumEmailInviate += 1;
-                    logger.info("inviaEmailOrosciopoGioraliero Email inviata a: {}", emailUtente.getEmail());
+                String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
+                Context context = new Context();
+                List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
+                for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
+                    OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
+                    listOroscopoGiornoDTO.add(dto);
                 }
+                context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
+                context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
+                context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
+
+                sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
+                totaleNumEmailInviate += 1;
+                logger.info("inviaEmailOrosciopoGioraliero Email inviata a: {}", emailUtente.getEmail());
+
             } catch (Exception e) {
                 logger.error("inviaEmailOroscopoGioraliero Exception per utente {}: {}", emailUtente.getEmail(), e.getMessage(), e);
                 telegramBotService.inviaMessaggio("inviaEmailOroscopoGioraliero Exception: " + e.getMessage());

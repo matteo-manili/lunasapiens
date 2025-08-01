@@ -30,6 +30,12 @@ public class ProfiloUtenteService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<ProfiloUtente> getUtentiConOroscopoAttivo() {
+        return profiloUtenteRepository.findByEmailOroscopoGiornalieroTrue();
+    }
+
+
     // Metodo per recuperare l'ultimo record inserito
     @Transactional(readOnly = true) // Disabilita l'autocommit
     public Optional<ProfiloUtente> getUltimoRecordInserito() {
@@ -41,7 +47,6 @@ public class ProfiloUtenteService {
     public Optional<ProfiloUtente> findByProfiloUtente(String email) {
         return profiloUtenteRepository.findByEmail(email);
     }
-
 
 
     @Transactional
