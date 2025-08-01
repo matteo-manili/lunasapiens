@@ -139,15 +139,13 @@ public class EmailService {
     /**
      * Limite invio email GoDaddy
      * Gli account di hosting standard di GoDaddy sono limitati a 250 destinatari email al giorno.
-     * 300 messaggi all'ora
+     * 300 messaggi all'ora e 200 messaggi al minuto.
      * @return
      */
     public int inviaEmailOroscopoGioraliero() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
-        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO =
-                servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
-        List<OroscopoGiornaliero> listOroscopoGiorn =
-                oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
+        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
+        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
 
         // 🧾 Converte la lista in DTO per usarla nelle email (conversione una sola volta)
         List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = listOroscopoGiorn.stream()
@@ -176,9 +174,7 @@ public class EmailService {
                 futures.add(executor.submit(() -> {
                     try {
                         // 📨 Componi l’oggetto dell’email
-                        String subject = "Orosocpo " +
-                                giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +
-                                " - LunaSapiens";
+                        String subject = "Orosocpo " + giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() + " - LunaSapiens";
 
                         // ✏️ Prepara il contesto Thymeleaf con le variabili necessarie
                         Context context = new Context();
