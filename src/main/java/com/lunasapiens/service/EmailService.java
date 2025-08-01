@@ -320,15 +320,15 @@ public class EmailService {
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            logger.error("Errore specifico JavaMail (MessagingException) durante l'invio email a {}: {}", to, e.getMessage(), e);
+            logger.error("Errore specifico (MessagingException) durante l'invio email a {}: {}", to, e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail MessagingException: "+e.getMessage());
 
         } catch (MailException e) {
-            logger.error("Errore generico di Spring Mail (MailException): {}", e.getMessage(), e);
+            logger.error("Errore (MailException): {}", e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail MailException: "+e.getMessage());
 
         } catch (Exception e) {
-            logger.error("Errore inaspettato (Exception): {}", e.getMessage(), e);
+            logger.error("Errore (Exception): {}", e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail Exception: "+e.getMessage());
         }
     }
