@@ -359,7 +359,6 @@ public class ServizioOroscopoDelGiorno {
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LAVORAZIONE TESTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     ArrayList<String> paragrafiTestoOroscopoIA = ServizioOroscopoDelGiorno.dividiParagrafiStringBuilderIA( sBTestoOroscopoIA );
 
-
                     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CREAZIONE IMMAGINE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     String fontName = "Comic Sans MS"; // Arial
                     int fontSize = 25; Color textColor = Color.BLUE;

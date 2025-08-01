@@ -72,7 +72,7 @@ public class EmailService {
 
 
 
-// ###################### EMAIL REGISTRAZION PROFILO UTENTE ####################################
+    // ###################### EMAIL REGISTRAZION PROFILO UTENTE ####################################
 
     public void inviaemailRegistrazioneUtente(ProfiloUtente profiloUtente, String codeTokenJwt) {
         if( profiloUtente != null ) {
@@ -142,7 +142,7 @@ public class EmailService {
      * 300 messaggi all'ora
      * @return
      */
-    public int inviaEmailOroscopoGioraliero_MULTI_THREAD() {
+    public int inviaEmailOroscopoGioraliero() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO =
                 servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
@@ -226,8 +226,7 @@ public class EmailService {
     }
 
 
-
-    public int inviaEmailOroscopoGioraliero() {
+    public int inviaEmailOroscopoGioraliero_OLD() {
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
         OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
         List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
@@ -326,22 +325,13 @@ public class EmailService {
 
         } catch (MailException e) {
             logger.error("Errore generico di Spring Mail (MailException): {}", e.getMessage(), e);
-            // Gestione alternativa (es. notifiche di fallback)
+            telegramBotService.inviaMessaggio("sendHtmlEmail MailException: "+e.getMessage());
 
         } catch (Exception e) {
             logger.error("Errore inaspettato (Exception): {}", e.getMessage(), e);
             telegramBotService.inviaMessaggio("sendHtmlEmail Exception: "+e.getMessage());
         }
     }
-
-
-
-    /*
-    logger.error
-logger.error
-logger.error
-
-     */
 
 
     public void sendTextEmail(String to, String subject, String text) {
