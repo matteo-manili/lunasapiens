@@ -21,5 +21,3 @@ public interface ArticleContentRepository extends JpaRepository<ArticleContent, 
     List<ArticleContent> findAllByOrderByCreatedAtDesc();  // Usando la colonna createdAt per ordinare
 
 }
-
-

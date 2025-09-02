@@ -112,7 +112,6 @@
 
 
         <!-- ###################### OPEN_AI ###################### -->
-
         <dependency>
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>client</artifactId>
@@ -131,9 +130,60 @@
             <version>1.0.0-beta.8</version>
         </dependency>
 
+        <!-- ###################### Deep Java Library (DJL) con modelli quantizzati ###################### -->
+        <!-- DJL API e Modello NLP -->
+        <!-- https://mvnrepository.com/artifact/ai.djl/api -->
+        <dependency>
+            <groupId>ai.djl</groupId>
+            <artifactId>api</artifactId>
+            <version>0.34.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-engine -->
+        <dependency>
+            <groupId>ai.djl.pytorch</groupId>
+            <artifactId>pytorch-engine</artifactId>
+            <version>0.34.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/ai.djl.huggingface/tokenizers -->
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
+            <version>0.34.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ai.djl/model-zoo -->
+        <dependency>
+            <groupId>ai.djl</groupId>
+            <artifactId>model-zoo</artifactId>
+            <version>0.34.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-model-zoo -->
+        <!-- (Opzionale) Model Zoo se vuoi scaricare modelli online -->
+        <dependency>
+            <groupId>ai.djl.pytorch</groupId>
+            <artifactId>pytorch-model-zoo</artifactId>
+            <version>0.34.0</version>
+        </dependency>
+
+
+        <!-- ###################### VECTOR ###################### -->
+
+        <!-- https://mvnrepository.com/artifact/com.pgvector/pgvector
+        <dependency>
+            <groupId>com.pgvector</groupId>
+            <artifactId>pgvector</artifactId>
+            <version>0.1.6</version>
+        </dependency> -->
+
+
+
+
+
+
+
 
         <!-- ###################### UTIL ###################### -->
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -173,16 +223,16 @@
             <version>1.18.1</version>
         </dependency>
 
-        <!-- ######################### JWT ########################## -->
 
+        <!-- ######################### JWT ########################## -->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>4.4.0</version>
         </dependency>
 
-        <!-- ###################### AWS S3 ###################### -->
 
+        <!-- ###################### AWS S3 ###################### -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>

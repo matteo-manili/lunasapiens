@@ -1,9 +1,14 @@
 package com.lunasapiens.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+
 
 @Entity
 public class ArticleContent implements Serializable {
@@ -20,6 +25,17 @@ public class ArticleContent implements Serializable {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+
+    /* @Column(columnDefinition = "vector(3)")
+    @JdbcTypeCode(SqlTypes.OTHER) // gestisce float[] come tipo 'vector' in PostgreSQL
+    private Float[] embedding; */
+    //@Convert(converter = FloatArrayToVectorConverter.class)
+
+
+    @Column(columnDefinition = "vector(768)")
+    private float[] embedding;
+
 
 
     @PrePersist
@@ -47,4 +63,13 @@ public class ArticleContent implements Serializable {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+
+    public float[] getEmbedding() {
+        return embedding;
+    }
+
+    public void setEmbedding(float[] embedding) {
+        this.embedding = embedding;
+    }
 }
