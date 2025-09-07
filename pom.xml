@@ -145,10 +145,10 @@
             <version>0.34.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-model-zoo -->
+        <!-- https://mvnrepository.com/artifact/ai.djl.huggingface/tokenizers -->
         <dependency>
-            <groupId>ai.djl.pytorch</groupId>
-            <artifactId>pytorch-model-zoo</artifactId>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
             <version>0.34.0</version>
         </dependency>
 
@@ -160,44 +160,16 @@
             <scope>runtime</scope>
         </dependency> -->
 
-        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-native-cpu SOLO SU WINDOWS -->
+        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-native-cpu SOLO SU WINDOWS
         <dependency>
             <groupId>ai.djl.pytorch</groupId>
             <artifactId>pytorch-native-cpu</artifactId>
             <version>2.7.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/ai.djl.huggingface/tokenizers -->
-        <dependency>
-            <groupId>ai.djl.huggingface</groupId>
-            <artifactId>tokenizers</artifactId>
-            <version>0.34.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/ai.djl/model-zoo -->
-        <dependency>
-            <groupId>ai.djl</groupId>
-            <artifactId>model-zoo</artifactId>
-            <version>0.34.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-model-zoo -->
-        <!-- (Opzionale) Model Zoo se vuoi scaricare modelli online -->
-        <dependency>
-            <groupId>ai.djl.pytorch</groupId>
-            <artifactId>pytorch-model-zoo</artifactId>
-            <version>0.34.0</version>
-        </dependency>
-
-
-        <!-- ###################### VECTOR ###################### -->
-
-        <!-- https://mvnrepository.com/artifact/com.pgvector/pgvector
-        <dependency>
-            <groupId>com.pgvector</groupId>
-            <artifactId>pgvector</artifactId>
-            <version>0.1.6</version>
         </dependency> -->
+
+
+
+
 
 
 
