@@ -65,8 +65,7 @@ public class EditorArticleBlogController extends BaseController {
 
     private void loadPagedArticles(int page, Model model) {
         int pageSize = 10;
-        Page<ArticleContent> articlePage = articleContentRepository
-                .findAll(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
+        Page<ArticleContent> articlePage = articleContentRepository.findAll(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("currentPage", page);
     }

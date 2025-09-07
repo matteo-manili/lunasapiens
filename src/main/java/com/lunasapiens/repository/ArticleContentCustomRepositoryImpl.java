@@ -3,8 +3,13 @@ package com.lunasapiens.repository;
 import com.lunasapiens.entity.ArticleContent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -25,7 +30,12 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    public ArticleContentCustomRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     @Override
@@ -35,32 +45,52 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     }
 
 
-    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public ArticleContentCustomRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    /** ************************** EMBEDDING ************************/
+
+
+
+
+    /**
+     * Aggiorna solo il campo embedding di un articolo esistente.
+     */
+    @Transactional
+    public ArticleContent updateArticleEmbeddingJdbc(Long articleId, Float[] embedding) throws Exception {
+
+        // Converti embedding in stringa per PGvector
+        PGobject pgVector = toPgVector(embedding);
+
+        String sql = "UPDATE article_content SET embedding = ? WHERE id = ?";
+
+        int updatedRows = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, pgVector);
+            ps.setLong(2, articleId);
+            return ps;
+        });
+
+        if (updatedRows == 0) {
+            throw new IllegalArgumentException("Nessun articolo trovato con id " + articleId);
+        }
+
+        // Restituisci un oggetto ArticleContent aggiornato (opzionale)
+        ArticleContent article = new ArticleContent();
+        article.setId(articleId);
+        article.setEmbedding(embedding);
+        return article;
     }
 
 
     @Transactional
-    public ArticleContent saveArticleWithEmbeddingJdbc(String content, float[] embedding) throws SQLException {
-        // Costruisci manualmente la stringa per PGvector
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < embedding.length; i++) {
-            if (i > 0) sb.append(",");
-            sb.append(embedding[i]);
-        }
-        sb.append("]");
-        String vectorLiteral = sb.toString();
+    public ArticleContent saveArticleWithEmbeddingJdbc(String content, Float[] embedding) throws Exception {
+
+        // Converti embedding in stringa per PGvector
+        PGobject pgVector = toPgVector(embedding);
 
         String sql = "INSERT INTO article_content (content, created_at, embedding) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PGobject pgVector = new PGobject();
-            pgVector.setType("vector");
-            pgVector.setValue(vectorLiteral);
 
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
             ps.setString(1, content);
@@ -79,15 +109,10 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     }
 
     @Transactional(readOnly = true)
-    public List<ArticleContent> findNearestJdbc(float[] embedding, int limit) throws SQLException {
+    public List<ArticleContent> findNearestJdbc(Float[] embedding, int limit) throws Exception {
+
         // Converti embedding in stringa per PGvector
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < embedding.length; i++) {
-            if (i > 0) sb.append(",");
-            sb.append(embedding[i]);
-        }
-        sb.append("]");
-        String vectorLiteral = sb.toString();
+        PGobject pgVector = toPgVector(embedding);
 
         String sql = "SELECT id, content, created_at, embedding " +
                 "FROM article_content " +
@@ -95,10 +120,6 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
                 "LIMIT ?";
 
         return jdbcTemplate.query(connection -> {
-            PGobject pgVector = new PGobject();
-            pgVector.setType("vector");
-            pgVector.setValue(vectorLiteral);
-
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setObject(1, pgVector);
             ps.setInt(2, limit);
@@ -113,7 +134,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
             String val = rs.getString("embedding"); // "[0.1,0.2,...]"
             if (val != null && !val.isBlank()) {
                 String[] parts = val.substring(1, val.length() - 1).split(",");
-                float[] vec = new float[parts.length];
+                Float[] vec = new Float[parts.length];
                 for (int i = 0; i < parts.length; i++) {
                     vec[i] = Float.parseFloat(parts[i]);
                 }
@@ -126,11 +147,32 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
 
 
-    /*********************** OLD ***********************/
+    /**
+     * Converte un array di float in un PGobject compatibile con PGvector.
+     */
+    private PGobject toPgVector(Float[] embedding) throws Exception {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < embedding.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(embedding[i]);
+        }
+        sb.append("]");
 
+        PGobject pgVector = new PGobject();
+        pgVector.setType("vector");
+        pgVector.setValue(sb.toString());
+        return pgVector;
+    }
+
+
+
+    /***************************************************/
+    /*********************** OLD ***********************/
+    /***************************************************/
 
     @Transactional
-    public ArticleContent saveArticleWithEmbeddingJdbc_OLD(String content, float[] embedding) throws SQLException {
+    @Deprecated
+    public ArticleContent saveArticleWithEmbeddingJdbc_OLD(String content, Float[] embedding) throws SQLException {
         String vectorLiteral = IntStream.range(0, embedding.length)
                 .mapToObj(i -> Float.toString(embedding[i]))
                 .collect(Collectors.joining(",", "[", "]"));
@@ -165,7 +207,8 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
 
     @Transactional(readOnly = true)
-    public List<ArticleContent> findNearestJdbc_OLD(float[] embedding, int limit) throws SQLException {
+    @Deprecated
+    public List<ArticleContent> findNearestJdbc_OLD(Float[] embedding, int limit) throws SQLException {
         // 1. Converte float[] in literal PostgreSQL vector
         String vectorLiteral = IntStream.range(0, embedding.length)
                 .mapToObj(i -> Float.toString(embedding[i]))
@@ -200,7 +243,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
                 if (val != null && !val.isBlank()) {
                     val = val.replaceAll("[\\[\\]]", "");
                     String[] parts = val.split(",");
-                    float[] vec = new float[parts.length];
+                    Float[] vec = new Float[parts.length];
                     for (int i = 0; i < parts.length; i++) {
                         vec[i] = Float.parseFloat(parts[i]);
                     }

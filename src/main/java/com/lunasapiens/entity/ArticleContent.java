@@ -1,9 +1,8 @@
 package com.lunasapiens.entity;
 
+import com.lunasapiens.config.PostgreSQLVectorJdbcType;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.JdbcType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -27,14 +26,15 @@ public class ArticleContent implements Serializable {
     private LocalDateTime createdAt;
 
 
-    /* @Column(columnDefinition = "vector(3)")
-    @JdbcTypeCode(SqlTypes.OTHER) // gestisce float[] come tipo 'vector' in PostgreSQL
-    private Float[] embedding; */
-    //@Convert(converter = FloatArrayToVectorConverter.class)
+    // Usiamo un tipo JDBC custom (PostgreSQLVectorJdbcType) perché Hibernate non supporta nativamente
+    // il tipo 'vector' di PostgreSQL (pgvector). Questo JdbcType gestisce la conversione tra
+    // Float[] in Java e il formato accettato da pgvector, permettendo di salvare e leggere correttamente
+    // gli embeddings direttamente dal database.
 
-
-    @Column(columnDefinition = "vector(768)")
-    private float[] embedding;
+    //@Column(columnDefinition = "vector(768)")
+    @Column(columnDefinition = "vector(384)")
+    @JdbcType(PostgreSQLVectorJdbcType.class)
+    private Float[] embedding;
 
 
 
@@ -64,12 +64,11 @@ public class ArticleContent implements Serializable {
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-
-    public float[] getEmbedding() {
+    public Float[] getEmbedding() {
         return embedding;
     }
 
-    public void setEmbedding(float[] embedding) {
+    public void setEmbedding(Float[] embedding) {
         this.embedding = embedding;
     }
 }

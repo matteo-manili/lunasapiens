@@ -1,15 +1,9 @@
 package com.lunasapiens;
 
 
-
-import ai.djl.repository.MRL;
-import ai.djl.repository.zoo.ModelLoader;
-import ai.djl.repository.zoo.ModelZoo;
-import ai.djl.translate.TranslateException;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.service.EmbeddingService;
-import org.aspectj.asm.AsmManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -25,20 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class LunasapiensApplicationTests {
 
-
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    void contextLoads() {
-    }
-
     @Autowired
     private EmbeddingService embeddingService;
 
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
+
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    void contextLoads() {
+    }
+
+
+    @Test
+    @Disabled("Disabilitato temporaneamente per debug")
     void testSaveArticleWithEmbedding() throws Exception {
         // 1️⃣ Testo dell'articolo
         String content = "ciao mondoooooo";
@@ -50,7 +44,7 @@ class LunasapiensApplicationTests {
         assertNotNull(savedArticle.getId(), "L'articolo dovrebbe avere un ID dopo il salvataggio");
 
         // 4️⃣ Recupera l'articolo dal database usando embedding appena generato
-        float[] embedding = savedArticle.getEmbedding();
+        Float[] embedding = savedArticle.getEmbedding();
         ArticleContent retrievedArticle = articleContentCustomRepository.findNearestJdbc(embedding, 1).get(0);
 
         // 5️⃣ Verifica che il contenuto corrisponda
@@ -105,56 +99,5 @@ class LunasapiensApplicationTests {
 
 
 
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    void testSearchSpecificWord() throws TranslateException {
-        // Parola da cercare
-        String query = "porca dio";
-
-        // Effettua ricerca semantica
-        List<ArticleContent> results = embeddingService.searchSimilar(query, 3);
-
-        // Controlla che ci siano risultati
-        assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
-
-        // Stampa i risultati nel log, gestendo embedding null
-        System.out.println("Risultati della ricerca per parola: \"" + query + "\"");
-        for (ArticleContent article : results) {
-            System.out.println("ID: " + article.getId());
-            System.out.println("Content snippet: " +
-                    article.getContent().substring(0, Math.min(100, article.getContent().length())) + "...");
-            // Gestione embedding null
-            if (article.getEmbedding() != null) {
-                System.out.println("Embedding length: " + article.getEmbedding().length);
-            } else {
-                System.out.println("Embedding: null");
-            }
-            System.out.println("--------------------------------------------------");
-        }
-
-        // Verifica che almeno un articolo contenga la parola cercata
-        boolean found = results.stream()
-                .anyMatch(a -> a.getContent().toLowerCase().contains(query.toLowerCase()));
-        assertTrue(found, "La ricerca dovrebbe recuperare almeno un articolo contenente la parola cercata");
-    }
-
-
-
-
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    void listAvailableEmbeddingModels() {
-        ModelZoo.listModels().forEach((app, mrlList) -> {
-            System.out.println("=== Application: " + app + " ===");
-            for (MRL mrl : mrlList) {
-                System.out.println("GroupId:    " + mrl.getGroupId());
-                System.out.println("ArtifactId: " + mrl.getArtifactId());
-                System.out.println("Version:    " + mrl.getVersion());
-                System.out.println("Repository: " + mrl.getRepository());
-                System.out.println("Artifact URIs: ");
-                System.out.println("---------------------------");
-            }
-        });
-    }
 
 }
