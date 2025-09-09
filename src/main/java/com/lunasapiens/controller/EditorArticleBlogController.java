@@ -57,7 +57,9 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
-            List<ArticleContent> results = embeddingService.searchSimilar(search, 10); // massimo 10 risultati
+            //List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // massimo 10 risultati
+            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
             model.addAttribute("semanticSearch", true);  // utile per nascondere la paginazione
@@ -83,10 +85,9 @@ public class EditorArticleBlogController extends BaseController {
             return "redirect:/error";
         }
 
-
         if (search != null && !search.isBlank()) {
             // 🔸 Se l'utente ha fatto una ricerca semantica
-            List<ArticleContent> results = embeddingService.searchSimilar(search, 10); // 10 risultati max
+            List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // 10 risultati max
             // Avvolgi in una Page fake
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
@@ -95,7 +96,6 @@ public class EditorArticleBlogController extends BaseController {
             model.addAttribute("currentPage", 0); // ← aggiungi questa riga
             return "private/editorArticles";
         }
-
 
         int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);

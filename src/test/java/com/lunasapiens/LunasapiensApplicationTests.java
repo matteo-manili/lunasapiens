@@ -45,7 +45,7 @@ class LunasapiensApplicationTests {
 
         // 4️⃣ Recupera l'articolo dal database usando embedding appena generato
         Float[] embedding = savedArticle.getEmbedding();
-        ArticleContent retrievedArticle = articleContentCustomRepository.findNearestJdbc(embedding, 1).get(0);
+        ArticleContent retrievedArticle = articleContentCustomRepository.findNearestByEmbedding(embedding, 1).get(0);
 
         // 5️⃣ Verifica che il contenuto corrisponda
         assertEquals(content, retrievedArticle.getContent(), "Il contenuto dell'articolo salvato dovrebbe corrispondere");
@@ -78,7 +78,7 @@ class LunasapiensApplicationTests {
 
         // 3️⃣ Effettua ricerca semantica usando parte del testo
         String query = "articolo numero 500";
-        List<ArticleContent> results = embeddingService.searchSimilar(query, 5);
+        List<ArticleContent> results = embeddingService.searchSemantic(query, 5);
 
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
 

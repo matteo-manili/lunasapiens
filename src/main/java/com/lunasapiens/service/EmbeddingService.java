@@ -100,10 +100,10 @@ public class EmbeddingService {
 
 
     // Ricerca semantica basata su embedding
-    public List<ArticleContent> searchSimilar(String query, int limit) {
+    public List<ArticleContent> searchSemantic(String query, int limit) {
         try {
             Float[] queryEmbedding = Utils.toFloatObjectArray(predictor.predict(query));
-            return articleContentCustomRepository.findNearestJdbc(queryEmbedding, limit);
+            return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);

@@ -4,12 +4,10 @@ package com.lunasapiens.manualjobs;
 import ai.djl.repository.MRL;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.EmbeddingService;
-import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ class LunasapiensApplicationManualJobs {
         String query = "infezioni post-operatorie";
 
         // Effettua ricerca semantica
-        List<ArticleContent> results = embeddingService.searchSimilar(query, 10);
+        List<ArticleContent> results = embeddingService.searchSemantic(query, 10);
 
         // Controlla che ci siano risultati
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
