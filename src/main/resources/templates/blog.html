@@ -31,6 +31,21 @@
 
 <div class="container mt-4">
 
+
+    <!-- Campo di ricerca sematica -->
+    <div class="mb-3">
+        <form method="get" th:action="@{/blog}">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Cerca negli articoli..."
+                       th:value="${search != null} ? ${search} : ''">
+                <button type="submit" class="btn btn-primary">Cerca</button>
+                <a th:href="@{/blog}" class="btn btn-secondary">Resetta</a>
+            </div>
+        </form>
+    </div>
+
+
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
         <h2>Articoli salvati</h2>
@@ -47,8 +62,12 @@
                 </div>
             </div>
         </div>
-        <!-- PAGINAZIONE -->
-        <div th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
+
+
+
+        <!-- PAGINAZIONE solo se non è ricerca semantica -->
+        <div th:if="${semanticSearch != true}"
+             th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
 
 
     </div>

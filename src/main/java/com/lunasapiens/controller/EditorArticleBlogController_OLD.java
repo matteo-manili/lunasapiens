@@ -3,17 +3,16 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
-import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.service.EmbeddingService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,83 +26,41 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-@Controller
-public class EditorArticleBlogController extends BaseController {
+//@Controller
+public class EditorArticleBlogController_OLD extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EditorArticleBlogController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EditorArticleBlogController_OLD.class);
 
-    @Autowired
+    //@Autowired
     private ArticleContentRepository articleContentRepository;
 
-    @Autowired
+    //@Autowired
     private S3Service s3Service;
 
-    @Autowired
-    private EmbeddingService embeddingService;
-
-    @Autowired
-    private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
     /**
      * Pagina pubblca
      * @param model
      * @return
      */
-    @GetMapping("/blog")
-    public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam,
-                       @RequestParam(name = "search", required = false) String search,
-                       Model model) {
-
-
-        if (search != null && !search.isBlank()) {
-            // 🔹 Ricerca semantica
-            List<ArticleContent> results = embeddingService.searchSimilar(search, 10); // massimo 10 risultati
-            Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
-            model.addAttribute("articlePage", page);
-            model.addAttribute("semanticSearch", true);  // utile per nascondere la paginazione
-            model.addAttribute("search", search);
-            model.addAttribute("currentPage", 0); // evita errori Thymeleaf
-            return "blog";
-        }
-
-        // 🔹 Paginazione normale
+    //@GetMapping("/blog")
+    public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam, Model model) {
         int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);
         return "blog";
     }
 
 
-    @GetMapping("/private/editorArticles")
-    public String editor(@RequestParam(name = "page", defaultValue = "0") String pageParam,
-                         @RequestParam(name = "search", required = false) String search,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
+    //@GetMapping("/private/editorArticles")
+    public String editor(@RequestParam(name = "page", defaultValue = "0") String pageParam, Model model, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
-
-
-        if (search != null && !search.isBlank()) {
-            // 🔸 Se l'utente ha fatto una ricerca semantica
-            List<ArticleContent> results = embeddingService.searchSimilar(search, 10); // 10 risultati max
-            // Avvolgi in una Page fake
-            Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
-            model.addAttribute("articlePage", page);
-            model.addAttribute("semanticSearch", true);  // utile se vuoi nascondere la paginazione
-            model.addAttribute("search", search);
-            model.addAttribute("currentPage", 0); // ← aggiungi questa riga
-            return "private/editorArticles";
-        }
-
-
         int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);
         return "private/editorArticles";
     }
-
-
-
 
     private void loadPagedArticles(int page, Model model) {
         int pageSize = 10;
@@ -112,7 +69,7 @@ public class EditorArticleBlogController extends BaseController {
         model.addAttribute("currentPage", page);
     }
 
-    @PostMapping("/private/saveOrUpdateArticle")
+    //@PostMapping("/private/saveOrUpdateArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
                                       @RequestParam("content") String content, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
@@ -120,14 +77,14 @@ public class EditorArticleBlogController extends BaseController {
             return "redirect:/error";
         }
         try {
-            ArticleContent article;
+            ArticleContent articleContent;
             List<String> newImageNames = Utils.extractImageNames(content); // Estrai le immagini dal nuovo contenuto
             if (id.isPresent()) {
                 // Aggiorna un articolo esistente
-                article = articleContentRepository.findById(id.get())
+                articleContent = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
                 // Trova le immagini attualmente associate
-                List<String> oldImageNames = Utils.extractImageNames(article.getContent());
+                List<String> oldImageNames = Utils.extractImageNames(articleContent.getContent());
                 // Trova le immagini da eliminare (presenti prima ma non più utilizzate)
                 List<String> imagesToDelete = new ArrayList<>(oldImageNames);
                 imagesToDelete.removeAll(newImageNames); // Rimuovi le immagini ancora presenti nel nuovo contenuto
@@ -144,19 +101,12 @@ public class EditorArticleBlogController extends BaseController {
                 }
             } else {
                 // Crea un nuovo articolo, MA NON impostare manualmente l'ID
-                article = new ArticleContent();
+                articleContent = new ArticleContent();
                 articleContentRepository.updateSequence();
             }
             // Aggiorna il contenuto dell'articolo
-            article.setContent(content);
-            articleContentRepository.save(article);
-
-            // aggiorno la colonna embedding
-            Float[] embedding = embeddingService.embeddingPredictor( article.getContent() );
-            System.out.println("Dimensione embedding: " + embedding.length);
-            ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
-            System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());
-
+            articleContent.setContent(content);
+            articleContentRepository.save(articleContent);
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo salvato con successo!");
             return "redirect:/private/editorArticles";
 
@@ -171,8 +121,8 @@ public class EditorArticleBlogController extends BaseController {
     /**
      * endpoint per restituire i dettagli di un articolo per l'editor.
      */
-    @GetMapping("/private/article/{id}")
-    @ResponseBody
+    //@GetMapping("/private/article/{id}")
+    //@ResponseBody
     public ResponseEntity<Map<String, Object>> getArticle(@PathVariable Long id) {
         if (!isMatteoManilIdUser()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
@@ -186,7 +136,7 @@ public class EditorArticleBlogController extends BaseController {
     }
 
 
-    @DeleteMapping("/private/deleteArticle/{id}")
+    //@DeleteMapping("/private/deleteArticle/{id}")
     public String deleteArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato");
@@ -221,7 +171,7 @@ public class EditorArticleBlogController extends BaseController {
     /**
      * private/upload-image-article
      */
-    @PostMapping("/private/" + Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
+    //@PostMapping("/private/" + Constants.DOM_LUNA_SAPIENS_UPLOAD_IMAGE_ARTICLE)
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
         if (!isMatteoManilIdUser()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Accesso negato"));
@@ -266,8 +216,8 @@ public class EditorArticleBlogController extends BaseController {
     /**
      * Retrive Image Public e in Cache
      */
-    @Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
-    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
+    //@Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
+    //@GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
     public ResponseEntity<byte[]> getImage(@PathVariable String nameImage) {
         logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
         try {

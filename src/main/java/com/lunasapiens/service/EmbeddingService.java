@@ -113,7 +113,6 @@ public class EmbeddingService {
         try {
             String text = Utils.cleanText(content);
             System.out.println(text);
-
             return Utils.toFloatObjectArray( predictor.predict( text ) );
         } catch (TranslateException e) {
             e.printStackTrace();

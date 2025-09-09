@@ -38,7 +38,7 @@ class LunasapiensApplicationManualJobs {
     //@Disabled("Disabilitato temporaneamente per debug")
     void testSearchSpecificWord() throws TranslateException {
         // Parola da cercare
-        String query = "sala operatoria chirurgia";
+        String query = "infezioni post-operatorie";
 
         // Effettua ricerca semantica
         List<ArticleContent> results = embeddingService.searchSimilar(query, 10);
