@@ -48,7 +48,6 @@
 
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
-        <h2>Articoli salvati</h2>
         <div th:if="${articlePage.isEmpty()}">
             <p>Nessun articolo trovato.</p>
         </div>
@@ -56,7 +55,11 @@
         <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
+                    <h6 class="card-title">
+                        Articolo #<span th:text="${article.id}"></span>
+                        &nbsp;|&nbsp;
+                        <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </h6>
                     <div class="card-text collapsible-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
                     <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>
                 </div>

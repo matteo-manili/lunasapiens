@@ -56,7 +56,6 @@ public class EmbeddingService {
                     .optModelPath(Paths.get( MODEL_PATH ))
                     .optTranslator(new HFMinilmItalianTranslator())
                     .build();
-
              */
 
 
@@ -66,10 +65,8 @@ public class EmbeddingService {
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
-
-                    //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2") // FUNZIONA MA PESANTE PER HEROKU
-                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA
-
+                    //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2") // FUNZIONA MA PESANTE PER HEROKU - ricerche non riuscte
+                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - ricerche non riuscte
                     .build();
 
 
