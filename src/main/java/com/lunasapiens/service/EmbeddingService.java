@@ -44,6 +44,9 @@ public class EmbeddingService {
                     .build();
              */
 
+
+            /*
+            // FUNZIUNA meglio di tutti LOCALE
             // modello da 384
             // Criteri per caricare il modello Hugging Face specifico per Multilanguage, anche italiano
             Criteria<String, float[]> criteria = Criteria.builder()
@@ -54,14 +57,20 @@ public class EmbeddingService {
                     .optTranslator(new HFMinilmItalianTranslator())
                     .build();
 
-            /* // FUNZIONA
+             */
+
+
+             // FUNZIONA
+            // modello da 384
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
-                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2")
+
+                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2") // FUNZIONA
+                    //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA
+
                     .build();
-             */
 
 
             // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
@@ -79,7 +88,7 @@ public class EmbeddingService {
     public ArticleContent addArticle(String content) {
         try {
             // Calcola embedding tramite DJL
-            Float[] embedding = Utils.toFloatObjectArray( predictor.predict(Utils.cleanText(content)) );
+            Float[] embedding = cleanTextEmbeddingPredictor(content);
             // Salva usando il repository custom con JDBC
             return articleContentCustomRepository.saveArticleWithEmbeddingJdbc(content, embedding);
 
@@ -109,7 +118,7 @@ public class EmbeddingService {
     }
 
 
-    public Float[] embeddingPredictor(String content)  {
+    public Float[] cleanTextEmbeddingPredictor(String content)  {
         try {
             String text = Utils.cleanText(content);
             System.out.println(text);

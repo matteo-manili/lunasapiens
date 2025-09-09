@@ -35,7 +35,7 @@ class LunasapiensApplicationManualJobs {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     void testSearchSpecificWord() throws TranslateException {
         // Parola da cercare
         String query = "infezioni post-operatorie";
@@ -71,12 +71,12 @@ class LunasapiensApplicationManualJobs {
 
 
     @Test
-    @Disabled("Disabilitato temporaneamente per debug")
+    //@Disabled("Disabilitato temporaneamente per debug")
     void populateEmbeddingsForExistingArticles() throws Exception {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
         for (ArticleContent article : articles) {
             try {
-                Float[] embedding = embeddingService.embeddingPredictor( article.getContent() );
+                Float[] embedding = embeddingService.cleanTextEmbeddingPredictor( article.getContent() );
                 System.out.println("Dimensione embedding: " + embedding.length);
                 ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
                 System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

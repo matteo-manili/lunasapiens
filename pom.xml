@@ -152,6 +152,7 @@
             <version>0.34.0</version>
         </dependency>
 
+
         <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-native-auto SOLO SU HEROKU
         <dependency>
             <groupId>ai.djl.pytorch</groupId>
