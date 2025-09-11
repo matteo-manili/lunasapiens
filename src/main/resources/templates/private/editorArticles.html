@@ -73,7 +73,7 @@
 
 
         <!-- PAGINAZIONE solo se non è una ricerca semantica -->
-        <div th:if="${semanticSearch != true}"
+        <div th:if="${hideSearch != true}"
              th:replace="~{fragments/templateBase :: paginationArticles('/private/editorArticles')}"></div>
 
 

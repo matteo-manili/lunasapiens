@@ -155,20 +155,8 @@ public class Utils {
         return ZoneId.of("Europe/Rome");
     }
 
-    public static ZonedDateTime getNowRomeEurope() {
-        return ZonedDateTime.now( getZoneIdRomeEurope() );
-    }
+    public static ZonedDateTime getNowRomeEurope() { return ZonedDateTime.now( getZoneIdRomeEurope() ); }
 
-
-    /*
-    public static Date OggiRomaOre12() {
-        ZonedDateTime nowRome = getNowRomeEurope();
-        // Crea ZonedDateTime di oggi ore 12:00 a Roma
-        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
-        // Converte a java.util.Date
-        return Date.from(todayAt12Rome.toInstant());
-    }
-*/
 
     public static LocalDateTime OggiRomaOre12() {
         ZonedDateTime zdtRome = ZonedDateTime.now( getZoneIdRomeEurope() )
@@ -176,29 +164,6 @@ public class Utils {
         return zdtRome.toLocalDateTime();
     }
 
-    /*
-    public static Timestamp OggiRomaOre12_OK() {
-        ZonedDateTime nowRome = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
-        ZonedDateTime todayAt12Rome = nowRome.withHour(12).withMinute(0).withSecond(0).withNano(0);
-
-        // Questa parte è fondamentale: usi l'orario LOCALE di Roma senza offset.
-        LocalDateTime localDateTimeRome = todayAt12Rome.toLocalDateTime();
-
-        // Timestamp è coerente con `timestamp without time zone` in PostgreSQL.
-        return Timestamp.valueOf(localDateTimeRome);
-    }
-*/
-
-    /*
-    public static Date OggiRomaOre0() {
-        ZonedDateTime nowRome = getNowRomeEurope();
-        // Crea ZonedDateTime di oggi ore 0:00 a Roma
-        ZonedDateTime todayAt0Rome = nowRome.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        // Converte a java.util.Date
-        return Date.from(todayAt0Rome.toInstant());
-    }
-
-     */
 
     public static LocalDateTime OggiRomaOre0() {
         ZonedDateTime zdtRome = ZonedDateTime.now( getZoneIdRomeEurope() )

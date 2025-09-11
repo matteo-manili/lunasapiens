@@ -24,6 +24,8 @@
         <link rel="canonical" href="https://www.lunasapiens.com/blog" />
         <link rel="stylesheet" href="/css/style.css?v=0.1">
         <link rel="stylesheet" href="/css/articles.css?v=0.1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" >
+
     </th:block>
 </head>
 <body>
@@ -55,21 +57,28 @@
         <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h6 class="card-title small-heading">
-                        Articolo #<span th:text="${article.id}"></span>
-                        &nbsp;|&nbsp;
-                        <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                    </h6>
-                    <div class="card-text collapsible-text" th:utext="${article.content}"></div> <!-- Renderizza l'HTML dell'articolo -->
+                    <!-- Riga con ID articolo e data -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">
+                    <i class="bi bi-hash me-1"></i>
+                    Articolo <span th:text="${article.id}"></span>
+                </span>
+                        <span class="text-muted">
+                    <i class="bi bi-calendar-event me-1"></i>
+                    <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                </span>
+                    </div>
+
+                    <!-- Contenuto articolo -->
+                    <div class="card-text collapsible-text" th:utext="${article.content}"></div>
                     <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>
                 </div>
             </div>
         </div>
 
 
-
         <!-- PAGINAZIONE solo se non è ricerca semantica -->
-        <div th:if="${semanticSearch != true}"
+        <div th:if="${hideSearch != true}"
              th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
 
 
@@ -82,15 +91,35 @@
 
 
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll(".toggle-button");
 
         toggleButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                const content = button.previousElementSibling;
-                content.classList.toggle("expanded");
-                button.textContent = content.classList.contains("expanded") ? "Leggi meno" : "Leggi tutto";
-            });
+            const content = button.previousElementSibling;
+
+            // Calcola altezza di una riga usando line-height
+            const style = getComputedStyle(content);
+            const lineHeight = parseFloat(style.lineHeight);
+
+            // Numero massimo di righe visibili (20 righe come nel CSS)
+            const maxLines = 20;
+            const maxHeight = lineHeight * maxLines;
+
+            // Altezza reale del contenuto
+            const actualHeight = content.scrollHeight;
+
+            if (actualHeight <= maxHeight) {
+                // Nascondi il pulsante se il contenuto non supera il limite
+                button.style.display = "none";
+            } else {
+                // Mostra il pulsante e aggiungi la logica toggle
+                button.style.display = "inline-block";
+                button.addEventListener("click", function () {
+                    content.classList.toggle("expanded");
+                    button.textContent = content.classList.contains("expanded") ? "Leggi meno" : "Leggi tutto";
+                });
+            }
         });
     });
 </script>

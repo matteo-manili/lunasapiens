@@ -62,7 +62,7 @@ public class EditorArticleBlogController extends BaseController {
 
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
-            model.addAttribute("semanticSearch", true);  // utile per nascondere la paginazione
+            model.addAttribute("hideSearch", true);  // utile per nascondere la paginazione
             model.addAttribute("search", search);
             model.addAttribute("currentPage", 0); // evita errori Thymeleaf
             return "blog";
@@ -91,7 +91,7 @@ public class EditorArticleBlogController extends BaseController {
             // Avvolgi in una Page fake
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
-            model.addAttribute("semanticSearch", true);  // utile se vuoi nascondere la paginazione
+            model.addAttribute("hideSearch", true);  // utile se vuoi nascondere la paginazione
             model.addAttribute("search", search);
             model.addAttribute("currentPage", 0); // ← aggiungi questa riga
             return "private/editorArticles";
