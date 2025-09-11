@@ -19,7 +19,7 @@ public class HFMinilmItalianTranslator implements Translator<String, float[]> {
     public HFMinilmItalianTranslator() {
         try {
             // Usa Path locale per i file del modello
-            Path modelPath = Paths.get( EmbeddingService.MODEL_PATH );
+            Path modelPath = Paths.get( ArticleEmbeddingService.MODEL_PATH );
             tokenizer = HuggingFaceTokenizer.newInstance(modelPath);
         } catch (IOException e) {
             throw new RuntimeException("Errore caricando il tokenizer locale", e);

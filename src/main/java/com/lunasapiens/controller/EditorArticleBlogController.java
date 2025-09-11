@@ -5,7 +5,7 @@ import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.service.EmbeddingService;
+import com.lunasapiens.service.ArticleEmbeddingService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    private EmbeddingService embeddingService;
+    private ArticleEmbeddingService articleEmbeddingService;
 
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
@@ -87,7 +87,7 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔸 Se l'utente ha fatto una ricerca semantica
-            List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleEmbeddingService.searchSemantic(search, 10); // 10 risultati max
             // Avvolgi in una Page fake
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
@@ -156,7 +156,7 @@ public class EditorArticleBlogController extends BaseController {
             System.out.println( "articleSave.getId(): "+articleSave.getId() );
 
             // aggiorno la colonna embedding
-            Float[] embedding = embeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
+            Float[] embedding = articleEmbeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
             System.out.println("Dimensione embedding: " + embedding.length);
             ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
             System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class EmbeddingService {
+public class ArticleEmbeddingService {
 
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
@@ -32,23 +32,22 @@ public class EmbeddingService {
     public static final String MODEL_PATH = "src/main/resources/models/multi-qa-MiniLM-L6-cos-v1";
 
 
-    public EmbeddingService(ArticleContentRepository repository) {
+    public ArticleEmbeddingService(ArticleContentRepository repository) {
         try {
+
             // modello da 768
-            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza quello standard, solo inglese
-            /*
+            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza quello standard, solo inglese - ricerche non buone
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch") // Assicura uso PyTorch
                     .build();
-             */
 
 
             /*
-            // FUNZIUNA meglio di tutti LOCALE
-            // modello da 384
-            // Criteri per caricare il modello Hugging Face specifico per Multilanguage, anche italiano
+            // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
+            // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
+            // vedere cartella C:\intellij_work\modello_minilm
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
@@ -59,15 +58,21 @@ public class EmbeddingService {
              */
 
 
-             // FUNZIONA
+            /*
             // modello da 384
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
-                    //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2") // FUNZIONA MA PESANTE PER HEROKU - ricerche non riuscte
-                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - ricerche non riuscte
+
+                    // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche quasi buone
+                    //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+
+                    // FUNZIONA MALE PERCHé è INGLESE - ricerche danno cattivi risultati
+                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - ricerche semantiche pessime
                     .build();
+
+             */
 
 
             // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
