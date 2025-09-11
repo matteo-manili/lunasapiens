@@ -104,13 +104,14 @@ public class EditorArticleBlogController extends BaseController {
 
 
 
-
     private void loadPagedArticles(int page, Model model) {
         int pageSize = 10;
         Page<ArticleContent> articlePage = articleContentRepository.findAll(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("currentPage", page);
     }
+
+
 
     @PostMapping("/private/saveOrUpdateArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
@@ -149,13 +150,17 @@ public class EditorArticleBlogController extends BaseController {
             }
             // Aggiorna il contenuto dell'articolo
             article.setContent(content);
-            articleContentRepository.save(article);
+            ArticleContent articleSave = articleContentRepository.save(article);
+
+            System.out.println( "id: "+id );
+            System.out.println( "articleSave.getId(): "+articleSave.getId() );
 
             // aggiorno la colonna embedding
-            Float[] embedding = embeddingService.cleanTextEmbeddingPredictor( article.getContent() );
+            Float[] embedding = embeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
             System.out.println("Dimensione embedding: " + embedding.length);
-            ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
+            ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
             System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());
+
 
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo salvato con successo!");
             return "redirect:/private/editorArticles";

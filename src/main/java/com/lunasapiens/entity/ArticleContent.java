@@ -1,5 +1,6 @@
 package com.lunasapiens.entity;
 
+import com.lunasapiens.Utils;
 import com.lunasapiens.config.PostgreSQLVectorJdbcType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
@@ -40,7 +41,8 @@ public class ArticleContent implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.createdAt = LocalDateTime.now(); // Imposta la data attuale quando l'articolo viene salvato per la prima volta
+        this.createdAt = Utils.getNowRomeEurope().toLocalDateTime(); // Imposta la data attuale quando l'articolo viene salvato per la prima volta
+
     }
 
 

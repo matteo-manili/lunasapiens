@@ -20,7 +20,7 @@
 
     <!-- Campo di ricerca ricerca semantica INIZIO -->
     <div class="mb-3">
-        <form method="get" th:action="@{/private/editorArticles}">
+        <form id="articleSearch" th:action="@{/private/editorArticles}" method="get">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
                        placeholder="Cerca negli articoli..."
@@ -34,7 +34,7 @@
 
 
     <div class="mb-4">
-        <form th:action="@{/private/saveOrUpdateArticle}" method="post" onsubmit="showLoadingOverlay()">
+        <form id="articleForm" th:action="@{/private/saveOrUpdateArticle}" method="post" onsubmit="showLoadingOverlay()">
             <div class="mb-3">
                 <label for="editor" class="form-label">Aggiungi Articolo</label>
                 <textarea id="editor" name="content" class="form-control" rows="10" placeholder="Inserisci il contenuto qui..."></textarea>
@@ -190,7 +190,8 @@
                     articleIdInput.type = 'hidden';
                     articleIdInput.name = 'id';
                     articleIdInput.id = 'articleIdInput';
-                    document.querySelector('form').appendChild(articleIdInput);
+                    document.querySelector('#articleForm').appendChild(articleIdInput);
+
                 }
                 articleIdInput.value = articleId;
                 // Scorri la pagina in cima al form

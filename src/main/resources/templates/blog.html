@@ -55,7 +55,7 @@
         <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h6 class="card-title">
+                    <h6 class="card-title small-heading">
                         Articolo #<span th:text="${article.id}"></span>
                         &nbsp;|&nbsp;
                         <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>

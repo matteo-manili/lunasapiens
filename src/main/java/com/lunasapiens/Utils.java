@@ -245,23 +245,6 @@ public class Utils {
         return localDateTime;
     }
 
-    /*
-    public static Date convertiGiornoOraPosizioneDTOInDate(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        // Creare un oggetto Calendar vuoto e impostare i valori
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear(); // per azzerare tutti i campi, importante!
-        calendar.set(giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getMese()-1, giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getOra(),
-                giornoOraPosizioneDTO.getMinuti());
-        calendar.set(Calendar.SECOND, 0); calendar.set(Calendar.MILLISECOND, 0);
-
-
-        logger.info("convertiGiornoOraPosizioneDTOInDate: "+calendar.getTime());
-
-        // Ottenere l'oggetto Date dal Calendar
-        return calendar.getTime();
-    }
-    */
-
     /**
      * Converte l'HTML in testo normale con formattazione specifica:
      * - Rimuove i tag <b> ma mantiene il testo al loro interno.
