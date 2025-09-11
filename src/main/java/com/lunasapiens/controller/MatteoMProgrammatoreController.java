@@ -18,8 +18,6 @@ public class MatteoMProgrammatoreController extends BaseController {
 
 
     private static final String URL_PAGE_MATTEO_M_PROG = "matteo-m-programmatore";
-    private static final String URL_PAGE_MATTEO_MANILI_PROG = "matteo-manili-programmatore"; // OLD
-
 
 
 
@@ -29,7 +27,7 @@ public class MatteoMProgrammatoreController extends BaseController {
     }
 
 
-    @GetMapping("/"+URL_PAGE_MATTEO_MANILI_PROG)
+    @GetMapping("/matteo-manili-programmatore")
     public RedirectView matteo_manili_prog_redirect_301() {
         RedirectView redirectView = new RedirectView("/"+URL_PAGE_MATTEO_M_PROG, true);
         redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
