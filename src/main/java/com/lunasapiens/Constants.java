@@ -70,7 +70,7 @@ public class Constants {
             "/oroscopo",
             "/omeopatia-astrologica",
             "/forum",
-            "/matteo-manili-programmatore",
+            "/matteo-m-programmatore",
             "/blog",
             "/register",
             "/contatti",
