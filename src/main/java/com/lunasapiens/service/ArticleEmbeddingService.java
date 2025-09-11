@@ -35,19 +35,10 @@ public class ArticleEmbeddingService {
     public ArticleEmbeddingService(ArticleContentRepository repository) {
         try {
 
-            // modello da 768
-            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza quello standard, solo inglese - ricerche non buone
-            Criteria<String, float[]> criteria = Criteria.builder()
-                    .optApplication(Application.NLP.TEXT_EMBEDDING)
-                    .setTypes(String.class, float[].class)
-                    .optEngine("PyTorch") // Assicura uso PyTorch
-                    .build();
-
-
             /*
             // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
             // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
-            // vedere cartella C:\intellij_work\modello_minilm
+            // per farlo vedere cartella C:\intellij_work\modello_minilm
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
@@ -59,20 +50,32 @@ public class ArticleEmbeddingService {
 
 
             /*
+            // FUNZIONA IN LOCALE MA PESANTE PER HEROKU, PRENDE TROPPA MEMORIA E DA ERRORE: Process running mem=1029M(201.0%) - Error R15 (Memory quota vastly exceeded)
+            // - Stopping process with SIGKILL - RICERCHE SEMANTICHE QUASI BUONE
+            // modello da 768
+            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza il modello di default, solo inglese - ricerche non buone
+            Criteria<String, float[]> criteria = Criteria.builder()
+                    .optApplication(Application.NLP.TEXT_EMBEDDING)
+                    .setTypes(String.class, float[].class)
+                    .optEngine("PyTorch") // Assicura uso PyTorch
+                    .build();
+             */
+
+
             // modello da 384
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
 
-                    // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche quasi buone
+                    // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - RICERCHE SEMANTICHE QUASI BUONE
                     //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
                     // FUNZIONA MALE PERCHé è INGLESE - ricerche danno cattivi risultati
-                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - ricerche semantiche pessime
+                    .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - RICERCHE SEMANTICHE PESSIME
                     .build();
 
-             */
+
 
 
             // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
