@@ -36,7 +36,7 @@ public class ArticleEmbeddingService {
         try {
 
             /*
-            // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
+            // FUNZIONA CON FILE (multi-qa-MiniLM-L6-cos-v1.pt) IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
             // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
             // per farlo vedere cartella C:\intellij_work\modello_minilm
             Criteria<String, float[]> criteria = Criteria.builder()
@@ -71,11 +71,10 @@ public class ArticleEmbeddingService {
                     // FUNZIONA IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - RICERCHE SEMANTICHE QUASI BUONE
                     //.optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
-                    // FUNZIONA MALE PERCHé è INGLESE - ricerche danno cattivi risultati
+                    // FUNZIONA IN LOCALE E SU HEROKU - RICERCHE DANNO NON BUONO RISULTATI - OK !!!!
                     .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - RICERCHE SEMANTICHE PESSIME
+
                     .build();
-
-
 
 
             // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
