@@ -37,6 +37,7 @@ public class ArticleEmbeddingService {
 
 
             // FUNZIONA CON FILE (multi-qa-MiniLM-L6-cos-v1.pt) IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
+            // ho ridotto il peso del modello, adesso su heroku funziona
             // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
             // per farlo vedere cartella C:\intellij_work\modello_minilm
             Criteria<String, float[]> criteria = Criteria.builder()
