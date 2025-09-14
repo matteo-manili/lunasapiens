@@ -58,7 +58,8 @@ public class EditorArticleBlogController extends BaseController {
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // massimo 10 risultati
-            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+            List<ArticleContent> results = articleEmbeddingService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
 
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
@@ -87,7 +88,10 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔸 Se l'utente ha fatto una ricerca semantica
-            List<ArticleContent> results = articleEmbeddingService.searchSemantic(search, 10); // 10 risultati max
+            //List<ArticleContent> results = articleEmbeddingService.searchSemantic(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleEmbeddingService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+
+
             // Avvolgi in una Page fake
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);

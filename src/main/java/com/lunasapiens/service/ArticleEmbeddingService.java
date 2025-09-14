@@ -109,10 +109,27 @@ public class ArticleEmbeddingService {
     }
 
 
+
+    // Ricerca semantica basata su embedding
+    public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
+        try {
+            Float[] queryEmbedding = Utils.toFloatObjectArray(predictor.predict(query));
+            return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
+
+        } catch (TranslateException e) {
+            throw new RuntimeException("Errore nella predizione dell'embedding", e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante la query JDBC", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante la ricerca semantica", e);
+        }
+    }
+
     // Ricerca semantica basata su embedding
     public List<ArticleContent> searchSemantic(String query, int limit) {
         try {
             Float[] queryEmbedding = Utils.toFloatObjectArray(predictor.predict(query));
+
             return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {

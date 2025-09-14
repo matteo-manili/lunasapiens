@@ -23,7 +23,7 @@
         <form id="articleSearch" th:action="@{/private/editorArticles}" method="get">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
-                       placeholder="Cerca negli articoli..."
+                       placeholder="Cerca negli articoli (ricerca semantica)..."
                        th:value="${search != null} ? ${search} : ''">
                 <button type="submit" class="btn btn-primary">Cerca</button>
                 <a th:href="@{/private/editorArticles}" class="btn btn-secondary">Resetta</a>

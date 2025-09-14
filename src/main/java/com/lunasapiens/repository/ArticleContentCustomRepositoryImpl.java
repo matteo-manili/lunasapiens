@@ -63,6 +63,43 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
 
 
+
+
+
+    /** ************************** Full-Text Search (FTS) in PostgreSQL END EMBEDDING ************************/
+
+    @Transactional(readOnly = true)
+    public List<ArticleContent> searchByEmbeddingThenFTS(Float[] embedding, String keyword, int limit) throws Exception {
+        PGobject pgVector = toPgVector(embedding);
+
+        // 1. Trova i più vicini semanticamente
+        String sql = "WITH nearest AS (" +
+                "  SELECT id, content, created_at, embedding, " +
+                "         embedding <-> ? AS distance " +
+                "  FROM article_content " +
+                "  ORDER BY embedding <-> ? " +
+                "  LIMIT 100" +  // limitiamo il set per il re-ranking FTS
+                ") " +
+                // 2. Re-ranking con FTS
+                "SELECT *, ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) AS fts_rank " +
+                "FROM nearest " +
+                "ORDER BY fts_rank DESC " +
+                "LIMIT ?";
+
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, pgVector); // embedding per <->
+            ps.setObject(2, pgVector); // embedding per ORDER BY
+            ps.setString(3, keyword);  // FTS re-ranking
+            ps.setInt(4, limit);
+            return ps;
+        }, (rs, rowNum) -> mapArticle(rs));
+    }
+
+
+
+
+
     /** ************************** EMBEDDING ************************/
 
 
