@@ -77,7 +77,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
                 "  SELECT id, content, created_at, embedding, " +
                 "         embedding <-> ? AS distance " +
                 "  FROM article_content " +
-                "  ORDER BY embedding <-> ? " +
+                "  ORDER BY distance " +
                 "  LIMIT 100" +  // limitiamo il set per il re-ranking FTS
                 ") " +
                 // 2. Re-ranking con FTS
@@ -89,9 +89,8 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         return jdbcTemplate.query(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setObject(1, pgVector); // embedding per <->
-            ps.setObject(2, pgVector); // embedding per ORDER BY
-            ps.setString(3, keyword);  // FTS re-ranking
-            ps.setInt(4, limit);
+            ps.setString(2, keyword);  // FTS re-ranking
+            ps.setInt(3, limit);
             return ps;
         }, (rs, rowNum) -> mapArticle(rs));
     }
