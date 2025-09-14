@@ -1,5 +1,5 @@
 {
-  "_name_or_path": "nreimers/MiniLM-L6-H384-uncased",
+  "_name_or_path": "old_models/paraphrase-MiniLM-L3-v2/0_Transformer",
   "architectures": [
     "BertModel"
   ],
@@ -14,10 +14,10 @@
   "max_position_embeddings": 512,
   "model_type": "bert",
   "num_attention_heads": 12,
-  "num_hidden_layers": 6,
+  "num_hidden_layers": 3,
   "pad_token_id": 0,
   "position_embedding_type": "absolute",
-  "transformers_version": "4.8.2",
+  "transformers_version": "4.7.0",
   "type_vocab_size": 2,
   "use_cache": true,
   "vocab_size": 30522

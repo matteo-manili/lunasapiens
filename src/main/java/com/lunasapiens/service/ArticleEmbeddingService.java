@@ -35,7 +35,7 @@ public class ArticleEmbeddingService {
     public ArticleEmbeddingService(ArticleContentRepository repository) {
         try {
 
-            /*
+
             // FUNZIONA CON FILE (multi-qa-MiniLM-L6-cos-v1.pt) IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
             // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
             // per farlo vedere cartella C:\intellij_work\modello_minilm
@@ -46,14 +46,14 @@ public class ArticleEmbeddingService {
                     .optModelPath(Paths.get( MODEL_PATH ))
                     .optTranslator(new HFMinilmItalianTranslator())
                     .build();
-             */
+
 
 
             /*
             // FUNZIONA IN LOCALE MA PESANTE PER HEROKU, PRENDE TROPPA MEMORIA E DA ERRORE: Process running mem=1029M(201.0%) - Error R15 (Memory quota vastly exceeded)
             // - Stopping process with SIGKILL - RICERCHE SEMANTICHE QUASI BUONE
             // modello da 768
-            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza il modello di default, solo inglese - ricerche non buone
+            // 1️⃣ Definisci criteri per caricare il modello di embedding da Hugging Face online, utilizza il modello di default, solo inglese
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
@@ -62,7 +62,8 @@ public class ArticleEmbeddingService {
              */
 
 
-            // modello da 384
+            // modello da 384 OK
+            /*
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
@@ -75,6 +76,8 @@ public class ArticleEmbeddingService {
                     .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - RICERCHE SEMANTICHE PESSIME
 
                     .build();
+
+             */
 
 
             // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
