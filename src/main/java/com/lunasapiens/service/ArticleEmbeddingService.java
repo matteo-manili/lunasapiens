@@ -29,7 +29,7 @@ public class ArticleEmbeddingService {
     private final Predictor<String, float[]> predictor;
 
 
-    public static final String MODEL_PATH = "src/main/resources/models/multi-qa-MiniLM-L6-cos-v1";
+    public static final String MODEL_PATH = "src/main/resources/models/multi-qa-MiniLM-L6-cos-v1-djl";
 
 
     public ArticleEmbeddingService(ArticleContentRepository repository) {
