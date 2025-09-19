@@ -26,7 +26,7 @@ public class SpeechToTextService {
 
     /**
      * Trascrive un file audio in testo.
-     * Il file deve essere WAV PCM 16kHz mono per compatibilità con Vosk
+     * Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM, 16 bit - per compatibilità con Vosk
      */
     public String transcribeAudio(File audioFile) throws Exception {
         try (InputStream ais = new FileInputStream(audioFile);
