@@ -35,3 +35,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Modelli grandi e file audio locali
+src/main/resources/models/vosk-model-it-0.22/
+

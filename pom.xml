@@ -130,6 +130,7 @@
             <version>1.0.0-beta.8</version>
         </dependency>
 
+
         <!-- ###################### Deep Java Library (DJL) con modelli quantizzati ###################### -->
         <!-- DJL API e Modello NLP -->
         <!-- https://mvnrepository.com/artifact/ai.djl/api -->
@@ -152,7 +153,6 @@
             <version>0.34.0</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-native-auto SOLO SU HEROKU
         <dependency>
             <groupId>ai.djl.pytorch</groupId>
@@ -170,9 +170,14 @@
 
 
 
+        <!-- ###################### Speech recognition library - da file .wav a text ###################### -->
 
-
-
+        <!-- https://mvnrepository.com/artifact/com.alphacephei/vosk -->
+        <dependency>
+            <groupId>com.alphacephei</groupId>
+            <artifactId>vosk</artifactId>
+            <version>0.3.45</version>
+        </dependency>
 
 
 

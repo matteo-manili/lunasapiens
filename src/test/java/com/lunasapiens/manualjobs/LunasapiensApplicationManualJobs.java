@@ -69,7 +69,7 @@ class LunasapiensApplicationManualJobs {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     void populateEmbeddingsForExistingArticles() throws Exception {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
         for (ArticleContent article : articles) {
