@@ -31,17 +31,6 @@ public class IndexController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
 
-    //------------------------ INIZIO -----
-
-    @GetMapping("/contatti-terapista")
-    public String contattiTerapista(Model model) {
-        return "contatti-terapista";
-    }
-
-
-    //------------------------ FINE -----
-
-
     @GetMapping("/")
     public String rootBase() {
         logger.info("sono in rootBase");
