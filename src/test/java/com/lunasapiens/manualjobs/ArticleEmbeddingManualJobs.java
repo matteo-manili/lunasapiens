@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-class LunasapiensApplicationManualJobs {
+class ArticleEmbeddingManualJobs {
 
 
     @Autowired

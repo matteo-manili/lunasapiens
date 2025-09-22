@@ -31,6 +31,30 @@
     </repositories>
 
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.lunasapiens.LunasapiensApplication</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+
+
+
+    </build>
+
+
     <dependencies>
 
         <!-- ###################### SPRING FRAMEWORK ###################### -->
@@ -172,12 +196,13 @@
 
         <!-- ###################### Speech recognition library - da file .wav a text ###################### -->
 
-        <!-- https://mvnrepository.com/artifact/com.alphacephei/vosk -->
+
+        <!-- TROPPO PESANTE PER EROKU  Compiled slug size: 514.7M is too large (max is 500M). Push failed
         <dependency>
             <groupId>com.alphacephei</groupId>
             <artifactId>vosk</artifactId>
             <version>0.3.45</version>
-        </dependency>
+        </dependency> -->
 
 
 
@@ -359,28 +384,4 @@
 
 
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.lunasapiens.LunasapiensApplication</mainClass>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
-            </plugin>
-
-
-        </plugins>
-
-
-
-    </build>
 </project>

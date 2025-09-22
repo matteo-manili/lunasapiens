@@ -1,10 +1,7 @@
-package com.lunasapiens.service;
+package com.lunasapiens;
 
 import org.springframework.stereotype.Service;
-import org.vosk.LogLevel;
-import org.vosk.Model;
-import org.vosk.Recognizer;
-import org.vosk.LibVosk;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +9,16 @@ import java.io.InputStream;
 
 @Service
 public class SpeechToTextService {
+
+    /*
+
+import org.vosk.LogLevel;
+import org.vosk.Model;
+import org.vosk.Recognizer;
+import org.vosk.LibVosk;
+
+
+
 
     private final Model model;
 
@@ -24,10 +31,10 @@ public class SpeechToTextService {
         this.model = new Model("src/main/resources/models/vosk-model-it-0.22");
     }
 
-    /**
-     * Trascrive un file audio in testo.
-     * Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM, 16 bit - per compatibilità con Vosk
-     */
+
+     // Trascrive un file audio in testo.
+     // Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM, 16 bit - per compatibilità con Vosk
+
     public String transcribeAudio(File audioFile) throws Exception {
         try (InputStream ais = new FileInputStream(audioFile);
              Recognizer recognizer = new Recognizer(model, 16000)) {
@@ -47,4 +54,7 @@ public class SpeechToTextService {
 
         }
     }
+
+     */
+
 }

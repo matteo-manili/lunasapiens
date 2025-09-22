@@ -1,6 +1,7 @@
 package com.lunasapiens.manualjobs;
 
-import com.lunasapiens.service.SpeechToTextService;
+import com.lunasapiens.SpeechToTextService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ class SpeechToTextManualJob {
     private SpeechToTextService speechToTextService;
 
     @Test
+    @Disabled("Disabilitato temporaneamente per debug")
     void testTranscribeAudioFile() throws Exception {
 
         // Percorso del file audio nella cartella resources
@@ -28,7 +30,8 @@ class SpeechToTextManualJob {
         assertTrue(audioFile.exists(), "Il file audio deve esistere: " + audioFile.getAbsolutePath());
 
         // Trascrizione del file audio
-        String transcription = speechToTextService.transcribeAudio(audioFile);
+        //String transcription = speechToTextService.transcribeAudio(audioFile);
+        String transcription = null;
 
         // Stampa il testo trascritto
         System.out.println("Testo trascritto:");
