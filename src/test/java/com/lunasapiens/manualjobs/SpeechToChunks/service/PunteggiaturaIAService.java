@@ -29,29 +29,13 @@ public class PunteggiaturaIAService {
 
     public StringBuilder generaTestoConPunteggiatura(String testo) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
-        /*
-        OpenAIGptTheokanning we = new OpenAIGptTheokanning();
-        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
-                appConfig.getParamOpenAi().getModelGpt4() );
-
-        we.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domandaBuilder.toString(),
-                appConfig.getParamOpenAi().getModelGpt3_5());
-         */
 
         StringBuilder inputPrompt = creaPromptPunteggiatura(testo);
         //logger.info("DOMANDA: " + domanda);
 
-        //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
-        //return openAIGptAzure.eseguiOpenAIGptAzure_Instruct(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-        //      appConfig.getParamOpenAi().getModelGpt3_5TurboInstruct() );
-
-        // return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), maxTokens, temperature, domanda.toString(),
-        //                appConfig.getParamOpenAi().getModelGpt4() );
-
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, finalcaratteriPerTokenStima,
                 appConfig.getParamOpenAi().getModelGpt4_Mini(), timeoutSecondiRisposta, inputPrompt.toString() );
-
     }
 
 
@@ -62,7 +46,6 @@ public class PunteggiaturaIAService {
 
         // il testo a cui mettere la punteggiarura
         domandaBuilder.append(testo);
-
 
         return domandaBuilder;
     }
