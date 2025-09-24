@@ -3,7 +3,7 @@ package com.lunasapiens;
 
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
-import com.lunasapiens.service.ArticleEmbeddingService;
+import com.lunasapiens.service.ArticleSemanticService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LunasapiensApplicationTests {
 
     @Autowired
-    private ArticleEmbeddingService articleEmbeddingService;
+    private ArticleSemanticService articleSemanticService;
 
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
@@ -38,7 +38,7 @@ class LunasapiensApplicationTests {
         String content = "ciao mondoooooo";
 
         // 2️⃣ Salva l'articolo usando embeddingService, così l'embedding viene generato correttamente
-        ArticleContent savedArticle = articleEmbeddingService.addArticle(content);
+        ArticleContent savedArticle = articleSemanticService.addArticle(content);
 
         // 3️⃣ Verifica che l'ID sia stato generato
         assertNotNull(savedArticle.getId(), "L'articolo dovrebbe avere un ID dopo il salvataggio");
@@ -70,7 +70,7 @@ class LunasapiensApplicationTests {
         String largeContent = sb.toString();
 
         // 2️⃣ Inserisci articolo e calcola embedding
-        ArticleContent savedArticle = articleEmbeddingService.addArticle(largeContent);
+        ArticleContent savedArticle = articleSemanticService.addArticle(largeContent);
 
         assertNotNull(savedArticle.getId(), "L'articolo dovrebbe avere un ID dopo il salvataggio");
         assertNotNull(savedArticle.getEmbedding(), "L'embedding non dovrebbe essere nullo");
@@ -78,7 +78,7 @@ class LunasapiensApplicationTests {
 
         // 3️⃣ Effettua ricerca semantica usando parte del testo
         String query = "articolo numero 500";
-        List<ArticleContent> results = articleEmbeddingService.searchSemantic(query, 5);
+        List<ArticleContent> results = articleSemanticService.searchSemantic(query, 5);
 
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
 

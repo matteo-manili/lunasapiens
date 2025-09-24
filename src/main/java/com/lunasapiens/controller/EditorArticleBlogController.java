@@ -5,7 +5,8 @@ import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.service.ArticleEmbeddingService;
+import com.lunasapiens.service.ArticleSemanticService;
+import com.lunasapiens.service.TextEmbeddingService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
@@ -39,7 +40,10 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    private ArticleEmbeddingService articleEmbeddingService;
+    TextEmbeddingService textEmbeddingService;
+
+    @Autowired
+    private ArticleSemanticService articleSemanticService;
 
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
@@ -59,7 +63,7 @@ public class EditorArticleBlogController extends BaseController {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // massimo 10 risultati
             //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
-            List<ArticleContent> results = articleEmbeddingService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
 
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
@@ -89,7 +93,7 @@ public class EditorArticleBlogController extends BaseController {
         if (search != null && !search.isBlank()) {
             // 🔸 Se l'utente ha fatto una ricerca semantica
             //List<ArticleContent> results = articleEmbeddingService.searchSemantic(search, 10); // 10 risultati max
-            List<ArticleContent> results = articleEmbeddingService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
 
 
             // Avvolgi in una Page fake
@@ -160,7 +164,7 @@ public class EditorArticleBlogController extends BaseController {
             System.out.println( "articleSave.getId(): "+articleSave.getId() );
 
             // aggiorno la colonna embedding
-            Float[] embedding = articleEmbeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
+            Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
             System.out.println("Dimensione embedding: " + embedding.length);
             ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
             System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

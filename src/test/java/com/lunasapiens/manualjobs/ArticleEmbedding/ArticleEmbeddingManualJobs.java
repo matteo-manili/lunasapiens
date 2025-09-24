@@ -1,13 +1,13 @@
 package com.lunasapiens.manualjobs.ArticleEmbedding;
 
-
 import ai.djl.repository.MRL;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.translate.TranslateException;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.service.ArticleEmbeddingService;
+import com.lunasapiens.service.ArticleSemanticService;
+import com.lunasapiens.service.TextEmbeddingService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +28,21 @@ class ArticleEmbeddingManualJobs {
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
     @Autowired
-    private ArticleEmbeddingService articleEmbeddingService;
+    TextEmbeddingService textEmbeddingService;
+
+    @Autowired
+    private ArticleSemanticService articleSemanticService;
 
 
 
     @Test
-    @Disabled("Disabilitato temporaneamente per debug")
+    //@Disabled("Disabilitato temporaneamente per debug")
     void testSearchSpecificWord() throws TranslateException {
         // Parola da cercare
         String query = "infezioni post-operatorie";
 
         // Effettua ricerca semantica
-        List<ArticleContent> results = articleEmbeddingService.searchSemantic(query, 10);
+        List<ArticleContent> results = articleSemanticService.searchSemantic(query, 10);
 
         // Controlla che ci siano risultati
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
@@ -74,7 +77,7 @@ class ArticleEmbeddingManualJobs {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
         for (ArticleContent article : articles) {
             try {
-                Float[] embedding = articleEmbeddingService.cleanTextEmbeddingPredictor( article.getContent() );
+                Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor( article.getContent() );
                 System.out.println("Dimensione embedding: " + embedding.length);
                 ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
                 System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

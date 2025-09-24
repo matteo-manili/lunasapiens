@@ -8,46 +8,57 @@ import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
 import com.lunasapiens.Utils;
-import com.lunasapiens.entity.ArticleContent;
-import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.List;
 
+/**
+ * Servizio per il calcolo degli embedding testuali.
+ *
+ * 🔹 Scopo della classe:
+ *    Permette di trasformare testi in vettori numerici (embedding) utilizzabili
+ *    per ricerche semantiche e similarity search.
+ *
+ * 🔹 Funziona tramite DJL (Deep Java Library) con modelli PyTorch locali o
+ *    scaricati da Hugging Face.
+ */
 @Service
-public class ArticleEmbeddingService {
-
-    @Autowired
-    private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
-
-    private final ZooModel<String, float[]> model;
-    private final Predictor<String, float[]> predictor;
+public class TextEmbeddingService {
 
 
+
+    /** Modello DJL caricato dal ModelZoo */
+    public final ZooModel<String, float[]> model;
+
+    /** Predictor DJL per calcolare gli embedding dal testo */
+    public final Predictor<String, float[]> predictor;
+
+    /** Percorso locale del modello ottimizzato per Heroku */
     public static final String MODEL_PATH = "src/main/resources/models/multi-qa-MiniLM-L6-cos-v1-djl";
 
 
-    public ArticleEmbeddingService(ArticleContentRepository repository) {
+    /**
+     * Costruttore: carica il modello e inizializza il predictor.
+     *
+     * @param repository repository degli articoli (non usato direttamente qui)
+     */
+    public TextEmbeddingService(ArticleContentRepository repository) {
         try {
-
 
             // FUNZIONA CON FILE (multi-qa-MiniLM-L6-cos-v1.pt) IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
             // ho ridotto il peso del modello, adesso su heroku funziona
             // modello da 384 - creato custom con python dal "pytorch_model.bin" ho creto il "multi-qa-MiniLM-L6-cos-v1.pt"
             // per farlo vedere cartella C:\intellij_work\modello_minilm
+            // Definisce i criteri per caricare il modello di embedding
             Criteria<String, float[]> criteria = Criteria.builder()
                     .optApplication(Application.NLP.TEXT_EMBEDDING)
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
                     .optModelPath(Paths.get( MODEL_PATH ))
-                    .optTranslator(new HFMinilmItalianTranslator())
+                    .optTranslator(new HFMinilmItalianTranslator()) // Traduttore custom per testi italiani
                     .build();
-
 
 
             /*
@@ -81,9 +92,10 @@ public class ArticleEmbeddingService {
              */
 
 
-            // 2️⃣ Carica modello dal ModelZoo (scarica automaticamente online)
+            // Carica il modello dal ModelZoo (può scaricare online se necessario)
             model = ModelZoo.loadModel(criteria);
-            // 3️⃣ Crea il predictor
+
+            // Crea il predictor per calcolare embedding dai testi
             predictor = model.newPredictor();
 
         } catch (IOException | ModelException e) {
@@ -92,62 +104,23 @@ public class ArticleEmbeddingService {
     }
 
 
-    // Inserisce un articolo calcolando l'embedding
-    public ArticleContent addArticle(String content) {
-        try {
-            // Calcola embedding tramite DJL
-            Float[] embedding = cleanTextEmbeddingPredictor(content);
-            // Salva usando il repository custom con JDBC
-            return articleContentCustomRepository.saveArticleWithEmbeddingJdbc(content, embedding);
 
-        } catch (TranslateException e) {
-            throw new RuntimeException("Errore nella predizione dell'embedding", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Errore durante la query JDBC", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante la ricerca semantica", e);
-        }
-    }
-
-
-
-    // Ricerca semantica basata su embedding
-    public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
-        try {
-            Float[] queryEmbedding = Utils.toFloatObjectArray(predictor.predict(query));
-            return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
-
-        } catch (TranslateException e) {
-            throw new RuntimeException("Errore nella predizione dell'embedding", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Errore durante la query JDBC", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante la ricerca semantica", e);
-        }
-    }
-
-    // Ricerca semantica basata su embedding
-    public List<ArticleContent> searchSemantic(String query, int limit) {
-        try {
-            Float[] queryEmbedding = Utils.toFloatObjectArray(predictor.predict(query));
-
-            return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
-
-        } catch (TranslateException e) {
-            throw new RuntimeException("Errore nella predizione dell'embedding", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Errore durante la query JDBC", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante la ricerca semantica", e);
-        }
-    }
-
-
+    /**
+     * Calcola l'embedding di un testo pulito.
+     *
+     * 🔹 Funzionamento:
+     *    1️⃣ Pulisce il testo rimuovendo caratteri speciali o formattazioni inutili.
+     *    2️⃣ Utilizza il predictor per ottenere l'embedding.
+     *    3️⃣ Converte l'array primitivo float[] in Float[] per compatibilità con DB.
+     *
+     * @param content testo di input
+     * @return embedding come array di Float
+     */
     public Float[] cleanTextEmbeddingPredictor(String content)  {
         try {
-            String text = Utils.cleanText(content);
+            String text = Utils.cleanText(content); // Pulizia del testo
             System.out.println(text);
-            return Utils.toFloatObjectArray( predictor.predict( text ) );
+            return Utils.toFloatObjectArray( predictor.predict( text ) ); // Calcolo embedding
         } catch (TranslateException e) {
             e.printStackTrace();
             return null;

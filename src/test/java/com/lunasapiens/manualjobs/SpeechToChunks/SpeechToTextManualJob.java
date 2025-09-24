@@ -5,7 +5,8 @@ import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaTestoIAService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.SpeechToTextService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
-import com.lunasapiens.service.ArticleEmbeddingService;
+import com.lunasapiens.service.TextEmbeddingService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,7 @@ class SpeechToTextManualJob {
     private PunteggiaturaTestoIAService punteggiaturaTestoIAService;
 
     @Autowired
-    private ArticleEmbeddingService articleEmbeddingService;
+    TextEmbeddingService textEmbeddingService;
 
     @Autowired
     private ChunksCustomRepositoryImpl chunksCustomRepository;
@@ -33,7 +34,7 @@ class SpeechToTextManualJob {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks() throws Exception {
 
         // 1️⃣ Trascrivi audio
@@ -60,7 +61,7 @@ class SpeechToTextManualJob {
         for (String chunkContent : chunks) {
             try {
                 // Calcola embedding reale tramite ArticleEmbeddingService
-                Float[] embedding = articleEmbeddingService.cleanTextEmbeddingPredictor(chunkContent);
+                Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor(chunkContent);
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoId, chunkIndex, chunkContent, embedding);

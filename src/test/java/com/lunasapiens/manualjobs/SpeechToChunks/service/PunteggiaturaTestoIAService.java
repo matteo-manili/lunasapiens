@@ -1,6 +1,5 @@
 package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
-
 import com.lunasapiens.config.AppConfig;
 
 import com.lunasapiens.zodiac.*;
