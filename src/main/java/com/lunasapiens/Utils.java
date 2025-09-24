@@ -33,33 +33,6 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
 
-    /**
-     * Pulizia testo: rimuove HTML, spazi extra e converte in minuscolo
-     */
-    public static String cleanText(String content) {
-        if (content == null) return "";
-        return Jsoup.parse(content).text().toLowerCase().trim();
-    }
-
-
-
-    /**
-     * Converte un array di float primitivo in un array di Float (boxed).
-     *
-     * @param primitiveArray array di float primitivo
-     * @return array di Float oggetti
-     */
-    public static Float[] toFloatObjectArray(float[] primitiveArray) {
-        if (primitiveArray == null) {
-            return null;
-        }
-        Float[] boxedArray = new Float[primitiveArray.length];
-        for (int i = 0; i < primitiveArray.length; i++) {
-            boxedArray[i] = primitiveArray[i]; // autoboxing da float a Float
-        }
-        return boxedArray;
-    }
-
 
 
     public static List<String> extractImageNames(String htmlContent) {

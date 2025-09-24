@@ -7,8 +7,8 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
 import com.lunasapiens.repository.ArticleContentRepository;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,7 +26,6 @@ import java.nio.file.Paths;
  */
 @Service
 public class TextEmbeddingService {
-
 
 
     /** Modello DJL caricato dal ModelZoo */
@@ -91,7 +90,6 @@ public class TextEmbeddingService {
                     .optModelUrls("djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2") // FUNZIONA GIRA SU HEROKU - RICERCHE SEMANTICHE PESSIME
 
                     .build();
-
              */
 
 
@@ -109,21 +107,28 @@ public class TextEmbeddingService {
 
 
     /**
-     * Calcola l'embedding di un testo pulito.
+     * Calcola l'embedding di un testo, dopo averlo pulito.
      *
      * 🔹 Funzionamento:
-     *    1️⃣ Pulisce il testo rimuovendo caratteri speciali o formattazioni inutili.
-     *    2️⃣ Utilizza il predictor per ottenere l'embedding.
-     *    3️⃣ Converte l'array primitivo float[] in Float[] per compatibilità con DB.
+     *    1️⃣ Pulisce il testo rimuovendo HTML, spazi extra e convertendo in minuscolo.
+     *    2️⃣ Utilizza il predictor DJL per ottenere l'embedding numerico.
+     *    3️⃣ Converte l'array primitivo float[] in Float[] per compatibilità con il DB.
      *
-     * @param content testo di input
-     * @return embedding come array di Float
+     * @param content testo da trasformare in embedding
+     * @return embedding come array di Float, o null in caso di errore
      */
-    public Float[] computeCleanEmbedding(String content)  {
+    public Float[] computeCleanEmbedding(String content) {
+        // restituisce array vuoto invece di null
+        if (content == null || content.isEmpty()) { return new Float[0]; }
         try {
-            String text = Utils.cleanText(content); // Pulizia del testo
-            System.out.println(text);
-            return Utils.toFloatObjectArray( predictor.predict( text ) ); // Calcolo embedding
+            // Pulizia del testo
+            String cleanedText = cleanText(content);
+            // Debug: stampa testo pulito
+            System.out.println(cleanedText);
+            // Calcolo embedding
+            float[] embeddingArray = predictor.predict(cleanedText);
+            // conversione in Float[]
+            return toFloatObjectArray(embeddingArray);
         } catch (TranslateException e) {
             e.printStackTrace();
             return null;
@@ -132,8 +137,44 @@ public class TextEmbeddingService {
 
 
 
+    /**
+     * Converte un array di float primitivi (float[]) in un array di oggetti Float (Float[]).
+     *
+     * 🔹 Perché serve:
+     *    DJL restituisce embedding come float[], ma per salvarli in database (es. PGvector)
+     *    o usarli in collezioni Java servono oggetti Float. Questo metodo effettua
+     *    l’autoboxing necessario.
+     *
+     * @param primitiveArray array di float primitivi da convertire
+     * @return array di Float corrispondente, compatibile con database e collezioni
+     */
+    public static Float[] toFloatObjectArray(float[] primitiveArray) {
+        if (primitiveArray == null) {
+            return null;
+        }
+        Float[] boxedArray = new Float[primitiveArray.length];
+        for (int i = 0; i < primitiveArray.length; i++) {
+            boxedArray[i] = primitiveArray[i]; // autoboxing da float a Float
+        }
+        return boxedArray;
+    }
 
 
 
+    /**
+     * Pulisce il testo rimuovendo HTML, spazi extra e convertendo tutto in minuscolo.
+     *
+     * 🔹 Perché serve:
+     *    Garantisce che gli embedding calcolati siano coerenti e privi di rumore
+     *    (tag HTML, spazi multipli, lettere maiuscole) prima di passare il testo
+     *    al modello di embedding o salvarlo nel database.
+     *
+     * @param content testo originale
+     * @return testo pulito pronto per embedding o elaborazioni successive
+     */
+    public static String cleanText(String content) {
+        if (content == null) return "";
+        return Jsoup.parse(content).text().toLowerCase().trim();
+    }
 
 }

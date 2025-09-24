@@ -101,8 +101,6 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
     /** ************************** EMBEDDING ************************/
 
-
-
     @Transactional(readOnly = true)
     public List<ArticleContent> findNearestByEmbedding(Float[] embedding, int limit) throws Exception {
 

@@ -1,7 +1,6 @@
 package com.lunasapiens.service;
 
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 
@@ -72,7 +71,7 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
         try {
-            Float[] queryEmbedding = Utils.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
             return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
 
         } catch (TranslateException e) {
@@ -98,8 +97,7 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchSemantic(String query, int limit) {
         try {
-            Float[] queryEmbedding = Utils.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-
+            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
             return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {
