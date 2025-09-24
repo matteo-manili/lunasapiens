@@ -45,6 +45,9 @@ public class TextEmbeddingService {
      * @param repository repository degli articoli (non usato direttamente qui)
      */
     public TextEmbeddingService(ArticleContentRepository repository) {
+
+        System.setProperty("ai.djl.logging.level", "DEBUG"); // ATTIVA LOG DEBUG
+
         try {
 
             // FUNZIONA CON FILE (multi-qa-MiniLM-L6-cos-v1.pt) IN LOCALE MA PESANTE PER HEROKU FALLISCE IL DEPLOY, PRENDE TROPPA MEMORIA - ricerche semantiche ottime !!!
@@ -57,7 +60,7 @@ public class TextEmbeddingService {
                     .setTypes(String.class, float[].class)
                     .optEngine("PyTorch")
                     .optModelPath(Paths.get( MODEL_PATH ))
-                    .optTranslator(new HFMinilmItalianTranslator()) // Traduttore custom per testi italiani
+                    .optTranslator(new ItalianTextEmbeddingTranslator()) // Traduttore custom per testi italiani
                     .build();
 
 

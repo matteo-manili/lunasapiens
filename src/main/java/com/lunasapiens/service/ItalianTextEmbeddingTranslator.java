@@ -12,22 +12,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Traduttore custom per DJL che converte testo italiano in embedding.
+ * Traduttore custom DJL per testi italiani.
  *
  * 🔹 Scopo della classe:
- *    Implementa l'interfaccia Translator di DJL per collegare il modello di
- *    embedding MiniLM multilingue/italiano al servizio TextEmbeddingService.
+ *    Converte un testo italiano in embedding numerico tramite il modello MiniLM.
  *
- * 🔹 Funzionamento generale:
- *    1️⃣ Tokenizza il testo in input usando HuggingFaceTokenizer.
- *    2️⃣ Converte i token in NDArray, il formato richiesto dal modello DJL.
- *    3️⃣ Riceve l'embedding come NDArray dal modello e lo restituisce come float[].
+ * 🔹 Funzionamento:
+ *    1️⃣ Tokenizza il testo con HuggingFaceTokenizer.
+ *    2️⃣ Converte i token in NDArray compatibile con il modello DJL.
+ *    3️⃣ Riceve l'embedding dal modello e lo restituisce come array float[].
  *
  * 🔹 A cosa serve:
- *    Permette a DJL di capire come trasformare testi italiani in vettori numerici,
- *    che saranno poi salvati nel database o usati per ricerche semantiche.
+ *    Permette al servizio TextEmbeddingService di generare embedding
+ *    dai testi italiani per ricerche semantiche e similarity search.
  */
-public class HFMinilmItalianTranslator implements Translator<String, float[]> {
+public class ItalianTextEmbeddingTranslator implements Translator<String, float[]> {
 
 
     /** Tokenizer HuggingFace per convertire testo in token numerici */
@@ -39,7 +38,7 @@ public class HFMinilmItalianTranslator implements Translator<String, float[]> {
      *
      * 🔹 Usa i file del modello locale per evitare problemi di memoria su Heroku.
      */
-    public HFMinilmItalianTranslator() {
+    public ItalianTextEmbeddingTranslator() {
         try {
             // Path locale dei file del modello MiniLM
             Path modelPath = Paths.get( TextEmbeddingService.MODEL_PATH );
