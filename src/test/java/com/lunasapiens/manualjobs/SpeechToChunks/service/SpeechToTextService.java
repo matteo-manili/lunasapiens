@@ -1,4 +1,4 @@
-package com.lunasapiens.manualjobs.SpeechToText.service;
+package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
 import org.springframework.stereotype.Service;
 

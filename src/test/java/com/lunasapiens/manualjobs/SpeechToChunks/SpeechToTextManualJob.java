@@ -1,9 +1,9 @@
-package com.lunasapiens.manualjobs.SpeechToText;
+package com.lunasapiens.manualjobs.SpeechToChunks;
 
 import com.lunasapiens.entity.Chunks;
 
-import com.lunasapiens.manualjobs.SpeechToText.service.PunteggiaturaTestoIAService;
-import com.lunasapiens.manualjobs.SpeechToText.service.SpeechToTextService;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaTestoIAService;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.SpeechToTextService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.service.ArticleEmbeddingService;
 import org.junit.jupiter.api.Test;
