@@ -101,7 +101,6 @@ class SpeechToTextManualJob {
     public static List<String> chunkText(String text) {
         int chunkSize = 400;
         int overlap = (int) (chunkSize * 0.15);
-        int step = chunkSize - overlap;
 
         // Normalizza \n e spazi multipli
         text = text.replaceAll("\\s+", " ").trim();
