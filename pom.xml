@@ -197,12 +197,12 @@
         <!-- ###################### Speech recognition library - da file .wav a text ###################### -->
 
 
-        <!-- TROPPO PESANTE PER EROKU  Compiled slug size: 514.7M is too large (max is 500M). Push failed DA USARE SOLO IN LOCALE
+        <!-- TROPPO PESANTE PER EROKU  Compiled slug size: 514.7M is too large (max is 500M). Push failed DA USARE SOLO IN LOCALE -->
         <dependency>
             <groupId>com.alphacephei</groupId>
             <artifactId>vosk</artifactId>
             <version>0.3.45</version>
-        </dependency> -->
+        </dependency>
 
 
 

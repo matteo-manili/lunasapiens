@@ -1,7 +1,5 @@
 package com.lunasapiens.repository;
 
-import com.lunasapiens.entity.ArticleContent;
-import org.springframework.data.domain.Page;
 
 public interface ArticleContentCustomRepository {
 

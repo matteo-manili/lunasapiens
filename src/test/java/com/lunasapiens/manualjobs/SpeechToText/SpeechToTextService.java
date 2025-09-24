@@ -1,4 +1,4 @@
-package com.lunasapiens;
+package com.lunasapiens.manualjobs.SpeechToText;
 
 import org.springframework.stereotype.Service;
 
@@ -7,17 +7,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-@Service
-public class SpeechToTextService {
-
-    /*
-
 import org.vosk.LogLevel;
 import org.vosk.Model;
 import org.vosk.Recognizer;
 import org.vosk.LibVosk;
 
-
+@Service
+public class SpeechToTextService {
 
 
     private final Model model;
@@ -28,7 +24,7 @@ import org.vosk.LibVosk;
 
         // Carica il modello italiano grande
         // Assicurati che la cartella contenga "vosk-model-it-0.22"
-        this.model = new Model("src/main/resources/models/vosk-model-it-0.22");
+        this.model = new Model("src/test/resources/models/vosk-model-it-0.22");
     }
 
 
@@ -55,6 +51,6 @@ import org.vosk.LibVosk;
         }
     }
 
-     */
+
 
 }

@@ -1,4 +1,4 @@
-package com.lunasapiens.manualjobs;
+package com.lunasapiens.manualjobs.ArticleEmbedding;
 
 
 import ai.djl.repository.MRL;

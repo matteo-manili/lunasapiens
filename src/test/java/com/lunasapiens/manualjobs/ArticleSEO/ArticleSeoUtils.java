@@ -1,11 +1,11 @@
-package com.lunasapiens;
+package com.lunasapiens.manualjobs.ArticleSEO;
 
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
 import java.text.Normalizer;
 
-public class SeoUtils {
+public class ArticleSeoUtils {
 
     /**
      * Pulisce l'HTML:

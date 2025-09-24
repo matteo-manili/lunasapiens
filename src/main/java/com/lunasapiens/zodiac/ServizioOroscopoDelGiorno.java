@@ -53,8 +53,10 @@ public class ServizioOroscopoDelGiorno {
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
-    private Double temperature = 0.3; private Integer tokensAggiuntiPerRisposta = 1000;
-        private final Double finalcaratteriPerTokenStima = 10.0;
+    private Double temperature = 0.3;
+    private Integer tokensAggiuntiPerRisposta = 1000;
+    private final Double finalcaratteriPerTokenStima = 10.0;
+    private Integer timeoutSecondiRisposta = 30;
 
 
 
@@ -180,7 +182,7 @@ public class ServizioOroscopoDelGiorno {
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, finalcaratteriPerTokenStima,
-                appConfig.getParamOpenAi().getModelGpt4_Mini(), domanda.toString() );
+                appConfig.getParamOpenAi().getModelGpt4_Mini(), timeoutSecondiRisposta, domanda.toString() );
     }
 
 

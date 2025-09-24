@@ -62,9 +62,10 @@ public class OpenAIGptTheokanning {
 
 
 
-    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensAggiuntiPerRisposta, Double caratteriPerTokenStima, final String modelGpt, String domanda) {
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensAggiuntiPerRisposta, Double caratteriPerTokenStima, final String modelGpt,
+                                                    Integer timeoutSecondiRisposta, String domanda) {
         // Inizializza il servizio OpenAI con il client configurato
-        OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
+        OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(timeoutSecondiRisposta));
         // Inizializza la lista dei messaggi
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new ChatMessage("system", domanda /*"Sei un astrologo che genera."*/ ));
