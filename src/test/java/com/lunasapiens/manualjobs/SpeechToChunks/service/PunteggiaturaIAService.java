@@ -27,7 +27,7 @@ public class PunteggiaturaIAService {
 
 
 
-    public StringBuilder punteggiaturaTesto(String testo) {
+    public StringBuilder generaTestoConPunteggiatura(String testo) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
         /*
         OpenAIGptTheokanning we = new OpenAIGptTheokanning();
@@ -38,7 +38,7 @@ public class PunteggiaturaIAService {
                 appConfig.getParamOpenAi().getModelGpt3_5());
          */
 
-        StringBuilder inputPrompt = input_prompt(testo);
+        StringBuilder inputPrompt = creaPromptPunteggiatura(testo);
         //logger.info("DOMANDA: " + domanda);
 
         //OpenAIGptAzure openAIGptAzure = new OpenAIGptAzure();
@@ -56,7 +56,7 @@ public class PunteggiaturaIAService {
 
 
 
-    public StringBuilder input_prompt(String testo) {
+    public StringBuilder creaPromptPunteggiatura(String testo) {
         StringBuilder domandaBuilder = new StringBuilder();
         domandaBuilder.append("inserisci la punteggiatura a questo testo senza togliere e modificare le parole: ");
 

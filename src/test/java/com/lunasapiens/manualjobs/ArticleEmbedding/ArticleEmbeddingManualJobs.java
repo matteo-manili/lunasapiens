@@ -36,7 +36,7 @@ class ArticleEmbeddingManualJobs {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     void testSearchSpecificWord() throws TranslateException {
         // Parola da cercare
         String query = "infezioni post-operatorie";

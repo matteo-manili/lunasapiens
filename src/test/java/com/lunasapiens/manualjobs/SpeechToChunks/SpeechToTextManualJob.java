@@ -41,7 +41,7 @@ class SpeechToTextManualJob {
         //String trascrizioneAudio = transcribeAudioFile();
 
         // 2️⃣ Ripristina punteggiatura
-        //StringBuilder testoPunteggiato = punteggiaturaIAService.punteggiaturaTesto(trascrizioneAudio);
+        //StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio);
 
         // 3️⃣ Dividi il testo in chunk
         //List<String> chunks = dividiTestoInChunk(testoPunteggiato.toString());
