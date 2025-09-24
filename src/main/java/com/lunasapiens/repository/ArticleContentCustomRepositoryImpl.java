@@ -70,7 +70,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
     @Transactional(readOnly = true)
     public List<ArticleContent> searchByEmbeddingThenFTS(Float[] embedding, String keyword, int limit) throws Exception {
-        PGobject pgVector = UtilRepository.toPgVector(embedding);
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         // 1. Trova i più vicini semanticamente
         String sql = "WITH nearest AS (" +
@@ -107,7 +107,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     public List<ArticleContent> findNearestByEmbedding(Float[] embedding, int limit) throws Exception {
 
         // Converti embedding in stringa per PGvector
-        PGobject pgVector = UtilRepository.toPgVector(embedding);
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql = "SELECT id, content, created_at, embedding " +
                 "FROM article_content " +
@@ -148,7 +148,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     public ArticleContent updateArticleEmbeddingJdbc(Long articleId, Float[] embedding) throws Exception {
 
         // Converti embedding in stringa per PGvector
-        PGobject pgVector = UtilRepository.toPgVector(embedding);
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql = "UPDATE article_content SET embedding = ? WHERE id = ?";
 
@@ -174,7 +174,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     @Transactional
     public ArticleContent saveArticleWithEmbeddingJdbc(String content, Float[] embedding) throws Exception {
         // Converti embedding in stringa per PGvector
-        PGobject pgVector = UtilRepository.toPgVector(embedding);
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql = "INSERT INTO article_content (content, created_at, embedding) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();

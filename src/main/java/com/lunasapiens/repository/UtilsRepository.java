@@ -2,7 +2,7 @@ package com.lunasapiens.repository;
 
 import org.postgresql.util.PGobject;
 
-public class UtilRepository {
+public class UtilsRepository {
 
     /**
      * Converte un array di float in un PGobject compatibile con PGvector.

@@ -36,7 +36,7 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
     @Transactional
     public Chunks saveChunkJdbc(Long videoId, int chunkIndex, String content, Float[] embedding) throws Exception {
 
-        PGobject pgVector = UtilRepository.toPgVector(embedding);
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql = "INSERT INTO chunks (video_id, chunk_index, content, embedding) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
