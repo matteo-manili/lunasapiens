@@ -21,7 +21,7 @@ public class PunteggiaturaIAService {
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
     private Double temperature = 0.2;
-    private Integer tokensAggiuntiPerRisposta = 2000;
+    private Integer tokensAggiuntiPerRisposta = 2500;
     private final Double finalcaratteriPerTokenStima = 10.0;
     private Integer timeoutSecondiRisposta = 200;
 
