@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class PunteggiaturaTestoIAService {
+public class PunteggiaturaIAService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PunteggiaturaTestoIAService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PunteggiaturaIAService.class);
 
     @Autowired
     private AppConfig appConfig;
@@ -55,9 +55,8 @@ public class PunteggiaturaTestoIAService {
     }
 
 
+
     public StringBuilder input_prompt(String testo) {
-
-
         StringBuilder domandaBuilder = new StringBuilder();
         domandaBuilder.append("inserisci la punteggiatura a questo testo senza togliere e modificare le parole: ");
 

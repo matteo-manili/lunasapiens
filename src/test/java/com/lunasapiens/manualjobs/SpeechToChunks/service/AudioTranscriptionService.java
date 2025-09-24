@@ -12,12 +12,12 @@ import org.vosk.Recognizer;
 import org.vosk.LibVosk;
 
 @Service
-public class SpeechToTextService {
+public class AudioTranscriptionService {
 
 
     private final Model model;
 
-    public SpeechToTextService() throws Exception {
+    public AudioTranscriptionService() throws Exception {
         // Imposta livello log
         LibVosk.setLogLevel(LogLevel.WARNINGS);
 

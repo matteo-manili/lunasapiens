@@ -2,8 +2,8 @@ package com.lunasapiens.manualjobs.SpeechToChunks;
 
 import com.lunasapiens.entity.Chunks;
 
-import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaTestoIAService;
-import com.lunasapiens.manualjobs.SpeechToChunks.service.SpeechToTextService;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaIAService;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.service.TextEmbeddingService;
 import org.junit.jupiter.api.Disabled;
@@ -19,10 +19,10 @@ import java.util.List;
 class SpeechToTextManualJob {
 
     @Autowired
-    private SpeechToTextService speechToTextService;
+    private AudioTranscriptionService audioTranscriptionService;
 
     @Autowired
-    private PunteggiaturaTestoIAService punteggiaturaTestoIAService;
+    private PunteggiaturaIAService punteggiaturaIAService;
 
     @Autowired
     TextEmbeddingService textEmbeddingService;
@@ -41,7 +41,7 @@ class SpeechToTextManualJob {
         //String trascrizioneAudio = transcribeAudioFile();
 
         // 2️⃣ Ripristina punteggiatura
-        //StringBuilder testoPunteggiato = punteggiaturaTestoIAService.punteggiaturaTesto(trascrizioneAudio);
+        //StringBuilder testoPunteggiato = punteggiaturaIAService.punteggiaturaTesto(trascrizioneAudio);
 
         // 3️⃣ Dividi il testo in chunk
         //List<String> chunks = dividiTestoInChunk(testoPunteggiato.toString());
@@ -60,8 +60,8 @@ class SpeechToTextManualJob {
         int chunkIndex = 1;
         for (String chunkContent : chunks) {
             try {
-                // Calcola embedding reale tramite ArticleEmbeddingService
-                Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor(chunkContent);
+                // Calcola embedding reale tramite TextEmbeddingService
+                Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoId, chunkIndex, chunkContent, embedding);
@@ -157,7 +157,7 @@ class SpeechToTextManualJob {
         File audioFile = new File("src/test/resources/models/vosk-model-it-0.22/AAA-file-audio/sample.wav");
 
         // Trascrizione del file audio
-        String transcription = speechToTextService.transcribeAudio(audioFile);
+        String transcription = audioTranscriptionService.transcribeAudio(audioFile);
         //String transcription = null;
 
         // Stampa il testo trascritto

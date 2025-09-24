@@ -43,7 +43,7 @@ public class ArticleSemanticService {
     public ArticleContent addArticle(String content) {
         try {
             // Calcola embedding tramite DJL
-            Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor(content);
+            Float[] embedding = textEmbeddingService.computeCleanEmbedding(content);
             // Salva usando il repository custom con JDBC
             return articleContentCustomRepository.saveArticleWithEmbeddingJdbc(content, embedding);
 

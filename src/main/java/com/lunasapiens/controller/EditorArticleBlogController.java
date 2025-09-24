@@ -164,7 +164,7 @@ public class EditorArticleBlogController extends BaseController {
             System.out.println( "articleSave.getId(): "+articleSave.getId() );
 
             // aggiorno la colonna embedding
-            Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor( articleSave.getContent() );
+            Float[] embedding = textEmbeddingService.computeCleanEmbedding( articleSave.getContent() );
             System.out.println("Dimensione embedding: " + embedding.length);
             ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
             System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

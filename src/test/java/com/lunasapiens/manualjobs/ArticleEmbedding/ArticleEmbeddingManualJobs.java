@@ -77,7 +77,7 @@ class ArticleEmbeddingManualJobs {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
         for (ArticleContent article : articles) {
             try {
-                Float[] embedding = textEmbeddingService.cleanTextEmbeddingPredictor( article.getContent() );
+                Float[] embedding = textEmbeddingService.computeCleanEmbedding( article.getContent() );
                 System.out.println("Dimensione embedding: " + embedding.length);
                 ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
                 System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

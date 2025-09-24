@@ -116,7 +116,7 @@ public class TextEmbeddingService {
      * @param content testo di input
      * @return embedding come array di Float
      */
-    public Float[] cleanTextEmbeddingPredictor(String content)  {
+    public Float[] computeCleanEmbedding(String content)  {
         try {
             String text = Utils.cleanText(content); // Pulizia del testo
             System.out.println(text);
