@@ -2,9 +2,10 @@ package com.lunasapiens.manualjobs.SpeechToText;
 
 import com.lunasapiens.entity.Chunks;
 
+import com.lunasapiens.manualjobs.SpeechToText.service.PunteggiaturaTestoIAService;
+import com.lunasapiens.manualjobs.SpeechToText.service.SpeechToTextService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.service.ArticleEmbeddingService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
