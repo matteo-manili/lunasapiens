@@ -7,6 +7,12 @@ import org.hibernate.annotations.JdbcType;
 import java.io.Serializable;
 
 @Entity
+@Table(
+        name = "chunks",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"videoId", "chunkIndex"})
+        }
+)
 public class Chunks implements Serializable {
 
     @Id

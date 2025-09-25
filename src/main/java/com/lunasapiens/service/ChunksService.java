@@ -23,7 +23,16 @@ public class ChunksService {
     public List<Chunks> findNearestChunksWithFts(String query, int limit) {
         try {
             Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+
+
+
+
             return chunksCustomRepository.findNearestChunksWithFts(queryEmbedding, query, limit);
+            //return chunksCustomRepository.findNearestChunksWithFts(queryEmbedding, query, limit);
+
+
+
+
 
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);

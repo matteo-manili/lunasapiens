@@ -31,7 +31,6 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
 
 
-
     public List<Chunks> findNearestChunksWithFts(Float[] embedding, String userQuestion, int limit) throws Exception {
         PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
@@ -41,7 +40,7 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
                         "          embedding <-> ? AS distance " +
                         "   FROM chunks " +
                         "   ORDER BY distance " +
-                        "   LIMIT 50 " +   // 🔹 prendo i 50 più vicini semanticamente
+                        "   LIMIT 150 " +   // 🔹 prendo i più vicini semanticamente
                         ") " +
                         "SELECT id, video_id, chunk_index, content, embedding, " +
                         "       ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) AS fts_rank, " +

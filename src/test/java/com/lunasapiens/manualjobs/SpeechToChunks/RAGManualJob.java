@@ -34,7 +34,7 @@ class RAGManualJob {
     @Test
     //@Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniRAG() throws Exception {
-        String userInput = "è giusto perdonare i miei genitori se io non li amo?";
+        String userInput = "mio figlio gioca spesso con i videogame violenti. mi devo preoccupare?";
 
         //List<Chunks> listCunks = chunksService.findNearestChunks(userInput, 5);
         List<Chunks> listCunks = chunksService.findNearestChunksWithFts(userInput, 10);

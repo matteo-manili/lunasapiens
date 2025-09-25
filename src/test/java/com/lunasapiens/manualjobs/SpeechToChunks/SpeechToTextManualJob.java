@@ -37,7 +37,7 @@ class SpeechToTextManualJob {
     @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks() throws Exception {
 
-        Long VIDEO_ID = 133L;  // ID del video
+        Long VIDEO_ID = 158L;  // ID del video
 
         System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
 
