@@ -21,14 +21,17 @@ public class PunteggiaturaIAService {
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
     private Double temperature = 0.2;
-    private Integer tokensAggiuntiPerRisposta = 2500;
     private final Double finalcaratteriPerTokenStima = 10.0;
-    private Integer timeoutSecondiRisposta = 200;
+    private Integer timeoutSecondiRisposta = 500; // secondi attesa riposta
 
 
-
-    public StringBuilder generaTestoConPunteggiatura(String testo) {
+    /**
+     * i tokensAggiuntiPerRisposta corrispondno al numero di parole del testo. in questo modo la risposta della LLM è completa.
+     * cioè mette la punteggiatura a tutto il testo senza troncare il testo.
+     */
+    public StringBuilder generaTestoConPunteggiatura(String testo, Integer tokensAggiuntiPerRisposta) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
+
 
         StringBuilder inputPrompt = creaPromptPunteggiatura(testo);
         //logger.info("DOMANDA: " + domanda);

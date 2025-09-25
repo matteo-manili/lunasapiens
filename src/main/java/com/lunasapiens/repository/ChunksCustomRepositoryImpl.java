@@ -13,11 +13,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 
 @Repository
 public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
-
-
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,6 +27,79 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
     public ChunksCustomRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+
+
+
+
+    public List<Chunks> findNearestChunksWithFts(Float[] embedding, String userQuestion, int limit) throws Exception {
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
+
+        String sql =
+                "WITH nearest AS ( " +
+                        "   SELECT id, video_id, chunk_index, content, embedding, " +
+                        "          embedding <-> ? AS distance " +
+                        "   FROM chunks " +
+                        "   ORDER BY distance " +
+                        "   LIMIT 50 " +   // 🔹 prendo i 50 più vicini semanticamente
+                        ") " +
+                        "SELECT id, video_id, chunk_index, content, embedding, " +
+                        "       ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) AS fts_rank, " +
+                        "       distance " +
+                        "FROM nearest " +
+                        "ORDER BY fts_rank DESC, distance ASC " +
+                        "LIMIT ?";
+
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, pgVector);        // embedding utente
+            ps.setString(2, userQuestion);    // testo della domanda per FTS
+            ps.setInt(3, limit);              // numero massimo di chunk
+            return ps;
+        }, (rs, rowNum) -> {
+            Chunks chunk = new Chunks();
+            chunk.setId(rs.getLong("id"));
+            chunk.setVideoId(rs.getLong("video_id"));
+            chunk.setChunkIndex(rs.getInt("chunk_index"));
+            chunk.setContent(rs.getString("content"));
+            // embedding non lo ricostruisco da DB (lo lasciamo null per evitare overhead inutile)
+            return chunk;
+        });
+    }
+
+
+
+
+    public List<Chunks> findNearestChunks(Float[] embedding, int limit) throws Exception {
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
+
+        String sql = "SELECT id, video_id, chunk_index, content, embedding " +
+                "FROM chunks " +
+                "ORDER BY embedding <-> ? " +
+                "LIMIT ?";
+
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, pgVector);
+            ps.setInt(2, limit);
+            return ps;
+        }, (rs, rowNum) -> {
+            Chunks chunk = new Chunks();
+            chunk.setId(rs.getLong("id"));
+            chunk.setVideoId(rs.getLong("video_id"));
+            chunk.setChunkIndex(rs.getInt("chunk_index"));
+            chunk.setContent(rs.getString("content"));
+            return chunk;
+        });
+    }
+
+
+
+
+
+
+
+
 
 
     /**

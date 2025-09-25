@@ -1,5 +1,8 @@
 package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
+import com.lunasapiens.zodiac.OpenAIGptTheokanning;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,6 +17,7 @@ import org.vosk.LibVosk;
 @Service
 public class AudioTranscriptionService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AudioTranscriptionService.class);
 
     private final Model model;
 
@@ -27,9 +31,12 @@ public class AudioTranscriptionService {
     }
 
 
-     // Trascrive un file audio in testo.
-     // Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM, 16 bit - per compatibilità con Vosk
-
+    /**
+     * Trascrive un file audio in testo.
+     * Per scaricare il video da youtube usare il sito https://v4.www-y2mate.com/
+     * Per convertire da MP3 a WAV usare software free Audacity. Fare Apri mp3 e poi Esporta audio...
+     * Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM 16 bit - (per compatibilità con Vosk)
+    */
     public String transcribeAudio(File audioFile) throws Exception {
         try (InputStream ais = new FileInputStream(audioFile);
              Recognizer recognizer = new Recognizer(model, 16000)) {
@@ -45,8 +52,6 @@ public class AudioTranscriptionService {
             // Restituisce il testo completo già in UTF-8
             String result = recognizer.getFinalResult();
             return new String(result.getBytes("ISO-8859-1"), "UTF-8");
-
-
         }
     }
 

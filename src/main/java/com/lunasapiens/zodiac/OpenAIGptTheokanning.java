@@ -54,7 +54,8 @@ public class OpenAIGptTheokanning {
     }
 
 
-    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensAggiuntiPerRisposta, double caratteriPerTokenStima, final String modelGpt, List<ChatMessage> chatMessageList) {
+    public StringBuilder eseguiOpenAIGptTheokanning(String apiKey, double temperature, int tokensAggiuntiPerRisposta, double caratteriPerTokenStima,
+                                                    final String modelGpt, List<ChatMessage> chatMessageList) {
         // Inizializza il servizio OpenAI con il client configurato
         OpenAiService service = new OpenAiService(apiKey, Duration.ofSeconds(30));
         return eseguiOpenAIGptTheokanning(service, temperature, tokensAggiuntiPerRisposta, caratteriPerTokenStima, modelGpt, chatMessageList) ;
@@ -81,7 +82,8 @@ public class OpenAIGptTheokanning {
      * chatgpt 3.5 e 4.0 accetta ruoli di user, system e assistant. gpt-3.5-turbo-instruct non vuole nessu ruolo
      * chatgpt 3.5 e 4.0 vogliono system e user nella domanda
      */
-    private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, double temperature, int tokensAggiuntiPerRisposta, double caratteriPerTokenStima, String modelGpt, List<ChatMessage> chatMessageList) {
+    private StringBuilder eseguiOpenAIGptTheokanning(OpenAiService service, double temperature, int tokensAggiuntiPerRisposta, double caratteriPerTokenStima,
+                                                     String modelGpt, List<ChatMessage> chatMessageList) {
 
         logger.info("################### INIZIOOO eseguiOpenAiTheokanning "+ modelGpt +" ###################");
 
@@ -105,7 +107,7 @@ public class OpenAIGptTheokanning {
                 risposta.append(choice.getMessage().getContent());
                 //System.out.printf("Index: %d, Message: %s\n", choice.getIndex(), choice.getMessage().getContent());
             }
-            System.out.println("risposta: " + risposta.toString());
+            logger.info("risposta: " + risposta.toString());
 
         } catch (Exception e) {
             System.err.println("Errore durante la richiesta: " + e.getMessage());
