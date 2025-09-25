@@ -23,7 +23,7 @@ public class RAGIAService {
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
     private Double temperature = 0.2;
     private final Double finalcaratteriPerTokenStima = 10.0;
-    private Integer tokensAggiuntiPerRisposta = 1000;
+    private Integer tokensAggiuntiPerRisposta = 1500;
 
     /**
      * i tokensAggiuntiPerRisposta corrispondno al numero di parole del testo. in questo modo la risposta della LLM è completa.
