@@ -2,9 +2,11 @@ package com.lunasapiens.manualjobs.SpeechToChunks;
 
 import com.lunasapiens.entity.Chunks;
 
+import com.lunasapiens.entity.VideoChunks;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaIAService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
+import com.lunasapiens.repository.VideoChunksRepository;
 import com.lunasapiens.service.TextEmbeddingService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,10 @@ class SpeechToTextManualJob {
     private PunteggiaturaIAService punteggiaturaIAService;
 
     @Autowired
-    TextEmbeddingService textEmbeddingService;
+    private TextEmbeddingService textEmbeddingService;
+
+    @Autowired
+    private VideoChunksRepository videoChunksRepository;
 
     @Autowired
     private ChunksCustomRepositoryImpl chunksCustomRepository;
@@ -33,11 +38,12 @@ class SpeechToTextManualJob {
 
 
 
+
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks() throws Exception {
+    public void OperazioniSpeechToChunks_VIDEO() throws Exception {
 
-        Long VIDEO_ID = 158L;  // ID del video
+        Long VIDEO_ID = 60L;  // ID del video
 
         System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
 
@@ -50,30 +56,54 @@ class SpeechToTextManualJob {
         StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio, numneroTotaleParole);
         //StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio_117, numneroTotaleParole);
 
-        // 3️⃣ Dividi il testo in chunk
+        // 3️⃣ Crea VideoChunks con title = numero del video e fullContent = testo punteggiato
+        VideoChunks videoChunks = new VideoChunks();
+        videoChunks.setNumeroVideo(VIDEO_ID);
+        videoChunks.setTitle(String.valueOf(VIDEO_ID));
+        videoChunks.setFullContent(testoPunteggiato.toString());
+        videoChunks = videoChunksRepository.save(videoChunks); // salva nel DB
+
+        // 4️⃣ Dividi il testo in chunk
         List<String> chunks = dividiTestoInChunk(testoPunteggiato.toString());
         //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
 
-        // 4️⃣ Salva i chunk nel database calcolando embedding reale
-        salvaChunkInDatabase(chunks, VIDEO_ID);
-
+        // 5️⃣ Salva i chunk nel database calcolando embedding reale
+        salvaChunkInDatabase(chunks, videoChunks);
     }
 
 
 
-    public void salvaChunkInDatabase(List<String> chunks, Long videoId){
+
+    @Test
+    //@Disabled("Disabilitato temporaneamente per debug")
+    public void OperazioniSpeechToChunks_TESTO() throws Exception {
+        List<VideoChunks> list = videoChunksRepository.findAll();
+        for(VideoChunks videoChunks: list){
+            // 4️⃣ Dividi il testo in chunk
+            List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent() );
+            //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
+            // 5️⃣ Salva i chunk nel database calcolando embedding reale
+            salvaChunkInDatabase(chunks, videoChunks);
+        }
+    }
+
+
+
+
+    public void salvaChunkInDatabase(List<String> chunks, VideoChunks videoChunks){
         int chunkIndex = 1;
         for (String chunkContent : chunks) {
             try {
                 // Calcola embedding reale tramite TextEmbeddingService
                 Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
+
                 // Salva il chunk nel DB usando il repository custom
-                Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoId, chunkIndex, chunkContent, embedding);
+                Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoChunks, chunkIndex, chunkContent, embedding);
 
                 System.out.println("Chunk salvato con ID: " + savedChunk.getId());
 
             } catch (Exception e) {
-                System.err.println("Errore durante salvataggio chunk " + chunkIndex + " del video " + videoId);
+                System.err.println("Errore durante salvataggio chunk " + chunkIndex + " del video " + videoChunks.getId());
                 e.printStackTrace();
             }
             chunkIndex++;
@@ -82,9 +112,10 @@ class SpeechToTextManualJob {
     }
 
 
+
     public List<String> dividiTestoInChunk(String testo) throws  Exception {
         //testo = "Buonasera a tutti! Mi chiamo Gabriella Tupini. Sto facendo dei video per comunicare alle persone interessate";
-        List<String> chunks = chunkText(testo);
+        List<String> chunks = chunkText_con_Overlap(testo);
         int index = 1;
         for (String c : chunks) {
             System.out.println("Chunk " + index++ + ":\n" + c + "\n---");
@@ -93,10 +124,49 @@ class SpeechToTextManualJob {
     }
 
 
+
+    /**
+     * Divide un testo in chunk da ~400 parole, senza overlap
+     */
+    public static List<String> chunkText_senza_Overlap(String text) {
+        int chunkSize = 400;
+
+        // Normalizza \n e spazi multipli
+        text = text.replaceAll("\\s+", " ").trim();
+
+        // Suddivide in frasi usando punteggiatura (.!?)
+        String[] sentences = text.split("(?<=[.!?])\\s+");
+
+        List<String> chunks = new ArrayList<>();
+        List<String> currentChunk = new ArrayList<>();
+        int wordCount = 0;
+
+        for (String sentence : sentences) {
+            String[] words = sentence.split("\\s+");
+            int sentenceWordCount = words.length;
+            if (wordCount + sentenceWordCount > chunkSize && !currentChunk.isEmpty()) {
+                // Crea chunk
+                chunks.add(String.join(" ", currentChunk));
+                // Inizia un nuovo chunk senza overlap
+                currentChunk = new ArrayList<>();
+                wordCount = 0;
+            }
+            currentChunk.add(sentence);
+            wordCount += sentenceWordCount;
+        }
+        if (!currentChunk.isEmpty()) {
+            chunks.add(String.join(" ", currentChunk));
+        }
+
+        return chunks;
+    }
+
+
+
     /**
      * Divide un testo in chunk da ~400 parole, rispettando frasi e overlap del 15%
      */
-    public static List<String> chunkText(String text) {
+    public static List<String> chunkText_con_Overlap(String text) {
         int chunkSize = 400;
         int overlap = (int) (chunkSize * 0.15);
         // Normalizza \n e spazi multipli
@@ -152,6 +222,7 @@ class SpeechToTextManualJob {
     }
 
 
+
     /**
      * Conta il numero di parole in una stringa.
      *
@@ -164,7 +235,6 @@ class SpeechToTextManualJob {
         if (text == null || text.trim().isEmpty()) {
             return 0; // nessuna parola
         }
-
         // Divide la stringa su uno o più spazi bianchi
         String[] words = text.trim().split("\\s+");
         return words.length;

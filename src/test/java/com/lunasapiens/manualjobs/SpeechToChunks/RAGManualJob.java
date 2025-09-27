@@ -32,33 +32,37 @@ class RAGManualJob {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniRAG() throws Exception {
         String userInput = "mio figlio gioca spesso con i videogame violenti. mi devo preoccupare?";
 
-        //List<Chunks> listCunks = chunksService.findNearestChunks(userInput, 5);
-        List<Chunks> listCunks = chunksService.findNearestChunksWithFts(userInput, 10);
+        List<Chunks> listCunks = chunksService.findNearestChunksWithFts(userInput, 5); //10
 
         StringBuilder context = new StringBuilder();
         for(Chunks chunk : listCunks ) {
-            System.out.println("ID Video "+chunk.getVideoId() );
+            System.out.println("ID Video "+chunk.getVideoChunks().getId() );
             System.out.println("Numero Chunk:" +chunk.getChunkIndex() +" content: "+  chunk.getContent() );
             context.append(chunk.getContent()).append("\n");
         }
 
         // 4. Prepara i messaggi per la chat
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("system",
+        /*messages.add(new ChatMessage("system",
                 "Sei uno psicologo empatico e professionale. " +
                         "Rispondi solo basandoti sul contesto fornito, ignora altre informazioni esterne. " +
                         "Mantieni un tono comprensivo e non aggiungere consigli esterni. "
+        )); */
+
+        messages.add(new ChatMessage("system",
+                "Sei uno psicologo empatico e professionale. " +
+                        "fai la sintesi del contesto. "
         ));
 
         messages.add(new ChatMessage("system",
                 "Contesto:\n" + context.toString()
         ));
 
-        messages.add(new ChatMessage("user", "Domanda: " + userInput));
+        //messages.add(new ChatMessage("user", "Domanda: " + userInput));
 
 
 

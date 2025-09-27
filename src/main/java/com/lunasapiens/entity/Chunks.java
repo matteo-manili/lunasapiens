@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Table(
         name = "chunks",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"videoId", "chunkIndex"})
+                @UniqueConstraint(columnNames = {"numero_video_chunks", "chunkIndex"})
         }
 )
 public class Chunks implements Serializable {
@@ -18,10 +18,6 @@ public class Chunks implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // ID del video da cui proviene il chunk
-    @Column(nullable = false)
-    private Long videoId;
 
     // Indice del chunk all'interno del video
     @Column(nullable = false)
@@ -38,6 +34,12 @@ public class Chunks implements Serializable {
 
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "numero_video_chunks", referencedColumnName = "numero_video")
+    private VideoChunks videoChunks;
+
+
+
     // ----- Getters e Setters -----
 
     public Long getId() {
@@ -48,13 +50,9 @@ public class Chunks implements Serializable {
         this.id = id;
     }
 
-    public Long getVideoId() {
-        return videoId;
-    }
+    public VideoChunks getVideoChunks() { return videoChunks; }
 
-    public void setVideoId(Long videoId) {
-        this.videoId = videoId;
-    }
+    public void setVideoChunks(VideoChunks videoChunks) { this.videoChunks = videoChunks; }
 
     public Integer getChunkIndex() {
         return chunkIndex;

@@ -33,9 +33,9 @@ public class AudioTranscriptionService {
 
     /**
      * Trascrive un file audio in testo.
-     * Per scaricare il video da youtube usare il sito https://v4.www-y2mate.com/
+     * Per scaricare il video da youtube usare il sito https://notube.link/it/youtube-app-241
      * Per convertire da MP3 a WAV usare software free Audacity. Fare Apri mp3 e poi Esporta audio...
-     * Il file deve essere WAV, Mono, 16kHz (o 16000Hz), PCM 16 bit - (per compatibilità con Vosk)
+     * Il file deve essere WAV, Mono, 16kHz (oppure 16000Hz), PCM 16 bit - (per compatibilità con Vosk)
     */
     public String transcribeAudio(File audioFile) throws Exception {
         try (InputStream ais = new FileInputStream(audioFile);
