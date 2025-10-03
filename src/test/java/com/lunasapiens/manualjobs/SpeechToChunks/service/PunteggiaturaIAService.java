@@ -32,7 +32,6 @@ public class PunteggiaturaIAService {
     public StringBuilder generaTestoConPunteggiatura(String testo, Integer tokensAggiuntiPerRisposta) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
-
         StringBuilder inputPrompt = creaPromptPunteggiatura(testo);
         //logger.info("DOMANDA: " + domanda);
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -32,24 +33,114 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
 
 
-    public List<Chunks> findNearestChunksWithFts(Float[] embedding, String userQuestion, int limit) throws Exception {
+
+
+    public List<Chunks> findNearestChunksWithFts(String userQuestion, int limit) throws Exception {
+
+            String sql =
+                    "SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, " +
+                            "       vc.title AS video_title, vc.full_content AS video_full_content, vc.metadati, " +
+                            "       ts_rank(to_tsvector('italian', c.content), plainto_tsquery('italian', ?)) AS fts_rank " +
+                            "FROM chunks c " +
+                            "JOIN video_chunks vc ON c.numero_video_chunks = vc.numero_video " +
+                            "ORDER BY fts_rank DESC " +
+                            "LIMIT ?";
+
+            return jdbcTemplate.query(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, userQuestion);  // testo della domanda per FTS
+                ps.setInt(2, limit);             // numero massimo di chunk
+                return ps;
+            }, (rs, rowNum) -> {
+                Chunks chunk = new Chunks();
+                chunk.setId(rs.getLong("id"));
+
+                VideoChunks videoChunks = new VideoChunks();
+                videoChunks.setNumeroVideo(rs.getLong("numero_video_chunks"));
+                videoChunks.setTitle(rs.getString("video_title"));
+                videoChunks.setFullContent(rs.getString("video_full_content"));
+                videoChunks.setMetadati(rs.getString("metadati"));
+                chunk.setVideoChunks(videoChunks);
+
+                chunk.setChunkIndex(rs.getInt("chunk_index"));
+                chunk.setContent(rs.getString("content"));
+
+                // embedding non utilizzato
+                return chunk;
+            });
+        }
+
+
+    public List<Chunks> findNearestChunksFtsThenCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
+
+        // 1️⃣ Prima ricerca FTS
+        List<Chunks> ftsChunks = findNearestChunksWithFts(userQuestion, 50); // prendi più chunk da filtrare poi con cosine
+
+        if (ftsChunks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Lista degli ID dei chunk FTS
+        List<Long> chunkIds = ftsChunks.stream().map(Chunks::getId).toList();
+
+        // 2️⃣ Seconda ricerca Cosine tra i chunk FTS
+        PGobject pgVector = UtilsRepository.toPgVector(embedding);
+
+        String sql =
+                "SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, " +
+                        "       vc.title AS video_title, vc.full_content AS video_full_content, " +
+                        "       c.embedding <=> ? AS cosine_distance " +
+                        "FROM chunks c " +
+                        "JOIN video_chunks vc ON c.numero_video_chunks = vc.numero_video " +
+                        "WHERE c.id = ANY (?) " +
+                        "ORDER BY cosine_distance ASC " + // più vicino = più simile
+                        "LIMIT ?";
+
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, pgVector);                       // embedding utente
+            ps.setArray(2, connection.createArrayOf("bigint", chunkIds.toArray())); // filtriamo solo chunk FTS
+            ps.setInt(3, limit);                             // numero massimo di chunk
+            return ps;
+        }, (rs, rowNum) -> {
+            Chunks chunk = new Chunks();
+            chunk.setId(rs.getLong("id"));
+
+            VideoChunks videoChunks = new VideoChunks();
+            videoChunks.setNumeroVideo(rs.getLong("numero_video_chunks"));
+            videoChunks.setTitle(rs.getString("video_title"));
+            videoChunks.setFullContent(rs.getString("video_full_content"));
+            chunk.setVideoChunks(videoChunks);
+
+            chunk.setChunkIndex(rs.getInt("chunk_index"));
+            chunk.setContent(rs.getString("content"));
+
+            return chunk;
+        });
+    }
+
+
+
+
+
+        public List<Chunks> findNearestChunksWithFtsCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
         PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql =
                 "WITH nearest AS ( " +
                         "   SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, c.embedding, " +
-                        "          vc.title AS video_title, vc.fullContent AS video_full_content, " +
-                        "          c.embedding <-> ? AS distance " +
+                        "          vc.title AS video_title, vc.full_content AS video_full_content, vc.metadati, " +
+                        "          c.embedding <=> ? AS cosine_distance " +
                         "   FROM chunks c " +
-                        "   JOIN video_chunks vc ON c.video_chunks_id = vc.numero_video " +
-                        "   ORDER BY distance " +
+                        "   JOIN video_chunks vc ON c.numero_video_chunks = vc.numero_video " +
+                        "   ORDER BY cosine_distance " +
                         "   LIMIT 150 " +
                         ") " +
-                        "SELECT id, numero_video_chunks, chunk_index, content, embedding, video_title, video_full_content, " +
+                        "SELECT id, numero_video_chunks, chunk_index, content, embedding, video_title, video_full_content, metadati, " +
                         "       ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) AS fts_rank, " +
-                        "       distance " +
+                        "       cosine_distance " +
                         "FROM nearest " +
-                        "ORDER BY fts_rank DESC, distance ASC " +
+                        "ORDER BY fts_rank DESC, cosine_distance ASC " +
                         "LIMIT ?";
 
 
@@ -69,6 +160,7 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
             videoChunks.setNumeroVideo(rs.getLong("numero_video_chunks")); // prima era setId
             videoChunks.setTitle(rs.getString("video_title"));
             videoChunks.setFullContent(rs.getString("video_full_content"));
+            videoChunks.setMetadati(rs.getString("metadati"));
             chunk.setVideoChunks(videoChunks);
 
 
@@ -88,9 +180,9 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
         String sql =
                 "SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, c.embedding, " +
-                        "       vc.title AS video_title, vc.fullContent AS video_full_content " +
+                        "       vc.title AS video_title, vc.full_content AS video_full_content " +
                         "FROM chunks c " +
-                        "JOIN video_chunks vc ON c.video_chunks_id = vc.numero_video " +
+                        "JOIN video_chunks vc ON c.numero_video_chunks = vc.numero_video " +
                         "ORDER BY c.embedding <-> ? " +
                         "LIMIT ?";
 

@@ -25,9 +25,9 @@ public class ChunksService {
             Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
 
 
-            return chunksCustomRepository.findNearestChunksWithFts(queryEmbedding, query, limit);
-            //return chunksCustomRepository.findNearestChunksWithFts(queryEmbedding, query, limit);
-
+            //return chunksCustomRepository.findNearestChunksFtsThenCosine(queryEmbedding, query, limit);
+            //return chunksCustomRepository.findNearestChunksWithFts(query, limit);
+            return chunksCustomRepository.findNearestChunksWithFtsCosine(queryEmbedding, query, limit);
 
 
 

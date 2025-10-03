@@ -18,6 +18,8 @@ public class VideoChunks implements Serializable {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String fullContent; // Testo lungo (fino a 10.000+ parole)
 
+    @Column(columnDefinition = "jsonb")
+    private String metadati;
 
 
     // Colonna dedicata per join con Chunks
@@ -59,6 +61,10 @@ public class VideoChunks implements Serializable {
     public Long getNumeroVideo() { return numeroVideo; }
 
     public void setNumeroVideo(Long numeroVideo) { this.numeroVideo = numeroVideo; }
+
+    public String getMetadati() { return metadati; }
+
+    public void setMetadati(String metadati) { this.metadati = metadati; }
 
     public List<Chunks> getChunks() { return chunks; }
 

@@ -25,20 +25,18 @@ public class RAGIAService {
     private final Double finalcaratteriPerTokenStima = 10.0;
     private Integer tokensAggiuntiPerRisposta = 1500;
 
+
     /**
      * i tokensAggiuntiPerRisposta corrispondno al numero di parole del testo. in questo modo la risposta della LLM è completa.
      * cioè mette la punteggiatura a tutto il testo senza troncare il testo.
      */
-    public StringBuilder chiediAlloPsicologo(List<ChatMessage> chatMessageList) {
+    public StringBuilder chiediAlloPsicologo(List<ChatMessage> chatMessageList, Double temperature, Integer tokensAggiuntiPerRisposta) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
 
-
         return openAIGptTheokanning.eseguiOpenAIGptTheokanning(appConfig.getParamOpenAi().getApiKeyOpenAI(), temperature, tokensAggiuntiPerRisposta, finalcaratteriPerTokenStima,
                 appConfig.getParamOpenAi().getModelGpt4_Mini(), chatMessageList );
-
-
 
     }
 
