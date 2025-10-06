@@ -15,7 +15,10 @@ import java.util.Map;
 
 
 /**
- * https://huggingface.co/models?pipeline_tag=feature-extraction&language=it
+ * https://huggingface.co/settings/billing
+ * https://huggingface.co/settings/tokens
+ *
+ * RICERCA MODELLO: https://huggingface.co/models?pipeline_tag=feature-extraction&language=it
  *
  * Questa ricerca soddisfa questi criteri:
  * feature extraction (cioè estrazione di embeddings, trasformazione del testo in vettori)
@@ -30,6 +33,9 @@ public class TextEmbeddingHuggingfaceService {
     private HuggingFaceConfig huggingFaceConfig;
 
     private static final String HF_MODEL_URL = "https://api-inference.huggingface.co/models/intfloat/multilingual-e5-large-instruct"; // dimensione dell'embedding di 1024
+
+
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -74,8 +80,13 @@ public class TextEmbeddingHuggingfaceService {
                 }
 
                 return cleanEmbedding;
-
             }
         }
     }
+
+
+
+
+
+
 }
