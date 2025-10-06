@@ -51,6 +51,20 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
+
+
+
+    @Bean
+    public HuggingFaceConfig huggingFaceConfig() {
+        if (Utils.isLocalhost()) {
+            List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("hugging.face.name", "hugging.face.token")));
+            return new HuggingFaceConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
+        }else{
+            return new HuggingFaceConfig(env.getProperty("hugging.face.name"), env.getProperty("hugging.face.token") );
+        }
+    }
+
+
     /**
      * Imposta la dimensione massima di un file caricato su 5 MB (per l'upload delle immagini in EditorArticleController)
      */
@@ -59,6 +73,7 @@ public class AppConfig implements WebMvcConfigurer {
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement("", 6 * 1024 * 1024, 6 * 1024 * 1024, 0); // 6MB
         return multipartConfigElement;
     }
+
 
     @Bean
     public JwtElements.JwtRsaKeys jwtRsaKeys() {

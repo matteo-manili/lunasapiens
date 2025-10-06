@@ -3,6 +3,7 @@ package com.lunasapiens.manualjobs.SpeechToChunks;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
+import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
 import com.lunasapiens.service.TextEmbeddingService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.json.JSONObject;
@@ -22,22 +23,36 @@ class RAGManualJob {
     TextEmbeddingService textEmbeddingService;
 
     @Autowired
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+
+    @Autowired
     ChunksService chunksService;
 
     @Autowired
     RAGIAService RAGIAService;
 
 
+
+    @Test
+    @Disabled("Disabilitato temporaneamente per debug")
+    public void eseguiEmbeddingHuggingface() throws Exception {
+
+        textEmbeddingHuggingfaceService.computeCleanEmbedding("ciao bellooo");
+    }
+
+
+
+
     @Test
     //@Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniRAG() throws Exception {
-        String userInput = "Come faccio a non farmi manipolare dagli altri?";
+        String userInput = "devo perdonare i miei genitori? mi hanno umiliato";
 
-        List<Chunks> listCunks = chunksService.findNearestChunksWithFts(userInput, 5); //10
+        List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, 5); //10
         StringBuilder context = new StringBuilder();
         System.out.println("========================================================");
         for(Chunks chunk : listCunks ) {
-            System.out.println("ID Video "+chunk.getVideoChunks().getNumeroVideo() );
+            System.out.println("ID Video "+chunk.getVideoChunks().getNumeroVideo() + " TITOLO VIDEO: "+chunk.getVideoChunks().getTitle());
 
             // Estrai summary dal JSON dei metadati
             String metadati = chunk.getVideoChunks().getMetadati();

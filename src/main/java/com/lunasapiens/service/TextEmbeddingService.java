@@ -107,7 +107,7 @@ public class TextEmbeddingService {
 
 
     /**
-     * Calcola l'embedding di un testo, dopo averlo pulito.
+     * Calcola l'embedding di un testo, dopo averlo pulito. Genera embedding normalizzato per un testo.
      *
      * 🔹 Funzionamento:
      *    1️⃣ Pulisce il testo rimuovendo HTML, spazi extra e convertendo in minuscolo.

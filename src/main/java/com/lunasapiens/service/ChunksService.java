@@ -19,16 +19,33 @@ public class ChunksService {
     @Autowired
     TextEmbeddingService textEmbeddingService;
 
+    @Autowired
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+
+
+
+    public List<Chunks> findNearestChunksCosine(String query, int limit) {
+        try {
+
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(query);
+            return chunksCustomRepository.findNearestChunksCosine(queryEmbedding, query, limit);
+
+        } catch (TranslateException e) {
+            throw new RuntimeException("Errore nella predizione dell'embedding", e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante la query JDBC", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante la ricerca semantica", e);
+        }
+    }
+
+
 
     public List<Chunks> findNearestChunksWithFts(String query, int limit) {
         try {
             Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-
-
-            //return chunksCustomRepository.findNearestChunksFtsThenCosine(queryEmbedding, query, limit);
-            //return chunksCustomRepository.findNearestChunksWithFts(query, limit);
-            return chunksCustomRepository.findNearestChunksWithFtsCosine(queryEmbedding, query, limit);
-
+            return chunksCustomRepository.findNearestChunksWithFts(query, limit);
+            //return chunksCustomRepository.findNearestChunksWithFtsCosine(queryEmbedding, query, limit);
 
 
 
@@ -42,10 +59,12 @@ public class ChunksService {
     }
 
 
-    public List<Chunks> findNearestChunks(String query, int limit) {
+
+
+    public List<Chunks> findNearestChunksDistance(String query, int limit) {
         try {
             Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            return chunksCustomRepository.findNearestChunks(queryEmbedding, limit);
+            return chunksCustomRepository.findNearestChunksDistance(queryEmbedding, limit);
 
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);

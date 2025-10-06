@@ -9,6 +9,7 @@ import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionServi
 import com.lunasapiens.manualjobs.SpeechToChunks.service.RAGIAService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
+import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
 import com.lunasapiens.service.TextEmbeddingService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
@@ -31,6 +32,9 @@ class SpeechToTextManualJob {
 
     @Autowired
     private TextEmbeddingService textEmbeddingService;
+
+    @Autowired
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
     @Autowired
     private VideoChunksRepository videoChunksRepository;
@@ -97,7 +101,7 @@ class SpeechToTextManualJob {
         List<VideoChunks> list = videoChunksRepository.findAll();
         for(VideoChunks videoChunks: list){
             // 4️⃣ Dividi il testo in chunk
-            List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 200, 40); // 200 parole per chunk, overlap 40 parole
+            List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
 
             //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
             // 5️⃣ Salva i chunk nel database calcolando embedding reale
@@ -185,7 +189,12 @@ class SpeechToTextManualJob {
         for (String chunkContent : chunks) {
             try {
                 // Calcola embedding reale tramite TextEmbeddingService
-                Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
+
+                //Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
+
+                Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(chunkContent);
+
+
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoChunks, chunkIndex, chunkContent, embedding);

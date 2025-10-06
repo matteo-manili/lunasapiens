@@ -71,36 +71,22 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
         }
 
 
-    public List<Chunks> findNearestChunksFtsThenCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
+    public List<Chunks> findNearestChunksCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
 
-        // 1️⃣ Prima ricerca FTS
-        List<Chunks> ftsChunks = findNearestChunksWithFts(userQuestion, 50); // prendi più chunk da filtrare poi con cosine
-
-        if (ftsChunks.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        // Lista degli ID dei chunk FTS
-        List<Long> chunkIds = ftsChunks.stream().map(Chunks::getId).toList();
-
-        // 2️⃣ Seconda ricerca Cosine tra i chunk FTS
         PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
-        String sql =
-                "SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, " +
+        String sql = "SELECT c.id, c.numero_video_chunks, c.chunk_index, c.content, " +
                         "       vc.title AS video_title, vc.full_content AS video_full_content, " +
                         "       c.embedding <=> ? AS cosine_distance " +
                         "FROM chunks c " +
                         "JOIN video_chunks vc ON c.numero_video_chunks = vc.numero_video " +
-                        "WHERE c.id = ANY (?) " +
                         "ORDER BY cosine_distance ASC " + // più vicino = più simile
                         "LIMIT ?";
 
         return jdbcTemplate.query(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setObject(1, pgVector);                       // embedding utente
-            ps.setArray(2, connection.createArrayOf("bigint", chunkIds.toArray())); // filtriamo solo chunk FTS
-            ps.setInt(3, limit);                             // numero massimo di chunk
+            ps.setInt(2, limit);                             // numero massimo di chunk
             return ps;
         }, (rs, rowNum) -> {
             Chunks chunk = new Chunks();
@@ -123,8 +109,8 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
 
 
-        public List<Chunks> findNearestChunksWithFtsCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
-        PGobject pgVector = UtilsRepository.toPgVector(embedding);
+    public List<Chunks> findNearestChunksWithFtsCosine(Float[] embedding, String userQuestion, int limit) throws Exception {
+    PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql =
                 "WITH nearest AS ( " +
@@ -142,8 +128,6 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
                         "FROM nearest " +
                         "ORDER BY fts_rank DESC, cosine_distance ASC " +
                         "LIMIT ?";
-
-
 
         return jdbcTemplate.query(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -175,7 +159,7 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
 
 
-    public List<Chunks> findNearestChunks(Float[] embedding, int limit) throws Exception {
+    public List<Chunks> findNearestChunksDistance(Float[] embedding, int limit) throws Exception {
         PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
         String sql =

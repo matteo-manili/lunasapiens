@@ -27,8 +27,8 @@ public class Chunks implements Serializable {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    // Embedding vettoriale (tipo pgvector)
-    @Column(columnDefinition = "vector(384)")
+    // Embedding vettoriale (tipo pgvector) 384 - 1024
+    @Column(columnDefinition = "vector(1024)")
     @JdbcType(PostgreSQLVectorJdbcType.class)
     private Float[] embedding;
 
