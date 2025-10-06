@@ -24,7 +24,7 @@ import java.util.Map;
  * feature extraction (cioè estrazione di embeddings, trasformazione del testo in vettori)
  * Supportano la lingua italiano (o sono multilingue che includono l’italiano)
  *
- * questo funziona bene: multilingual-e5-large-instruct
+ * questo funziona bene: multilingual-e5-large-instruct (dimensione dell'embedding di 1024)
  */
 @Service
 public class TextEmbeddingHuggingfaceService {
@@ -43,7 +43,7 @@ public class TextEmbeddingHuggingfaceService {
      * Genera embedding normalizzato per un testo. dimensione dell'embedding di 1024
      *
      * @param content testo da trasformare in embedding
-     * @return Float[] embedding normalizzato
+     * @return Float[]
      * @throws Exception in caso di errore HTTP o parsing JSON
      */
     public Float[] computeCleanEmbedding(String content) throws Exception {
@@ -69,17 +69,13 @@ public class TextEmbeddingHuggingfaceService {
                 // La risposta è un array singolo di float
                 double[] embedding = objectMapper.readValue(responseBody, double[].class);
 
-                // Normalizzazione
-                double norm = 0.0;
-                for (double v : embedding) norm += v * v;
-                norm = Math.sqrt(norm);
-
-                Float[] cleanEmbedding = new Float[embedding.length];
+                // Conversione in Float[]
+                Float[] floatEmbedding = new Float[embedding.length];
                 for (int i = 0; i < embedding.length; i++) {
-                    cleanEmbedding[i] = (float) (embedding[i] / norm);
+                    floatEmbedding[i] = (float) embedding[i];
                 }
 
-                return cleanEmbedding;
+                return floatEmbedding;
             }
         }
     }

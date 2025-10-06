@@ -46,7 +46,7 @@ class RAGManualJob {
     @Test
     //@Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniRAG() throws Exception {
-        String userInput = "devo perdonare i miei genitori? mi hanno umiliato";
+        String userInput = "parlami della masturbazione. la pratico molto, da che dipende?";
 
         List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, 5); //10
         StringBuilder context = new StringBuilder();
@@ -76,7 +76,7 @@ class RAGManualJob {
         messages.add(new ChatMessage("user","Contesto: " + context.toString() +
                         "\n\nDomanda: " + userInput));
 
-        RAGIAService.chiediAlloPsicologo( messages, 0.2, 1000 );
+        RAGIAService.chiediAlloPsicologo( messages, 0.0, 1000 );
     }
 
 
