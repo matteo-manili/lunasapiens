@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface VideoChunksRepository extends JpaRepository<VideoChunks, Long> {
 
@@ -18,6 +20,10 @@ public interface VideoChunksRepository extends JpaRepository<VideoChunks, Long> 
     @Transactional
     @Query(value = "UPDATE video_chunks SET metadati = CAST(:metadati AS jsonb) WHERE id = :id", nativeQuery = true)
     void updateMetadati(@Param("id") Long id, @Param("metadati") String metadati);
+
+
+    @Query("SELECT v.title FROM VideoChunks v ORDER BY v.numeroVideo ASC")
+    List<String> findAllTitles();
 
 
 

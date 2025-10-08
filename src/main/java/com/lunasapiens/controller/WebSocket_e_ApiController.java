@@ -3,6 +3,7 @@ package com.lunasapiens.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.Constants;
+import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.config.ApiGeonamesConfig;
 import com.lunasapiens.config.CustomPrincipalWebSocketChatBot;
@@ -53,6 +54,9 @@ public class WebSocket_e_ApiController extends BaseController {
     @Autowired
     private TelegramBotService telegramBotService;
 
+    @Autowired
+    private RAGIAService rAGIAService;
+
 
 
 
@@ -95,17 +99,14 @@ public class WebSocket_e_ApiController extends BaseController {
                         return response;
                     }
                 }
-
                 if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) && message.get("tipoServizio").equals("SINASTRIA") ){
                     response.put(keyJsonStandardContent, "<a href=\"/register\">Iscriviti</a> per usare la ChatBot Sinastria IA");
                     return response;
                 }
-
                 if (domanda == null || domanda.isEmpty()) {
                     response.put(keyJsonStandardContent, "Il messaggio non può essere vuoto.");
                     return response;
                 }
-
                 if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ){
                     response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
                     if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
@@ -113,7 +114,6 @@ public class WebSocket_e_ApiController extends BaseController {
                                 +" "+ "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
                         return response;
                     }
-
                 }else{
                     response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
                     if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
@@ -122,11 +122,28 @@ public class WebSocket_e_ApiController extends BaseController {
                     }
                 }
 
+                //PSICOLOGO
 
-                chatMessageIaList.add(new ChatMessage("user", HtmlUtils.htmlEscape(domanda)));
-                cacheMessageBot.put(paginaChatId, chatMessageIaList);
                 try {
-                    StringBuilder rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIaList);
+                    StringBuilder rispostaIA;
+                    if( message.get("tipoServizio").equals("SINASTRIA") || message.get("tipoServizio").equals("SINASTRIA") ){
+                        chatMessageIaList.add(new ChatMessage("user", domanda));
+                        cacheMessageBot.put(paginaChatId, chatMessageIaList);
+                        rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIaList);
+
+
+                    }else if (message.get("tipoServizio").equals("PSICOLOGO") ){
+                        StringBuilder context = rAGIAService.getChunksContext(HtmlUtils.htmlEscape(domanda));
+                        chatMessageIaList.add(new ChatMessage("system", "Informazioni: "+context.toString()));
+                        chatMessageIaList.add(new ChatMessage("user", domanda));
+                        cacheMessageBot.put(paginaChatId, chatMessageIaList);
+                        rispostaIA = rAGIAService.chiediAlloPsicologo( chatMessageIaList, 0.0, 1000 );
+
+                    }else{
+                        return response;
+                    }
+
+
                     //StringBuilder rispostaIA = new StringBuilder("risposta dalla iaaaaaaaaaaaaaaaaaaaa");
 
                     chatMessageIaList.add(new ChatMessage("assistant", rispostaIA.toString()));

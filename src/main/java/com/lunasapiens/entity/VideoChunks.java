@@ -1,8 +1,12 @@
 package com.lunasapiens.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "video_chunks")
@@ -18,8 +22,13 @@ public class VideoChunks implements Serializable {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String fullContent; // Testo lungo (fino a 10.000+ parole)
 
+
+    /**
+     * bisogna inserire per forza un valore json, per il null va bene così: {}
+     */
+    @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
-    private String metadati;
+    private Map<String, Object> metadati;
 
 
     // Colonna dedicata per join con Chunks
@@ -62,9 +71,14 @@ public class VideoChunks implements Serializable {
 
     public void setNumeroVideo(Long numeroVideo) { this.numeroVideo = numeroVideo; }
 
-    public String getMetadati() { return metadati; }
 
-    public void setMetadati(String metadati) { this.metadati = metadati; }
+    public Map<String, Object> getMetadati() {
+        return metadati;
+    }
+
+    public void setMetadati(Map<String, Object> metadati) {
+        this.metadati = metadati;
+    }
 
     public List<Chunks> getChunks() { return chunks; }
 

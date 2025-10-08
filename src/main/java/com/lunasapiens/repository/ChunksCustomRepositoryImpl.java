@@ -1,6 +1,8 @@
 package com.lunasapiens.repository;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.entity.VideoChunks;
 import jakarta.persistence.EntityManager;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
@@ -46,6 +49,8 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
                             "ORDER BY fts_rank DESC " +
                             "LIMIT ?";
 
+            ObjectMapper mapper = new ObjectMapper();
+
             return jdbcTemplate.query(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, userQuestion);  // testo della domanda per FTS
@@ -59,8 +64,21 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
                 videoChunks.setNumeroVideo(rs.getLong("numero_video_chunks"));
                 videoChunks.setTitle(rs.getString("video_title"));
                 videoChunks.setFullContent(rs.getString("video_full_content"));
-                videoChunks.setMetadati(rs.getString("metadati"));
                 chunk.setVideoChunks(videoChunks);
+
+                // 🔥 Conversione sicura da JSON → Map
+                String json = rs.getString("metadati");
+                if (json != null && !json.isBlank()) {
+                    try {
+                        Map<String, Object> metaMap = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+                        videoChunks.setMetadati(metaMap);
+                    } catch (Exception e) {
+                        System.err.println("⚠️ Errore parsing metadati JSON: " + e.getMessage());
+                        videoChunks.setMetadati(Map.of()); // fallback a {}
+                    }
+                } else {
+                    videoChunks.setMetadati(Map.of()); // JSON vuoto
+                }
 
                 chunk.setChunkIndex(rs.getInt("chunk_index"));
                 chunk.setContent(rs.getString("content"));
@@ -129,6 +147,9 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
                         "ORDER BY fts_rank DESC, cosine_distance ASC " +
                         "LIMIT ?";
 
+
+        ObjectMapper mapper = new ObjectMapper();
+
         return jdbcTemplate.query(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setObject(1, pgVector);        // embedding utente
@@ -144,9 +165,21 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
             videoChunks.setNumeroVideo(rs.getLong("numero_video_chunks")); // prima era setId
             videoChunks.setTitle(rs.getString("video_title"));
             videoChunks.setFullContent(rs.getString("video_full_content"));
-            videoChunks.setMetadati(rs.getString("metadati"));
             chunk.setVideoChunks(videoChunks);
 
+            // 🔥 Conversione sicura da JSON → Map
+            String json = rs.getString("metadati");
+            if (json != null && !json.isBlank()) {
+                try {
+                    Map<String, Object> metaMap = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+                    videoChunks.setMetadati(metaMap);
+                } catch (Exception e) {
+                    System.err.println("⚠️ Errore parsing metadati JSON: " + e.getMessage());
+                    videoChunks.setMetadati(Map.of()); // fallback a {}
+                }
+            } else {
+                videoChunks.setMetadati(Map.of()); // JSON vuoto
+            }
 
             chunk.setChunkIndex(rs.getInt("chunk_index"));
             chunk.setContent(rs.getString("content"));

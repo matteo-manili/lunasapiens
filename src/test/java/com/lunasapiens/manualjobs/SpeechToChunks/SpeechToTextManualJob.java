@@ -1,12 +1,10 @@
 package com.lunasapiens.manualjobs.SpeechToChunks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.entity.Chunks;
 
 import com.lunasapiens.entity.VideoChunks;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaIAService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionService;
-import com.lunasapiens.manualjobs.SpeechToChunks.service.RAGIAService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
 import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
@@ -20,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class SpeechToTextManualJob {
@@ -43,7 +42,7 @@ class SpeechToTextManualJob {
     private ChunksCustomRepositoryImpl chunksCustomRepository;
 
     @Autowired
-    com.lunasapiens.manualjobs.SpeechToChunks.service.RAGIAService RAGIAService;
+    com.lunasapiens.service.RAGIAService RAGIAService;
 
 
     @Test
@@ -51,16 +50,12 @@ class SpeechToTextManualJob {
     public void OperazioniSpeechToChunks_Sintesi_e_Argomenti_VideoChunks() throws Exception {
         List<VideoChunks> list = videoChunksRepository.findAll();
         for(VideoChunks videoChunks: list){
-
             //if(videoChunks.getNumeroVideo() == 21l){ // LA VERITA SUI CHAKRA (21).mp3
-
                 StringBuilder context = new StringBuilder();
                 List<ChatMessage> chatMessageList = new ArrayList<>();
 
                 //chatMessageList.add(new ChatMessage("system", "Sei un assistente che estrae metadati da un testo."));
                 //chatMessageList.add(new ChatMessage("user", "Testo: " + videoChunks.getFullContent() + "\nRispondi solo con JSON come specificato."));
-
-
                 chatMessageList.add(new ChatMessage("system",
                         "Sei un assistente che estrae metadati rilevanti da un testo lungo. " +
                                 "Restituisci SOLO un JSON valido con i campi: title, summary, keywords, argomento_principale, tags."));
@@ -68,9 +63,7 @@ class SpeechToTextManualJob {
                 chatMessageList.add(new ChatMessage("user",
                         "Testo da analizzare:\n" + videoChunks.getFullContent()));
 
-
                 StringBuilder jsonMetadati = RAGIAService.chiediAlloPsicologo( chatMessageList, 0.0, 1000 );
-
 
                 // 1. Trasforma StringBuilder in String
                 String jsonString = jsonMetadati.toString();
@@ -81,8 +74,6 @@ class SpeechToTextManualJob {
                         .replaceAll("```\\s*$", "")       // rimuove ``` alla fine
                         .trim();
 
-
-
                 // Salva direttamente il JSON nella colonna metadati
                 videoChunksRepository.updateMetadati(videoChunks.getId(), jsonString);
 
@@ -92,13 +83,15 @@ class SpeechToTextManualJob {
     }
 
 
-
-
-
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_TESTO() throws Exception {
-        List<VideoChunks> list = videoChunksRepository.findAll();
+        List<VideoChunks> list = videoChunksRepository.findAll()
+
+                .stream()
+                .filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
+                .toList();
+
         for(VideoChunks videoChunks: list){
             // 4️⃣ Dividi il testo in chunk
             List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
@@ -113,11 +106,9 @@ class SpeechToTextManualJob {
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_VIDEO_MULTIPLO() throws Exception {
-
-        for(int numVideo = 1; numVideo <= 64; numVideo++ ){
+        for(int numVideo = 175; numVideo <= 192; numVideo++ ){
             Long VIDEO_ID = Long.valueOf(numVideo);
             System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
-
             try {
                 // 1️⃣ Trascrivi audio
                 String trascrizioneAudio = transcribeAudioFile( "src/test/resources/video_tupini/"+String.valueOf(VIDEO_ID)+".wav" );
@@ -133,6 +124,8 @@ class SpeechToTextManualJob {
                 videoChunks.setNumeroVideo(VIDEO_ID);
                 videoChunks.setTitle(String.valueOf(VIDEO_ID));
                 videoChunks.setFullContent(testoPunteggiato.toString());
+                videoChunks.setMetadati(Map.of()); // JSON vuoto {}
+
                 videoChunks = videoChunksRepository.save(videoChunks); // salva nel DB
 
             } catch (java.io.FileNotFoundException e) {

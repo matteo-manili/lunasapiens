@@ -66,7 +66,7 @@ public class Constants {
     public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
             "/",
             "/tema-natale",
-            "/sinastria",
+            "/psicologo",
             "/oroscopo",
             "/omeopatia-astrologica",
             "/forum",

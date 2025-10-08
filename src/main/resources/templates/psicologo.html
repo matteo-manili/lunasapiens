@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
+    <title th:fragment="title">Luna Sapiens | Psicologo IA</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Parla con il tuo Psicologo Virtuale di Luna Sapiens. Grazie all'Intelligenza Artificiale, puoi ricevere supporto psicologico, chiarire dubbi e ottenere consigli personalizzati in tempo reale, in un ambiente riservato e sicuro." />
+        <meta name="keywords" content="psicologo virtuale, psicologo online, intelligenza artificiale, chat psicologo, supporto psicologico, benessere mentale, Luna Sapiens, IA psicologia, assistente psicologico" />
+
+        <meta property="og:title" content="Psicologo Virtuale IA | Luna Sapiens" />
+        <meta property="og:description" content="Interagisci con il tuo Psicologo Virtuale basato su Intelligenza Artificiale. Luna Sapiens ti offre una chat privata per ricevere supporto, riflettere su te stesso e migliorare il tuo benessere psicologico." />
+        <meta property="og:image" content="https://www.lunasapiens.com/logo_400x300.png" />
+        <meta property="og:image:secure_url" content="https://www.lunasapiens.com/logo_400x300.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="400" />
+        <meta property="og:image:height" content="300" />
+        <meta property="og:image:alt" content="Psicologo Virtuale IA - Luna Sapiens" />
+        <meta property="og:url" content="https://www.lunasapiens.com/psicologo" />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Parla con il tuo Psicologo Virtuale IA | Luna Sapiens" />
+        <meta name="twitter:description" content="Scopri la chat con il tuo Psicologo IA. Luna Sapiens unisce psicologia e intelligenza artificiale per offrirti un dialogo empatico e personalizzato, ovunque tu sia." />
+        <meta name="twitter:image" content="https://www.lunasapiens.com/logo_400x300.png" />
+
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/psicologo" />
+        <link rel="stylesheet" href="/css/style.css?v=0.1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    </th:block>
+</head>
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+<div class="container mt-4">
+
+    <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
+
+
+    <div class="container my-4 p-3 shadow-lg rounded bg-light">
+        <h1 class="display-4  mb-3 text-center">Psicologo IA</h1>
+        <form id="psicologo-submit" th:action="@{/psicologoSubmit}" method="GET" class="p-4 rounded" onsubmit="showLoadingOverlay()">
+
+            <div class="text-center">
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Avvia Chat Psicologo</button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- #################################### Chat-Box IA #################################### -->
+    <input type="hidden" id="avviaChatPsicologo" name="avviaChatPsicologo" th:value="${avviaChatPsicologo}">
+    <input type="hidden" id="paginaChatId" name="paginaChatId" th:value="${paginaChatId}">
+    <input type="hidden" id="userSessionId" name="userSessionId" th:value="${userSessionId}">
+
+
+
+    <div th:if="${avviaChatPsicologo != null and !avviaChatPsicologo.isEmpty()}" class="mb-5">
+        <h7 class="mb-3"><b>Chat IA - Domanda allo Psicologo</b></h7>
+        <div class="chat-container mb-5">
+            <div class="chat-box bg-light p-3 border rounded" style="height: 400px; overflow-y: scroll;">
+                <div id="chat-messages" class="d-flex flex-column"></div>
+                <div id="loading-indicator" class="hidden-text">Attendere, per favore...</div>
+            </div>
+            <div class="input-group mt-3">
+                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi una domanda...">
+                <button id="sendMessage" class="btn btn-primary">Invia</button>
+            </div>
+        </div>
+
+
+        <div class="alert alert-dark mb-4" th:if="${psicologoDescIstruzioniBOTSystem != null and psicologoDescIstruzioniBOTSystem != ''}">
+            <strong>PROMPT:</strong> <br> <div th:utext="${psicologoDescIstruzioniBOTSystem}"></div>.
+        </div>
+
+    </div>
+</div>
+
+
+<div th:replace="~{fragments/templateBase :: loadingOverlay}"></div>
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap-jquery}"></div>
+
+
+<script th:inline="javascript">
+$(document).ready(function() { });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // ############################# START PAGINA #############################
+    loadData();
+    function loadData() { }
+
+    // ############################# CODICE CHAT-BOT #############################
+    var avviaChatPsicologo = document.getElementById('avviaChatPsicologo').value;
+
+    // Se la chat è stata avviata
+    if (avviaChatPsicologo && avviaChatPsicologo.trim() !== "") {
+        // Attendi un attimo che la chat venga renderizzata, poi scorri
+        setTimeout(function() {
+            var chatInput = document.getElementById("userMessage");
+            if (chatInput) {
+                chatInput.scrollIntoView({ behavior: "smooth", block: "center" });
+                chatInput.focus(); // porta il cursore direttamente nel campo di input
+            }
+        }, 600); // leggero delay per sicurezza
+
+
+        var socket = new SockJS('/chat-websocket');
+        var stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/user/queue/reply', function (messageOutput) {
+                console.log('Received message:', messageOutput.body);
+                try {
+                    var parsedMessage = JSON.parse(messageOutput.body);
+                    showMessage(parsedMessage.content, true);
+                    if (parsedMessage && typeof parsedMessage.numDomandeRimanenti !== 'undefined') {
+                        showMessage('Domande Rimanenti: ' + parsedMessage.numDomandeRimanenti, true);
+                    }
+
+                } catch (e) {
+                    console.error('Error parsing message:', e);
+                    showMessage('Errore nel messaggio ricevuto.', true);
+                }
+                hideLoadingIndicator();
+                eseguiScrollChatBox();
+            });
+        });
+
+        function sendMessage() {
+            var message = document.getElementById("userMessage").value;
+            var paginaChatId = document.querySelector('input[name="paginaChatId"]').value;
+            var userSessionId = document.querySelector('input[name="userSessionId"]').value;
+            if (message.trim() !== "") {
+                var payload = {
+                    content: message,
+                    paginaChatId: paginaChatId,
+                    userSessionId: userSessionId,
+                    tipoServizio: 'PSICOLOGO'
+                };
+                stompClient.send("/app/message", {}, JSON.stringify(payload));
+                document.getElementById("userMessage").value = "";
+                showMessage(message, false); // Visualizza il messaggio inviato nella chat
+                showLoadingIndicator(); // Mostra l'indicatore di caricamento
+                eseguiScrollChatBox();
+            } else {
+                console.log('Message is empty');
+            }
+        }
+
+        function showMessage(message, isBotMessage) {
+            var chatMessages = document.getElementById("chat-messages");
+            var messageElement = document.createElement("div");
+            messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
+            // interpeta il codice html nel message (perché devo fare vedere i link nel messaggio ma non converte \n in <br>).
+            // Gli \n li mette le risposte della IA
+            let formattedMessage = message.replace(/\n/g, '<br>'); // // Sostituisci tutti i \n con <br>
+            messageElement.innerHTML = formattedMessage; // messageElement.innerText = message; // solo testo
+            chatMessages.appendChild(messageElement);
+        }
+        document.getElementById("sendMessage").addEventListener("click", sendMessage);
+        document.getElementById("userMessage").addEventListener("keyup", function (event) {
+            if (event.key === "Enter") { sendMessage(); }
+        });
+
+        function showLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.remove("hidden-text");
+        }
+
+        function hideLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.add("hidden-text");
+        }
+
+        function eseguiScrollChatBox() {
+            // rimosso alert che blocca l'esecuzione
+            var chatBox = document.querySelector('.chat-box');
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+
+
+    }
+});
+</script>
+
+</body>
+</html>
