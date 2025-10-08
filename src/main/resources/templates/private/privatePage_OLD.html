@@ -19,9 +19,10 @@
     <div class="alert alert-primary mb-4">
         <p>Benvenuto, <b><span sec:authentication="name">NOT FOUND</span>!</b> Sei un utente iscritto a LunaSapiens.</p>
 
-        <p>Ora puoi approfittare del vantaggio di porre più domande alla <a href="/psicologo">Chat Psicologo IA</a>.</p>
+        <p>Ora puoi approfittare del vantaggio di porre più domande al <a href="/tema-natale">Tema Natale IA</a> e allo <a href="/psicologo">Psicologo IA</a>.</p>
 
-        <p>L'applicazione è in fase di sviluppo. Sono previsti aggiornamenti.</p>
+        <p>L'applicazione è in fase di sviluppo. Sono previsti aggiornamenti, tra cui il miglioramento del Tema Natale, Sinastria,
+            <a href="/oroscopo">Oroscopo giornaliero</a> e <a href="/omeopatia-astrologica">Omeopatia Astrologica</a>.</p>
     </div>
 
 
@@ -44,7 +45,7 @@
     </div>
 
 
-    <!-- <div class="alert alert-dark mb-4">
+    <div class="alert alert-dark mb-4">
         <form th:action="@{/private/subscribe-oroscopo}" method="post">
             <div class="form-check d-flex align-items-center">
                 <label class="form-check-label" for="oroscopoCheckbox">
@@ -53,7 +54,7 @@
                        th:checked="${isSubscribedOroscGiorn}" onchange="this.form.submit()" onclick="showLoadingOverlay()">
             </div>
         </form>
-    </div> -->
+    </div>
 
 
     <!-- scerivi qui il codice -->

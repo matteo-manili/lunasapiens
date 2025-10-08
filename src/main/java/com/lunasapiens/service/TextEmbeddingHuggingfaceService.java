@@ -7,6 +7,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ import java.util.Map;
  */
 @Service
 public class TextEmbeddingHuggingfaceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TextEmbeddingHuggingfaceService.class);
 
     @Autowired
     private HuggingFaceConfig huggingFaceConfig;
@@ -59,7 +63,7 @@ public class TextEmbeddingHuggingfaceService {
 
             try (InputStream responseStream = client.execute(post).getEntity().getContent()) {
                 String responseBody = new String(responseStream.readAllBytes());
-                System.out.println("Hugging Face response: " + responseBody);
+                //logger.info("Hugging Face response: " + responseBody);
 
                 // Controllo errori
                 if (responseBody.contains("error")) {

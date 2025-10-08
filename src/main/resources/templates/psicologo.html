@@ -1,81 +1,86 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
-    <title th:fragment="title">Luna Sapiens | Psicologo IA</title>
+    <title th:fragment="title">Luna Sapiens | Chat Psicologo IA</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="Parla con il tuo Psicologo Virtuale di Luna Sapiens. Grazie all'Intelligenza Artificiale, puoi ricevere supporto psicologico, chiarire dubbi e ottenere consigli personalizzati in tempo reale, in un ambiente riservato e sicuro." />
-        <meta name="keywords" content="psicologo virtuale, psicologo online, intelligenza artificiale, chat psicologo, supporto psicologico, benessere mentale, Luna Sapiens, IA psicologia, assistente psicologico" />
+        <meta name="description" content="Entra in dialogo con la Chat Psicologo IA di Luna Sapiens. Un'esperienza di introspezione guidata dall'intelligenza artificiale, ispirata ai testi di uno psicologo innovativo. Rifletti, esplora e conosci te stesso.">
+        <meta name="keywords" content="Luna Sapiens, psicologo IA, chat psicologica, intelligenza artificiale, crescita personale, introspezione, consapevolezza, psicologia, mente, anima">
 
-        <meta property="og:title" content="Psicologo Virtuale IA | Luna Sapiens" />
-        <meta property="og:description" content="Interagisci con il tuo Psicologo Virtuale basato su Intelligenza Artificiale. Luna Sapiens ti offre una chat privata per ricevere supporto, riflettere su te stesso e migliorare il tuo benessere psicologico." />
-        <meta property="og:image" content="https://www.lunasapiens.com/logo_400x300.png" />
-        <meta property="og:image:secure_url" content="https://www.lunasapiens.com/logo_400x300.png" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="400" />
-        <meta property="og:image:height" content="300" />
-        <meta property="og:image:alt" content="Psicologo Virtuale IA - Luna Sapiens" />
-        <meta property="og:url" content="https://www.lunasapiens.com/psicologo" />
-        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Chat Psicologo IA | Luna Sapiens">
+        <meta property="og:description" content="Dialoga con la Chat Psicologo IA di Luna Sapiens. Un'esperienza interattiva per esplorare emozioni, pensieri e consapevolezza, basata sui testi di uno psicologo innovativo.">
+        <meta property="og:image" content="https://www.lunasapiens.com/logo_400x300.png">
+        <meta property="og:image:secure_url" content="https://www.lunasapiens.com/logo_400x300.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="400">
+        <meta property="og:image:height" content="300">
+        <meta property="og:image:alt" content="Chat Psicologo IA - Luna Sapiens">
+        <meta property="og:url" content="https://www.lunasapiens.com/psicologo">
+        <meta property="og:type" content="website">
 
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Parla con il tuo Psicologo Virtuale IA | Luna Sapiens" />
-        <meta name="twitter:description" content="Scopri la chat con il tuo Psicologo IA. Luna Sapiens unisce psicologia e intelligenza artificiale per offrirti un dialogo empatico e personalizzato, ovunque tu sia." />
-        <meta name="twitter:image" content="https://www.lunasapiens.com/logo_400x300.png" />
-
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Chat Psicologo IA | Luna Sapiens">
+        <meta name="twitter:description" content="Confrontati con l'intelligenza artificiale di Luna Sapiens e scopri nuove prospettive su te stesso. Un dialogo consapevole ispirato alla psicologia umanistica.">
+        <meta name="twitter:image" content="https://www.lunasapiens.com/logo_400x300.png">
     </th:block>
+
     <th:block th:fragment="links">
-        <link rel="canonical" href="https://www.lunasapiens.com/psicologo" />
+        <link rel="canonical" href="https://www.lunasapiens.com/psicologo">
         <link rel="stylesheet" href="/css/style.css?v=0.1">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     </th:block>
+
     <th:block th:fragment="scripts">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     </th:block>
 </head>
+
 <body>
 <header th:replace="~{fragments/templateBase :: header}"></header>
-<div class="container mt-4">
 
+<div class="container mt-4">
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
-
-    <div class="container my-4 p-3 shadow-lg rounded bg-light">
-        <h1 class="display-4  mb-3 text-center">Psicologo IA</h1>
-        <form id="psicologo-submit" th:action="@{/psicologoSubmit}" method="GET" class="p-4 rounded" onsubmit="showLoadingOverlay()">
-
-            <div class="text-center">
-                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">Avvia Chat Psicologo</button>
-            </div>
-        </form>
+    <div class="container my-4 p-4 shadow-lg rounded bg-light">
+        <h1 class="display-5 mb-3 text-center">Chat Psicologo IA</h1>
+        <p class="text-center mb-4">
+            La Chat Psicologo IA di <strong>Luna Sapiens</strong> nasce per offrirti uno spazio di riflessione personale e consapevolezza.
+            Attraverso l’intelligenza artificiale, puoi dialogare liberamente con un modello basato sui testi di uno <strong>psicologo innovativo</strong>,
+            esplorando emozioni, domande interiori e dinamiche della mente.
+            <br><br>
+            Non è un servizio terapeutico, ma un <strong>strumento di esplorazione psicologica e crescita interiore</strong>.
+        </p>
+        <div class="text-center mt-4">
+            <form id="psicologo-submit" th:action="@{/psicologoSubmit}" method="GET" onsubmit="showLoadingOverlay()">
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5">
+                    Avvia Chat Psicologo IA
+                </button>
+            </form>
+        </div>
     </div>
-
 
     <!-- #################################### Chat-Box IA #################################### -->
     <input type="hidden" id="avviaChatPsicologo" name="avviaChatPsicologo" th:value="${avviaChatPsicologo}">
     <input type="hidden" id="paginaChatId" name="paginaChatId" th:value="${paginaChatId}">
     <input type="hidden" id="userSessionId" name="userSessionId" th:value="${userSessionId}">
 
-
-
     <div th:if="${avviaChatPsicologo != null and !avviaChatPsicologo.isEmpty()}" class="mb-5">
-        <h7 class="mb-3"><b>Chat IA - Domanda allo Psicologo</b></h7>
+        <h6 class="mb-3"><b>Chat Psicologo IA – Inizia la tua riflessione</b></h6>
         <div class="chat-container mb-5">
             <div class="chat-box bg-light p-3 border rounded" style="height: 400px; overflow-y: scroll;">
                 <div id="chat-messages" class="d-flex flex-column"></div>
-                <div id="loading-indicator" class="hidden-text">Attendere, per favore...</div>
+                <div id="loading-indicator" class="hidden-text">Sto elaborando il tuo pensiero...</div>
             </div>
             <div class="input-group mt-3">
-                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi una domanda...">
+                <input type="text" id="userMessage" class="form-control" placeholder="Scrivi la tua domanda o riflessione...">
                 <button id="sendMessage" class="btn btn-primary">Invia</button>
             </div>
         </div>
 
-
-        <div class="alert alert-dark mb-4" th:if="${psicologoDescIstruzioniBOTSystem != null and psicologoDescIstruzioniBOTSystem != ''}">
-            <strong>PROMPT:</strong> <br> <div th:utext="${psicologoDescIstruzioniBOTSystem}"></div>.
+        <div class="alert alert-secondary mb-4" th:if="${psicologoDescIstruzioniBOTSystem != null and psicologoDescIstruzioniBOTSystem != ''}">
+            <strong>Contesto:</strong><br>
+            <div th:utext="${psicologoDescIstruzioniBOTSystem}"></div>
         </div>
-
     </div>
 </div>
 

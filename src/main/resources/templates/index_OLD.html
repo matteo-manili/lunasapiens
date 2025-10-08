@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Luna Sapiens | Home Page</title>
+    <th:block th:fragment="meta">
+        <meta name="description" content="Scopri LunaSapiens.com, il sito che rivoluziona l'astrologia con l'intelligenza artificiale. Leggi il tuo Oroscopo giornaliero e crea il tuo Tema Natale personalizzato. Esplora le influenze celesti sulla tua vita con accuratezza scientifica e innovazione.">
+        <meta name="keywords" content="LunaSapiens, astrologia, oroscopo, tema natale, intelligenza artificiale, IA, posizioni celesti, pianeti, transiti, aspetti astrologici, influenze celesti, oroscopo giornaliero, tema natale personalizzato">
+    </th:block>
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    </th:block>
+</head>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+<!-- Page Content-->
+<div class="container mt-4">
+
+    <!-- Highlight Section -->
+    <div class="px-lg-5 my-3">
+        <div class="highlight-section text-center p-5 bg-light shadow rounded">
+            <h1 class="font-weight-light display-4 mb-4">LunaSapiens.com</h1>
+            <p class="lead">Scopri un nuovo modo di esplorare l'astrologia basato su reali fattori astronomici e astrologici. Utilizziamo
+                l'intelligenza artificiale per offrirti un'esperienza unica nel comprendere le influenze celesti sulla tua vita.</p>
+        </div>
+    </div>
+    <!-- Content Row-->
+    <div class="row gx-4 gx-lg-5">
+        <div class="col-md-6 mb-5">
+            <div class="card h-100 p-5 bg-light shadow rounded">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Tema Natale IA</h4>
+                    <p class="card-text">Scopri il Tema Natale IA, utilizza la ChatBot IA per porre domande e approfondire i significati.</p>
+                </div>
+                <a class="btn btn-primary mt-3" href="/tema-natale">Scopri il tuo tema natale</a>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 mb-5">
+            <div class="card h-100 p-5 bg-light shadow rounded">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Psicologo IA</h4>
+                    <p class="card-text">Domanda allo psicologo IA, utilizza la ChatBot IA per porre domande.</p>
+                </div>
+                <a class="btn btn-primary mt-3" href="/psicologo">Parla con lo psicologo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row gx-4 gx-lg-5">
+        <div class="col mb-5">
+            <div class="card h-100 p-5 bg-light shadow rounded">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Oroscopo del Giorno</h4>
+                    <p class="card-text">Scopri l'Oroscopo giornaliero generato con intelligenza artificiale! <br>
+                        La nostra IA analizza le reali posizioni dei corpi celesti,
+                        inclusi pianeti, transiti e aspetti. I corpi celesti sono orientati verso l'Italia alle ore 12 di oggi.</p>
+                </div>
+                <a class="btn btn-primary mt-3" href="/oroscopo">Consulta l'oroscopo del giorno</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row gx-4 gx-lg-5">
+        <div class="bg-light p-4 rounded-3 text-center mb-2">
+            <h5>Fai conoscere LunaSapiens!</h5>
+            <p>Se apprezzi il modo innovativo con cui LunaSapiens esplora l'astrologia attraverso l'intelligenza artificiale, aiutaci a far conoscere la nostra piattaforma! Condividi la nostra pagina con i tuoi amici cliccando sui pulsanti qui sotto e permetti anche a loro di scoprire le influenze celesti sulla loro vita. Grazie per il tuo supporto!</p>
+            <div th:replace="~{fragments/templateBase :: pulsanti_social('index')}"></div>
+        </div>
+    </div>
+
+
+</div>
+
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+</body>
+</html>

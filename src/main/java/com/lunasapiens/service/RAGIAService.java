@@ -35,7 +35,7 @@ public class RAGIAService {
 
 
     public StringBuilder getChunksContext(String userInput){
-        List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, 5); //10
+        List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, 7); //10
         StringBuilder context = new StringBuilder();
         System.out.println("========================================================");
         for(Chunks chunk : listCunks ) {
