@@ -1,6 +1,7 @@
 package com.lunasapiens.service;
 
 import ai.djl.translate.TranslateException;
+import com.lunasapiens.Utils;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,6 @@ public class ChunksService {
 
     @Autowired
     private ChunksCustomRepositoryImpl chunksCustomRepository;
-
-    @Autowired
-    TextEmbeddingService textEmbeddingService;
 
     @Autowired
     TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
@@ -43,7 +41,11 @@ public class ChunksService {
 
     public List<Chunks> findNearestChunksWithFts(String query, int limit) {
         try {
-            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+
+            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( query );
+
+
             return chunksCustomRepository.findNearestChunksWithFts(query, limit);
             //return chunksCustomRepository.findNearestChunksWithFtsCosine(queryEmbedding, query, limit);
 
@@ -63,7 +65,10 @@ public class ChunksService {
 
     public List<Chunks> findNearestChunksDistance(String query, int limit) {
         try {
-            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( query );
+
+
             return chunksCustomRepository.findNearestChunksDistance(queryEmbedding, limit);
 
         } catch (TranslateException e) {

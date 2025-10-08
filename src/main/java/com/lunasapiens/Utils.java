@@ -183,6 +183,25 @@ public class Utils {
         return localDateTime;
     }
 
+
+    /**
+     * Pulisce il testo rimuovendo HTML, spazi extra e convertendo tutto in minuscolo.
+     *
+     * 🔹 Perché serve:
+     *    Garantisce che gli embedding calcolati siano coerenti e privi di rumore
+     *    (tag HTML, spazi multipli, lettere maiuscole) prima di passare il testo
+     *    al modello di embedding o salvarlo nel database.
+     *
+     * @param content testo originale
+     * @return testo pulito pronto per embedding o elaborazioni successive
+     */
+    public static String cleanHtmlText(String content) {
+        if (content == null) return "";
+        return Jsoup.parse(content).text().toLowerCase().trim();
+    }
+
+
+
     /**
      * Converte l'HTML in testo normale con formattazione specifica:
      * - Rimuove i tag <b> ma mantiene il testo al loro interno.
@@ -208,8 +227,6 @@ public class Utils {
     public static String convertPlainTextToHtml(String text) {
         return text.replaceAll("\\n", "<br>");
     }
-
-
 
 
 

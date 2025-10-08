@@ -8,7 +8,7 @@ import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionServi
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
 import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
-import com.lunasapiens.service.TextEmbeddingService;
+import com.lunasapiens.manualjobs.ArticleEmbedding.service.TextEmbeddingService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,9 +28,6 @@ class SpeechToTextManualJob {
 
     @Autowired
     private PunteggiaturaIAService punteggiaturaIAService;
-
-    @Autowired
-    private TextEmbeddingService textEmbeddingService;
 
     @Autowired
     TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;

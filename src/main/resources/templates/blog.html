@@ -36,7 +36,7 @@
 
     <!-- Campo di ricerca sematica -->
     <div class="mb-3">
-        <form method="get" th:action="@{/blog}">
+        <form method="get" th:action="@{/blog}" onsubmit="showLoadingOverlay()">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
                        placeholder="Cerca negli articoli (ricerca semantica)..."

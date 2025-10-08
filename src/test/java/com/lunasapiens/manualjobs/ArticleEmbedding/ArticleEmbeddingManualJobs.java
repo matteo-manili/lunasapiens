@@ -7,7 +7,8 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.TextEmbeddingService;
+import com.lunasapiens.manualjobs.ArticleEmbedding.service.TextEmbeddingService;
+import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ class ArticleEmbeddingManualJobs {
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
     @Autowired
-    TextEmbeddingService textEmbeddingService;
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;
@@ -79,7 +80,9 @@ class ArticleEmbeddingManualJobs {
         List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
         for (ArticleContent article : articles) {
             try {
-                Float[] embedding = textEmbeddingService.computeCleanEmbedding( article.getContent() );
+                //Float[] embedding = textEmbeddingService.computeCleanEmbedding( article.getContent() );
+                Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( article.getContent() );
+
                 System.out.println("Dimensione embedding: " + embedding.length);
                 ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
                 System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

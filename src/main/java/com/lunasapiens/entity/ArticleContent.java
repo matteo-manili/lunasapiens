@@ -32,8 +32,8 @@ public class ArticleContent implements Serializable {
     // Float[] in Java e il formato accettato da pgvector, permettendo di salvare e leggere correttamente
     // gli embeddings direttamente dal database.
 
-    //@Column(columnDefinition = "vector(768)")
-    @Column(columnDefinition = "vector(384)")
+    // Embedding vettoriale (tipo pgvector) 384 - 1024
+    @Column(columnDefinition = "vector(1024)")
     @JdbcType(PostgreSQLVectorJdbcType.class)
     private Float[] embedding;
 

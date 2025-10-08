@@ -6,7 +6,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.TextEmbeddingService;
+import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    TextEmbeddingService textEmbeddingService;
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;
@@ -61,7 +61,7 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
-            //List<ArticleContent> results = embeddingService.searchSemantic(search, 10); // massimo 10 risultati
+            //List<ArticleContent> results = articleSemanticService.searchSemantic(search, 10); // massimo 10 risultati
             //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
             List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
 
@@ -92,7 +92,7 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔸 Se l'utente ha fatto una ricerca semantica
-            //List<ArticleContent> results = articleEmbeddingService.searchSemantic(search, 10); // 10 risultati max
+            //List<ArticleContent> results = articleSemanticService.searchSemantic(search, 10); // 10 risultati max
             List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
 
 
@@ -164,7 +164,9 @@ public class EditorArticleBlogController extends BaseController {
             System.out.println( "articleSave.getId(): "+articleSave.getId() );
 
             // aggiorno la colonna embedding
-            Float[] embedding = textEmbeddingService.computeCleanEmbedding( articleSave.getContent() );
+            //Float[] embedding = textEmbeddingService.computeCleanEmbedding( articleSave.getContent() );
+            Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( Utils.cleanHtmlText(articleSave.getContent()) );
+
             System.out.println("Dimensione embedding: " + embedding.length);
             ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
             System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());

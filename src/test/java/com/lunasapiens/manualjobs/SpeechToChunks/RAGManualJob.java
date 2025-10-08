@@ -4,7 +4,7 @@ import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
 import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
-import com.lunasapiens.service.TextEmbeddingService;
+import com.lunasapiens.manualjobs.ArticleEmbedding.service.TextEmbeddingService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -17,10 +17,6 @@ import java.util.Map;
 
 @SpringBootTest
 class RAGManualJob {
-
-
-    @Autowired
-    TextEmbeddingService textEmbeddingService;
 
     @Autowired
     TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;

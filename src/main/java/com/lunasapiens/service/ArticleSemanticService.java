@@ -1,6 +1,7 @@
 package com.lunasapiens.service;
 
 import ai.djl.translate.TranslateException;
+import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 
@@ -24,8 +25,9 @@ public class ArticleSemanticService {
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
+
     @Autowired
-    TextEmbeddingService textEmbeddingService;
+    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
 
 
@@ -42,7 +44,9 @@ public class ArticleSemanticService {
     public ArticleContent addArticle(String content) {
         try {
             // Calcola embedding tramite DJL
-            Float[] embedding = textEmbeddingService.computeCleanEmbedding(content);
+            //Float[] embedding = textEmbeddingService.computeCleanEmbedding(content);
+            Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( Utils.cleanHtmlText(content) );
+
             // Salva usando il repository custom con JDBC
             return articleContentCustomRepository.saveArticleWithEmbeddingJdbc(content, embedding);
 
@@ -71,8 +75,11 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
         try {
-            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(query);
+
             return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
+
 
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);
@@ -97,7 +104,8 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchSemantic(String query, int limit) {
         try {
-            Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( Utils.cleanHtmlText(query) );
             return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {

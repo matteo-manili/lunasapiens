@@ -75,9 +75,9 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         // 1. Trova i più vicini semanticamente
         String sql = "WITH nearest AS (" +
                 "  SELECT id, content, created_at, embedding, " +
-                "         embedding <-> ? AS distance " +
+                "         embedding <=> ? AS cosine_distance " +
                 "  FROM article_content " +
-                "  ORDER BY distance " +
+                "  ORDER BY cosine_distance " +
                 "  LIMIT 100" +  // limitiamo il set per il re-ranking FTS
                 ") " +
                 // 2. Re-ranking con FTS
@@ -109,7 +109,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
         String sql = "SELECT id, content, created_at, embedding " +
                 "FROM article_content " +
-                "ORDER BY embedding <-> ? " +
+                "ORDER BY embedding <=> ? " +
                 "LIMIT ?";
 
         return jdbcTemplate.query(connection -> {

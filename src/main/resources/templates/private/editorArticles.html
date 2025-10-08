@@ -20,7 +20,7 @@
 
     <!-- Campo di ricerca ricerca semantica INIZIO -->
     <div class="mb-3">
-        <form id="articleSearch" th:action="@{/private/editorArticles}" method="get">
+        <form id="articleSearch" th:action="@{/private/editorArticles}" method="get" onsubmit="showLoadingOverlay()">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
                        placeholder="Cerca negli articoli (ricerca semantica)..."
