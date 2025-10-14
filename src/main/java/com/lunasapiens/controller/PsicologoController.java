@@ -7,6 +7,7 @@ import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.entity.VideoChunks;
+import com.lunasapiens.filter.RateLimiterUser;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.repository.VideoChunksRepository;
 import com.lunasapiens.service.EmailService;
@@ -79,6 +80,10 @@ public class PsicologoController extends BaseController {
         Optional.ofNullable(psicologoDescIstruzioniBOTSystem).filter(descriptionBOTSystem -> !descriptionBOTSystem.isEmpty()).ifPresent(descriptionBOTSystem -> model.addAttribute("psicologoDescIstruzioniBOTSystem", descriptionBOTSystem));
         Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
+
+        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
+
         return "psicologo";
     }
 

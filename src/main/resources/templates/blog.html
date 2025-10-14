@@ -39,7 +39,7 @@
         <form method="get" th:action="@{/blog}" onsubmit="showLoadingOverlay()">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
-                       placeholder="Cerca negli articoli (ricerca semantica)..."
+                       placeholder="Cerca negli articoli..."
                        th:value="${search != null} ? ${search} : ''">
                 <button type="submit" class="btn btn-primary">Cerca</button>
                 <a th:href="@{/blog}" class="btn btn-secondary">Resetta</a>

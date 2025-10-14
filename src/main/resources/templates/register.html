@@ -15,15 +15,18 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
-    <h1 class="mb-4">Pagina di Iscrizione</h1>
+    <h1 class="mb-4 text-center">Iscriviti a Luna Sapiens</h1>
 
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
-        <h5 class="mb-4">Ricevi il Link per Autenticarti</h5>
-        <p>Riceverai un'email con un link per accedere.<br>
-            L'accesso sarà valido per <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni, dopo i quali potrai richiedere un nuovo link.
-            Nessuna password è necessaria. L'iscrizione è gratuita</p>
+        <h5 class="mb-4">Ricevi il tuo link di accesso</h5>
+        <p>
+            Inserisci la tua email e riceverai un link speciale per accedere al servizio.<br>
+            Questo link funziona senza password e dura <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni.
+            Alla scadenza potrai richiederne uno nuovo.<br>
+            Tutto il progetto è <strong>gratuito</strong> e semplice da usare.
+        </p>
         <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
@@ -32,18 +35,16 @@
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Invia link</button>
             </div>
         </form>
-
     </div>
 
-
     <div class="alert alert-success mt-3" role="alert">
-        <p><b>Iscrivendoti, potrai usufruire di diversi vantaggi:</b></p>
+        <p><b>Vantaggi dell'iscrizione:</b></p>
         <ul>
-            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_UTENTE}"></span> domande al giorno con la Chat Psicologo IA <a href="/psicologo">Chat Psicologo IA</a>.</li>
+            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_UTENTE}"></span> domande al giorno con la <a href="/psicologo">Chat Psicologo IA</a>.</li>
         </ul>
-        <p><b>Se scegli di non iscriverti, avrai comunque accesso a:</b></p>
+        <p><b>Se non ti iscrivi, potrai comunque:</b></p>
         <ul>
-            <li>Fino a <span th:text="${MAX_MESSAGES_PER_DAY_ANONYMOUS}"></span> domande al giorno con la Chat Psicologo IA <a href="/psicologo">Chat Psicologo IA</a>.</li>
+            <li>Fare fino a <span th:text="${MAX_MESSAGES_PER_DAY_ANONYMOUS}"></span> domande al giorno con la <a href="/psicologo">Chat Psicologo IA</a>.</li>
         </ul>
     </div>
 </div>
