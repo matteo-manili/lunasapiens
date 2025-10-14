@@ -134,6 +134,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 hideLoadingIndicator();
                 eseguiScrollChatBox();
+
+                // ✅ Tracciamento conversione Google Ads (Domanda chat)
+                // Lo metto, dopo la ricezione della risposta della IA,
+                // per evitare falsi positivi (es. invii vuoti o errori di connessione).
+                // Controlla se esiste già una chiave "conversioneChatPsicologo" nel sessionStorage.
+                // Se non esiste, significa che è la prima interazione della sessione utente.
+                // fa si che non si riattivi neanche ricaricando la pagina
+                if (!sessionStorage.getItem("conversioneChatPsicologo")) {
+                    try {
+                        gtag_report_conversion();
+                        console.log("Conversione Google Ads (prima interazione domanda chat) registrata");
+                        sessionStorage.setItem("conversioneChatPsicologo", "true"); // Evita chiamate successive
+                    } catch (e) {
+                        console.warn("Errore chiamata gtag_report_conversion:", e);
+                    }
+                    sessionStorage.setItem("conversioneChatPsicologo", "true");
+                }
             });
         });
 
@@ -153,23 +170,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 showMessage(message, false); // Visualizza il messaggio inviato nella chat
                 showLoadingIndicator(); // Mostra l'indicatore di caricamento
                 eseguiScrollChatBox();
-
-                // ✅ Tracciamento conversione Google Ads (Domanda chat)
-                // Controlla se esiste già una chiave "conversioneChatPsicologo" nel sessionStorage.
-                // Se non esiste, significa che è la prima interazione della sessione utente.
-                // fa si che non si riattivi neanche ricaricando la pagina
-                if (!sessionStorage.getItem("conversioneChatPsicologo")) {
-                    try {
-                        gtag_report_conversion();
-                        console.log("Conversione Google Ads (prima interazione domanda chat) registrata");
-                        sessionStorage.setItem("conversioneChatPsicologo", "true"); // Evita chiamate successive
-                    } catch (e) {
-                        console.warn("Errore chiamata gtag_report_conversion:", e);
-                    }
-                    sessionStorage.setItem("conversioneChatPsicologo", "true");
-                }
-
-
             } else {
                 console.log('Message is empty');
             }
