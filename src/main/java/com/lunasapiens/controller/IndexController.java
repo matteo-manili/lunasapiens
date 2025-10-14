@@ -147,6 +147,24 @@ public class IndexController extends BaseController {
     }
 
 
+    @GetMapping("/matteo-manili-programmatore")
+    public RedirectView redirect_matteoManiliProgrammatore() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+    @GetMapping("/matteo-m-programmatore")
+    public RedirectView redirect_matteoMProgrammatore() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+
+
+
+
     /**
      * 1. Pagina rimossa definitivamente e non verrà sostituita
      * Codice di stato 410 (Gone)
