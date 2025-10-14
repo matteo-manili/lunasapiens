@@ -1,6 +1,8 @@
-<!-- Event snippet for Visualizzazione di pagina conversion page -->
-gtag('event', 'conversion', {'send_to': 'AW-1011317208/-UdhCPzO0akbENjzneID'});
-
+/**
+ * ✅ Tracciamento conversione Google Ads (Domanda chat)
+ * @param url
+ * @returns {boolean}
+ */
 function gtag_report_conversion(url) {
     var callback = function () {
         if (typeof(url) != 'undefined') {
