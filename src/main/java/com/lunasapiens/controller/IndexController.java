@@ -129,6 +129,7 @@ public class IndexController extends BaseController {
                 WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
                         .lastMod( lastModDate  ) // Data di ultima modifica
                         .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
+
                         .priority(1.0)                // Priorità alta
                         .build();
                 sitemapGenerator.addUrl(oroscopoUrl);
