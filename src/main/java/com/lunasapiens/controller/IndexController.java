@@ -110,8 +110,6 @@ public class IndexController extends BaseController {
             writer.println("Disallow: "+url);
         }
         writer.println();
-        writer.println("Allow: /download-pdf");
-        writer.println();
         writer.println("Sitemap: "+Constants.DOM_LUNA_SAPIENS+"/"+"sitemap.xml");
         writer.close();
     }
@@ -129,7 +127,6 @@ public class IndexController extends BaseController {
                 WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
                         .lastMod( lastModDate  ) // Data di ultima modifica
                         .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
-
                         .priority(1.0)                // Priorità alta
                         .build();
                 sitemapGenerator.addUrl(oroscopoUrl);
