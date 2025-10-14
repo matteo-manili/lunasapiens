@@ -84,7 +84,6 @@ public class WebSocket_e_ApiController extends BaseController {
             logger.info("customPrincipal.getName(): "+ customPrincipalWebSocketChatBot.getName());
             logger.info("domanda: "+domanda);
 
-
             Cache cacheMessageBot = cacheManager.getCache(Constants.MESSAGE_BOT_CACHE);
             if (cacheMessageBot != null ) {
                 // Recupera la lista di chat messages dalla cache
@@ -123,7 +122,6 @@ public class WebSocket_e_ApiController extends BaseController {
                 }
 
                 //PSICOLOGO
-
                 try {
                     StringBuilder rispostaIA;
                     if( message.get("tipoServizio").equals("SINASTRIA") || message.get("tipoServizio").equals("SINASTRIA") ){
@@ -131,14 +129,12 @@ public class WebSocket_e_ApiController extends BaseController {
                         cacheMessageBot.put(paginaChatId, chatMessageIaList);
                         rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIaList);
 
-
                     }else if (message.get("tipoServizio").equals("PSICOLOGO") ){
-                        StringBuilder context = rAGIAService.getChunksContext(HtmlUtils.htmlEscape(domanda));
+                        StringBuilder context = rAGIAService.getChunksContext(HtmlUtils.htmlEscape(domanda), 5);
                         chatMessageIaList.add(new ChatMessage("system", "Informazioni: "+context.toString()));
                         chatMessageIaList.add(new ChatMessage("user", domanda));
                         cacheMessageBot.put(paginaChatId, chatMessageIaList);
                         rispostaIA = rAGIAService.chiediAlloPsicologo( chatMessageIaList, 0.0, 1000 );
-
                     }else{
                         return response;
                     }

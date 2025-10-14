@@ -24,7 +24,6 @@ public class ChunksService {
 
     public List<Chunks> findNearestChunksCosine(String query, int limit) {
         try {
-
             Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(query);
             return chunksCustomRepository.findNearestChunksCosine(queryEmbedding, query, limit);
 

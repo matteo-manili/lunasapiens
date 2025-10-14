@@ -35,9 +35,6 @@ public class ChunksCustomRepositoryImpl implements ChunksCustomRepository {
 
 
 
-
-
-
     public List<Chunks> findNearestChunksWithFts(String userQuestion, int limit) throws Exception {
 
             String sql =

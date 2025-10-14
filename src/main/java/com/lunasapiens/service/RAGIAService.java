@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -34,9 +33,9 @@ public class RAGIAService {
     }
 
 
-    public StringBuilder getChunksContext(String userInput){
-        List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, 7); //10
-        StringBuilder context = new StringBuilder();
+    public StringBuilder getChunksContext(String userInput, int limit){
+        List<Chunks> listCunks = chunksService.findNearestChunksCosine(userInput, limit);
+        StringBuilder contextChunks = new StringBuilder();
         System.out.println("========================================================");
         for(Chunks chunk : listCunks ) {
             System.out.println("ID Video "+chunk.getVideoChunks().getNumeroVideo() + " TITOLO VIDEO: "+chunk.getVideoChunks().getTitle());
@@ -55,9 +54,9 @@ public class RAGIAService {
 
             System.out.println("Numero Chunk:" +chunk.getChunkIndex() +" content: "+  chunk.getContent() );
             System.out.println("========================================================");
-            context.append(chunk.getContent()).append("\n");
+            contextChunks.append(chunk.getContent()).append("\n");
         }
-        return context;
+        return contextChunks;
 
     }
 

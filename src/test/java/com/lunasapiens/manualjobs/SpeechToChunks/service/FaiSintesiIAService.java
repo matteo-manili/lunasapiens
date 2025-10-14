@@ -1,9 +1,7 @@
 package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
 import com.lunasapiens.config.AppConfig;
-
-import com.lunasapiens.zodiac.*;
-
+import com.lunasapiens.zodiac.OpenAIGptTheokanning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +9,9 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class PunteggiaturaIAService {
+public class FaiSintesiIAService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PunteggiaturaIAService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FaiSintesiIAService.class);
 
     @Autowired
     private AppConfig appConfig;
@@ -26,13 +24,11 @@ public class PunteggiaturaIAService {
 
 
     /**
-     * i tokensAggiuntiPerRisposta corrispondno al numero di parole del testo. in questo modo la risposta della LLM è completa.
-     * cioè mette la punteggiatura a tutto il testo senza troncare il testo.
      */
-    public StringBuilder generaTestoConPunteggiatura(String testo, Integer tokensAggiuntiPerRisposta) {
+    public StringBuilder generaSintesi(String testo, Integer tokensAggiuntiPerRisposta) {
         //########################################## INIZIO - INVIO LA DOMANDA ALLA IA #########################
 
-        StringBuilder inputPrompt = creaPromptPunteggiatura(testo);
+        StringBuilder inputPrompt = creaPromptFaiSintesi(testo);
         //logger.info("DOMANDA: " + domanda);
 
         OpenAIGptTheokanning openAIGptTheokanning = new OpenAIGptTheokanning();
@@ -42,9 +38,9 @@ public class PunteggiaturaIAService {
 
 
 
-    private StringBuilder creaPromptPunteggiatura(String testo) {
+    private StringBuilder creaPromptFaiSintesi(String testo) {
         StringBuilder domandaBuilder = new StringBuilder();
-        domandaBuilder.append("inserisci la punteggiatura a questo testo senza togliere e modificare le parole: \n\n");
+        domandaBuilder.append("Fai una sintesi ma mantieni tutti i concetti principali, senza perdere informazioni importanti: \n\n");
 
         // il testo a cui mettere la punteggiarura
         domandaBuilder.append(testo);

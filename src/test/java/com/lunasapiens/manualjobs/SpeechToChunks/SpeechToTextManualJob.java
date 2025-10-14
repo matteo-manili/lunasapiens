@@ -4,6 +4,7 @@ import com.lunasapiens.entity.Chunks;
 
 import com.lunasapiens.entity.VideoChunks;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaIAService;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.FaiSintesiIAService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionService;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
@@ -30,6 +31,9 @@ class SpeechToTextManualJob {
     private PunteggiaturaIAService punteggiaturaIAService;
 
     @Autowired
+    private FaiSintesiIAService faiSintesiIAService;
+
+    @Autowired
     TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
     @Autowired
@@ -42,56 +46,19 @@ class SpeechToTextManualJob {
     com.lunasapiens.service.RAGIAService RAGIAService;
 
 
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks_Sintesi_e_Argomenti_VideoChunks() throws Exception {
-        List<VideoChunks> list = videoChunksRepository.findAll();
-        for(VideoChunks videoChunks: list){
-            //if(videoChunks.getNumeroVideo() == 21l){ // LA VERITA SUI CHAKRA (21).mp3
-                StringBuilder context = new StringBuilder();
-                List<ChatMessage> chatMessageList = new ArrayList<>();
-
-                //chatMessageList.add(new ChatMessage("system", "Sei un assistente che estrae metadati da un testo."));
-                //chatMessageList.add(new ChatMessage("user", "Testo: " + videoChunks.getFullContent() + "\nRispondi solo con JSON come specificato."));
-                chatMessageList.add(new ChatMessage("system",
-                        "Sei un assistente che estrae metadati rilevanti da un testo lungo. " +
-                                "Restituisci SOLO un JSON valido con i campi: title, summary, keywords, argomento_principale, tags."));
-
-                chatMessageList.add(new ChatMessage("user",
-                        "Testo da analizzare:\n" + videoChunks.getFullContent()));
-
-                StringBuilder jsonMetadati = RAGIAService.chiediAlloPsicologo( chatMessageList, 0.0, 1000 );
-
-                // 1. Trasforma StringBuilder in String
-                String jsonString = jsonMetadati.toString();
-
-                // 2. Rimuovi backtick, spazi e newline all'inizio/fine
-                jsonString = jsonString
-                        .replaceAll("^```json\\s*", "")   // rimuove ```json all'inizio
-                        .replaceAll("```\\s*$", "")       // rimuove ``` alla fine
-                        .trim();
-
-                // Salva direttamente il JSON nella colonna metadati
-                videoChunksRepository.updateMetadati(videoChunks.getId(), jsonString);
-
-                System.out.println("Metadati generati per video: " + videoChunks.getTitle());
-            //}
-        }
-    }
-
 
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks_TESTO() throws Exception {
+    public void OperazioniSpeech_DIVIDI_IN_CHUNKS() throws Exception {
         List<VideoChunks> list = videoChunksRepository.findAll()
-
                 .stream()
-                .filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
+                //.filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
                 .toList();
-
         for(VideoChunks videoChunks: list){
             // 4️⃣ Dividi il testo in chunk
-            List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
+            //List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
+
+            List<String> chunks = new ArrayList<>(List.of( videoChunks.getSintesi() ));
 
             //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
             // 5️⃣ Salva i chunk nel database calcolando embedding reale
@@ -100,10 +67,41 @@ class SpeechToTextManualJob {
     }
 
 
+
+
+
+    @Test
+    @Disabled("Disabilitato temporaneamente per debug")
+    public void OperazioniSpeechToChunks_FAI_SINTESI() throws Exception {
+        List<VideoChunks> list = videoChunksRepository.findAll()
+                .stream()
+                //.filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
+                .toList();
+        for(VideoChunks videoChunks: list){
+            try {
+                int numneroTotaleParole = countWords(videoChunks.getFullContent());
+
+                StringBuilder sintesi = faiSintesiIAService.generaSintesi(videoChunks.getFullContent(), numneroTotaleParole);
+
+                videoChunks.setSintesi( sintesi.toString() );
+
+                videoChunksRepository.save(videoChunks); // salva nel DB
+
+            } catch (Exception e) {
+                // altre eccezioni impreviste
+                System.err.println("❌ Errore durante l’elaborazione di VIDEO_TITLE=" + videoChunks.getTitle());
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_VIDEO_MULTIPLO() throws Exception {
-        for(int numVideo = 175; numVideo <= 192; numVideo++ ){
+        for(int numVideo = 33; numVideo <= 169; numVideo++ ){
             Long VIDEO_ID = Long.valueOf(numVideo);
             System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
             try {
@@ -140,40 +138,6 @@ class SpeechToTextManualJob {
 
 
 
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks_VIDEO() throws Exception {
-
-        Long VIDEO_ID = 60L;  // ID del video
-
-        System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
-
-        // 1️⃣ Trascrivi audio
-        String trascrizioneAudio = transcribeAudioFile( "src/test/resources/video_tupini/"+String.valueOf(VIDEO_ID)+".wav" );
-
-        // 2️⃣ Ripristina punteggiatura
-        int numneroTotaleParole = countWords(trascrizioneAudio);
-        System.out.println("numneroParole: "+numneroTotaleParole);
-        StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio, numneroTotaleParole);
-        //StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio_117, numneroTotaleParole);
-
-        // 3️⃣ Crea VideoChunks con title = numero del video e fullContent = testo punteggiato
-        VideoChunks videoChunks = new VideoChunks();
-        videoChunks.setNumeroVideo(VIDEO_ID);
-        videoChunks.setTitle(String.valueOf(VIDEO_ID));
-        videoChunks.setFullContent(testoPunteggiato.toString());
-        videoChunks = videoChunksRepository.save(videoChunks); // salva nel DB
-
-        // 4️⃣ Dividi il testo in chunk
-        List<String> chunks = dividiTestoInChunk(testoPunteggiato.toString(), 400);
-        //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
-
-        // 5️⃣ Salva i chunk nel database calcolando embedding reale
-        salvaChunkInDatabase(chunks, videoChunks);
-    }
-
-
-
     public void salvaChunkInDatabase(List<String> chunks, VideoChunks videoChunks){
         int chunkIndex = 1;
         for (String chunkContent : chunks) {
@@ -183,8 +147,6 @@ class SpeechToTextManualJob {
                 //Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
 
                 Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(chunkContent);
-
-
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoChunks, chunkIndex, chunkContent, embedding);
@@ -265,22 +227,11 @@ class SpeechToTextManualJob {
         if (!currentChunk.isEmpty()) {
             chunks.add(String.join(" ", currentChunk));
         }
-
         return chunks;
     }
 
 
 
-
-    public List<String> dividiTestoInChunk(String testo, int chunkSize) throws  Exception {
-        //testo = "Buonasera a tutti! Mi chiamo Gabriella Tupini. Sto facendo dei video per comunicare alle persone interessate";
-        List<String> chunks = chunkText_con_Overlap(testo, chunkSize);
-        int index = 1;
-        for (String c : chunks) {
-            System.out.println("Chunk " + index++ + ":\n" + c + "\n---");
-        }
-        return chunks;
-    }
 
 
 

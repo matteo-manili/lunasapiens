@@ -22,6 +22,9 @@ public class VideoChunks implements Serializable {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String fullContent; // Testo lungo (fino a 10.000+ parole)
 
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String sintesi; // Testo lungo (fino a 10.000+ parole)
+
 
     /**
      * bisogna inserire per forza un valore json, per il null va bene così: {}
@@ -71,14 +74,13 @@ public class VideoChunks implements Serializable {
 
     public void setNumeroVideo(Long numeroVideo) { this.numeroVideo = numeroVideo; }
 
+    public Map<String, Object> getMetadati() { return metadati; }
 
-    public Map<String, Object> getMetadati() {
-        return metadati;
-    }
+    public void setMetadati(Map<String, Object> metadati) { this.metadati = metadati; }
 
-    public void setMetadati(Map<String, Object> metadati) {
-        this.metadati = metadati;
-    }
+    public String getSintesi() { return sintesi; }
+
+    public void setSintesi(String sintesi) { this.sintesi = sintesi; }
 
     public List<Chunks> getChunks() { return chunks; }
 
