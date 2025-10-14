@@ -51,6 +51,14 @@ public class TemaNataleController extends BaseController {
 
     // #################################### TEMA NATALE #####################################
 
+
+    @GetMapping("/tema-natale")
+    public RedirectView redirect_temaNatale() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
     /**
      * questa pagina è indicizzata da google ma gli da errori, quindi va gestita e fatto redirect alla pagina canonica
      * @return
@@ -65,7 +73,7 @@ public class TemaNataleController extends BaseController {
     /**
      * servizio tema natale
      */
-    @GetMapping("/tema-natale")
+    @GetMapping("/tema-natale_OLD")
     public String temaNatale(Model model, @ModelAttribute("dateTime") String dateTime,
                              @ModelAttribute("cityInput") String cityInput,
                              @ModelAttribute("cityName") String cityName,

@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -40,10 +42,19 @@ public class SinastriaController extends BaseController {
 
     // #################################### SINATRIA #####################################
 
+
+    @GetMapping("/sinastria")
+    public RedirectView redirect_sinastria() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+
     /**
      * servizio tema natale
      */
-    @GetMapping("/sinastria")
+    @GetMapping("/sinastria_OLD")
     public String sinastria(Model model,
                             @ModelAttribute("dateTime") String dateTime,
                             @ModelAttribute("cityInput") String cityInput,

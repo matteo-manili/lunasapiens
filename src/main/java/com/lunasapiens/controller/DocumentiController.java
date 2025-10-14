@@ -37,15 +37,40 @@ public class DocumentiController extends BaseController {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
+
     @GetMapping("/forum")
-    public String register(Model model, HttpServletRequest request) {
-        return "forum";
+    public RedirectView redirect_forum() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+    @GetMapping("/view-pdf")
+    public RedirectView redirect_viewPDF() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+    @GetMapping("/download-pdf")
+    public RedirectView redirect_downloadPDF() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
     }
 
 
 
+    // **** OLD
 
-    @GetMapping("/view-pdf")
+
+    @GetMapping("/forum_OLD")
+    public String forum(Model model, HttpServletRequest request) {
+        return "forum";
+    }
+
+
+    @GetMapping("/view-pdf_OLD")
     public ResponseEntity<Resource> viewPDF(@RequestParam String fileName) {
 
         logger.info("sono in DocumentiController viewPDF");
@@ -166,7 +191,7 @@ public class DocumentiController extends BaseController {
 
 
     // Metodo per il download del PDF
-    @GetMapping("/download-pdf")
+    @GetMapping("/download-pdf_OLD")
     public RedirectView downloadPDF(@RequestParam String fileName, RedirectAttributes attributes) {
         // URL base del repository GitHub dove si trovano i PDF
         String baseUrl = "https://github.com/matteo-manili/lunasapiens_download/raw/main/";

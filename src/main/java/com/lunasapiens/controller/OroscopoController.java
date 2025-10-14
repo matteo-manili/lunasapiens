@@ -51,6 +51,14 @@ public class OroscopoController extends BaseController {
 
     // #################################### OROSCOPO #####################################
 
+    @GetMapping("/oroscopo")
+    public RedirectView redirect_oroscopo() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
+
     /**
      * vedi google search console tra le pagine indicizzate c'è questa
      */
@@ -65,7 +73,7 @@ public class OroscopoController extends BaseController {
     /**
      * servizio oroscopo giornaliero
      */
-    @GetMapping("/oroscopo")
+    @GetMapping("/oroscopo_OLD")
     public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage,
                                  @ModelAttribute(Constants.INFO_ALERT) String infoAlert,
                                  @ModelAttribute(Constants.INFO_ERROR) String infoError) {

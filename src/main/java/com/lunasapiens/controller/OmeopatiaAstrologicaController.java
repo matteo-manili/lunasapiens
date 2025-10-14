@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -33,10 +35,18 @@ public class OmeopatiaAstrologicaController extends BaseController {
     ServizioOmeopatiaAstrologica servizioOmeopatiaAstrologica;
 
 
+
+    @GetMapping("/omeopatia-astrologica")
+    public RedirectView redirect_omeopatiaAstrologica() {
+        RedirectView redirectView = new RedirectView("/", true);
+        redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+        return redirectView;
+    }
+
     /**
      * servizio omeopatia Astrologica
      */
-    @GetMapping("/omeopatia-astrologica")
+    @GetMapping("/omeopatia-astrologica_OLD")
     public String omeopatiaAstrologica(Model model, @ModelAttribute("dateTime") String dateTime,
                                        @ModelAttribute("cityInput") String cityInput,
                                        @ModelAttribute("cityName") String cityName,
