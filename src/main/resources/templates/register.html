@@ -22,9 +22,9 @@
     <div class="bg-light rounded-3 text-center shadow-sm mb-4 mt-4 pt-3">
         <h5 class="mb-4">Ricevi il tuo link di accesso</h5>
         <p>
-            Inserisci la tua email e riceverai un link speciale per accedere al servizio.<br>
-            Questo link funziona senza password e dura <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni.
-            Alla scadenza potrai richiederne uno nuovo.<br>
+            Inserisci la tua email e riceverai un <strong>link speciale</strong> che ti permetterà di accedere al servizio come utente registrato.<br>
+            Una volta aperto il link, sarai iscritto automaticamente e potrai subito usare tutti i vantaggi riservati agli utenti.<br>
+            Il link è valido per <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni, dopodiché potrai richiederne uno nuovo.<br>
             Tutto il progetto è <strong>gratuito</strong> e semplice da usare.
         </p>
         <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
