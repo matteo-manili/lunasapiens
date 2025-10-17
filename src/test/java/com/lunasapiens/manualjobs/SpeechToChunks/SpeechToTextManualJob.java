@@ -3,14 +3,14 @@ package com.lunasapiens.manualjobs.SpeechToChunks;
 import com.lunasapiens.entity.Chunks;
 
 import com.lunasapiens.entity.VideoChunks;
+import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionMultiThredService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.PunteggiaturaIAService;
 import com.lunasapiens.manualjobs.SpeechToChunks.service.FaiSintesiIAService;
-import com.lunasapiens.manualjobs.SpeechToChunks.service.AudioTranscriptionService;
+
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
 import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
-import com.lunasapiens.manualjobs.ArticleEmbedding.service.TextEmbeddingService;
-import com.theokanning.openai.completion.chat.ChatMessage;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class SpeechToTextManualJob {
 
     @Autowired
-    private AudioTranscriptionService audioTranscriptionService;
+    private AudioTranscriptionMultiThredService audioTranscriptionMultiThredService;
 
     @Autowired
     private PunteggiaturaIAService punteggiaturaIAService;
@@ -34,7 +38,7 @@ class SpeechToTextManualJob {
     private FaiSintesiIAService faiSintesiIAService;
 
     @Autowired
-    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    private TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
 
     @Autowired
     private VideoChunksRepository videoChunksRepository;
@@ -42,100 +46,132 @@ class SpeechToTextManualJob {
     @Autowired
     private ChunksCustomRepositoryImpl chunksCustomRepository;
 
-    @Autowired
-    com.lunasapiens.service.RAGIAService RAGIAService;
 
 
 
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeech_DIVIDI_IN_CHUNKS() throws Exception {
-        List<VideoChunks> list = videoChunksRepository.findAll()
-                .stream()
-                //.filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
-                .toList();
-        for(VideoChunks videoChunks: list){
-            // 4️⃣ Dividi il testo in chunk
-            //List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
+    public void OperazioniSpeechToChunks_CREA_CHUNKS() {
+        for (int numVideo = 1; numVideo <= 192; numVideo++) {
+            final long NUM_VIDEO = numVideo; // deve essere final per usarlo nella lambda
+            VideoChunks video = videoChunksRepository.findByNumeroVideo(NUM_VIDEO).orElse(null);
+            if (video != null && video.getSintesi() != null) {
+                System.out.println("✅ Trovato video con numeroVideo = " + video.getNumeroVideo());
+                System.out.println("Titolo: " + video.getTitle());
+                try {
+                    // ############################## CREA CHUNKS ##############################
+                    // ESEMPIO // List<String> chunks = dividiTestoInChunk(videoChunks.getFullContent(), 500, 80); // 200 parole per chunk, overlap 40 parole
+                    List<String> chunks = new ArrayList<>(List.of( video.getSintesi() ));
+                    // List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
+                    // Salva i chunk nel database calcolando embedding reale
+                    salvaChunkInDatabase(chunks, video);
 
-            List<String> chunks = new ArrayList<>(List.of( videoChunks.getSintesi() ));
-
-            //List<String> chunks = dividiTestoInChunk(TESTO_PUNTEGGIATO_117.toString());
-            // 5️⃣ Salva i chunk nel database calcolando embedding reale
-            salvaChunkInDatabase(chunks, videoChunks);
-        }
-    }
-
-
-
-
-
-    @Test
-    @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks_FAI_SINTESI() throws Exception {
-        List<VideoChunks> list = videoChunksRepository.findAll()
-                .stream()
-                //.filter(vc -> vc.getNumeroVideo() >= 175 && vc.getNumeroVideo() <= 192)
-                .toList();
-        for(VideoChunks videoChunks: list){
-            try {
-                int numneroTotaleParole = countWords(videoChunks.getFullContent());
-
-                StringBuilder sintesi = faiSintesiIAService.generaSintesi(videoChunks.getFullContent(), numneroTotaleParole);
-
-                videoChunks.setSintesi( sintesi.toString() );
-
-                videoChunksRepository.save(videoChunks); // salva nel DB
-
-            } catch (Exception e) {
-                // altre eccezioni impreviste
-                System.err.println("❌ Errore durante l’elaborazione di VIDEO_TITLE=" + videoChunks.getTitle());
-                e.printStackTrace();
+                } catch (Exception e) {
+                    System.err.println("❌ Errore durante L'EMBEDDING del NUM_VIDEO=" + NUM_VIDEO);
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("⚠️ Nessun video trovato con numeroVideo = " + NUM_VIDEO);
             }
         }
     }
 
 
 
-
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
-    public void OperazioniSpeechToChunks_VIDEO_MULTIPLO() throws Exception {
-        for(int numVideo = 33; numVideo <= 169; numVideo++ ){
-            Long VIDEO_ID = Long.valueOf(numVideo);
-            System.out.println("########## VIDEO "+String.valueOf(VIDEO_ID)+" ##########");
-            try {
-                // 1️⃣ Trascrivi audio
-                String trascrizioneAudio = transcribeAudioFile( "src/test/resources/video_tupini/"+String.valueOf(VIDEO_ID)+".wav" );
+    public void OperazioniSpeechToChunks_VIDEO_PUNTEGGIATURA_E_SINTESI() {
+        for (int numVideo = 1; numVideo <= 192; numVideo++) {
+            final long NUM_VIDEO = numVideo; // deve essere final per usarlo nella lambda
+            VideoChunks video = videoChunksRepository.findByNumeroVideo(NUM_VIDEO).orElse(null);
+            if (video != null && video.getSintesi() == null) {
+                System.out.println("✅ Trovato video con numeroVideo = " + video.getNumeroVideo());
+                System.out.println("Titolo: " + video.getTitle());
+                try {
+                    // ############################## FAI PUNTEGGIATURA E SINTESI ##############################
+                    if( video.getOriginal() != null ){
+                        String testoOriginale = video.getOriginal();
+                        StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(testoOriginale, countWords(testoOriginale));
+                        video.setFullContent(testoPunteggiato.toString());
+                        StringBuilder sintesi = faiSintesiIAService.generaSintesi(testoPunteggiato.toString(), countWords(testoPunteggiato.toString()));
+                        video.setSintesi( sintesi.toString() );
+                        videoChunksRepository.save(video);
 
-                // 2️⃣ Ripristina punteggiatura
-                int numneroTotaleParole = countWords(trascrizioneAudio);
-                System.out.println("numneroParole: "+numneroTotaleParole);
-                StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio, numneroTotaleParole);
-                //StringBuilder testoPunteggiato = punteggiaturaIAService.generaTestoConPunteggiatura(trascrizioneAudio_117, numneroTotaleParole);
-
-                // 3️⃣ Crea VideoChunks con title = numero del video e fullContent = testo punteggiato
-                VideoChunks videoChunks = new VideoChunks();
-                videoChunks.setNumeroVideo(VIDEO_ID);
-                videoChunks.setTitle(String.valueOf(VIDEO_ID));
-                videoChunks.setFullContent(testoPunteggiato.toString());
-                videoChunks.setMetadati(Map.of()); // JSON vuoto {}
-
-                videoChunks = videoChunksRepository.save(videoChunks); // salva nel DB
-
-            } catch (java.io.FileNotFoundException e) {
-                // Log e continua con il prossimo video
-                System.err.println("⚠️ File non trovato per VIDEO_ID=" + VIDEO_ID + ": " + e.getMessage());
-                continue;
-            } catch (Exception e) {
-                // altre eccezioni impreviste
-                System.err.println("❌ Errore durante l’elaborazione di VIDEO_ID=" + VIDEO_ID);
-                e.printStackTrace();
+                    }else if( video.getFullContent() != null){
+                        String testoPunteggiato = video.getFullContent();
+                        StringBuilder sintesi = faiSintesiIAService.generaSintesi(testoPunteggiato, countWords(testoPunteggiato));
+                        video.setSintesi( sintesi.toString() );
+                        videoChunksRepository.save(video);
+                    }
+                } catch (Exception e) {
+                    System.err.println("❌ Errore durante l’elaborazione testi del NUM_VIDEO=" + NUM_VIDEO);
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("⚠️ Nessun video trovato con numeroVideo = " + NUM_VIDEO);
             }
+
         }
     }
 
 
+
+
+
+    @Test
+    @Disabled("Disabilitato temporaneamente per debug")
+    public void OperazioniSpeechToChunks_VIDEO_AUDIO_MULTI_THREAD() throws Exception {
+        // ✅ Thread pool con 3 thread (3 video contemporaneamente)
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<?>> futures = new ArrayList<>();
+
+        for (int numVideo = 60; numVideo <= 60; numVideo++) {
+            final long NUM_VIDEO = numVideo; // deve essere final per usarlo nella lambda
+            // Invia ogni video come task al thread pool
+            futures.add(executor.submit(() -> {
+                System.out.println("########## VIDEO " + NUM_VIDEO + " ##########");
+                try {
+                    VideoChunks video = videoChunksRepository.findByNumeroVideo(NUM_VIDEO).orElse(null);
+                    if( (video != null && video.getOriginal() == null) || video == null) {
+                        // 1️⃣ Trascrivi audio
+                        String videoPath = "src/test/resources/video_tupini/" + NUM_VIDEO + ".wav";
+                        String trascrizioneAudio = transcribeAudioFile(videoPath);
+                        if (video != null) {
+                            video.setOriginal(trascrizioneAudio);
+                            video.setMetadati(Map.of()); // JSON vuoto {}, non accetta null
+                            videoChunksRepository.save(video);
+                        }else {
+                            // 2️⃣ Crea VideoChunks
+                            VideoChunks newVideoChunks = new VideoChunks();
+                            newVideoChunks.setNumeroVideo(NUM_VIDEO);
+                            newVideoChunks.setTitle(String.valueOf(NUM_VIDEO));
+                            newVideoChunks.setOriginal(trascrizioneAudio);
+                            newVideoChunks.setMetadati(Map.of()); // JSON vuoto {}, non accetta null
+                            videoChunksRepository.save(newVideoChunks);
+                        }
+                    }
+                } catch (java.io.FileNotFoundException e) {
+                    System.err.println("⚠️ File non trovato per VIDEO_ID=" + NUM_VIDEO + ": " + e.getMessage());
+                } catch (Exception e) {
+                    System.err.println("❌ Errore durante l’elaborazione di VIDEO_ID=" + NUM_VIDEO);
+                    e.printStackTrace();
+                }
+            }));
+        }
+        // ⏳ Aspetta che tutti i task finiscano
+        for (Future<?> f : futures) {
+            try {
+                f.get(); // blocca finché ogni task termina (o lancia eccezione)
+            } catch (Exception e) {
+                System.err.println("❌ Errore in uno dei thread: " + e.getMessage());
+            }
+        }
+
+        // 🧹 Chiude il pool
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.HOURS); // o un tempo adeguato
+
+    }
 
 
     public void salvaChunkInDatabase(List<String> chunks, VideoChunks videoChunks){
@@ -316,22 +352,23 @@ class SpeechToTextManualJob {
 
 
 
-
     public String transcribeAudioFile(String filePath) throws Exception {
         // Percorso del file audio nella cartella resources
         //Formato: WAV
         //Bit depth: 16 bit
         //Canali: Mono
         //Sample rate: 16 kHz o 16000 Hz
-        File audioFile = new File( filePath );
+        File audioFile = new File(filePath);
         // Trascrizione del file audio
-        String transcription = audioTranscriptionService.transcribeAudio(audioFile);
+        String transcription = audioTranscriptionMultiThredService.transcribeAudio(audioFile);
+
         //String transcription = null;
         // Stampa il testo trascritto
         System.out.println("Testo trascritto:");
         System.out.println(transcription);
         return transcription;
     }
+
 
 
 
@@ -349,6 +386,8 @@ class SpeechToTextManualJob {
         }
         // Divide la stringa su uno o più spazi bianchi
         String[] words = text.trim().split("\\s+");
+
+        System.out.println("numeroParole: " + words.length);
         return words.length;
     }
 

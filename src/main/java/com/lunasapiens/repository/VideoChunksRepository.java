@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VideoChunksRepository extends JpaRepository<VideoChunks, Long> {
@@ -25,6 +26,8 @@ public interface VideoChunksRepository extends JpaRepository<VideoChunks, Long> 
     @Query("SELECT v.title FROM VideoChunks v ORDER BY v.numeroVideo ASC")
     List<String> findAllTitles();
 
+
+    Optional<VideoChunks> findByNumeroVideo(Long numeroVideo);
 
 
 }

@@ -19,11 +19,14 @@ public class VideoChunks implements Serializable {
     @Column(nullable = false, length = 255)
     private String title; // Titolo del video
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String fullContent; // Testo lungo (fino a 10.000+ parole)
 
     @Column(columnDefinition = "TEXT", nullable = true)
     private String sintesi; // Testo lungo (fino a 10.000+ parole)
+
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String original; // Testo lungo (fino a 10.000+ parole)
 
 
     /**
@@ -81,6 +84,10 @@ public class VideoChunks implements Serializable {
     public String getSintesi() { return sintesi; }
 
     public void setSintesi(String sintesi) { this.sintesi = sintesi; }
+
+    public String getOriginal() { return original; }
+
+    public void setOriginal(String original) { this.original = original; }
 
     public List<Chunks> getChunks() { return chunks; }
 
