@@ -107,16 +107,16 @@ public class WebSocket_e_ApiController extends BaseController {
                     return response;
                 }
                 if( customPrincipalWebSocketChatBot.getName().startsWith(WebSocketConfig.userAnonymous) ){
-                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
-                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
-                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti(RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS)
+                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS ) );
+                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS )) {
+                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti(Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS)
                                 +" "+ "<a href=\"/register\">Iscriviti</a> per fare più domande!") ;
                         return response;
                     }
                 }else{
-                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
-                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE )) {
-                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE ) );
+                    response.put( "numDomandeRimanenti", rateLimiterUser.getRemainingMessages( customPrincipalWebSocketChatBot.getIpAddress(), Constants.MAX_MESSAGES_PER_DAY_UTENTE ) );
+                    if (!rateLimiterUser.allowMessage( customPrincipalWebSocketChatBot.getIpAddress(), Constants.MAX_MESSAGES_PER_DAY_UTENTE )) {
+                        response.put(keyJsonStandardContent, rateLimiterUser.numeroMessaggi_e_Minuti( Constants.MAX_MESSAGES_PER_DAY_UTENTE ) );
                         return response;
                     }
                 }

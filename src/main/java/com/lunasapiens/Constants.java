@@ -48,11 +48,12 @@ public class Constants {
     public static final String VIDEO_CACHE = "videoCache";
     public static final String IMAGES_ARTICLE_CACHE = "imagesArticleCache";
 
-
-
     public static final String MESSAGE_BOT_CACHE = "messageBotCache";
     public static final String URLS_ASTRO_SEEK_CACHE = "urlsAstroSeekCache";
     public static final String LIMITATORE_MESS_BOT_IA_USER_CACHE = "rateLimiterUserCache";
+
+    public static final int MAX_MESSAGES_PER_DAY_UTENTE = 15; // 15 Limite di messaggi per giorno
+    public static final int MAX_MESSAGES_PER_DAY_ANONYMOUS = 5; // 5 Limite di messaggi per giorno
 
     public static final List<RelationshipOption> RELATIONSHIP_OPTIONS  = Collections.unmodifiableList(Arrays.asList(
             new RelationshipOption("P", "Partners"),

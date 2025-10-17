@@ -2,7 +2,6 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
-import com.lunasapiens.filter.RateLimiterUser;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
@@ -53,8 +52,8 @@ public class IndexController extends BaseController {
         String infoMessage = (String) request.getSession().getAttribute(Constants.INFO_MESSAGE);
 
         model.addAttribute("JWT_EXPIRED_TOKEN_DAY_OF_YEAR", Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
-        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
-        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", Constants.MAX_MESSAGES_PER_DAY_UTENTE);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS);
         if (infoError != null) {
             model.addAttribute(Constants.INFO_ERROR, infoError);
             request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina

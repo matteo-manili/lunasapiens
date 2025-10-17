@@ -12,8 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimiterUser {
 
-    public static final int MAX_MESSAGES_PER_DAY_UTENTE = 30; // 15 Limite di messaggi per giorno
-    public static final int MAX_MESSAGES_PER_DAY_ANONYMOUS = 15; // 5 Limite di messaggi per giorno
+
 
     private static final long DAY_WINDOW_SIZE_MS = 86400000; // 1 giorno in millisecondi
 

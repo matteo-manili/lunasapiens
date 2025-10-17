@@ -2,42 +2,24 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
-import com.lunasapiens.dto.AstroChartDTO;
-import com.lunasapiens.dto.CoordinateDTO;
-import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.entity.ProfiloUtente;
-import com.lunasapiens.entity.VideoChunks;
-import com.lunasapiens.filter.RateLimiterUser;
-import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.repository.VideoChunksRepository;
-import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.RAGIAService;
-import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,11 +31,8 @@ public class PsicologoController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(PsicologoController.class);
 
-
-
     @Autowired
     private CacheManager cacheManager;
-
 
     @Autowired
     private VideoChunksRepository videoChunksRepository;
@@ -81,8 +60,8 @@ public class PsicologoController extends BaseController {
         Optional.ofNullable(paginaChatId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute("paginaChatId", id));
         Optional.ofNullable(userSessionId).filter(id -> !id.isEmpty()).ifPresent(id -> model.addAttribute(Constants.USER_SESSION_ID, id));
 
-        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", RateLimiterUser.MAX_MESSAGES_PER_DAY_UTENTE);
-        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", RateLimiterUser.MAX_MESSAGES_PER_DAY_ANONYMOUS);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", Constants.MAX_MESSAGES_PER_DAY_UTENTE);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS);
 
         return "psicologo";
     }
@@ -95,7 +74,6 @@ public class PsicologoController extends BaseController {
 
         logger.info("sono in psicologoSubmit");
 
-
         HttpSession session = request.getSession(true); // Crea una nuova sessione se non esiste
         String userId = (String) session.getAttribute(Constants.USER_SESSION_ID);
         if (userId == null) {
@@ -103,7 +81,6 @@ public class PsicologoController extends BaseController {
             session.setAttribute(Constants.USER_SESSION_ID, userId);
         }
         logger.info(Constants.USER_SESSION_ID + userId);
-
 
         String paginaChatId = UUID.randomUUID().toString();
         redirectAttributes.addFlashAttribute("paginaChatId", paginaChatId);
@@ -137,14 +114,12 @@ public class PsicologoController extends BaseController {
     public String dammiTitoliVideo(String separatore) {
         List<String> list = videoChunksRepository.findAllTitles();
         StringBuilder sb = new StringBuilder();
-
         for (int i = 0; i < list.size(); i++) {
             sb.append(list.get(i));
             if (i < list.size() - 1) {
                 sb.append(separatore);
             }
         }
-
         return sb.toString();
     }
 
