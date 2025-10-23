@@ -49,7 +49,7 @@ public class TextEmbeddingHuggingfaceService {
     /**
      * Genera embedding normalizzato per un testo. dimensione dell'embedding di 1024
      *
-     * @param content testo da trasformare in embedding
+     * @param content testo da trasformare in embeddinguva
      * @return Float[]
      * @throws Exception in caso di errore HTTP o parsing JSON
      */
