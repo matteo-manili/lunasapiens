@@ -36,8 +36,11 @@ public class TextEmbeddingHuggingfaceService {
     @Autowired
     private HuggingFaceConfig huggingFaceConfig;
 
-    private static final String HF_MODEL_URL = "https://api-inference.huggingface.co/models/intfloat/multilingual-e5-large-instruct"; // dimensione dell'embedding di 1024
-
+    /**
+     * Per mantenere la continuità del servizio, migra alla nuova API Inference Providers.
+     * È sufficiente sostituire https://api-inference.huggingface.co/ nelle chiamate con https://router.huggingface.co/hf-inference/ .
+     */
+    private static final String HF_MODEL_URL = "https://router.huggingface.co/hf-inference/models/intfloat/multilingual-e5-large-instruct"; // dimensione dell'embedding di 1024
 
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
