@@ -45,7 +45,7 @@ public class ArticleSemanticService {
         try {
             // Calcola embedding tramite DJL
             //Float[] embedding = textEmbeddingService.computeCleanEmbedding(content);
-            Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( Utils.cleanHtmlText(content) );
+            Float[] embedding = textEmbeddingHuggingfaceService.embedDocument( Utils.cleanHtmlText(content) );
 
             // Salva usando il repository custom con JDBC
             return articleContentCustomRepository.saveArticleWithEmbeddingJdbc(content, embedding);
@@ -76,7 +76,7 @@ public class ArticleSemanticService {
     public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
         try {
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(query);
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery(query);
 
             return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
 
@@ -105,7 +105,7 @@ public class ArticleSemanticService {
     public List<ArticleContent> searchSemantic(String query, int limit) {
         try {
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( Utils.cleanHtmlText(query) );
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( Utils.cleanHtmlText(query) );
             return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {

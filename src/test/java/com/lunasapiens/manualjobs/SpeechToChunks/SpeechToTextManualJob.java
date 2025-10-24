@@ -182,7 +182,7 @@ class SpeechToTextManualJob {
 
                 //Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
 
-                Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(chunkContent);
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(chunkContent);
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoChunks, chunkIndex, chunkContent, embedding);

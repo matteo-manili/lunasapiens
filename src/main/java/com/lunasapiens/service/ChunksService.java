@@ -24,7 +24,7 @@ public class ChunksService {
 
     public List<Chunks> findNearestChunksCosine(String query, int limit) {
         try {
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding(query);
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery(query);
             return chunksCustomRepository.findNearestChunksCosine(queryEmbedding, query, limit);
 
         } catch (TranslateException e) {
@@ -42,7 +42,7 @@ public class ChunksService {
         try {
 
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( query );
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( query );
 
 
             return chunksCustomRepository.findNearestChunksWithFts(query, limit);
@@ -65,7 +65,7 @@ public class ChunksService {
     public List<Chunks> findNearestChunksDistance(String query, int limit) {
         try {
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( query );
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( query );
 
 
             return chunksCustomRepository.findNearestChunksDistance(queryEmbedding, limit);

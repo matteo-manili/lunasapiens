@@ -33,7 +33,7 @@ class RAGManualJob {
     @Disabled("Disabilitato temporaneamente per debug")
     public void eseguiEmbeddingHuggingface() throws Exception {
 
-        textEmbeddingHuggingfaceService.computeCleanEmbedding("ciao bellooo");
+        textEmbeddingHuggingfaceService.embedDocument("ciao bellooo");
     }
 
 

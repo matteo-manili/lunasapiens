@@ -81,7 +81,7 @@ class ArticleEmbeddingManualJobs {
         for (ArticleContent article : articles) {
             try {
                 //Float[] embedding = textEmbeddingService.computeCleanEmbedding( article.getContent() );
-                Float[] embedding = textEmbeddingHuggingfaceService.computeCleanEmbedding( article.getContent() );
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument( article.getContent() );
 
                 System.out.println("Dimensione embedding: " + embedding.length);
                 ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(article.getId(), embedding);
