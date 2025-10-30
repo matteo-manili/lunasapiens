@@ -97,12 +97,10 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
 
 
-
-
     /** ************************** EMBEDDING ************************/
 
     @Transactional(readOnly = true)
-    public List<ArticleContent> findNearestByEmbedding(Float[] embedding, int limit) throws Exception {
+    public List<ArticleContent> searchByEmbedding(Float[] embedding, int limit) throws Exception {
 
         // Converti embedding in stringa per PGvector
         PGobject pgVector = UtilsRepository.toPgVector(embedding);

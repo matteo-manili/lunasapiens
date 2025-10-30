@@ -22,6 +22,9 @@ import java.util.Map;
 public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
 
 
+
+
+
     /**
      * Multilingual-E5-large-instruct
      * Multilingual E5 Text Embeddings: A Technical Report. Liang Wang, Nan Yang, Xiaolong Huang, Linjun Yang, Rangan Majumder, Furu Wei, arXiv 2024
@@ -36,6 +39,8 @@ public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
      * https://huggingface.co/intfloat/multilingual-e5-large-instruct
      */
     private static final String MODEL_URL = "/intfloat/multilingual-e5-large-instruct";
+
+    private static final String MODELS = "/models";
 
     /**
      * Numero massimo di parole per chunk
@@ -103,7 +108,9 @@ public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
         );
 
         String payload = objectMapper.writeValueAsString(payloadMap);
-        String response = callHuggingFaceAPI(MODEL_URL, payload);
+        //String response = callHuggingFaceAPI( HuggingFaceBaseService.URL_HUGGING_FACE_ROOT_OLD + MODELS + MODEL_URL, payload); // OLD URL
+        String response = callHuggingFaceAPI( HuggingFaceBaseService.URL_HUGGING_FACE_HF_INFERENCE_ROOT + MODELS +MODEL_URL, payload);
+
         double[] embedding = objectMapper.readValue(response, double[].class);
 
         Float[] floatEmb = new Float[embedding.length];

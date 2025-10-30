@@ -75,9 +75,7 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchByEmbeddingThenFTS(String query, int limit) {
         try {
-            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery(query);
-
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery(Utils.cleanHtmlText(query));
             return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
 
 
@@ -102,11 +100,10 @@ public class ArticleSemanticService {
      * @param limit numero massimo di risultati
      * @return lista di articoli ordinata per similarità
      */
-    public List<ArticleContent> searchSemantic(String query, int limit) {
+    public List<ArticleContent> searchByEmbedding(String query, int limit) {
         try {
-            //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
             Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( Utils.cleanHtmlText(query) );
-            return articleContentCustomRepository.findNearestByEmbedding(queryEmbedding, limit);
+            return articleContentCustomRepository.searchByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);

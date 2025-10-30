@@ -61,9 +61,12 @@ public class EditorArticleBlogController extends BaseController {
 
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
-            //List<ArticleContent> results = articleSemanticService.searchSemantic(search, 10); // massimo 10 risultati
-            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
-            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
+            // 🔹 Ricerca semantica e FTS
+            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            // RICERCA FTS
+            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+
 
             Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
             model.addAttribute("articlePage", page);
@@ -91,9 +94,12 @@ public class EditorArticleBlogController extends BaseController {
         }
 
         if (search != null && !search.isBlank()) {
-            // 🔸 Se l'utente ha fatto una ricerca semantica
-            //List<ArticleContent> results = articleSemanticService.searchSemantic(search, 10); // 10 risultati max
-            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            // 🔹 Ricerca semantica
+            //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
+            // 🔹 Ricerca semantica e FTS
+            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            // RICERCA FTS
+            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
 
 
             // Avvolgi in una Page fake

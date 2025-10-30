@@ -44,7 +44,7 @@ class ArticleEmbeddingManualJobs {
         String query = "infezioni post-operatorie";
 
         // Effettua ricerca semantica
-        List<ArticleContent> results = articleSemanticService.searchSemantic(query, 10);
+        List<ArticleContent> results = articleSemanticService.searchByEmbedding(query, 10);
 
         // Controlla che ci siano risultati
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
@@ -111,7 +111,7 @@ class ArticleEmbeddingManualJobs {
 
         // 4️⃣ Recupera l'articolo dal database usando embedding appena generato
         Float[] embedding = savedArticle.getEmbedding();
-        ArticleContent retrievedArticle = articleContentCustomRepository.findNearestByEmbedding(embedding, 1).get(0);
+        ArticleContent retrievedArticle = articleContentCustomRepository.searchByEmbedding(embedding, 1).get(0);
 
         // 5️⃣ Verifica che il contenuto corrisponda
         assertEquals(content, retrievedArticle.getContent(), "Il contenuto dell'articolo salvato dovrebbe corrispondere");
@@ -144,7 +144,7 @@ class ArticleEmbeddingManualJobs {
 
         // 3️⃣ Effettua ricerca semantica usando parte del testo
         String query = "articolo numero 500";
-        List<ArticleContent> results = articleSemanticService.searchSemantic(query, 5);
+        List<ArticleContent> results = articleSemanticService.searchByEmbedding(query, 5);
 
         assertFalse(results.isEmpty(), "La ricerca dovrebbe restituire almeno un risultato");
 

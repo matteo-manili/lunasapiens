@@ -10,6 +10,7 @@ import java.util.*;
 public class HuggingfaceTextSummarizationService extends HuggingFaceBaseService {
 
 
+    protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
     private static final String MODEL_URL = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
     private int MAX_CHUNK_WORDS = 5700; // Sono 8.000 token corrispondono grosso modo a 5.500–6.000 parole in italiano o inglese
@@ -54,7 +55,7 @@ public class HuggingfaceTextSummarizationService extends HuggingFaceBaseService 
 
         // ✅ endpoint corretto: niente MODEL_URL nel path!
         String response = callHuggingFaceAPI(
-                HuggingFaceBaseService.URL_HUGGING_FACE_ROOT + HuggingFaceBaseService.URL_HUGGING_FACE_CHAT_COMPLETIONS, // endpoint corretto
+                HuggingFaceBaseService.URL_HUGGING_FACE_ROOT + URL_HUGGING_FACE_CHAT_COMPLETIONS, // endpoint corretto
                 payload
         );
 

@@ -27,13 +27,12 @@ public abstract class HuggingFaceBaseService {
     /**
      * To maintain service continuity, please migrate to the new Inference Providers API. It can be as seamless
      * as replacing https://api-inference.huggingface.co/ in your calls with https://router.huggingface.co/hf-inference/.
+     * API root
      */
-    // API root
+    protected static final String URL_HUGGING_FACE_ROOT_OLD = "https://api-inference.huggingface.co";
+
     protected static final String URL_HUGGING_FACE_ROOT = "https://router.huggingface.co";
-
-    protected static final String URL_HUGGING_FACE_EMBEDDINGS = "/hf-inference/models";
-    protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
-
+    protected static final String URL_HUGGING_FACE_HF_INFERENCE_ROOT = "https://router.huggingface.co/hf-inference";
 
     /**
      * Divide un testo lungo in blocchi più piccoli.
@@ -58,25 +57,31 @@ public abstract class HuggingFaceBaseService {
      * @return stringa JSON della risposta
      */
     protected String callHuggingFaceAPI(String url, String payload) throws Exception {
-        // Se l'URL inizia con http, lo usa così com'è, altrimenti lo concatena al root
-        String finalUrl = url.startsWith("http") ? url : URL_HUGGING_FACE_ROOT + URL_HUGGING_FACE_EMBEDDINGS + url;
+        String finalUrl = url;
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(finalUrl);
+            logger.info("Calling Hugging Face model at: {}", finalUrl);
             post.addHeader("Authorization", "Bearer " + huggingFaceConfig.getToken());
             post.setHeader("Accept", "application/json");
             post.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
 
-            try (InputStream responseStream = client.execute(post).getEntity().getContent()) {
-                String responseBody = new String(responseStream.readAllBytes(), StandardCharsets.UTF_8);
+            try (var response = client.execute(post)) {
+                int status = response.getStatusLine().getStatusCode();
+                String body = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
 
-                if (responseBody.contains("error") || responseBody.contains("Not Found")) {
-                    throw new RuntimeException("HuggingFace API error: " + responseBody);
+                if (status >= 400) {
+                    throw new RuntimeException("HTTP " + status + " from Hugging Face: " + body);
                 }
 
-                return responseBody;
+                if (body.startsWith("<!DOCTYPE") || body.startsWith("<html")) {
+                    throw new RuntimeException("Hugging Face returned HTML instead of JSON. Probably wrong endpoint or token.\n" + body.substring(0, Math.min(200, body.length())));
+                }
+
+                return body;
             }
         }
     }
+
 
 }
