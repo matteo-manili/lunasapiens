@@ -27,7 +27,7 @@ public class ArticleSemanticService {
 
 
     @Autowired
-    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
 
 
 

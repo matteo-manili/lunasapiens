@@ -1,7 +1,6 @@
 package com.lunasapiens.service;
 
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class ChunksService {
     private ChunksCustomRepositoryImpl chunksCustomRepository;
 
     @Autowired
-    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
 
 
 

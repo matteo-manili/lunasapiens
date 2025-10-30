@@ -9,8 +9,9 @@ import com.lunasapiens.manualjobs.SpeechToChunks.service.FaiSintesiIAService;
 
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
-import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
+import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
 
+import com.lunasapiens.service.HuggingfaceTextSummarizationService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,10 @@ class SpeechToTextManualJob {
     private FaiSintesiIAService faiSintesiIAService;
 
     @Autowired
-    private TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    private HuggingfaceTextEmbeddingService textEmbedding;
+
+    @Autowired
+    private HuggingfaceTextSummarizationService summarizationService;
 
     @Autowired
     private VideoChunksRepository videoChunksRepository;
@@ -47,6 +51,89 @@ class SpeechToTextManualJob {
     private ChunksCustomRepositoryImpl chunksCustomRepository;
 
 
+
+
+    @Test
+    //@Disabled("Disabilitato temporaneamente per debug")
+    public void OperazioniSpeechToChunks_TEST_SINTESI_E_TITOLO_ARTICOLO() throws Exception {
+        String longText = articolo; // anche 1500 parole
+        String title = summarizationService.summarize(longText, true);
+        String summary = summarizationService.summarize(longText, false);
+
+        System.out.println("TITOLO: " + title);
+        System.out.println("SOMMARIO: " + summary);
+    }
+
+
+
+    private static String articolo = "Considerazioni sociali riguardo i fratelli Ramponi\n" +
+            "\n" +
+            "Franco Ramponi, Dino Ramponi e Maria Luisa Ramponi\n" +
+            "\n" +
+            "Ecco una panoramica aggiornata – con considerazioni sociali – riguardo alla vicenda dei fratelli Ramponi, che si è sviluppata negli ultimi anni a Castel d’Azzano (Verona).\n" +
+            "\n" +
+            "\n" +
+            "---\n" +
+            "\n" +
+            "Contesto della vicenda\n" +
+            "\n" +
+            "I tre fratelli, Franco, Dino e Maria Luisa Ramponi, gestivano fino a tempi recenti una piccola azienda agricola/famigliare con allevamento e campi, ereditata dai genitori.\n" +
+            "\n" +
+            "A seguito di un incidente stradale nel 2012 (un trattore con fari spenti guidato da uno dei fratelli che causò la morte di un uomo) la vicenda ha preso una piega giudiziaria ed economica drammatica.\n" +
+            "\n" +
+            "Nel tempo si accumularono debiti, ipoteche, pignoramenti: il casolare, i terreni, gli animali sono entrati in procedure di esecuzione.\n" +
+            "\n" +
+            "I fratelli vissero in condizioni isolate e che i media definiscono «di fatto medievali»: senza luce elettrica, vivendo di notte, allevamento notturno per evitare sguardi, pochi contatti con il mondo esterno.\n" +
+            "\n" +
+            "Alla fine la situazione è culminata in un’esplosione del casolare, conseguente allo sgombero: tre carabinieri sono morti, numerosi feriti, e i fratelli sono stati arrestati.\n" +
+            "\n" +
+            " \n" +
+            "\n" +
+            "---\n" +
+            "\n" +
+            "Considerazioni sociali principali\n" +
+            "\n" +
+            "1. Isolamento sociale e marginalità\n" +
+            "L’esperienza dei Ramponi evidenzia come, pur in un contesto rurale relativamente vicino a centri abitati, una famiglia possa trovarsi a vivere in uno stato di forte isolamento: rifiuto dei contatti con i servizi sociali, assenza di rete, barricamento sociale. \n" +
+            "Questo aiuta a comprendere come condizioni di vulnerabilità (economica + culturale) possano degenerare quando non viene attivata alcuna mediazione efficace.\n" +
+            "\n" +
+            "\n" +
+            "2. Crisi dell’agricoltura familiare come sfondo\n" +
+            "La vicenda non è semplicemente personale: è inserita in un contesto più ampio in cui molte aziende a conduzione famigliare in Veneto (e non solo) sono chiuse o in difficoltà. \n" +
+            "Lo sfruttamento di mutui, ipoteche, la dipendenza da creditori esterni, la perdita della proprietà tradizionale, rappresentano una dinamica più ampia di precarietà rurale.\n" +
+            "\n" +
+            "\n" +
+            "3. Rapporto tra cittadini e istituzioni, fiducia e conflitto\n" +
+            "I Ramponi hanno più volte dichiarato di sentirsi vittime di un sistema ingiusto, denunciando firme false, procedure di credito scorrette, ecc. \n" +
+            "Allo stesso tempo, le istituzioni locali (Comune, servizi sociali, tribunale) hanno cercato soluzioni alternative (abitazioni sostitutive, assistenza) che i fratelli hanno rifiutato. \n" +
+            "Questo conflitto – rifiuto di aiuto + percezione di ingiustizia – ha contribuito all’escalation.\n" +
+            "\n" +
+            "\n" +
+            "4. Estremo gesto come esito della disperazione/contesto\n" +
+            "L’atto dell’esplosione del casolare – saturato di gas, uso di molotov, modalità di barricamento – va letto anche come espressione estrema di un conflitto in cui la famiglia non aveva – o percepiva di non avere – altre “uscite”. \n" +
+            "Socialmente, questo apre riflessioni su come condizioni di esclusione, marginalizzazione, perdita di contatto con la comunità possano generare gesti radicali, violenti.\n" +
+            "\n" +
+            "\n" +
+            "5. Precarietà culturale e formativa\n" +
+            "I media parlano di “estrema indigenza socio-culturale” dei fratelli, difficoltà nel relazionarsi, conoscenza limitata delle “regole del gioco”, del mondo istituzionale. \n" +
+            "Ciò suggerisce che non sia stata solo una questione economica, ma anche di capitale sociale, educazione, supporto comunitario.\n" +
+            "\n" +
+            " \n" +
+            "\n" +
+            "\n" +
+            "---\n" +
+            "\n" +
+            "Implicazioni e spunti di riflessione\n" +
+            "\n" +
+            "Prevenzione: la vicenda mostra che l’intervento precoce – sociale, comunitario, psicologico – in famiglie rurali in difficoltà può essere cruciale.\n" +
+            "\n" +
+            "Reti di supporto: nei contesti agricoli, le reti tradizionali (famiglia, vicinato, associazioni agricole) possono deteriorarsi; occorre pensare nuovi modelli.\n" +
+            "\n" +
+            "Diritto alla proprietà e stabilità: la perdita della casa dei genitori, della terra di famiglia, rappresenta un trauma identitario oltre che economico.\n" +
+            "\n" +
+            "Ruolo delle istituzioni: il conflitto tra volontà della famiglia e imposizione di azioni esecutive (sgombero, pignoramento) porta a tensioni gravissime; serve un equilibrio tra diritti del debitore, tutela collettiva e sistema dell’esecuzione.\n" +
+            "\n" +
+            "Cultura rurale vs modernità: il caso evidenzia uno scontro tra modelli di vita “antichi” (autarchia, autogestione rurale, isolamento) e le esigenze/controlli della modernità (credito, normativa, relazioni sociali).";
 
 
     @Test
@@ -182,7 +269,7 @@ class SpeechToTextManualJob {
 
                 //Float[] embedding = textEmbeddingService.computeCleanEmbedding(chunkContent);
 
-                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(chunkContent);
+                Float[] embedding = textEmbedding.embedDocument(chunkContent);
 
                 // Salva il chunk nel DB usando il repository custom
                 Chunks savedChunk = chunksCustomRepository.saveChunkJdbc(videoChunks, chunkIndex, chunkContent, embedding);

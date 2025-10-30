@@ -1,25 +1,30 @@
 package com.lunasapiens.manualjobs.SpeechToChunks;
 
+import com.lunasapiens.GeneratorVideo;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
-import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
-import com.lunasapiens.manualjobs.ArticleEmbedding.service.TextEmbeddingService;
+import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
 class RAGManualJob {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
-    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
 
     @Autowired
     ChunksService chunksService;
@@ -30,10 +35,12 @@ class RAGManualJob {
 
 
     @Test
-    @Disabled("Disabilitato temporaneamente per debug")
+    //@Disabled("Disabilitato temporaneamente per debug")
     public void eseguiEmbeddingHuggingface() throws Exception {
 
-        textEmbeddingHuggingfaceService.embedDocument("ciao bellooo");
+        Float[] aa = textEmbeddingHuggingfaceService.embedDocument("ciao bellooo");
+        logger.info(Arrays.toString(aa));
+
     }
 
 

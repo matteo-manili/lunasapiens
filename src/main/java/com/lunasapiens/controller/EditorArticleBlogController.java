@@ -6,7 +6,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.TextEmbeddingHuggingfaceService;
+import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    TextEmbeddingHuggingfaceService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;
