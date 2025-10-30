@@ -38,7 +38,7 @@ public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
      *
      * https://huggingface.co/intfloat/multilingual-e5-large-instruct
      */
-    private static final String MODEL_URL = "/intfloat/multilingual-e5-large-instruct";
+    private static final String MODEL_NAME = "/intfloat/multilingual-e5-large-instruct";
 
     private static final String MODELS = "/models";
 
@@ -79,6 +79,7 @@ public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
         int index = 0;
         for (String chunk : chunks) {
             embeddings[index++] = computeEmbedding(chunk, taskType);
+            Thread.sleep(2000); // 2 secondi di pausa tra le richieste
         }
 
         // media dei chunk
@@ -109,7 +110,7 @@ public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
 
         String payload = objectMapper.writeValueAsString(payloadMap);
         //String response = callHuggingFaceAPI( HuggingFaceBaseService.URL_HUGGING_FACE_ROOT_OLD + MODELS + MODEL_URL, payload); // OLD URL
-        String response = callHuggingFaceAPI( HuggingFaceBaseService.URL_HUGGING_FACE_HF_INFERENCE_ROOT + MODELS +MODEL_URL, payload);
+        String response = callHuggingFaceAPI( HuggingFaceBaseService.URL_HUGGING_FACE_HF_INFERENCE_ROOT + MODELS + MODEL_NAME, payload);
 
         double[] embedding = objectMapper.readValue(response, double[].class);
 

@@ -11,7 +11,7 @@ public class HuggingfaceTextSummarizationService extends HuggingFaceBaseService 
 
 
     protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
-    private static final String MODEL_URL = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
+    private static final String MODEL_NAME = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
     private int MAX_CHUNK_WORDS = 5700; // Sono 8.000 token corrispondono grosso modo a 5.500–6.000 parole in italiano o inglese
 
@@ -43,7 +43,7 @@ public class HuggingfaceTextSummarizationService extends HuggingFaceBaseService 
         );
 
         Map<String, Object> payloadMap = Map.of(
-                "model", MODEL_URL + ":featherless-ai",
+                "model", MODEL_NAME + ":featherless-ai",
                 "messages", messages,
                 "max_tokens", maxNewTokens,
                 "temperature", 0.2,
