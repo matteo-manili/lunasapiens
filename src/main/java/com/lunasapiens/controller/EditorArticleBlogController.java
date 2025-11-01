@@ -6,7 +6,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
+import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;
@@ -63,16 +63,11 @@ public class EditorArticleBlogController extends BaseController {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
             // 🔹 Ricerca semantica e FTS
-            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
             // RICERCA FTS
-            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
 
-
-            Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
-            model.addAttribute("articlePage", page);
-            model.addAttribute("hideSearch", true);  // utile per nascondere la paginazione
-            model.addAttribute("search", search);
-            model.addAttribute("currentPage", 0); // evita errori Thymeleaf
+            setModelAttributeArticlesPage(results, model, search);
             return "blog";
         }
 
@@ -97,17 +92,12 @@ public class EditorArticleBlogController extends BaseController {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
             // 🔹 Ricerca semantica e FTS
-            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
             // RICERCA FTS
-            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
-
+            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
 
             // Avvolgi in una Page fake
-            Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
-            model.addAttribute("articlePage", page);
-            model.addAttribute("hideSearch", true);  // utile se vuoi nascondere la paginazione
-            model.addAttribute("search", search);
-            model.addAttribute("currentPage", 0); // ← aggiungi questa riga
+            setModelAttributeArticlesPage(results, model, search);
             return "private/editorArticles";
         }
 
@@ -115,6 +105,18 @@ public class EditorArticleBlogController extends BaseController {
         loadPagedArticles(page, model);
         return "private/editorArticles";
     }
+
+
+    private void setModelAttributeArticlesPage(List<ArticleContent> results, Model model, String search){
+        Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
+        model.addAttribute("articlePage", page);
+        model.addAttribute("hideSearch", true);  // utile se vuoi nascondere la paginazione
+        model.addAttribute("search", search);
+        model.addAttribute("currentPage", 0); // ← aggiungi questa riga
+
+    }
+
+
 
 
 

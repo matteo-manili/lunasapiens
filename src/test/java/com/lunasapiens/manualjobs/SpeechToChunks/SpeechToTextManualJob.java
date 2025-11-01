@@ -9,7 +9,7 @@ import com.lunasapiens.manualjobs.SpeechToChunks.service.FaiSintesiIAService;
 
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
-import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
+import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
 
 import com.lunasapiens.service.HuggingfaceTextSummarizationService;
 import org.junit.jupiter.api.Disabled;
@@ -39,7 +39,7 @@ class SpeechToTextManualJob {
     private FaiSintesiIAService faiSintesiIAService;
 
     @Autowired
-    private HuggingfaceTextEmbeddingService textEmbedding;
+    private HuggingfaceTextEmbedding_E5LargeService textEmbedding;
 
     @Autowired
     private HuggingfaceTextSummarizationService summarizationService;
@@ -54,7 +54,7 @@ class SpeechToTextManualJob {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_TEST_SINTESI_E_TITOLO_ARTICOLO() throws Exception {
         String longText = articolo; // anche 1500 parole
         String title = summarizationService.summarize(longText, true);
@@ -137,7 +137,7 @@ class SpeechToTextManualJob {
 
 
     @Test
-    @Disabled("Disabilitato temporaneamente per debug")
+    //@Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_CREA_CHUNKS() {
         for (int numVideo = 1; numVideo <= 192; numVideo++) {
             final long NUM_VIDEO = numVideo; // deve essere final per usarlo nella lambda

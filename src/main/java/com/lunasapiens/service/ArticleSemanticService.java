@@ -27,7 +27,7 @@ public class ArticleSemanticService {
 
 
     @Autowired
-    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
 
 
 
@@ -44,7 +44,6 @@ public class ArticleSemanticService {
     public ArticleContent addArticle(String content) {
         try {
             // Calcola embedding tramite DJL
-            //Float[] embedding = textEmbeddingService.computeCleanEmbedding(content);
             Float[] embedding = textEmbeddingHuggingfaceService.embedDocument( Utils.cleanHtmlText(content) );
 
             // Salva usando il repository custom con JDBC
@@ -78,7 +77,6 @@ public class ArticleSemanticService {
             Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery(Utils.cleanHtmlText(query));
             return articleContentCustomRepository.searchByEmbeddingThenFTS(queryEmbedding, query, limit);
 
-
         } catch (TranslateException e) {
             throw new RuntimeException("Errore nella predizione dell'embedding", e);
         } catch (SQLException e) {
@@ -102,7 +100,7 @@ public class ArticleSemanticService {
      */
     public List<ArticleContent> searchByEmbedding(String query, int limit) {
         try {
-            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( Utils.cleanHtmlText(query) );
+            Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( query );
             return articleContentCustomRepository.searchByEmbedding(queryEmbedding, limit);
 
         } catch (TranslateException e) {

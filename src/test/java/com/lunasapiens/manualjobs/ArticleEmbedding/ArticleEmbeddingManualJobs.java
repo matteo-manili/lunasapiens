@@ -7,7 +7,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
+import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ class ArticleEmbeddingManualJobs {
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
     @Autowired
-    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;

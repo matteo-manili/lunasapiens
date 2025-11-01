@@ -1,10 +1,10 @@
 package com.lunasapiens.manualjobs.SpeechToChunks;
 
-import com.lunasapiens.GeneratorVideo;
 import com.lunasapiens.entity.Chunks;
+import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeIstructorService;
 import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
-import com.lunasapiens.service.HuggingfaceTextEmbeddingService;
+import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class RAGManualJob {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbedding_E5LargeIstructorService textEmbeddingHuggingfaceService;
 
     @Autowired
     ChunksService chunksService;
@@ -35,7 +35,7 @@ class RAGManualJob {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     public void eseguiEmbeddingHuggingface() throws Exception {
 
         Float[] aa = textEmbeddingHuggingfaceService.embedDocument("ciao bellooo");

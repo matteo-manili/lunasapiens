@@ -18,28 +18,22 @@ import java.util.Map;
  *
  *
  */
+@Deprecated
 @Service
-public class HuggingfaceTextEmbeddingService extends HuggingFaceBaseService {
-
-
-
-
-
+public class HuggingfaceTextEmbedding_E5LargeIstructorService extends HuggingFaceBaseService {
     /**
      * Multilingual-E5-large-instruct
      * Multilingual E5 Text Embeddings: A Technical Report. Liang Wang, Nan Yang, Xiaolong Huang, Linjun Yang, Rangan Majumder, Furu Wei, arXiv 2024
      * This model has 24 layers and the embedding size is 1024.
      * Long texts will be truncated to at most 512 tokens.
      *
-     *  questo funziona bene: multilingual-e5-large-instruct (dimensione dell'embedding di 1024)
+     *  multilingual-e5-large-instruct (dimensione dell'embedding di 1024) // TODO DA ERRORE 504 Gateway Timeout
      *  max ~400–500 parole
      *  2500–3000 caratteri
      *  per chiamata
-     *
      * https://huggingface.co/intfloat/multilingual-e5-large-instruct
      */
-    private static final String MODEL_NAME = "/intfloat/multilingual-e5-large-instruct";
-
+    private static final String MODEL_NAME = "/intfloat/multilingual-e5-large-instruct"; // DA ERRORE 504 timeoput
     private static final String MODELS = "/models";
 
     /**

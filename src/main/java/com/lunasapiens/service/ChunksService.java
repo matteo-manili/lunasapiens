@@ -17,7 +17,7 @@ public class ChunksService {
     private ChunksCustomRepositoryImpl chunksCustomRepository;
 
     @Autowired
-    HuggingfaceTextEmbeddingService textEmbeddingHuggingfaceService;
+    HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
 
 
 
@@ -39,14 +39,11 @@ public class ChunksService {
 
     public List<Chunks> findNearestChunksWithFts(String query, int limit) {
         try {
-
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
             Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( query );
 
-
             return chunksCustomRepository.findNearestChunksWithFts(query, limit);
             //return chunksCustomRepository.findNearestChunksWithFtsCosine(queryEmbedding, query, limit);
-
 
 
         } catch (TranslateException e) {
@@ -65,7 +62,6 @@ public class ChunksService {
         try {
             //Float[] queryEmbedding = TextEmbeddingService.toFloatObjectArray(textEmbeddingService.predictor.predict(query));
             Float[] queryEmbedding = textEmbeddingHuggingfaceService.embedQuery( query );
-
 
             return chunksCustomRepository.findNearestChunksDistance(queryEmbedding, limit);
 
