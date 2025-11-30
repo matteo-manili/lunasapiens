@@ -43,34 +43,6 @@ public class IndexController extends BaseController {
     }
 
 
-    @GetMapping("/register")
-    public String register(Model model, HttpServletRequest request) {
-        // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
-        // è per questo che qui raccolgo l'eventuale attributo
-        String infoError = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
-        String infoAlert = (String) request.getSession().getAttribute(Constants.INFO_ALERT);
-        String infoMessage = (String) request.getSession().getAttribute(Constants.INFO_MESSAGE);
-
-        model.addAttribute("JWT_EXPIRED_TOKEN_DAY_OF_YEAR", Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
-        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", Constants.MAX_MESSAGES_PER_DAY_UTENTE);
-        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS);
-        if (infoError != null) {
-            model.addAttribute(Constants.INFO_ERROR, infoError);
-            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
-        }
-        if (infoAlert != null) {
-            model.addAttribute(Constants.INFO_ALERT, infoAlert);
-            request.getSession().removeAttribute(Constants.INFO_ALERT); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
-        }
-        if (infoMessage != null) {
-            model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
-            request.getSession().removeAttribute(Constants.INFO_MESSAGE); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
-        }
-        return "register";
-    }
-
-
-
     @GetMapping("/info-privacy")
     public String infoPrivacy(Model model) {
         return "info-privacy";

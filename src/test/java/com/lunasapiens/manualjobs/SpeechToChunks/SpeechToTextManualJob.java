@@ -137,7 +137,7 @@ class SpeechToTextManualJob {
 
 
     @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
+    @Disabled("Disabilitato temporaneamente per debug")
     public void OperazioniSpeechToChunks_CREA_CHUNKS() {
         for (int numVideo = 1; numVideo <= 192; numVideo++) {
             final long NUM_VIDEO = numVideo; // deve essere final per usarlo nella lambda

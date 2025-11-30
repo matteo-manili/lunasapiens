@@ -3,6 +3,7 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.service.EmailService;
+import com.lunasapiens.service.RecaptchaVerificationService;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.entity.ProfiloUtente;
@@ -19,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,17 +48,54 @@ public class RegisterController extends BaseController{
     @Autowired
     private TelegramBotService telegramBotService;
 
+    @Autowired
+    private RecaptchaVerificationService recaptchaVerificationService;
 
 
+    @GetMapping("/register")
+    public String register(Model model, HttpServletRequest request) {
+        // dal CeckFilterJwtAutenticator faccio un request.getSession().setAttribute e il redirect a /register.
+        // è per questo che qui raccolgo l'eventuale attributo
+        String infoError = (String) request.getSession().getAttribute(Constants.INFO_ERROR);
+        String infoAlert = (String) request.getSession().getAttribute(Constants.INFO_ALERT);
+        String infoMessage = (String) request.getSession().getAttribute(Constants.INFO_MESSAGE);
+
+        model.addAttribute("JWT_EXPIRED_TOKEN_DAY_OF_YEAR", Constants.JWT_EXPIRED_TOKEN_DAY_OF_YEAR);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_UTENTE", Constants.MAX_MESSAGES_PER_DAY_UTENTE);
+        model.addAttribute("MAX_MESSAGES_PER_DAY_ANONYMOUS", Constants.MAX_MESSAGES_PER_DAY_ANONYMOUS);
+        if (infoError != null) {
+            model.addAttribute(Constants.INFO_ERROR, infoError);
+            request.getSession().removeAttribute(Constants.INFO_ERROR); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
+        }
+        if (infoAlert != null) {
+            model.addAttribute(Constants.INFO_ALERT, infoAlert);
+            request.getSession().removeAttribute(Constants.INFO_ALERT); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
+        }
+        if (infoMessage != null) {
+            model.addAttribute(Constants.INFO_MESSAGE, infoMessage);
+            request.getSession().removeAttribute(Constants.INFO_MESSAGE); // Rimuovi dalla sessione altrimenti si vede sempore nell pagina
+        }
+        return "register";
+    }
 
 
     /**
      * INVIO EMAIL REGISTRAZIOE CON LINK TOKEN
      */
     @PostMapping("/registrazioneUtente")
-    public String registrazioneUtente(@RequestParam("email") @Email @NotEmpty String email, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String registrazioneUtente(@RequestParam("email") @Email @NotEmpty String email, @RequestParam("g-recaptcha-response") String recaptchaResponse,
+                                      HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
         logger.info("sono in registrazioneUtente");
+
+        // 1. Verifica reCAPTCHA
+        if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
+            logger.warn("verifica reCAPTCHA non valida");
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
+            return "redirect:/register";
+        }
+
+        // 2. Continua con la logica già presente
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
         if (skipEmailSave != null && skipEmailSave) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Troppe richieste. Iscrizione negata.");
@@ -92,7 +131,6 @@ public class RegisterController extends BaseController{
                 exc.printStackTrace();;
             }
         }
-
         redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, infoMessage);
         return "redirect:/register";
     }

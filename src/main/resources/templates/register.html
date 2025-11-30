@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links_scripts(~{::title},~{::meta},~{::links},~{::scripts})}">
     <title th:fragment="title">Luna Sapiens | Iscrizione Utente</title>
     <th:block th:fragment="meta">
-        <meta name="description" content="Iscriviti su LunaSapiens.com per accedere a vantaggi esclusivi come il chatbot del Tema Natale IA e il servizio Sinastria. Ricevi un link di accesso valido per 7 giorni, senza necessità di password.">
+        <meta name="description" content="Iscriviti su LunaSapiens.com per accedere a vantaggi esclusivi come il chatbot. Ricevi un link di accesso valido per 7 giorni, senza necessità di password.">
         <meta name="keywords" content="iscrizione, tema natale, chatbot, psicologo, accesso gratuito, LunaSapiens">
     </th:block>
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/register" />
         <link rel="stylesheet" href="/css/style.css">
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="https://www.google.com/recaptcha/api.js"></script>
     </th:block>
 </head>
 <body>
@@ -31,9 +34,27 @@
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
+
+
+            <!-- OLD
             <div class="col-12 col-md-4 col-lg-3">
                 <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Invia link</button>
+            </div> -->
+
+            <!-- NEW -->
+            <div class="col-12 col-md-4 col-lg-3">
+
+                <button class="g-recaptcha btn btn-primary w-100"
+                        id="subscribe-button"
+                        data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
+                        data-callback="onSubmit"
+                        data-action="submit">Invia link</button>
+
+
+
+
             </div>
+
         </form>
     </div>
 
@@ -54,6 +75,8 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
 <script>
+
+    /*
     document.addEventListener("DOMContentLoaded", function() {
         loadData();
         function loadData() {
@@ -81,6 +104,43 @@
             form.submit();
         });
     });
+*/
+
+
+
+    // Quando la pagina è pronta, ricarica l'email salvata
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const savedEmail = localStorage.getItem('email');
+        if (savedEmail) {
+            document.getElementById('email').value = savedEmail;
+        }
+
+    });
+
+
+
+
+    // Funzione richiesta da reCAPTCHA: qui si esegue il submit reale del form
+    function onSubmit(token) {
+
+        // Mostra overlay di caricamento
+        if (typeof showLoadingOverlay === "function") {
+            showLoadingOverlay();
+        }
+
+        // Salva l'email nel localStorage
+        const email = document.getElementById('email').value;
+        localStorage.setItem('email', email);
+
+        // Tracking opzionale
+        if (typeof googleTrackFormSubmit === "function") {
+            googleTrackFormSubmit('register-submit');
+        }
+
+        // Esegue l'invio del form
+        document.getElementById("register-submit").submit();
+    }
 </script>
 
 
