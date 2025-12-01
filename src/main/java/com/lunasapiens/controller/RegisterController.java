@@ -113,10 +113,6 @@ public class RegisterController extends BaseController{
             infoMessage = "Utente già iscritto. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
         }else {
             try{
-
-                // LocalDateTime.now();
-
-
                 ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, Utils.getNowRomeEurope().toLocalDateTime(), null, request.getRemoteAddr(),
                         false, false, UUID.randomUUID().toString() );
                 profiloUtenteRepository.updateSequence();
