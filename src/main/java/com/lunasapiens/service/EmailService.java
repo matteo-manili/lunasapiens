@@ -255,7 +255,7 @@ public class EmailService {
             Optional<ProfiloUtente> profiloUtenteOptional = profiloUtenteRepository.findByEmail(email);
             if (profiloUtenteOptional.isPresent()) {
                 ProfiloUtente profiloUtente = profiloUtenteOptional.get();
-                profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
+                profiloUtente.setDataUltimoAccesso( Utils.getNowRomeEurope().toLocalDateTime() );
                 profiloUtente.setEmailOroscopoGiornaliero(true);
                 profiloUtente.setEmailAggiornamentiTemaNatale(true);
                 profiloUtente.setConfirmationCode( UUID.randomUUID().toString() );
@@ -265,7 +265,7 @@ public class EmailService {
                 result[2] = profiloUtenteOptional.get();
             } else {
 
-                ProfiloUtente newProfiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, LocalDateTime.now(), null,
+                ProfiloUtente newProfiloUtente = profiloUtenteService.salvaProfiloUtente( email, null, null, Utils.getNowRomeEurope().toLocalDateTime(), null,
                         ipAddress, true, true, UUID.randomUUID().toString() );
                 result[0] = true; // Indica successo
                 result[1] = "Indirizzo email salvato con successo. Ti abbiamo inviato un'email di conferma all'indirizzo " + email + ". " +

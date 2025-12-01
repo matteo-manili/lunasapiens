@@ -253,7 +253,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
 
 
     public static int calculateAge(LocalDateTime dateOfBirth) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = Utils.getNowRomeEurope().toLocalDateTime();
         Period period = Period.between(dateOfBirth.toLocalDate(), now.toLocalDate());
         return period.getYears();
     }

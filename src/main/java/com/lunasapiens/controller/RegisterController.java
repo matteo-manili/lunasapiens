@@ -107,14 +107,18 @@ public class RegisterController extends BaseController{
         if(profiloUteteOpt.isPresent() ) {
             ProfiloUtente profiloUtente = profiloUteteOpt.get();
             if(profiloUtente.getDataCreazione() != null){
-                profiloUtente.setDataUltimoAccesso( LocalDateTime.now() );
+                profiloUtente.setDataUltimoAccesso( Utils.getNowRomeEurope().toLocalDateTime() );
                 profiloUtenteRepository.save( profiloUtente );
             }
             emailService.inviaemailRegistrazioneUtente(profiloUtente, codeTokenJwt);
             infoMessage = "Utente già iscritto. Ti abbiamo inviato un'email ("+email+") con il link per accedere come utente autenticato.";
         }else {
             try{
-                ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, LocalDateTime.now(), null, request.getRemoteAddr(),
+
+                // LocalDateTime.now();
+
+
+                ProfiloUtente newProfiloUtente = new ProfiloUtente( email, null, null, Utils.getNowRomeEurope().toLocalDateTime(), null, request.getRemoteAddr(),
                         false, false, UUID.randomUUID().toString() );
                 profiloUtenteRepository.updateSequence();
                 newProfiloUtente = profiloUtenteRepository.save( newProfiloUtente );

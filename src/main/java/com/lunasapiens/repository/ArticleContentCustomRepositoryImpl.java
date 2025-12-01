@@ -1,5 +1,6 @@
 package com.lunasapiens.repository;
 
+import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -178,7 +179,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
             ps.setString(1, content);
-            ps.setObject(2, LocalDateTime.now());
+            ps.setObject(2, Utils.getNowRomeEurope().toLocalDateTime());
             ps.setObject(3, pgVector);
             return ps;
         }, keyHolder);
@@ -186,7 +187,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         ArticleContent article = new ArticleContent();
         article.setId(keyHolder.getKey().longValue());
         article.setContent(content);
-        article.setCreatedAt(LocalDateTime.now());
+        article.setCreatedAt(Utils.getNowRomeEurope().toLocalDateTime());
         article.setEmbedding(embedding);
 
         return article;
