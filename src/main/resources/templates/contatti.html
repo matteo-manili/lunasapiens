@@ -50,6 +50,12 @@
                     <div class="text-danger" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
                 </div>
 
+                <!-- HONEYPOT: campo nascosto per bloccare bot automatici. Se compilato, l'invio è sospetto e viene ignorato. -->
+                <div style="display:none;">
+                    <label for="hp_name">Non compilare questo campo</label>
+                    <input type="text" id="hp_name" name="hp_name" value="">
+                </div>
+
                 <div class="col-12">
                     <!-- reCAPTCHA visibile -->
                     <div class="g-recaptcha" data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP"></div>

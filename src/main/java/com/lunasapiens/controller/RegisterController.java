@@ -84,11 +84,19 @@ public class RegisterController extends BaseController{
      */
     @PostMapping("/registrazioneUtente")
     public String registrazioneUtente(@RequestParam("email") @Email @NotEmpty String email, @RequestParam("g-recaptcha-response") String recaptchaResponse,
-                                      HttpServletRequest request, RedirectAttributes redirectAttributes) {
+                                      @RequestParam(value = "hp_name", required = false) String hpName, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
         logger.info("sono in registrazioneUtente");
 
-        // 1. Verifica reCAPTCHA
+
+        // 1. Controllo honeypot. HONEYPOT: campo nascosto per bloccare bot automatici. Se compilato, l'invio è sospetto e viene ignorato.
+        if (hpName != null && !hpName.isEmpty()) {
+            logger.warn("Honeypot compilato, possibile bot: " + email);
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: invio sospetto bloccato.");
+            return "redirect:/register";
+        }
+
+        // 2. Verifica reCAPTCHA
         if (!recaptchaEnterpriseService.verify(recaptchaResponse)) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
             return "redirect:/register";

@@ -48,10 +48,8 @@ public class ContattiController extends BaseController {
 
 
     @PostMapping("/contattiSubmit")
-    public String contattiSubmit(@Valid @ModelAttribute("contactForm") ContactFormDTO contactForm,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes,
-                                 @RequestParam("g-recaptcha-response") String recaptchaResponse) {
+    public String contattiSubmit(@Valid @ModelAttribute("contactForm") ContactFormDTO contactForm, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                 @RequestParam("g-recaptcha-response") String recaptchaResponse, @RequestParam(value = "hp_name", required = false) String hpName) {
         logger.info("sono in contattiSubmit");
 
         // 1. Verifica se ci sono errori di validazione
@@ -62,7 +60,14 @@ public class ContattiController extends BaseController {
             return "redirect:/contatti";
         }
 
-        // 2. Verifica il token reCAPTCHA
+        // 2. Controllo honeypot. HONEYPOT: campo nascosto per bloccare bot automatici. Se compilato, l'invio è sospetto e viene ignorato.
+        if (hpName != null && !hpName.isEmpty()) {
+            logger.warn("Honeypot compilato, possibile bot: " + contactForm.getEmail());
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: invio sospetto bloccato.");
+            return "redirect:/register";
+        }
+
+        // 3. Verifica il token reCAPTCHA
         if (!recaptchaEnterpriseService.verify(recaptchaResponse)) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
             return "redirect:/contatti";

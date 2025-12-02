@@ -35,10 +35,17 @@
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
 
-            <div class="col-12 ">
+            <!-- HONEYPOT: campo nascosto per bloccare bot automatici. Se compilato, l'invio è sospetto e viene ignorato. -->
+            <div style="display:none;">
+                <label for="hp_name">Non compilare questo campo</label>
+                <input type="text" id="hp_name" name="hp_name" value="">
+            </div>
+
+            <div class="col-12 col-md-8 col-lg-6 mb-3 d-flex justify-content-center">
                 <!-- reCAPTCHA visibile -->
                 <div class="g-recaptcha" data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP"></div>
             </div>
+
 
             <div class="col-12 col-md-4 col-lg-3">
                 <button type="submit" class="btn btn-primary w-100 mt-2">Invia link</button>
