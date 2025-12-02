@@ -102,10 +102,10 @@ public class AppConfig implements WebMvcConfigurer {
         GoogleRecaptchaConfig googleRecaptchaConfig;
         if (Utils.isLocalhost()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
-                    "recaptcha.secret.key", "recaptcha.public.key")) );
-            googleRecaptchaConfig = new GoogleRecaptchaConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
+                    "google.recaptcha.api-key", "google.recaptcha.site-key", "google.recaptcha.project-id")) );
+            googleRecaptchaConfig = new GoogleRecaptchaConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            googleRecaptchaConfig = new GoogleRecaptchaConfig( env.getProperty("recaptcha.secret.key"), env.getProperty("recaptcha.public.key") );
+            googleRecaptchaConfig = new GoogleRecaptchaConfig( env.getProperty("google.recaptcha.api-key"), env.getProperty("google.recaptcha.site-key"), env.getProperty("google.recaptcha.project-id") );
         }
         return googleRecaptchaConfig;
     }

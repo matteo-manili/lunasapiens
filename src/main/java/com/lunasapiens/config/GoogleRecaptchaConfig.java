@@ -3,16 +3,39 @@ package com.lunasapiens.config;
 public class GoogleRecaptchaConfig {
 
 
-    private String secretKey;
-    private String publicKey;
+    private String apiKey;
+    private String siteKey;
+    private String projectId;
 
-    public GoogleRecaptchaConfig(String secretKey, String publicKey) {
-        this.secretKey = secretKey;
-        this.publicKey = publicKey;
+
+    public GoogleRecaptchaConfig(String apiKey, String siteKey, String projectId) {
+        this.apiKey = apiKey;
+        this.siteKey = siteKey;
+        this.projectId = projectId;
     }
 
-    public String getSecretKey() {
-        return secretKey;
+
+    public String getApiKey() {
+        return apiKey;
     }
-    public String getPublicKey() { return publicKey; }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getSiteKey() {
+        return siteKey;
+    }
+
+    public void setSiteKey(String siteKey) {
+        this.siteKey = siteKey;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 }

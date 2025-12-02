@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.service.EmailService;
-import com.lunasapiens.service.RecaptchaVerificationService;
+import com.lunasapiens.service.RecaptchaEnterpriseService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ContattiController extends BaseController {
     private EmailService emailService;
 
     @Autowired
-    private RecaptchaVerificationService recaptchaVerificationService;
+    private RecaptchaEnterpriseService recaptchaEnterpriseService;
 
 
 
@@ -63,11 +63,11 @@ public class ContattiController extends BaseController {
         }
 
         // 2. Verifica il token reCAPTCHA
-        if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
-            logger.warn("verifica reCAPTCHA non valida");
+        if (!recaptchaEnterpriseService.verify(recaptchaResponse)) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
-            return "redirect:/contatti";
+            return "redirect:/register";
         }
+
 
         // 3. Se tutto è valido, invia l'email
         emailService.inviaEmailContatti(contactForm);

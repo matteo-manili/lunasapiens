@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;
 import com.lunasapiens.service.EmailService;
-import com.lunasapiens.service.RecaptchaVerificationService;
+import com.lunasapiens.service.RecaptchaEnterpriseService;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.entity.ProfiloUtente;
@@ -48,7 +48,8 @@ public class RegisterController extends BaseController{
     private TelegramBotService telegramBotService;
 
     @Autowired
-    private RecaptchaVerificationService recaptchaVerificationService;
+    private RecaptchaEnterpriseService recaptchaEnterpriseService;
+
 
 
     @GetMapping("/register")
@@ -88,11 +89,11 @@ public class RegisterController extends BaseController{
         logger.info("sono in registrazioneUtente");
 
         // 1. Verifica reCAPTCHA
-        if (!recaptchaVerificationService.verifyRecaptcha(recaptchaResponse)) {
-            logger.warn("verifica reCAPTCHA non valida");
+        if (!recaptchaEnterpriseService.verify(recaptchaResponse)) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
             return "redirect:/register";
         }
+
 
         // 2. Continua con la logica già presente
         Boolean skipEmailSave = (Boolean) request.getAttribute(Constants.SKIP_EMAIL_SAVE);
@@ -180,131 +181,6 @@ public class RegisterController extends BaseController{
 
 
 
-
-
-
-
-    // ############################### CODICE DI TEST JWT ###############################
-
-/*
-
-    @GetMapping("/jwt")
-    public String testJWT(Model model) throws NoSuchAlgorithmException {
-
-        // Chiavi Base64 (esempio, sostituisci con le tue chiavi)
-        String publicKeyB64 = jwtKeys.getKeyPublic();
-        String privateKeyB64 = jwtKeys.getKeyPrivate();
-
-        System.out.println("publicKeyB64 testJWT: " + publicKeyB64);
-        System.out.println("privateKeyB64 testJWT: " + privateKeyB64);
-
-        RSAPublicKey rSAPublicKey = decodificaChiaveJwtPublic(publicKeyB64);
-        RSAPrivateKey rSAPrivateKey = decodificaChiaveJwtPrivate(privateKeyB64);
-
-        String token = "";
-
-        // Creo un token JWT
-        try {
-            Algorithm algorithm = Algorithm.RSA256(rSAPublicKey, rSAPrivateKey);
-            token = JWT.create()
-                    .withIssuer( Constants.JWT_WITH_ISSUER )
-
-                    .withSubject("emailllllll")
-                    .withIssuedAt(new Date()) // Aggiunge data di emissione
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 86400000)) // Token valido per 1 giorno
-
-                    .sign(algorithm);
-
-
-            System.out.println("token jwt: "+token);
-
-
-        } catch (JWTCreationException exc){
-            // Invalid Signing configuration / Couldn't convert Claims.
-            exc.printStackTrace();
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
-
-
-
-        // qui verifica se il token è valido
-        //token = "TOKENCASUALEeeeeeeeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE";
-
-        DecodedJWT decodedJWT;
-        try {
-            Algorithm algorithm = Algorithm.RSA256(rSAPublicKey, rSAPrivateKey);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    // specify any specific claim validations
-                    .withIssuer( Constants.JWT_WITH_ISSUER )
-                    // reusable verifier instance
-                    .build();
-
-            decodedJWT = verifier.verify(token);
-
-            // Se arriviamo qui, il token è valido
-            System.out.println("Token valido!");
-            System.out.println("Issuer: " + decodedJWT.getIssuer());
-            System.out.println("Claims: " + decodedJWT.getClaims());
-
-
-        } catch (JWTVerificationException exception){
-            // Invalid signature/claims
-            // Token non valido
-            System.out.println("Token non valido: " + exception.getMessage());
-
-
-        }
-
-        return "index";
-    }
-
-
-    public static RSAPublicKey decodificaChiaveJwtPublic(String publicKeyB64){
-        // Decodifica Base64
-        byte[] publicKeyDecoded = Base64.getDecoder().decode(publicKeyB64);
-        // Crea la chiave pubblica da X.509
-        KeyFactory keyFactory = null;
-        try {
-            keyFactory = KeyFactory.getInstance("RSA");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyDecoded);
-        RSAPublicKey publicKey = null;
-        try {
-            publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
-        return publicKey;
-    }
-
-
-    public static RSAPrivateKey decodificaChiaveJwtPrivate(String privateKeyB64){
-
-        byte[] privateKeyDecoded = Base64.getDecoder().decode(privateKeyB64);
-        // Crea la chiave privata da PKCS#8
-        KeyFactory keyFactory = null;
-        try {
-            keyFactory = KeyFactory.getInstance("RSA");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyDecoded);
-        RSAPrivateKey rSAPrivateKey = null;
-        try {
-            rSAPrivateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
-        return rSAPrivateKey;
-    }
-
-
- */
 
 }
 

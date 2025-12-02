@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
     <th:block th:fragment="scripts">
-        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
     </th:block>
 </head>
 <body>
@@ -52,10 +52,15 @@
 
                 <div class="col-12">
                     <div class="d-grid">
-                        <button class="g-recaptcha btn btn-primary btn-lg"
-                                data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
-                                data-callback="onSubmit"
-                                data-action="submit">Invia Messaggio</button>
+                        <!-- reCAPTCHA visibile -->
+                        <div class="g-recaptcha"
+                             data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP">
+                        </div>
+
+                        <button type="submit" class="btn btn btn-primary btn-lg">Invia Messaggio</button>
+
+
+
                     </div>
                 </div>
 

@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="/css/style.css">
     </th:block>
     <th:block th:fragment="scripts">
-        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
     </th:block>
 </head>
 <body>
@@ -30,28 +30,28 @@
             Il link è valido per <span th:text="${JWT_EXPIRED_TOKEN_DAY_OF_YEAR}"></span> giorni, dopodiché potrai richiederne uno nuovo.<br>
             Tutto il progetto è <strong>gratuito</strong> e semplice da usare.
         </p>
-        <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center" onsubmit="showLoadingOverlay()">
+        <form id="register-submit" th:action="@{/registrazioneUtente}" method="post" class="row g-2 justify-content-center">
             <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Indirizzo Email" aria-label="Indirizzo Email" required>
             </div>
 
-
-            <!-- OLD
-            <div class="col-12 col-md-4 col-lg-3">
-                <button type="submit" id="subscribe-button" class="btn btn-primary w-100">Invia link</button>
-            </div> -->
-
             <!-- NEW -->
             <div class="col-12 col-md-4 col-lg-3">
 
+                <!--
                 <button class="g-recaptcha btn btn-primary w-100"
                         id="subscribe-button"
-                        data-sitekey="6Ld0P8YqAAAAAMkoHnykcf5Yjy2UtyTHKXIiDnlR"
+                        data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP"
                         data-callback="onSubmit"
-                        data-action="submit">Invia link</button>
+                        data-action="REGISTER">Invia link</button> -->
 
 
+                <!-- reCAPTCHA visibile -->
+                <div class="g-recaptcha"
+                     data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP">
+                </div>
 
+                <button type="submit" class="btn btn-primary w-100 mt-2">Invia link</button>
 
             </div>
 
@@ -75,72 +75,42 @@
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
 <script>
-
-    /*
     document.addEventListener("DOMContentLoaded", function() {
-        loadData();
-        function loadData() {
-            const email = localStorage.getItem('email');
-            // Imposta i valori sugli input
-            document.getElementById('email').value = email || "";
-        }
-
-        // Ottieni il modulo
-        const form = document.getElementById('register-submit');
-        // Aggiungi un event listener per l'evento submit
-        form.addEventListener('submit', function(event) {
-            // Prevenire l'invio del modulo se necessario
-            event.preventDefault();
-            // Ottieni il valore dell'input email
-            const emailInput = document.getElementById('email');
-            const email = emailInput.value;
-
-            // Salva il valore nel localStorage
-            localStorage.setItem('email', email);
-
-            googleTrackFormSubmit('register-submit');
-
-            // Esegui il submit del modulo
-            form.submit();
-        });
-    });
-*/
-
-
-
-    // Quando la pagina è pronta, ricarica l'email salvata
-    document.addEventListener("DOMContentLoaded", function() {
-
+        // Ricarica email salvata
         const savedEmail = localStorage.getItem('email');
         if (savedEmail) {
             document.getElementById('email').value = savedEmail;
         }
 
+        const form = document.getElementById("register-submit");
+
+        form.addEventListener("submit", function(event) {
+            // Mostra overlay di caricamento
+            if (typeof showLoadingOverlay === "function") {
+                showLoadingOverlay();
+            }
+
+            // Salva email in localStorage
+            const email = document.getElementById("email").value;
+            localStorage.setItem("email", email);
+
+            // Tracking opzionale
+            if (typeof googleTrackFormSubmit === "function") {
+                googleTrackFormSubmit('register-submit');
+            }
+
+            // Verifica che il reCAPTCHA sia stato completato
+            const recaptchaResponse = grecaptcha.getResponse();
+            if (!recaptchaResponse || recaptchaResponse.length === 0) {
+                alert("Per favore, completa il reCAPTCHA.");
+                event.preventDefault();
+                return false;
+            }
+
+            // Il form invierà automaticamente 'g-recaptcha-response' al server
+            // Non serve richiamare onSubmit
+        });
     });
-
-
-
-
-    // Funzione richiesta da reCAPTCHA: qui si esegue il submit reale del form
-    function onSubmit(token) {
-
-        // Mostra overlay di caricamento
-        if (typeof showLoadingOverlay === "function") {
-            showLoadingOverlay();
-        }
-
-        // Salva l'email nel localStorage
-        const email = document.getElementById('email').value;
-        localStorage.setItem('email', email);
-
-        // Tracking opzionale
-        if (typeof googleTrackFormSubmit === "function") {
-            googleTrackFormSubmit('register-submit');
-        }
-
-        // Esegue l'invio del form
-        document.getElementById("register-submit").submit();
-    }
 </script>
 
 
