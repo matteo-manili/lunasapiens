@@ -64,7 +64,7 @@ public class ContattiController extends BaseController {
         if (hpName != null && !hpName.isEmpty()) {
             logger.warn("Honeypot compilato, possibile bot: " + contactForm.getEmail());
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: invio sospetto bloccato.");
-            return "redirect:/register";
+            return "redirect:/contatti";
         }
 
         // 3. Verifica il token reCAPTCHA

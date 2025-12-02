@@ -49,7 +49,7 @@ public class RecaptchaEnterpriseService {
             RecaptchaAssessmentRequest requestBody = new RecaptchaAssessmentRequest(
                     new Event(
                             token,
-                            "REGISTER",
+                            "SUBMIT_FORM",
                             recaptchaConfig.getSiteKey()
                     )
             );
