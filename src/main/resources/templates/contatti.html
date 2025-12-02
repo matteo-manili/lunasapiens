@@ -51,16 +51,13 @@
                 </div>
 
                 <div class="col-12">
+                    <!-- reCAPTCHA visibile -->
+                    <div class="g-recaptcha" data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP"></div>
+                </div>
+
+                <div class="col-12">
                     <div class="d-grid">
-                        <!-- reCAPTCHA visibile -->
-                        <div class="g-recaptcha"
-                             data-sitekey="6LeYNh8sAAAAAD7KgT8WuM4-ug9PpKuP3AWxUbiP">
-                        </div>
-
                         <button type="submit" class="btn btn btn-primary btn-lg">Invia Messaggio</button>
-
-
-
                     </div>
                 </div>
 
@@ -75,13 +72,33 @@
 
 
 <script>
-    function onSubmit(token) {
-        let form = document.getElementById("contact-form");
-        showLoadingOverlay(); // Mostra l'animazione di caricamento
-        form.submit();
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+        // Carica eventuali valori salvati
+        const savedName = localStorage.getItem('contact_name');
+        const savedEmail = localStorage.getItem('contact_email');
+        const savedMessage = localStorage.getItem('contact_message');
 
+        if (savedName) document.getElementById('name').value = savedName;
+        if (savedEmail) document.getElementById('email').value = savedEmail;
+        if (savedMessage) document.getElementById('message').value = savedMessage;
+
+        // Aggiungi listener sul submit per salvare i dati
+        const form = document.getElementById('contact-form');
+        form.addEventListener('submit', function() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            localStorage.setItem('contact_name', name);
+            localStorage.setItem('contact_email', email);
+            localStorage.setItem('contact_message', message);
+
+            // Mostra overlay di caricamento se definito
+            if (typeof showLoadingOverlay === "function") showLoadingOverlay();
+        });
+    });
 </script>
+
 
 
 

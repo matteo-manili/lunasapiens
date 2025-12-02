@@ -65,7 +65,7 @@ public class ContattiController extends BaseController {
         // 2. Verifica il token reCAPTCHA
         if (!recaptchaEnterpriseService.verify(recaptchaResponse)) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Errore: verifica reCAPTCHA non valida!");
-            return "redirect:/register";
+            return "redirect:/contatti";
         }
 
 
