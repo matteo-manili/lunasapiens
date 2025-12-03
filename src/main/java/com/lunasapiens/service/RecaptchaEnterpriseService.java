@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Nome Progetto reCaptcha v2 lunasapiens.com
+ * reCaptcha v2 lunasapiens.com
  *
  *
  * Credenziali Api Key gooogle
@@ -47,12 +47,7 @@ public class RecaptchaEnterpriseService {
 
             // JSON Body
             RecaptchaAssessmentRequest requestBody = new RecaptchaAssessmentRequest(
-                    new Event(
-                            token,
-                            "SUBMIT_FORM",
-                            recaptchaConfig.getSiteKey()
-                    )
-            );
+                    new Event(token, "SUBMIT_FORM", recaptchaConfig.getSiteKey()));
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
