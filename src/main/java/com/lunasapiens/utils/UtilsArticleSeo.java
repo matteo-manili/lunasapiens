@@ -8,6 +8,31 @@ public class UtilsArticleSeo {
 
 
     /**
+     * Pulisce un testo generato da LLM rimuovendo eventuali virgolette iniziali e finali.
+     * Gestisce sia virgolette standard (") che tipografiche (“”).
+     *
+     * @param title titolo generato dal modello
+     * @return titolo senza virgolette ai bordi
+     */
+    public static String cleanGeneratedText(String title) {
+        if (title == null || title.isBlank()) {
+            return title; // restituisce null o stringa vuota così com'è
+        }
+        title = title.strip(); // rimuove spazi iniziali e finali
+
+        // rimuove virgolette iniziali e finali
+        if ((title.startsWith("\"") && title.endsWith("\"")) ||
+                (title.startsWith("“") && title.endsWith("”"))) {
+            title = title.substring(1, title.length() - 1).strip();
+        }
+
+        return title;
+    }
+
+
+
+
+    /**
      * Pulisce l'HTML:
      * - Rimuove i tag
      * - Decodifica le entità HTML (&nbsp;, &egrave; → è, ecc.)
@@ -28,19 +53,6 @@ public class UtilsArticleSeo {
 
         return text;
     }
-
-
-    /**
-     * Controlla se il testo è solo un URL (con eventuali spazi o newline attorno)
-     */
-    private static boolean isOnlyUrl(String text) {
-        if (text == null) return false;
-        String trimmed = text.trim();
-        // Rimuove eventuali punti finali o caratteri extra
-        trimmed = trimmed.replaceAll("[.,;!?]+$", "");
-        return trimmed.matches("https?://\\S+");
-    }
-
 
 
 }

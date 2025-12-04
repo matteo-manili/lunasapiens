@@ -14,36 +14,76 @@ import java.util.Map;
 @Service
 public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBaseService {
 
-
     protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
     private static final String MODEL_NAME = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
 
-    public String generateTitle(String content, Long articleId) {
 
-        String text = UtilsArticleSeo.cleanText(content);
-        System.out.println("text pulito: " + text);
+    public String generateMetaDescription(String content, Long articleId) {
 
-        String textSystem = "Genera un titolo di max 10 parole per il seguente testo:\n\n" + text;
+        if (content == null || content.isEmpty()) {
+            // La stringa è nulla o vuota
+            System.out.println("La stringa è nulla o vuota");
+            return "articolo-"+String.valueOf(articleId);
 
-        int numTokenInput = countTokens(MODEL_NAME, textSystem);
-        int numTokenOutput = estimateTokensFromWords(10);
+        } else {
+            System.out.println("La stringa contiene qualcosa");
+
+            String text = UtilsArticleSeo.cleanText(content);
+            System.out.println("text pulito: " + text);
+            String textSystem = "Genera **solo la meta description in italiano**, circa 140–160 caratteri, " +
+                    "per il seguente testo. Non aggiungere frasi come 'Ecco la meta description:' " +
+                    "e non usare virgolette:\n\n" + text;
 
 
-        int totalTokens = numTokenInput + numTokenOutput;
+            int numTokenInput = countTokens(MODEL_NAME, textSystem);
+            int numTokenOutput = estimateTokensFromChars(200);
 
-        System.out.println("totalTokens: " + totalTokens);
+            int totalTokens = numTokenInput + numTokenOutput;
+            System.out.println("totalTokens: " + totalTokens);
 
-        String title = eseguiLLaM(textSystem, "", totalTokens);
+            String metaDescription = eseguiLLaM(textSystem, "", totalTokens);
 
-
-
-        // fallback se la generazione fallisce
-        if (title == null || title.isBlank()) {
-            title = "Articolo di approfondimento " + articleId;
+            return metaDescription;
         }
 
-        return title;
+    }
+
+
+
+
+
+
+    public String generateTitle(String content, Long articleId) {
+
+        if (content == null || content.isEmpty()) {
+            // La stringa è nulla o vuota
+            System.out.println("La stringa è nulla o vuota");
+            return "articolo-"+String.valueOf(articleId);
+
+        } else {
+            System.out.println("La stringa contiene qualcosa");
+
+            String text = UtilsArticleSeo.cleanText(content);
+            System.out.println("text pulito: " + text);
+            String textSystem = "Genera **solo un titolo in italiano**, 50–80 caratteri, " +
+                    "per il seguente testo. Non aggiungere frasi come 'Ecco il titolo:' " +
+                    "e non usare virgolette:\n\n" + text;
+
+
+            int numTokenInput = countTokens(MODEL_NAME, textSystem);
+            int numTokenOutput = estimateTokensFromChars(100);
+
+
+            int totalTokens = numTokenInput + numTokenOutput;
+            System.out.println("totalTokens: " + totalTokens);
+
+            String title = eseguiLLaM(textSystem, "", totalTokens);
+
+            return title;
+        }
+
+
     }
 
 

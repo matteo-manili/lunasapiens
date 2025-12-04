@@ -27,6 +27,21 @@ public class ArticleContent implements Serializable {
     private LocalDateTime createdAt;
 
 
+
+    // Campo nuovo: Titolo SEO
+    @Column(unique = true, length = 100)
+    private String title;
+
+    // Campo nuovo: Meta description
+    @Column(name = "meta_description", columnDefinition = "TEXT")
+    private String metaDescription;
+
+    // Campo nuovo: URL parlante SEO-friendly
+    @Column(name = "seo_url", unique = true, length = 100)
+    private String seoUrl;
+
+
+
     // Usiamo un tipo JDBC custom (PostgreSQLVectorJdbcType) perché Hibernate non supporta nativamente
     // il tipo 'vector' di PostgreSQL (pgvector). Questo JdbcType gestisce la conversione tra
     // Float[] in Java e il formato accettato da pgvector, permettendo di salvare e leggere correttamente
@@ -65,6 +80,18 @@ public class ArticleContent implements Serializable {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getTitle() { return title; }
+
+    public void setTitle(String title) { this.title = title; }
+
+    public String getMetaDescription() { return metaDescription; }
+
+    public void setMetaDescription(String metaDescription) { this.metaDescription = metaDescription; }
+
+    public String getSeoUrl() { return seoUrl; }
+
+    public void setSeoUrl(String seoUrl) { this.seoUrl = seoUrl; }
 
     public Float[] getEmbedding() {
         return embedding;

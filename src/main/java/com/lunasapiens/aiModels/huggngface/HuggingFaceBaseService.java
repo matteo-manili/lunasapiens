@@ -116,6 +116,32 @@ public abstract class HuggingFaceBaseService {
         return (int) Math.ceil(numWords * tokensPerWord);
     }
 
+    /**
+     * Stima il numero di token a partire dal numero di caratteri.
+     * Basato sulla media italiana per LLaMAntino-3-ANITA (~4 caratteri per token)
+     *
+     * @param numChars numero di caratteri del testo
+     * @return numero stimato di token
+     */
+    public int estimateTokensFromChars(int numChars) {
+        double avgCharsPerToken = 4.0; // 1 token ≈ 4 caratteri in italiano
+        return (int) Math.ceil(numChars / avgCharsPerToken);
+    }
+
+    /**
+     * Comodo overload: calcola la stima dei token direttamente dal testo
+     *
+     * @param text testo di cui stimare i token
+     * @return numero stimato di token
+     */
+    public int estimateTokensFromChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        return estimateTokensFromChars(text.length());
+    }
+
+
 
 
 }
