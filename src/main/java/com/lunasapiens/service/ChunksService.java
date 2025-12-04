@@ -3,7 +3,7 @@ package com.lunasapiens.service;
 import ai.djl.translate.TranslateException;
 import com.lunasapiens.entity.Chunks;
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.lunasapiens.manualjobs.SpeechToChunks;
 
 import com.lunasapiens.entity.Chunks;
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeIstructorService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeIstructorService;
 import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
 import com.theokanning.openai.completion.chat.ChatMessage;

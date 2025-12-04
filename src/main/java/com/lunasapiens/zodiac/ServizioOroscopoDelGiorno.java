@@ -2,7 +2,7 @@ package com.lunasapiens.zodiac;
 
 import com.lunasapiens.GeneratorImage;
 import com.lunasapiens.GeneratorVideo;
-import com.lunasapiens.service.aiModels.openai.OpenAIGptTheokanning;
+import com.lunasapiens.aiModels.openai.OpenAIGptTheokanning;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
 import com.lunasapiens.Utils;

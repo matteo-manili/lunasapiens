@@ -1,4 +1,4 @@
-package com.lunasapiens.service.aiModels.huggngface;
+package com.lunasapiens.aiModels.huggngface;
 
 import com.lunasapiens.UtilsArticleSeo;
 import org.springframework.stereotype.Service;

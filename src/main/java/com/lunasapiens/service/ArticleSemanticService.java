@@ -5,7 +5,7 @@ import com.lunasapiens.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

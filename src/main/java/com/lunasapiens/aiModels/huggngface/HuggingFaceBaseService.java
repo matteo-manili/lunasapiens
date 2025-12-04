@@ -1,4 +1,4 @@
-package com.lunasapiens.service.aiModels.huggngface;
+package com.lunasapiens.aiModels.huggngface;
 
 import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,7 +1,7 @@
 package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
 import com.lunasapiens.config.AppConfig;
-import com.lunasapiens.service.aiModels.openai.OpenAIGptTheokanning;
+import com.lunasapiens.aiModels.openai.OpenAIGptTheokanning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

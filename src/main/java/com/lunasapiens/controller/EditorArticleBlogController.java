@@ -6,7 +6,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import org.slf4j.Logger;

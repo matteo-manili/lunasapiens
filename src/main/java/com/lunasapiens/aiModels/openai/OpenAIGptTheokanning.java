@@ -1,4 +1,4 @@
-package com.lunasapiens.service.aiModels.openai;
+package com.lunasapiens.aiModels.openai;
 
 
 import com.theokanning.openai.service.OpenAiService;

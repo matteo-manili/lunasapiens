@@ -9,9 +9,9 @@ import com.lunasapiens.manualjobs.SpeechToChunks.service.FaiSintesiIAService;
 
 import com.lunasapiens.repository.ChunksCustomRepositoryImpl;
 import com.lunasapiens.repository.VideoChunksRepository;
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 
-import com.lunasapiens.service.aiModels.huggngface.HuggingfaceLLaMASummarizationService;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceLLaMASummarizationService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
