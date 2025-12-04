@@ -7,6 +7,7 @@ import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.AstroChartDTO;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.utils.UtilsZodiac;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +145,7 @@ public class ServizioTemaNatale {
         Properties lunaSegniProperties = propertiesConfig.lunaSegni(); // non lo uso....
         Properties transitiPianetiSegniTMProperties = propertiesConfig.transitiPianetiSegni_TemaNatale();
 
-        ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
+        UtilsZodiac.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
 
         Properties aspettiCongiunzione = propertiesConfig.aspettiCongiunzione();
@@ -263,7 +264,7 @@ public class ServizioTemaNatale {
         Properties lunaSegniProperties = propertiesConfig.lunaSegni(); // non lo uso....
         Properties transitiPianetiSegniTMProperties = propertiesConfig.transitiPianetiSegni_TemaNatale();
 
-        ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
+        UtilsZodiac.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
 
         Properties aspettiCongiunzione = propertiesConfig.aspettiCongiunzione();

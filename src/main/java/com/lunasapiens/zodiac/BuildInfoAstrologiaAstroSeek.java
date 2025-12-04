@@ -1,10 +1,11 @@
 package com.lunasapiens.zodiac;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.RelationshipOption;
+import com.lunasapiens.utils.UtilsZodiac;
 import javafx.util.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -274,11 +275,11 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 "&narozeni_mesto_hidden=" + coordinateDTO.getCityName() +
                 "&narozeni_stat_hidden=" +coordinateDTO.getStatoCode() +
                 "&narozeni_podstat_kratky_hidden=" +
-                "&narozeni_sirka_stupne=" +ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
-                "&narozeni_sirka_minuty="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
+                "&narozeni_sirka_stupne=" + UtilsZodiac.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getKey() +
+                "&narozeni_sirka_minuty="+ UtilsZodiac.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLat()).getValue() +
                 "&narozeni_sirka_smer=0" +
-                "&narozeni_delka_stupne="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
-                "&narozeni_delka_minuty="+ZodiacUtils.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
+                "&narozeni_delka_stupne="+ UtilsZodiac.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getKey() +
+                "&narozeni_delka_minuty="+ UtilsZodiac.convertCoordinataToDegreesMinutes(giornoOraPosizioneDTO.getLon()).getValue() +
                 "&narozeni_delka_smer=0" +
                 "&narozeni_timezone_form=auto" +
                 "&narozeni_timezone_dst_form=auto" +
@@ -326,7 +327,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     }
 
                     boolean isRetrograde = retrogradeElement.text().trim().equals("R");
-                    double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
+                    double positionInDecimal = UtilsZodiac.convertDegreesToDecimal(positionGradiString);
                     Constants.SegniZodiacali segnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
                     double positionInDecimalTotal = segnoZodiacale.getGradi() + positionInDecimal;
 
@@ -336,8 +337,8 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     //System.out.println();
 
                     Constants.Pianeti pianetaConstant = Constants.Pianeti.fromNomeAstroSeek( planetName );
-                    Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
-                    String significatoTransitoPianetaSegno = ZodiacUtils.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
+                    Pair gradiMinutiPair = UtilsZodiac.dammiGradiEMinutiPair(positionGradiString);
+                    String significatoTransitoPianetaSegno = UtilsZodiac.significatoTransitoPianetaSegno(transitiPianetiSegniProperties, pianetaConstant.getNumero(), segnoZodiacale.getNumero());
                     Pianeti pianeta = new Pianeti(pianetaConstant.getNumero(), pianetaConstant.getNome(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
                             (int)gradiMinutiPair.getValue(), segnoZodiacale.getNumero(), segnoZodiacale.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                     pianetiList.add( pianeta );
@@ -345,9 +346,9 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
 
                     // aggiungo pianeta Nodo Sud (sarebbe opposto al pianeta Nodo M, o anche chiamato Nodo N. Sono simili ma non proprio gli stessi)
                     if( pianeta.getNumeroPianeta() == Constants.Pianeti.NODE_M.getNumero()){
-                        Pair gradiMinutiNodoOppostoPair = ZodiacUtils.calcolaPosizionePianetaOppostoInGradiEMinuti((int)gradiMinutiPair.getKey(), (int)gradiMinutiPair.getValue());
-                        double positionInDecimalTotalNodoSud = ZodiacUtils.calcolaPosizionePianetaOpposto(positionInDecimalTotal);
-                        Constants.SegniZodiacali segnoOpposto = ZodiacUtils.calcolaSegnoOpposto(segnoZodiacale);
+                        Pair gradiMinutiNodoOppostoPair = UtilsZodiac.calcolaPosizionePianetaOppostoInGradiEMinuti((int)gradiMinutiPair.getKey(), (int)gradiMinutiPair.getValue());
+                        double positionInDecimalTotalNodoSud = UtilsZodiac.calcolaPosizionePianetaOpposto(positionInDecimalTotal);
+                        Constants.SegniZodiacali segnoOpposto = UtilsZodiac.calcolaSegnoOpposto(segnoZodiacale);
                         Pianeti pianetaNodeS = new Pianeti(Constants.Pianeti.NODE_S.getNumero(), Constants.Pianeti.NODE_S.getNome(), positionInDecimalTotalNodoSud, (int)gradiMinutiNodoOppostoPair.getKey(),
                                 (int)gradiMinutiNodoOppostoPair.getValue(), segnoOpposto.getNumero(), segnoOpposto.getNome(), isRetrograde, significatoTransitoPianetaSegno);
                         pianetiList.add( pianetaNodeS );
@@ -363,7 +364,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     String signName = siblingElement.select("img.astro_symbol").attr("alt");
                     String positionGradiString = siblingElement.nextElementSibling().text();
 
-                    double positionInDecimal = ZodiacUtils.convertDegreesToDecimal(positionGradiString);
+                    double positionInDecimal = UtilsZodiac.convertDegreesToDecimal(positionGradiString);
                     Constants.SegniZodiacali SegnoZodiacale = Constants.SegniZodiacali.fromNomeEn( signName );
                     double positionInDecimalTotal = SegnoZodiacale.getGradi() + positionInDecimal;
 
@@ -372,7 +373,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                     //System.out.println();
 
                     Constants.Case casa = Constants.Case.fromCode( houseName );
-                    Pair gradiMinutiPair = ZodiacUtils.dammiGradiEMinutiPair(positionGradiString);
+                    Pair gradiMinutiPair = UtilsZodiac.dammiGradiEMinutiPair(positionGradiString);
                     CasePlacide casaPlacida = new CasePlacide( casa.getNumero(), casa.getName(), positionInDecimalTotal, (int)gradiMinutiPair.getKey(),
                             (int)gradiMinutiPair.getValue(), SegnoZodiacale.getNumero(), SegnoZodiacale.getNome());
                     casePlacidesList.add( casaPlacida );

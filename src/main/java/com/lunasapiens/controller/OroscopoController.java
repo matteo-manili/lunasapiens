@@ -7,6 +7,7 @@ import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.OroscopoGiornalieroService;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;

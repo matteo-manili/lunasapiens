@@ -1,7 +1,7 @@
 package com.lunasapiens.service;
 
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 

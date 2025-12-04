@@ -6,6 +6,7 @@ import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
+import com.lunasapiens.utils.UtilsZodiac;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class ServizioSinastria {
         Properties segniAscendenteProperties = propertiesConfig.segniAscendente();
         Properties lunaSegniProperties = propertiesConfig.lunaSegni();
 
-        ZodiacUtils.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
+        UtilsZodiac.assegnaCaseAiPianeti(pianetiTransiti, casePlacideArrayList);
         ArrayList<Aspetti> aspetti = CalcoloAspetti.aspettiListPinaneti(pianetiTransiti, propertiesConfig.aspettiSignificato());
 
         //for(Aspetti var: aspetti) {

@@ -1,7 +1,7 @@
 package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;

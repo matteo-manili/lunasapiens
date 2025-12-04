@@ -7,9 +7,8 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.repository.ArticleContentRepository;
-import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

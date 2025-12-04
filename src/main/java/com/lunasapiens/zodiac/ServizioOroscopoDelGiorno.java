@@ -5,7 +5,7 @@ import com.lunasapiens.GeneratorVideo;
 import com.lunasapiens.aiModels.openai.OpenAIGptTheokanning;
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.config.PropertiesConfig;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;

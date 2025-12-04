@@ -1,6 +1,6 @@
 package com.lunasapiens.manualjobs.ArticleSEO;
 
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;

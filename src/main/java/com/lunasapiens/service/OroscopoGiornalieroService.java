@@ -1,6 +1,6 @@
 package com.lunasapiens.service;
 
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.entity.OroscopoGiornaliero;
 import com.lunasapiens.repository.OroscopoGiornalieroRepository;

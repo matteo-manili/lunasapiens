@@ -1,7 +1,7 @@
 package com.lunasapiens.service;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import com.lunasapiens.dto.OroscopoDelGiornoDescrizioneDTO;

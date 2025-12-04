@@ -1,4 +1,4 @@
-package com.lunasapiens;
+package com.lunasapiens.utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;

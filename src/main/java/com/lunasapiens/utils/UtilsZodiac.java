@@ -1,15 +1,17 @@
-package com.lunasapiens.zodiac;
+package com.lunasapiens.utils;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.zodiac.CasePlacide;
+import com.lunasapiens.zodiac.Pianeti;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class ZodiacUtils {
+public class UtilsZodiac {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZodiacUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(UtilsZodiac.class);
 
 
 

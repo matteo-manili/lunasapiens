@@ -1,6 +1,6 @@
 package com.lunasapiens.aiModels.huggngface;
 
-import com.lunasapiens.UtilsArticleSeo;
+import com.lunasapiens.utils.UtilsArticleSeo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

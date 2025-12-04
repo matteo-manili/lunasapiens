@@ -1,6 +1,6 @@
 package com.lunasapiens.service;
 
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.config.S3ClientConfig;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentRepository;

@@ -1,7 +1,7 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.RecaptchaEnterpriseService;
 import com.lunasapiens.service.TelegramBotService;

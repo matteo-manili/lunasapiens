@@ -1,11 +1,9 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
-import com.lunasapiens.zodiac.ServizioOroscopoDelGiorno;
-import com.lunasapiens.zodiac.ServizioTemaNatale;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

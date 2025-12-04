@@ -1,5 +1,7 @@
-package com.lunasapiens;
+package com.lunasapiens.utils;
 
+import com.lunasapiens.Constants;
+import com.lunasapiens.GeneratorVideo;
 import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
 import de.thmac.swisseph.SweDate;

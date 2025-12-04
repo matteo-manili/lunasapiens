@@ -1,7 +1,7 @@
 package com.lunasapiens.filter;
 
 import com.lunasapiens.Constants;
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.config.JwtElements;
 import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;

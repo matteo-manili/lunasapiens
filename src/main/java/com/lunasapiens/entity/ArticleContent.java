@@ -1,6 +1,6 @@
 package com.lunasapiens.entity;
 
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.config.PostgreSQLVectorJdbcType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;

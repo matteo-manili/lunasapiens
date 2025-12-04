@@ -1,6 +1,6 @@
 package com.lunasapiens.repository;
 
-import com.lunasapiens.Utils;
+import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
