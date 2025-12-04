@@ -20,12 +20,12 @@ public class UtilsZodiac {
 
 
 
-    protected static double convertDegreesToDecimal(String position) {
+    public static double convertDegreesToDecimal(String position) {
         Pair<Integer, Integer> pair = dammiGradiEMinutiPair(position);
         return pair.getKey() + (pair.getValue() / 60.0);
     }
 
-    protected static Pair dammiGradiEMinutiPair(String position) {
+    public static Pair dammiGradiEMinutiPair(String position) {
         String[] parts = position.split("°|'");
         int degrees = Integer.parseInt(parts[0].trim());
         int minutes = Integer.parseInt(parts[1].replace("’", "").trim());
@@ -85,7 +85,7 @@ public class UtilsZodiac {
     }
 
 
-    protected static Pair convertCoordinataToDegreesMinutes(double coordinata) {
+    public static Pair convertCoordinataToDegreesMinutes(double coordinata) {
         int degrees = (int) coordinata;
         double fractionalPart = coordinata - degrees;
         // Convertire la parte decimale in minuti
@@ -99,7 +99,7 @@ public class UtilsZodiac {
 
 
 
-    protected static void assegnaCaseAiPianeti(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
+    public static void assegnaCaseAiPianeti(List<Pianeti> pianetiTransiti, List<CasePlacide> casePlacideArrayList) {
         // Creare una copia della lista delle case per ordinarla
         List<CasePlacide> caseOrdinate = new ArrayList<>(casePlacideArrayList);
         caseOrdinate.sort(Comparator.comparingDouble(CasePlacide::getGradi));
@@ -135,7 +135,7 @@ public class UtilsZodiac {
      * @param grado
      * @return
      */
-    protected static Map<Integer, String> determinaSegnoZodiacale(double grado) {
+    public static Map<Integer, String> determinaSegnoZodiacale(double grado) {
         Map<Integer, String> segniZodiacali = new HashMap<>();
         List<String> nomiSegni = Constants.SegniZodiacali.getAllNomi();
         if (grado >= Constants.SegniZodiacali.ARIETE.getGradi() && grado < 30.0d) {                 // Ariete
@@ -171,7 +171,7 @@ public class UtilsZodiac {
 
 
 
-    protected static String significatoTransitoPianetaSegno(Properties properties, int numero1, int numero2) {
+    public static String significatoTransitoPianetaSegno(Properties properties, int numero1, int numero2) {
         // Costruisci la chiave per recuperare il valore desiderato
         String chiaveProperties = numero1 + "_" + numero2;
         // Recupera il significato del pianeta
