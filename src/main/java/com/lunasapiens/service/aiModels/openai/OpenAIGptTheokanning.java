@@ -1,4 +1,4 @@
-package com.lunasapiens.zodiac;
+package com.lunasapiens.service.aiModels.openai;
 
 
 import com.theokanning.openai.service.OpenAiService;

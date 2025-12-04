@@ -7,7 +7,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.service.ArticleSemanticService;
-import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
+import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

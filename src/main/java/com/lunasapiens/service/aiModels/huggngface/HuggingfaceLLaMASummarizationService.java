@@ -1,4 +1,4 @@
-package com.lunasapiens.service;
+package com.lunasapiens.service.aiModels.huggngface;
 
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -7,7 +7,7 @@ import java.util.*;
  * info modello https://huggingface.co/swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA
  */
 @Service
-public class HuggingfaceTextSummarizationService extends HuggingFaceBaseService {
+public class HuggingfaceLLaMASummarizationService extends HuggingFaceBaseService {
 
 
     protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";

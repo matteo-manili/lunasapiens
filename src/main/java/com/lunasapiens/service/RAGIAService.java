@@ -2,7 +2,7 @@ package com.lunasapiens.service;
 
 import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.entity.Chunks;
-import com.lunasapiens.zodiac.OpenAIGptTheokanning;
+import com.lunasapiens.service.aiModels.openai.OpenAIGptTheokanning;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

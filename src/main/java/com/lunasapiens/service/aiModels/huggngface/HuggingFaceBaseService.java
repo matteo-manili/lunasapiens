@@ -1,5 +1,6 @@
-package com.lunasapiens.service;
+package com.lunasapiens.service.aiModels.huggngface;
 
+import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lunasapiens.config.HuggingFaceConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -82,6 +82,40 @@ public abstract class HuggingFaceBaseService {
             }
         }
     }
+
+
+
+    /**
+     * Conta i token del testo passato per un modello Hugging Face.
+     * Se il tokenizer non è inizializzato, lo crea al volo.
+     *
+     * @param modelName nome del modello HF
+     * @param text testo da tokenizzare
+     * @return numero di token
+     */
+    protected int countTokens(String modelName, String text) {
+        try {
+            HuggingFaceTokenizer tokenizer = HuggingFaceTokenizer.newInstance(modelName);
+            long[] tokenIds = tokenizer.encode(text).getIds();
+            return tokenIds.length;
+        } catch (Exception e) {
+            logger.error("Errore nel conteggio dei token per modello {}: {}", modelName, e.getMessage());
+            return 0;
+        }
+    }
+
+
+    /**
+     * Stima il numero di token a partire dal numero di parole
+     *
+     * @param numWords numero di parole che vuoi generare (es. 10 per un titolo)
+     * @return numero stimato di token
+     */
+    public int estimateTokensFromWords(int numWords) {
+        double tokensPerWord = 1.25; // media per l'italiano su LLaMA
+        return (int) Math.ceil(numWords * tokensPerWord);
+    }
+
 
 
 }

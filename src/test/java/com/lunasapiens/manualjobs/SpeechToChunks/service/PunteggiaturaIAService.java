@@ -1,8 +1,7 @@
 package com.lunasapiens.manualjobs.SpeechToChunks.service;
 
+import com.lunasapiens.service.aiModels.openai.OpenAIGptTheokanning;
 import com.lunasapiens.config.AppConfig;
-
-import com.lunasapiens.zodiac.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

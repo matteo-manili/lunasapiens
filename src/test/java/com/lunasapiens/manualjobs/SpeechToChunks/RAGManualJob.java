@@ -1,10 +1,9 @@
 package com.lunasapiens.manualjobs.SpeechToChunks;
 
 import com.lunasapiens.entity.Chunks;
-import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeIstructorService;
+import com.lunasapiens.service.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeIstructorService;
 import com.lunasapiens.service.RAGIAService;
 import com.lunasapiens.service.ChunksService;
-import com.lunasapiens.service.HuggingfaceTextEmbedding_E5LargeService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
