@@ -62,12 +62,20 @@ public class EditorArticleBlogController extends BaseController {
     public String viewArticle(@PathVariable String seoUrl, Model model) {
         Optional<ArticleContent> articleOpt = articleContentRepository.findLightBySeoUrl(seoUrl);
         if (articleOpt.isEmpty()) {
-            // articolo non trovato → reindirizza a pagina 404 o lista articoli
             return "redirect:/blog";
         }
-        model.addAttribute("article", articleOpt.get());
-        return "blogArticle"; // il template Thymeleaf che hai creato
+        ArticleContent article = articleOpt.get();
+        model.addAttribute("article", article);
+
+        // Recupera articolo precedente e successivo
+        ArticleContent prevArticle = articleContentRepository.findNext(article.getCreatedAt()).orElse(null);
+        ArticleContent nextArticle = articleContentRepository.findPrevious(article.getCreatedAt()).orElse(null);
+        model.addAttribute("prevArticle", prevArticle);
+        model.addAttribute("nextArticle", nextArticle);
+
+        return "blogArticle";
     }
+
 
 
     /**

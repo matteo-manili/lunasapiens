@@ -23,7 +23,7 @@
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/blog" />
         <link rel="stylesheet" href="/css/style.css?v=0.1">
-        <link rel="stylesheet" href="/css/articles.css?v=0.1">
+        <link rel="stylesheet" href="/css/articles.css?v=0.2">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     </th:block>
@@ -54,16 +54,23 @@
             <div class="card mb-3">
                 <!-- Riga con ID articolo e data -->
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted">
-                            <i class="bi bi-hash me-1"></i>Articolo <span th:text="${article.id}"></span>
-                        </span>
-                        <!-- Titolo linkabile -->
-                        <a th:href="@{'/blog/' + ${article.seoUrl}}" class="fw-bold text-decoration-none" th:text="${article.title}"></a>
-                        <span class="text-muted">
-                            <i class="bi bi-calendar-event me-1"></i><span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    <div class="d-flex justify-content-between align-items-center mb-2 article-header">
+
+                        <!-- Titolo che prende tutto lo spazio -->
+                        <a th:href="@{'/blog/' + ${article.seoUrl}}"
+                           class="blog-article-title flex-grow-1"
+                           th:text="${article.title}"></a>
+
+                        <!-- ID + data piccoli e compatti -->
+                        <span class="blog-article-meta text-muted ms-3">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                            &nbsp;<i class="bi bi-hash"></i><span th:text="${article.id}"></span>
                         </span>
                     </div>
+
+
+
                     <!-- Contenuto articolo -->
                     <div class="card-text collapsible-text" th:utext="${article.content}"></div>
                     <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>

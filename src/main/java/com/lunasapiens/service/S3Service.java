@@ -145,7 +145,7 @@ public class S3Service {
     public void eliminaImmaginiArticoloNonUtilizzateBucketS3(){
         try {
             // Tutti gli articoli
-            List<ArticleContent> articles = articleContentRepository.findAllByOrderByCreatedAtDesc();
+            List<ArticleContent> articles = articleContentRepository.findAllLight();
             List<String> totaliImmaginiArticoli = new ArrayList<>();
             for(ArticleContent articolo : articles){
                 totaliImmaginiArticoli.addAll( Utils.extractImageNames(articolo.getContent()) );
