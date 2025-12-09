@@ -1,6 +1,7 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.aiModels.huggngface.HuggingfaceLLaMAGenerateSEOTextArticleService;
 import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
@@ -9,11 +10,13 @@ import com.lunasapiens.service.ArticleSemanticService;
 import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeService;
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
+import com.lunasapiens.utils.UtilsArticleSeo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +43,7 @@ public class EditorArticleBlogController extends BaseController {
     private S3Service s3Service;
 
     @Autowired
-    HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
+    private HuggingfaceTextEmbedding_E5LargeService textEmbeddingHuggingfaceService;
 
     @Autowired
     private ArticleSemanticService articleSemanticService;
@@ -48,17 +51,34 @@ public class EditorArticleBlogController extends BaseController {
     @Autowired
     private ArticleContentCustomRepositoryImpl articleContentCustomRepository;
 
+    @Autowired
+    private HuggingfaceLLaMAGenerateSEOTextArticleService huggingfaceLLaMAGenerateSEOTextArticleService;
+
+
     /**
      * Pagina pubblca
-     * @param model
-     * @return
+     */
+    @GetMapping("/blog/{seoUrl}")
+    public String viewArticle(@PathVariable String seoUrl, Model model) {
+        Optional<ArticleContent> articleOpt = articleContentRepository.findLightBySeoUrl(seoUrl);
+        if (articleOpt.isEmpty()) {
+            // articolo non trovato → reindirizza a pagina 404 o lista articoli
+            return "redirect:/blog";
+        }
+        model.addAttribute("article", articleOpt.get());
+        return "blogArticle"; // il template Thymeleaf che hai creato
+    }
+
+
+
+
+    /**
+     * Pagina pubblca
      */
     @GetMapping("/blog")
     public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam,
                        @RequestParam(name = "search", required = false) String search,
                        Model model) {
-
-
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
@@ -106,50 +126,58 @@ public class EditorArticleBlogController extends BaseController {
         return "private/editorArticles";
     }
 
-
     private void setModelAttributeArticlesPage(List<ArticleContent> results, Model model, String search){
         Page<ArticleContent> page = new PageImpl<>(results, Pageable.unpaged(), results.size());
         model.addAttribute("articlePage", page);
         model.addAttribute("hideSearch", true);  // utile se vuoi nascondere la paginazione
         model.addAttribute("search", search);
         model.addAttribute("currentPage", 0); // ← aggiungi questa riga
-
     }
-
-
-
-
 
     private void loadPagedArticles(int page, Model model) {
         int pageSize = 10;
-        Page<ArticleContent> articlePage = articleContentRepository.findAll(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
+        Page<ArticleContent> articlePage = articleContentRepository.findAllLight(PageRequest.of(page, pageSize, Sort.by("createdAt").descending()));
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("currentPage", page);
     }
 
-
-
     @PostMapping("/private/saveOrUpdateArticle")
     public String saveOrUpdateArticle(@RequestParam("id") Optional<Long> id,
-                                      @RequestParam("content") String content, RedirectAttributes redirectAttributes) {
+                                      @RequestParam("content") String content,
+                                      @RequestParam("title") String title,
+                                      @RequestParam("metaDescription") String metaDescription,
+                                      @RequestParam("seoUrl") String seoUrl,
+                                      RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato");
             return "redirect:/error";
         }
+
         try {
+            if (content == null || content.isBlank()) {
+                redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Il contenuto è obbligatorio.");
+                return "redirect:/private/editorArticles";
+            }
+
             ArticleContent article;
-            List<String> newImageNames = Utils.extractImageNames(content); // Estrai le immagini dal nuovo contenuto
+            boolean contentChanged = false;
+
             if (id.isPresent()) {
-                // Aggiorna un articolo esistente
+                // Aggiorna articolo esistente
                 article = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
+
+                if (!article.getContent().equals(content)) {
+                    contentChanged = true;
+                }
                 // Trova le immagini attualmente associate
                 List<String> oldImageNames = Utils.extractImageNames(article.getContent());
-                // Trova le immagini da eliminare (presenti prima ma non più utilizzate)
-                List<String> imagesToDelete = new ArrayList<>(oldImageNames);
-                imagesToDelete.removeAll(newImageNames); // Rimuovi le immagini ancora presenti nel nuovo contenuto
+                // Estrai le immagini dal nuovo contenuto
+                List<String> newImageNames = Utils.extractImageNames(content);
+                // Rimuovi le immagini ancora presenti nel nuovo contenuto
+                oldImageNames.removeAll(newImageNames);
                 // Elimina le immagini non più utilizzate
-                for( String imgDelete : imagesToDelete ){
+                for( String imgDelete : oldImageNames ){
                     try{
                         Optional<FileWithMetadata> imageOptional = Optional.ofNullable(s3Service.getImageFromS3(imgDelete));
                         if(imageOptional.isPresent()){
@@ -163,29 +191,60 @@ public class EditorArticleBlogController extends BaseController {
                 // Crea un nuovo articolo, MA NON impostare manualmente l'ID
                 article = new ArticleContent();
                 articleContentRepository.updateSequence();
+                contentChanged = true; // nuovo articolo → embedding sempre
             }
-            // Aggiorna il contenuto dell'articolo
+
+            // Aggiorna contenuto
             article.setContent(content);
-            ArticleContent articleSave = articleContentRepository.save(article);
 
-            System.out.println( "id: "+id );
-            System.out.println( "articleSave.getId(): "+articleSave.getId() );
+            //1- Il Titolo
+            // Deve essere unico, descrittivo e contenere la parola chiave principale.
+            // Un solo H1 e nel Tag <title> contenente il titolo. Lunghezza ideale: 50–60 caratteri.
+            if (title != null && !title.isBlank()) {
+                article.setTitle(UtilsArticleSeo.cleanGeneratedText(title));
+            } else {
+                String autoTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId(), 0.6);
+                article.setTitle(UtilsArticleSeo.cleanGeneratedText(autoTitle));
+            }
+            // 2- Meta description
+            // <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
+            // Dovrebbe invogliare l’utente al click. Lunghezza ideale: 140–160 caratteri.
+            if (metaDescription != null && !metaDescription.isBlank()) {
+                article.setMetaDescription(metaDescription);
+            } else {
+                String autoDesc = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId(), 0.6);
+                article.setMetaDescription(UtilsArticleSeo.cleanGeneratedText(autoDesc));
+            }
+            // 3- SEO URL / Slug
+            if (seoUrl != null && !seoUrl.isBlank()) {
+                article.setSeoUrl(seoUrl);
+            } else {
+                article.setSeoUrl(UtilsArticleSeo.toSlug(article.getTitle()));
+            }
 
-            // aggiorno la colonna embedding
-            //Float[] embedding = textEmbeddingService.computeCleanEmbedding( articleSave.getContent() );
-            Float[] embedding = textEmbeddingHuggingfaceService.embedDocument( Utils.cleanHtmlText(articleSave.getContent()) );
+            // Salvataggio articolo con fallback per unicità
+            ArticleContent articleSave;
+            try {
+                articleSave = articleContentRepository.save(article);
+            } catch (DataIntegrityViolationException e) {
+                if (e.getMessage().contains("title")) article.setTitle(article.getTitle() + " " + article.getId());
+                if (e.getMessage().contains("seoUrl")) article.setSeoUrl(article.getSeoUrl() + "-" + article.getId());
+                articleSave = articleContentRepository.save(article);
+            }
 
-            System.out.println("Dimensione embedding: " + embedding.length);
-            ArticleContent articleContentRefresh = articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
-            System.out.println("Aggiornato embedding articolo ID: " + articleContentRefresh.getId());
+            // 🔹 Esegui embedding solo se il contenuto è stato modificato
+            if (contentChanged) {
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getContent()));
+                articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
+                logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
+            }
 
-
-            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo salvato con successo!");
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo " + articleSave.getId() + " salvato con successo!");
             return "redirect:/private/editorArticles";
 
         } catch (Exception e) {
             logger.error("Errore durante il salvataggio dell'articolo", e);
-            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Errore durante il salvataggio dell'articolo");
+            redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Errore durante il salvataggio dell'articolo " + id.orElse(null));
             return "redirect:/private/editorArticles";
         }
     }
@@ -205,7 +264,12 @@ public class EditorArticleBlogController extends BaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Articolo non trovato"));
         }
-        return ResponseEntity.ok(Map.of("id", article.get().getId(), "content", article.get().getContent()));
+        return ResponseEntity.ok(Map.of(
+                "id", article.get().getId(),
+                "content", article.get().getContent(),
+                "title", article.get().getTitle(),
+                "metaDescription", article.get().getMetaDescription(),
+                "seoUrl", article.get().getSeoUrl()));
     }
 
 

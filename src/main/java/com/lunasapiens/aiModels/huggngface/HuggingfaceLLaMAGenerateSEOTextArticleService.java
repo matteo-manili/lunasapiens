@@ -19,7 +19,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
 
 
 
-    public String generateMetaDescription(String content, Long articleId) {
+    public String generateMetaDescription(String content, Long articleId, double temperatura) {
 
         if (content == null || content.isEmpty()) {
             // La stringa è nulla o vuota
@@ -42,7 +42,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
             int totalTokens = numTokenInput + numTokenOutput;
             System.out.println("totalTokens: " + totalTokens);
 
-            String metaDescription = eseguiLLaM(textSystem, "", totalTokens);
+            String metaDescription = eseguiLLaM(textSystem, "", totalTokens, temperatura);
 
             return metaDescription;
         }
@@ -54,7 +54,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
 
 
 
-    public String generateTitle(String content, Long articleId) {
+    public String generateTitle(String content, Long articleId, double temperatura) {
 
         if (content == null || content.isEmpty()) {
             // La stringa è nulla o vuota
@@ -78,7 +78,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
             int totalTokens = numTokenInput + numTokenOutput;
             System.out.println("totalTokens: " + totalTokens);
 
-            String title = eseguiLLaM(textSystem, "", totalTokens);
+            String title = eseguiLLaM(textSystem, "", totalTokens, temperatura);
 
             return title;
         }
@@ -90,7 +90,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
 
 
 
-    private String eseguiLLaM(String textSystem, String textUser, int numToken) {
+    private String eseguiLLaM(String textSystem, String textUser, int numToken, double temperatura) {
         try {
 
             // Costruisci lo schema "messages" in stile OpenAI
@@ -103,7 +103,7 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
                     "model", MODEL_NAME + ":featherless-ai",
                     "messages", messages,
                     "max_tokens", numToken,
-                    "temperature", 0.2,
+                    "temperature", temperatura,
                     "top_p", 0.9
             );
 

@@ -60,7 +60,7 @@ public class SecurityConfig {
             // "/*" = significa tutti gli url ma non i sotto url (esempio localhost:/contatti)
             // "/*" = significa tutti gli url e anche i sotto url (esempio localhost:/private/privatePage)
             .authorizeHttpRequests(requests -> requests
-                    .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*",
+                    .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*","/blog/*",
                             "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**",
                             "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*", "/s3-download/*" ).permitAll()    // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()     // Richiede autenticazione per le risorse private

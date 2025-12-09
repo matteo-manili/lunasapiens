@@ -32,8 +32,6 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-4">
-
-
     <!-- Campo di ricerca sematica -->
     <div class="mb-3">
         <form method="get" th:action="@{/blog}" onsubmit="showLoadingOverlay()">
@@ -47,40 +45,33 @@
         </form>
     </div>
 
-
     <!-- Sezione per visualizzare gli articoli -->
     <div class="mt-5">
         <div th:if="${articlePage.isEmpty()}">
             <p>Nessun articolo trovato.</p>
         </div>
-
         <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
+                <!-- Riga con ID articolo e data -->
                 <div class="card-body">
-                    <!-- Riga con ID articolo e data -->
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-muted">
-                    <i class="bi bi-hash me-1"></i>
-                    Articolo <span th:text="${article.id}"></span>
-                </span>
                         <span class="text-muted">
-                    <i class="bi bi-calendar-event me-1"></i>
-                    <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                </span>
+                            <i class="bi bi-hash me-1"></i>Articolo <span th:text="${article.id}"></span>
+                        </span>
+                        <!-- Titolo linkabile -->
+                        <a th:href="@{'/blog/' + ${article.seoUrl}}" class="fw-bold text-decoration-none" th:text="${article.title}"></a>
+                        <span class="text-muted">
+                            <i class="bi bi-calendar-event me-1"></i><span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </span>
                     </div>
-
                     <!-- Contenuto articolo -->
                     <div class="card-text collapsible-text" th:utext="${article.content}"></div>
                     <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>
                 </div>
             </div>
         </div>
-
-
         <!-- PAGINAZIONE solo se non è ricerca semantica -->
-        <div th:if="${hideSearch != true}"
-             th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
-
+        <div th:if="${hideSearch != true}" th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
 
     </div>
 
@@ -89,9 +80,7 @@
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
-
 <script>
-
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll(".toggle-button");
 
@@ -123,7 +112,6 @@
         });
     });
 </script>
-
 
 </body>
 </html>

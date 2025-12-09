@@ -64,13 +64,7 @@ public class Constants {
             new RelationshipOption("N", "Preferisco non dirlo")));
 
 
-    public static final List<String> URL_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
-            "/",
-            "/psicologo",
-            "/blog",
-            "/register",
-            "/contatti",
-            "/info-privacy"));
+
 
     public static final List<String> URL_INDEX_LIST_OLD = Collections.unmodifiableList(Arrays.asList(
             "/",

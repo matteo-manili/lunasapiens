@@ -60,61 +60,82 @@ public class UtilsArticleSeoManualJobs {
     //@Disabled("Disabilitato temporaneamente per debug")
     public void testSeoGeneration() {
         List<ArticleContent> articles = articleContentRepository.findAll();
-
-        int count = 0;
-
         for (ArticleContent article : articles) {
-            if (count >= 2) break; // ferma dopo i primi 3 articoli
-            String content = article.getContent();
-            System.out.println("=== ARTICOLO ID: " + article.getId() + " ===");
-            System.out.println("content: " + UtilsArticleSeo.cleanText(content) );
+
+            //if (article.getId() == 147l) {
+
+                String content = article.getContent();
+                System.out.println("=== ARTICOLO ID: " + article.getId() + " ===");
+                System.out.println("content: " + UtilsArticleSeo.cleanText(content) );
+
+                /**
+                 * 1- Il Titolo
+                 * Deve essere unico, descrittivo e contenere la parola chiave principale.
+                 * Un solo H1 e nel Tag <title> contenente il titolo.
+                 * Lunghezza ideale: 50–60 caratteri.
+                 */
+                if (article.getTitle() == null || article.getTitle().isEmpty()) {
+                    //String generateTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId(), 0.6);
+                    String generateTitle = "";
 
 
-            /**
-             * 1- Il Titolo
-             * Deve essere unico, descrittivo e contenere la parola chiave principale.
-             * Un solo H1 e nel Tag <title> contenente il titolo.
-             * Lunghezza ideale: 50–60 caratteri.
-             */
-            if (article.getTitle() == null || article.getTitle().isEmpty()) {
-                String title = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId());
-                article.setTitle( UtilsArticleSeo.cleanGeneratedText(title) );
-                try {
-                    articleContentRepository.save(article);
-                } catch (DataIntegrityViolationException e) {
-                    article.setTitle(title + " " + article.getId());
-                    articleContentRepository.save(article);
+                    article.setTitle( UtilsArticleSeo.cleanGeneratedText(generateTitle) );
+                    try {
+                        articleContentRepository.save(article);
+                    } catch (DataIntegrityViolationException e) {
+
+                        article.setTitle(generateTitle + " " + article.getId());
+                        articleContentRepository.save(article);
+                    }
+                    System.out.println("Title      : " + article.getTitle() );
+                    //Il mito della sovranità
+                    //Il Falso Centro dell'Uomo
+                    //Il mito della sovranità
+                    //Il mito dell'io
+                    //Il mito dell'uomo
+                    //Il Declino dell'Ego
                 }
-                System.out.println("Title      : " + article.getTitle() );
-
-            }
 
 
-            /**
-             * 2- Meta description
-             * <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
-             * Dovrebbe invogliare l’utente al click.
-             * Lunghezza ideale: 140–160 caratteri.
-             */
-            if (article.getMetaDescription() == null || article.getMetaDescription().isEmpty()) {
-                String metaDescription = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId());
-                article.setMetaDescription( UtilsArticleSeo.cleanGeneratedText(metaDescription) );
-                articleContentRepository.save(article);
-                System.out.println("MetaDescription: " + article.getMetaDescription());
-            }
+                /**
+                 * 2- Meta description
+                 * <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
+                 * Dovrebbe invogliare l’utente al click.
+                 * Lunghezza ideale: 140–160 caratteri.
+                 */
+                if (article.getMetaDescription() == null || article.getMetaDescription().isEmpty()) {
+                    //String generateMetaDescription = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId(), 0.6);
+                    String generateMetaDescription = "";
+                    article.setMetaDescription( UtilsArticleSeo.cleanGeneratedText(generateMetaDescription) );
+                    articleContentRepository.save(article);
+                    System.out.println("MetaDescription: " + article.getMetaDescription());
+                    //La realtà umana, sfidata dalle scoperte scientifiche e psicoanalitiche.
+                }
+
+                /**
+                 * 3- Seo Url
+                 */
+                if (article.getSeoUrl() == null || article.getSeoUrl().isEmpty()) {
+                    String generateSeoUrl = UtilsArticleSeo.toSlug(article.getTitle());
+                    article.setSeoUrl( generateSeoUrl );
+                    try {
+                        articleContentRepository.save(article);
+                    } catch (DataIntegrityViolationException e) {
+                        article.setSeoUrl(generateSeoUrl + "-" + article.getId());
+                        articleContentRepository.save(article);
+                    }
+                    System.out.println("SeoUrl      : " + article.getTitle() );
+                }
+
+                System.out.println("URL        : https://www.lunasapiens.com/blog/" + article.getSeoUrl());
+                System.out.println();
 
 
 
 
+            //}
 
 
-
-
-            System.out.println("Slug       : " + "");
-            System.out.println("URL        : https://www.lunasapiens.com/blog/" + "");
-            System.out.println();
-
-            count++;
         }
 
     }

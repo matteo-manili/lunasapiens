@@ -13,6 +13,19 @@ import java.time.LocalDateTime;
 @Entity
 public class ArticleContent implements Serializable {
 
+    public ArticleContent() {
+        // Hibernate ha bisogno di un costruttore vuoto
+    }
+
+    public ArticleContent(Long id, String content, LocalDateTime createdAt,
+                          String title, String seoUrl, String metaDescription) {
+        this.id = id;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.title = title;
+        this.seoUrl = seoUrl;
+        this.metaDescription = metaDescription;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +42,16 @@ public class ArticleContent implements Serializable {
 
 
     // Campo nuovo: Titolo SEO
-    @Column(unique = true, length = 100)
+    @Column(unique = true, length = 200, nullable = false)
     private String title;
 
-    // Campo nuovo: Meta description
+    // Campo nuovo: URL parlante SEO-friendly
+    @Column(name = "seo_url", unique = true, length = 200, nullable = false)
+    private String seoUrl;
+
+    // Campo nuovo: Meta description (può rimanere nullable)
     @Column(name = "meta_description", columnDefinition = "TEXT")
     private String metaDescription;
-
-    // Campo nuovo: URL parlante SEO-friendly
-    @Column(name = "seo_url", unique = true, length = 100)
-    private String seoUrl;
 
 
 
@@ -85,13 +98,13 @@ public class ArticleContent implements Serializable {
 
     public void setTitle(String title) { this.title = title; }
 
-    public String getMetaDescription() { return metaDescription; }
-
-    public void setMetaDescription(String metaDescription) { this.metaDescription = metaDescription; }
-
     public String getSeoUrl() { return seoUrl; }
 
     public void setSeoUrl(String seoUrl) { this.seoUrl = seoUrl; }
+
+    public String getMetaDescription() { return metaDescription; }
+
+    public void setMetaDescription(String metaDescription) { this.metaDescription = metaDescription; }
 
     public Float[] getEmbedding() {
         return embedding;

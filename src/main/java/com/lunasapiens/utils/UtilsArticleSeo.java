@@ -3,7 +3,39 @@ package com.lunasapiens.utils;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
+import java.text.Normalizer;
+
 public class UtilsArticleSeo {
+
+
+
+
+    /**
+     * Genera uno slug SEO-friendly a partire da un titolo.
+     *
+     * Il metodo:
+     * 1. Trasforma tutti i caratteri in minuscolo.
+     * 2. Rimuove gli accenti dalle lettere (es. "à" → "a").
+     * 3. Rimuove tutti i simboli non alfanumerici (eccetto spazi).
+     * 4. Sostituisce gli spazi con trattini (-).
+     * 5. Opzionalmente può limitare la lunghezza massima dello slug.
+     *
+     * Esempio:
+     * Input:  "Università degli Studi di Milano!"
+     * Output: "universita-degli-studi-di-milano"
+     *
+     * @param input Il titolo da cui generare lo slug
+     * @return Lo slug SEO-friendly derivato dal titolo
+     */
+    public static String toSlug(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")      // rimuove accenti
+                .replaceAll("[^a-zA-Z0-9\\s]", "")   // rimuove simboli
+                .trim()
+                .replaceAll("\\s+", "-")             // spazi -> trattini
+                .toLowerCase();
+    }
+
 
 
 

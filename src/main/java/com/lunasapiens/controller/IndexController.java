@@ -1,6 +1,8 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.entity.ArticleContent;
+import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.utils.Utils;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +34,9 @@ import java.util.List;
 public class IndexController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+
+    @Autowired
+    private ArticleContentRepository articleContentRepository;
 
 
     @GetMapping("/")
@@ -88,6 +99,69 @@ public class IndexController extends BaseController {
 
     @GetMapping("/sitemap.xml")
     public void getSitemap(HttpServletResponse response) throws IOException {
+        WebSitemapGenerator sitemapGenerator =
+                WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
+        // 1️⃣ Pagine statiche
+        List<PageInfo> staticPages = Arrays.asList(
+                new PageInfo("/", ChangeFreq.DAILY, 1.0),
+                new PageInfo("/psicologo", ChangeFreq.WEEKLY, 0.9),
+                new PageInfo("/blog", ChangeFreq.WEEKLY, 0.9),
+                new PageInfo("/register", ChangeFreq.YEARLY, 0.5),
+                new PageInfo("/contatti", ChangeFreq.YEARLY, 0.5),
+                new PageInfo("/info-privacy", ChangeFreq.YEARLY, 0.5)
+        );
+        for (PageInfo page : staticPages) {
+            sitemapGenerator.addUrl(
+                    new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + page.getPath())
+                            .changeFreq(page.getChangeFreq())
+                            .priority(page.getPriority())
+                            .build()
+            );
+        }
+        // 2️⃣ Articoli del blog
+        List<ArticleContent> articles = articleContentRepository.findAllLight();
+        for (ArticleContent article : articles) {
+            // LocalDateTime -> tronco a mezzanotte -> Date con timezone Roma
+            LocalDateTime truncated = article.getCreatedAt().toLocalDate().atStartOfDay();
+            Date lastModDate = Utils.toDate(truncated);
+            sitemapGenerator.addUrl(
+                    new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + "/blog/" + article.getSeoUrl())
+                            .lastMod(lastModDate)
+                            .changeFreq(ChangeFreq.MONTHLY)
+                            .priority(0.8)
+                            .build()
+            );
+        }
+        // 3️⃣ Output XML
+        response.setContentType("application/xml");
+        List<String> sitemapXml = sitemapGenerator.writeAsStrings();
+        response.getWriter().write(String.join("\n", sitemapXml));
+    }
+
+
+
+    // Classe di supporto per pagine statiche
+    static class PageInfo {
+        private final String path;
+        private final ChangeFreq changeFreq;
+        private final double priority;
+
+        public PageInfo(String path, ChangeFreq changeFreq, double priority) {
+            this.path = path;
+            this.changeFreq = changeFreq;
+            this.priority = priority;
+        }
+
+        public String getPath() { return path; }
+        public ChangeFreq getChangeFreq() { return changeFreq; }
+        public double getPriority() { return priority; }
+    }
+
+
+
+/*
+    @GetMapping("/sitemap.xml")
+    public void getSitemap(HttpServletResponse response) throws IOException {
         // Crea il generatore di sitemap
         WebSitemapGenerator sitemapGenerator = WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
         // Aggiungi URL alla sitemap
@@ -113,6 +187,8 @@ public class IndexController extends BaseController {
         response.setContentType("application/xml");
         response.getWriter().write(String.join("\n", sitemapUrls));
     }
+
+ */
 
 
     @GetMapping("/matteo-manili-programmatore")

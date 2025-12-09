@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <!-- Titolo SEO dinamico -->
+    <title th:fragment="title" th:text="${article.title}">Titolo Articolo</title>
+
+    <!-- Meta SEO dinamiche -->
+    <th:block th:fragment="meta">
+        <meta name="description" th:content="${article.metaDescription}" />
+        <meta property="og:title" th:content="${article.title}" />
+        <meta property="og:description" th:content="${article.metaDescription}" />
+        <!-- Immagine di default perché non c'è campo dedicato -->
+        <meta property="og:image" content="https://www.lunasapiens.com/logo_400x300.png" />
+        <meta property="og:url" th:content="@{'/blog/' + ${article.seoUrl}}" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" th:content="${article.title}" />
+        <meta name="twitter:description" th:content="${article.metaDescription}" />
+        <meta name="twitter:image" content="https://www.lunasapiens.com/logo_400x300.png" />
+    </th:block>
+
+    <th:block th:fragment="links">
+        <link rel="canonical" th:href="@{'/blog/' + ${article.seoUrl}}" />
+        <link rel="stylesheet" href="/css/style.css?v=0.1">
+        <link rel="stylesheet" href="/css/articles.css?v=0.1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    </th:block>
+</head>
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4 mb-5">
+
+    <!-- Breadcrumbs SEO -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/blog}">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${article.title}">Titolo Articolo</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-body">
+            <h1 th:text="${article.title}" class="mb-3"></h1>
+            <div class="text-muted mb-2">
+                <i class="bi bi-calendar-event me-1"></i>
+                <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div class="card-text" th:utext="${article.content}"></div>
+        </div>
+    </div>
+</div>
+
+
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+</body>
+</html>

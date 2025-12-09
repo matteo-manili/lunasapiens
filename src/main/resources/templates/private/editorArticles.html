@@ -39,7 +39,18 @@
                 <label for="editor" class="form-label">Aggiungi Articolo</label>
                 <textarea id="editor" name="content" class="form-control" rows="10" placeholder="Inserisci il contenuto qui..."></textarea>
             </div>
-            <div class="d-flex justify-content-start">
+            <!-- nuovi campi -->
+            <div class="mb-3">
+                <input type="text" id="title" name="title" class="form-control form-control-sm" placeholder="Titolo dell'articolo">
+            </div>
+            <div class="mb-3">
+                <input type="text" id="metaDescription" name="metaDescription" class="form-control form-control-sm" placeholder="Meta description SEO">
+            </div>
+            <div class="mb-3">
+                <input type="text" id="seoUrl" name="seoUrl" class="form-control form-control-sm" placeholder="Slug SEO">
+            </div>
+
+            <div class="d-flex justify-content-start mt-3">
                 <button type="submit" class="btn btn-primary">Salva</button>
                 <button type="button" class="btn btn-secondary ms-2" onclick="cancelEdit()">Cancella</button>
             </div>
@@ -58,8 +69,15 @@
         <div th:each="article : ${articlePage.content}">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Articolo #<span th:text="${article.id}"></span></h5>
+                    <h5 class="card-title">Articolo #<span th:text="${article.id}"></span> - <span th:text="${article.title}"></span></h5>
+                    <p class="text-muted mb-1"><strong>Meta Description:</strong> <span th:text="${article.metaDescription}"></span></p>
+                    <p class="text-muted mb-1"><strong>SEO URL:</strong>
+                        <a th:href="@{'/blog/' + ${article.seoUrl}}" th:text="${article.seoUrl}" target="_blank" rel="noopener noreferrer"></a>
+                    </p>
+                    <!-- Linea di separazione -->
+                    <hr/>
                     <div class="card-text" th:utext="${article.content}"></div>
+
                     <div class="mt-2">
                         <button class="btn btn-warning btn-sm" th:onclick="|editArticle('${article.id}')|">Modifica</button>
                         <form th:action="@{/private/deleteArticle/{id}(id=${article.id})}" method="post" onsubmit="return confirmDeletion()" class="d-inline">
@@ -75,12 +93,8 @@
         <!-- PAGINAZIONE solo se non è una ricerca semantica -->
         <div th:if="${hideSearch != true}"
              th:replace="~{fragments/templateBase :: paginationArticles('/private/editorArticles')}"></div>
-
-
         <!-- PAGINAZIONE OLD
-        <div th:replace="~{fragments/templateBase :: paginationArticles('/private/editorArticles')}"></div>
-        -->
-
+        <div th:replace="~{fragments/templateBase :: paginationArticles('/private/editorArticles')}"></div> -->
     </div>
 
 
@@ -191,9 +205,14 @@
                     articleIdInput.name = 'id';
                     articleIdInput.id = 'articleIdInput';
                     document.querySelector('#articleForm').appendChild(articleIdInput);
-
                 }
                 articleIdInput.value = articleId;
+
+                // Popola i nuovi campi SEO
+                document.querySelector('#title').value = data.title || '';
+                document.querySelector('#metaDescription').value = data.metaDescription || '';
+                document.querySelector('#seoUrl').value = data.seoUrl || '';
+
                 // Scorri la pagina in cima al form
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             })
