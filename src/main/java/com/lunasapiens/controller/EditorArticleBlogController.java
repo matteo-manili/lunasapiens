@@ -70,8 +70,6 @@ public class EditorArticleBlogController extends BaseController {
     }
 
 
-
-
     /**
      * Pagina pubblca
      */
@@ -147,26 +145,23 @@ public class EditorArticleBlogController extends BaseController {
                                       @RequestParam("title") String title,
                                       @RequestParam("metaDescription") String metaDescription,
                                       @RequestParam("seoUrl") String seoUrl,
+                                      @RequestParam(name="page", defaultValue="0") int page,
                                       RedirectAttributes redirectAttributes) {
         if (!isMatteoManilIdUser()) {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato");
             return "redirect:/error";
         }
-
         try {
             if (content == null || content.isBlank()) {
                 redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Il contenuto è obbligatorio.");
                 return "redirect:/private/editorArticles";
             }
-
             ArticleContent article;
             boolean contentChanged = false;
-
             if (id.isPresent()) {
                 // Aggiorna articolo esistente
                 article = articleContentRepository.findById(id.get())
                         .orElseThrow(() -> new IllegalArgumentException("Articolo non trovato"));
-
                 if (!article.getContent().equals(content)) {
                     contentChanged = true;
                 }
@@ -193,10 +188,8 @@ public class EditorArticleBlogController extends BaseController {
                 articleContentRepository.updateSequence();
                 contentChanged = true; // nuovo articolo → embedding sempre
             }
-
             // Aggiorna contenuto
             article.setContent(content);
-
             //1- Il Titolo
             // Deve essere unico, descrittivo e contenere la parola chiave principale.
             // Un solo H1 e nel Tag <title> contenente il titolo. Lunghezza ideale: 50–60 caratteri.
@@ -221,7 +214,6 @@ public class EditorArticleBlogController extends BaseController {
             } else {
                 article.setSeoUrl(UtilsArticleSeo.toSlug(article.getTitle()));
             }
-
             // Salvataggio articolo con fallback per unicità
             ArticleContent articleSave;
             try {
@@ -231,16 +223,14 @@ public class EditorArticleBlogController extends BaseController {
                 if (e.getMessage().contains("seoUrl")) article.setSeoUrl(article.getSeoUrl() + "-" + article.getId());
                 articleSave = articleContentRepository.save(article);
             }
-
             // 🔹 Esegui embedding solo se il contenuto è stato modificato
             if (contentChanged) {
                 Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getContent()));
                 articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
                 logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
             }
-
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo " + articleSave.getId() + " salvato con successo!");
-            return "redirect:/private/editorArticles";
+            return "redirect:/private/editorArticles?page="+page;
 
         } catch (Exception e) {
             logger.error("Errore durante il salvataggio dell'articolo", e);
