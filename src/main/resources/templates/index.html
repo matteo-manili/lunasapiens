@@ -9,6 +9,7 @@
     <th:block th:fragment="links">
         <link rel="canonical" href="https://www.lunasapiens.com/" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" th:href="@{/css/style.css(v=${version})}" />
     </th:block>
 </head>
 
@@ -28,6 +29,40 @@
             </p>
         </div>
     </div>
+
+    <!-- SEZIONE BLOG SULLA HOMEPAGE -->
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-md-10">
+            <div class="card h-100 p-4 bg-light shadow rounded">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Riflessioni dal Blog</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3" th:each="article : ${recentArticles}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <a th:href="@{'/blog/' + ${article.seoUrl}}" class="h6 card-title text-decoration-none">
+                                        <span th:text="${article.title}"></span>
+                                    </a>
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy')}"></span>
+                                    </p>
+                                    <p class="card-text" th:utext="${article.content.length() > 150} ? ${article.content.substring(0,150)} + '...' : ${article.content}"></p>
+                                </div>
+                                <div class="card-footer text-end bg-white">
+                                    <a th:href="@{'/blog/' + ${article.seoUrl}}" class="btn btn-sm btn-primary">Leggi articolo</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a th:href="@{/blog}" class="btn btn-outline-primary">Vedi tutti gli articoli</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- MAIN CARD: PSICOLOGO IA -->
     <div class="row gx-4 gx-lg-5 justify-content-center">

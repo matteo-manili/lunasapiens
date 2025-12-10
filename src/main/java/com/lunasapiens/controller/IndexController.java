@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,8 +39,14 @@ public class IndexController extends BaseController {
 
 
     @GetMapping("/")
-    public String rootBase() {
+    public String rootBase(HttpServletResponse response, Model model) {
         logger.info("sono in rootBase");
+        // Prendi i 3 articoli più recenti con la query light paginata
+        Page<ArticleContent> recentArticlesPage = articleContentRepository.findAllLight(
+                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+        List<ArticleContent> recentArticles = recentArticlesPage.getContent();
+        model.addAttribute("recentArticles", recentArticles);
         return "index";
     }
 

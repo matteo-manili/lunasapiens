@@ -7,7 +7,8 @@
     <meta name="keywords" content="contatti, assistenza clienti, supporto, richieste, LunaSapiens, modulo di contatto, informazioni astrologiche, assistenza astrologica">
     </th:block>
     <th:block th:fragment="links">
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="canonical" href="https://www.lunasapiens.com/contatti" />
+        <link rel="stylesheet" th:href="@{/css/style.css(v=${version})}" />
     </th:block>
     <th:block th:fragment="scripts">
         <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>

@@ -10,6 +10,12 @@ public class BaseController {
 
 
     @ModelAttribute
+    public void versionCssStyle(Model model) {
+        model.addAttribute("version", "0.2"); // cambia a ogni deploy
+    }
+
+
+    @ModelAttribute
     public void aggiungiCostanteAlModel(Model model) {
         model.addAttribute("cookieDisabledGoogleAnalytics", Constants.COOKIE_DISABLED_GOOGLE_ANALYTICS);
     }
