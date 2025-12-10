@@ -99,8 +99,8 @@ public class IndexController extends BaseController {
                 WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
         // 1️⃣ Pagine statiche
         List<PageInfo> staticPages = Arrays.asList(
-                new PageInfo("/", ChangeFreq.DAILY, 1.0),
-                new PageInfo("/psicologo", ChangeFreq.WEEKLY, 0.9),
+                new PageInfo("/", ChangeFreq.MONTHLY, 1.0),
+                new PageInfo("/psicologo", ChangeFreq.MONTHLY, 0.9),
                 new PageInfo("/blog", ChangeFreq.WEEKLY, 0.9),
                 new PageInfo("/register", ChangeFreq.YEARLY, 0.5),
                 new PageInfo("/contatti", ChangeFreq.YEARLY, 0.5),
