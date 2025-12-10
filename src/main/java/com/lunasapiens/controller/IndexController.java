@@ -3,7 +3,6 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentRepository;
-import com.lunasapiens.utils.Utils;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
@@ -23,9 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -120,22 +117,12 @@ public class IndexController extends BaseController {
         // 2️⃣ Articoli del blog
         List<ArticleContent> articles = articleContentRepository.findAllLight();
         for (ArticleContent article : articles) {
-
-
-
             LocalDate lastModLocalDate = article.getCreatedAt().toLocalDate();
-
-            // lastModLocalDate è un LocalDate
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String lastModStr = lastModLocalDate.format(formatter);
-
-            logger.info("Sitemap lastmod for article {}: {}", article.getSeoUrl(), lastModStr);
-
-
-
             sitemapGenerator.addUrl(
                     new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + "/blog/" + article.getSeoUrl())
-                            .lastMod(lastModStr)  // <--- ora genera YYYY-MM-DD
+                            .lastMod(lastModStr)  // <--- Passare sempre una String altrimenti su heroku fa vedere ore minuti e secondi
                             .changeFreq(ChangeFreq.MONTHLY)
                             .priority(0.8)
                             .build()
