@@ -47,6 +47,12 @@ public class IndexController extends BaseController {
         );
         List<ArticleContent> recentArticles = recentArticlesPage.getContent();
         model.addAttribute("recentArticles", recentArticles);
+
+        // Disabilita la cache del browser per la pagina HTML
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // proxy intermedi
+
         return "index";
     }
 

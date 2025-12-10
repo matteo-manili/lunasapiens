@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class BaseController {
 
-
+    /**
+     * Aggiunge al model la variabile "version" per il cache-busting di /css/style.css
+     * Serve a forzare il browser a scaricare nuove versioni del file dopo
+     * un deploy, evitando di usare risorse obsolete dalla cache.
+     */
     @ModelAttribute
     public void versionCssStyle(Model model) {
         model.addAttribute("version", "0.2"); // cambia a ogni deploy
