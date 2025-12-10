@@ -41,17 +41,18 @@ public class IndexController extends BaseController {
     @GetMapping("/")
     public String rootBase(HttpServletResponse response, Model model) {
         logger.info("sono in rootBase");
+
+        // Disabilita la cache del browser per la pagina HTML
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // proxy intermedi
+
         // Prendi i 3 articoli più recenti con la query light paginata
         Page<ArticleContent> recentArticlesPage = articleContentRepository.findAllLight(
                 PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"))
         );
         List<ArticleContent> recentArticles = recentArticlesPage.getContent();
         model.addAttribute("recentArticles", recentArticles);
-
-        // Disabilita la cache del browser per la pagina HTML
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        response.setDateHeader("Expires", 0); // proxy intermedi
 
         return "index";
     }
