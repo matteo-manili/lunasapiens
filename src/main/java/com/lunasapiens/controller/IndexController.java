@@ -22,7 +22,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -93,7 +97,7 @@ public class IndexController extends BaseController {
 
 
     @GetMapping("/sitemap.xml")
-    public void getSitemap(HttpServletResponse response) throws IOException {
+    public void getSitemap(HttpServletResponse response) throws IOException, ParseException {
         WebSitemapGenerator sitemapGenerator =
                 WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
         // 1️⃣ Pagine statiche
@@ -117,26 +121,21 @@ public class IndexController extends BaseController {
         List<ArticleContent> articles = articleContentRepository.findAllLight();
         for (ArticleContent article : articles) {
 
+
+
             LocalDate lastModLocalDate = article.getCreatedAt().toLocalDate();
 
+            // lastModLocalDate è un LocalDate
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String lastModStr = lastModLocalDate.format(formatter);
 
-            // Creiamo un Calendar con fuso orario di Roma
-            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Utils.getZoneIdRomeEurope()));
-            cal.set(Calendar.YEAR, lastModLocalDate.getYear());
-            cal.set(Calendar.MONTH, lastModLocalDate.getMonthValue() - 1); // Calendar usa 0-based per i mesi
-            cal.set(Calendar.DAY_OF_MONTH, lastModLocalDate.getDayOfMonth());
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
+            logger.info("Sitemap lastmod for article {}: {}", article.getSeoUrl(), lastModStr);
 
-            Date lastModDate = cal.getTime();
 
-            logger.info("Sitemap lastmod for article {}: {}", article.getSeoUrl(), lastModDate);
 
             sitemapGenerator.addUrl(
                     new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + "/blog/" + article.getSeoUrl())
-                            .lastMod(lastModDate)  // <--- ora genera YYYY-MM-DD
+                            .lastMod(lastModStr)  // <--- ora genera YYYY-MM-DD
                             .changeFreq(ChangeFreq.MONTHLY)
                             .priority(0.8)
                             .build()
