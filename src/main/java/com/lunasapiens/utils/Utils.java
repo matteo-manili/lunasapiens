@@ -126,9 +126,7 @@ public class Utils {
 
 
 
-    public static ZoneId getZoneIdRomeEurope() {
-        return ZoneId.of("Europe/Rome");
-    }
+    public static ZoneId getZoneIdRomeEurope() { return ZoneId.of("Europe/Rome"); }
 
     public static ZonedDateTime getNowRomeEurope() { return ZonedDateTime.now( getZoneIdRomeEurope() ); }
 
@@ -139,13 +137,11 @@ public class Utils {
         return zdtRome.toLocalDateTime();
     }
 
-
     public static LocalDateTime OggiRomaOre0() {
         ZonedDateTime zdtRome = ZonedDateTime.now( getZoneIdRomeEurope() )
                 .withHour(0).withMinute(0).withSecond(0).withNano(0);
         return zdtRome.toLocalDateTime();
     }
-
 
     public static Date toDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone( getZoneIdRomeEurope() ).toInstant());
@@ -169,8 +165,6 @@ public class Utils {
                 5, 1981, 41.89, 12.48);
         return giornoOraPosizioneDTO;
     }
-
-
 
     public static LocalDateTime convertiGiornoOraPosizioneDTOInLocalDateTime(GiornoOraPosizioneDTO dto) {
         LocalDateTime localDateTime = LocalDateTime.of(
@@ -251,8 +245,6 @@ public class Utils {
         return responseEntity;
     }
 
-
-
     public static void createDirectory(String pathDirectory) {
         File outputFolder = new File(pathDirectory);
         if (!outputFolder.exists()) {
@@ -263,14 +255,12 @@ public class Utils {
         }
     }
 
-
     public static void eliminaCartelleEFile(String pathOroscopoGiornalieroImmagini) {
         File directoryImmagini = new File(pathOroscopoGiornalieroImmagini);
         deleteDirectory(directoryImmagini);
         File directoryVideo = new File(GeneratorVideo.pathOroscopoGiornalieroVideo);
         deleteDirectory(directoryVideo);
     }
-
 
     public static void deleteDirectory(File directory) {
         File[] contents = directory.listFiles();
@@ -288,9 +278,6 @@ public class Utils {
         // Dopo aver eliminato tutti i contenuti, elimina la cartella stessa
         directory.delete();
     }
-
-
-
 
     public static List<String> loadPropertiesEsternoLunaSapiens(List<String> keysProperties ) {
         List<String> keysPropertiesResult = new ArrayList<>();
