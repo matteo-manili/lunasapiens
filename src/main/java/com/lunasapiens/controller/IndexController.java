@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class IndexController extends BaseController {
@@ -118,10 +116,24 @@ public class IndexController extends BaseController {
         // 2️⃣ Articoli del blog
         List<ArticleContent> articles = articleContentRepository.findAllLight();
         for (ArticleContent article : articles) {
-            // Otteniamo solo la data (LocalDate) senza orario
+
             LocalDate lastModLocalDate = article.getCreatedAt().toLocalDate();
-            // Convertiamo LocalDate in Date usando il timezone di Roma
-            Date lastModDate = Date.from(lastModLocalDate.atStartOfDay(Utils.getZoneIdRomeEurope()).toInstant());
+
+
+            // Creiamo un Calendar con fuso orario di Roma
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Utils.getZoneIdRomeEurope()));
+            cal.set(Calendar.YEAR, lastModLocalDate.getYear());
+            cal.set(Calendar.MONTH, lastModLocalDate.getMonthValue() - 1); // Calendar usa 0-based per i mesi
+            cal.set(Calendar.DAY_OF_MONTH, lastModLocalDate.getDayOfMonth());
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            Date lastModDate = cal.getTime();
+
+            logger.info("Sitemap lastmod for article {}: {}", article.getSeoUrl(), lastModDate);
+
             sitemapGenerator.addUrl(
                     new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + "/blog/" + article.getSeoUrl())
                             .lastMod(lastModDate)  // <--- ora genera YYYY-MM-DD
