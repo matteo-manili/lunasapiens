@@ -63,10 +63,6 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
     }
 
 
-
-
-
-
     /** ************************** Full-Text Search (FTS) in PostgreSQL END EMBEDDING ************************/
 
     @Transactional(readOnly = true)
@@ -95,8 +91,6 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
             return ps;
         }, (rs, rowNum) -> mapArticle(rs));
     }
-
-
 
     /** ************************** EMBEDDING ************************/
 

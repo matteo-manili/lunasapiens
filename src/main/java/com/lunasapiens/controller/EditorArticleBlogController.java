@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,23 +60,23 @@ public class EditorArticleBlogController extends BaseController {
      * Pagina pubblca
      */
     @GetMapping("/blog/{seoUrl}")
-    public String viewArticle(@PathVariable String seoUrl, Model model) {
+    public Object viewArticle(@PathVariable String seoUrl, Model model) {
         Optional<ArticleContent> articleOpt = articleContentRepository.findLightBySeoUrl(seoUrl);
+        // Caso 1 → articolo non trovato → 301
         if (articleOpt.isEmpty()) {
-            return "redirect:/blog";
+            RedirectView rv = new RedirectView("/blog", true);
+            rv.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
+            return rv;
         }
+        // Caso 2 → articolo trovato → render view normale
         ArticleContent article = articleOpt.get();
         model.addAttribute("article", article);
-
-        // Recupera articolo precedente e successivo
         ArticleContent prevArticle = articleContentRepository.findNext(article.getCreatedAt()).orElse(null);
         ArticleContent nextArticle = articleContentRepository.findPrevious(article.getCreatedAt()).orElse(null);
         model.addAttribute("prevArticle", prevArticle);
         model.addAttribute("nextArticle", nextArticle);
-
         return "blogArticle";
     }
-
 
 
     /**
@@ -96,7 +97,6 @@ public class EditorArticleBlogController extends BaseController {
             setModelAttributeArticlesPage(results, model, search);
             return "blog";
         }
-
         // 🔹 Paginazione normale
         int page = parsePositivePage(pageParam);
         loadPagedArticles(page, model);
@@ -232,8 +232,7 @@ public class EditorArticleBlogController extends BaseController {
             }
             // 🔹 Esegui embedding solo se il contenuto è stato modificato
             if (contentChanged) {
-                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(
-                        articleSave.getTitle()+". "+articleSave.getMetaDescription()+". "+articleSave.getContent()));
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getTitle()+". "+articleSave.getContent()));
                 articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
                 logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
             }
