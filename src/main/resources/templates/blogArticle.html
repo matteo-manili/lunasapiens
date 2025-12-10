@@ -18,7 +18,6 @@
         <meta name="twitter:description" th:content="${article.metaDescription}" />
         <meta name="twitter:image" content="https://www.lunasapiens.com/logo_400x300.png" />
     </th:block>
-
     <th:block th:fragment="links">
         <link rel="canonical" th:href="@{'/blog/' + ${article.seoUrl}}" />
         <link rel="stylesheet" th:href="@{/css/style.css(v=${version})}" />

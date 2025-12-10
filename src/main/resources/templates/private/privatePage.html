@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Pagina privata</title>
     <th:block th:fragment="links">
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" th:href="@{/css/style.css(v=${version})}" />
     </th:block>
 </head>
 
