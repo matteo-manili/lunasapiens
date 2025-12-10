@@ -50,7 +50,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         String sql = "SELECT id, content, created_at, title, seo_url, meta_description  " + // embedding
                 "FROM article_content " +
                 "WHERE to_tsvector('italian', content || ' ' || title) @@ plainto_tsquery('italian', ?) " +
-                "ORDER BY ts_rank(to_tsvector('italian', content || ' ' || title), plainto_tsquery('italian', ?)) DESC " +
+                "ORDER BY ts_rank(to_tsvector('italian', content || ' ' || title || ' ' || meta_description), plainto_tsquery('italian', ?)) DESC " +
                 "LIMIT ?";
 
         return jdbcTemplate.query(connection -> {
@@ -82,7 +82,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
                 "  LIMIT 100" +  // limitiamo il set per il re-ranking FTS
                 ") " +
                 // 2. Re-ranking con FTS
-                "SELECT *, ts_rank(to_tsvector('italian', content || ' ' || title), plainto_tsquery('italian', ?)) AS fts_rank " +
+                "SELECT *, ts_rank(to_tsvector('italian', content || ' ' || title || ' ' || meta_description), plainto_tsquery('italian', ?)) AS fts_rank " +
                 "FROM nearest " +
                 "ORDER BY fts_rank DESC " +
                 "LIMIT ?";

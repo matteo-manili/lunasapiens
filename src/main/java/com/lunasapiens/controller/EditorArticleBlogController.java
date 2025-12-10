@@ -232,7 +232,8 @@ public class EditorArticleBlogController extends BaseController {
             }
             // 🔹 Esegui embedding solo se il contenuto è stato modificato
             if (contentChanged) {
-                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getTitle()+". "+articleSave.getContent()));
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(
+                        articleSave.getTitle()+". "+articleSave.getMetaDescription()+". "+articleSave.getContent()));
                 articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
                 logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
             }
