@@ -113,14 +113,13 @@ public class EditorArticleBlogController extends BaseController {
             redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi per visualizzare questa pagina.");
             return "redirect:/error";
         }
-
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
             // 🔹 Ricerca semantica e FTS
-            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
             // RICERCA FTS
-            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
+            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
 
             // Avvolgi in una Page fake
             setModelAttributeArticlesPage(results, model, search);
@@ -233,7 +232,7 @@ public class EditorArticleBlogController extends BaseController {
             }
             // 🔹 Esegui embedding solo se il contenuto è stato modificato
             if (contentChanged) {
-                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getContent()));
+                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getTitle()+". "+articleSave.getContent()));
                 articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
                 logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
             }

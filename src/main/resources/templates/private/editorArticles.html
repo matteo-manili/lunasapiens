@@ -18,20 +18,19 @@
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
 
 
-    <!-- Campo di ricerca ricerca semantica INIZIO -->
+    <!-- Campo di ricerca ricerca INIZIO -->
     <div class="mb-3">
         <form id="articleSearch" th:action="@{/private/editorArticles}" method="get" onsubmit="showLoadingOverlay()">
             <div class="input-group">
                 <input type="text" name="search" class="form-control"
-                       placeholder="Cerca negli articoli (ricerca semantica)..."
+                       placeholder="Cerca negli articoli..."
                        th:value="${search != null} ? ${search} : ''">
                 <button type="submit" class="btn btn-primary">Cerca</button>
                 <a th:href="@{/private/editorArticles}" class="btn btn-secondary">Resetta</a>
             </div>
         </form>
     </div>
-    <!-- Campo di ricerca semantica FINE -->
-
+    <!-- Campo di ricerca FINE -->
 
     <div class="mb-4">
         <form id="articleForm" th:action="@{/private/saveOrUpdateArticle}" method="post" onsubmit="showLoadingOverlay()">
@@ -75,10 +74,6 @@
                     <p class="text-muted mb-1"><strong>SEO URL:</strong>
                         <a th:href="@{'/blog/' + ${article.seoUrl}}" th:text="${article.seoUrl}" target="_blank" rel="noopener noreferrer"></a>
                     </p>
-                    <!-- Linea di separazione -->
-                    <hr/>
-                    <div class="card-text" th:utext="${article.content}"></div>
-
                     <div class="mt-2">
                         <button class="btn btn-warning btn-sm" th:onclick="|editArticle('${article.id}')|">Modifica</button>
                         <form th:action="@{/private/deleteArticle/{id}(id=${article.id})}" method="post" onsubmit="return confirmDeletion()" class="d-inline">
@@ -86,6 +81,11 @@
                             <button type="submit" class="btn btn-danger btn-sm">Cancella</button>
                         </form>
                     </div>
+                    <!-- Linea di separazione -->
+                    <hr/>
+                    <div class="card-text" th:utext="${article.content}"></div>
+
+
                 </div>
             </div>
         </div>

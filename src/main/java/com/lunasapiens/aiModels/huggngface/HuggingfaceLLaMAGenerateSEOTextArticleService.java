@@ -18,87 +18,57 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
     private static final String MODEL_NAME = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
 
-
     public String generateMetaDescription(String content, Long articleId, double temperatura) {
-
         if (content == null || content.isEmpty()) {
-            // La stringa è nulla o vuota
-            System.out.println("La stringa è nulla o vuota");
             return "articolo-"+String.valueOf(articleId);
-
         } else {
-            System.out.println("La stringa contiene qualcosa");
-
             String text = UtilsArticleSeo.cleanText(content);
             System.out.println("text pulito: " + text);
-            String textSystem = "Genera **solo la meta description in italiano**, circa 140–160 caratteri, " +
+            String textSystem = "Genera **solo la meta description in italiano**, circa 170–190 caratteri, " +
                     "per il seguente testo. Non aggiungere frasi come 'Ecco la meta description:' " +
                     "e non usare virgolette:\n\n" + text;
 
-
             int numTokenInput = countTokens(MODEL_NAME, textSystem);
             int numTokenOutput = estimateTokensFromChars(200);
-
             int totalTokens = numTokenInput + numTokenOutput;
-            System.out.println("totalTokens: " + totalTokens);
-
+            logger.info("totalTokens: " + totalTokens);
             String metaDescription = eseguiLLaM(textSystem, "", totalTokens, temperatura);
-
             return metaDescription;
         }
-
     }
-
-
 
 
 
 
     public String generateTitle(String content, Long articleId, double temperatura) {
-
         if (content == null || content.isEmpty()) {
-            // La stringa è nulla o vuota
-            System.out.println("La stringa è nulla o vuota");
             return "articolo-"+String.valueOf(articleId);
-
         } else {
-            System.out.println("La stringa contiene qualcosa");
-
             String text = UtilsArticleSeo.cleanText(content);
             System.out.println("text pulito: " + text);
-            String textSystem = "Genera **solo un titolo in italiano**, 50–80 caratteri, " +
+            String textSystem = "Genera **solo un titolo in italiano**, 90–120 caratteri, " +
                     "per il seguente testo. Non aggiungere frasi come 'Ecco il titolo:' " +
                     "e non usare virgolette:\n\n" + text;
-
 
             int numTokenInput = countTokens(MODEL_NAME, textSystem);
             int numTokenOutput = estimateTokensFromChars(100);
 
-
             int totalTokens = numTokenInput + numTokenOutput;
-            System.out.println("totalTokens: " + totalTokens);
-
+            logger.info("totalTokens: " + totalTokens);
             String title = eseguiLLaM(textSystem, "", totalTokens, temperatura);
-
             return title;
         }
-
-
     }
-
-
 
 
 
     private String eseguiLLaM(String textSystem, String textUser, int numToken, double temperatura) {
         try {
-
             // Costruisci lo schema "messages" in stile OpenAI
             List<Map<String, String>> messages = List.of(
                     Map.of("role", "system", "content", textSystem),
                     Map.of("role", "user", "content", textUser)
             );
-
             Map<String, Object> payloadMap = Map.of(
                     "model", MODEL_NAME + ":featherless-ai",
                     "messages", messages,
@@ -106,22 +76,16 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
                     "temperature", temperatura,
                     "top_p", 0.9
             );
-
-
             String payload = objectMapper.writeValueAsString(payloadMap);
-
             // ✅ endpoint corretto: niente MODEL_URL nel path!
             String response = callHuggingFaceAPI(
                     HuggingFaceBaseService.URL_HUGGING_FACE_ROOT + URL_HUGGING_FACE_CHAT_COMPLETIONS, // endpoint corretto
-                    payload
-            );
-
+                    payload );
 
             // parsing OpenAI-style JSON response
             Map<String, Object> result = objectMapper.readValue(response, Map.class);
             List<Map<String, Object>> choices = (List<Map<String, Object>>) result.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-
             return (String) message.get("content");
 
         } catch (Exception e) {

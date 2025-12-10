@@ -43,14 +43,14 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
      * Full-Text Search (FTS) in PostgreSQL
      * @param keyword
      * @param limit
-     * @return
+     * @return title seo_url meta_description
      */
     @Transactional(readOnly = true)
     public List<ArticleContent> searchByKeywordFTS(String keyword, int limit) {
-        String sql = "SELECT id, content, created_at, embedding " +
+        String sql = "SELECT id, content, created_at, title, seo_url, meta_description  " + // embedding
                 "FROM article_content " +
-                "WHERE to_tsvector('italian', content) @@ plainto_tsquery('italian', ?) " +
-                "ORDER BY ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) DESC " +
+                "WHERE to_tsvector('italian', content || ' ' || title) @@ plainto_tsquery('italian', ?) " +
+                "ORDER BY ts_rank(to_tsvector('italian', content || ' ' || title), plainto_tsquery('italian', ?)) DESC " +
                 "LIMIT ?";
 
         return jdbcTemplate.query(connection -> {
@@ -75,14 +75,14 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
 
         // 1. Trova i più vicini semanticamente
         String sql = "WITH nearest AS (" +
-                "  SELECT id, content, created_at, embedding, " +
+                "  SELECT id, content, created_at, title, seo_url, meta_description,  " + // embedding
                 "         embedding <=> ? AS cosine_distance " +
                 "  FROM article_content " +
                 "  ORDER BY cosine_distance " +
                 "  LIMIT 100" +  // limitiamo il set per il re-ranking FTS
                 ") " +
                 // 2. Re-ranking con FTS
-                "SELECT *, ts_rank(to_tsvector('italian', content), plainto_tsquery('italian', ?)) AS fts_rank " +
+                "SELECT *, ts_rank(to_tsvector('italian', content || ' ' || title), plainto_tsquery('italian', ?)) AS fts_rank " +
                 "FROM nearest " +
                 "ORDER BY fts_rank DESC " +
                 "LIMIT ?";
@@ -106,7 +106,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         // Converti embedding in stringa per PGvector
         PGobject pgVector = UtilsRepository.toPgVector(embedding);
 
-        String sql = "SELECT id, content, created_at, embedding " +
+        String sql = "SELECT id, content, created_at, title, seo_url, meta_description " + // embedding
                 "FROM article_content " +
                 "ORDER BY embedding <=> ? " +
                 "LIMIT ?";
@@ -125,6 +125,10 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
         article.setId(rs.getLong("id"));
         article.setContent(rs.getString("content"));
         article.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+        article.setTitle(rs.getString("title"));
+        article.setSeoUrl(rs.getString("seo_url"));
+        article.setMetaDescription(rs.getString("meta_description"));
+        /* // non lo porto dietro, pesa troppo
         String val = rs.getString("embedding");
         if (val != null && !val.isBlank()) {
             String[] parts = val.substring(1, val.length() - 1).split(",");
@@ -133,7 +137,7 @@ public class ArticleContentCustomRepositoryImpl implements ArticleContentCustomR
                 vec[i] = Float.parseFloat(parts[i]);
             }
             article.setEmbedding(vec);
-        }
+        } */
         return article;
     }
 
