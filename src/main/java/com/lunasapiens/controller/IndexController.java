@@ -22,7 +22,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -118,12 +118,13 @@ public class IndexController extends BaseController {
         // 2️⃣ Articoli del blog
         List<ArticleContent> articles = articleContentRepository.findAllLight();
         for (ArticleContent article : articles) {
-            // LocalDateTime -> tronco a mezzanotte -> Date con timezone Roma
-            LocalDateTime truncated = article.getCreatedAt().toLocalDate().atStartOfDay();
-            Date lastModDate = Utils.toDate(truncated);
+            // Otteniamo solo la data (LocalDate) senza orario
+            LocalDate lastModLocalDate = article.getCreatedAt().toLocalDate();
+            // Convertiamo LocalDate in Date usando il timezone di Roma
+            Date lastModDate = Date.from(lastModLocalDate.atStartOfDay(Utils.getZoneIdRomeEurope()).toInstant());
             sitemapGenerator.addUrl(
                     new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + "/blog/" + article.getSeoUrl())
-                            .lastMod(lastModDate)
+                            .lastMod(lastModDate)  // <--- ora genera YYYY-MM-DD
                             .changeFreq(ChangeFreq.MONTHLY)
                             .priority(0.8)
                             .build()
