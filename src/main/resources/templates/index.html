@@ -36,32 +36,47 @@
             <div class="card h-100 p-4 bg-light shadow rounded">
                 <div class="card-body">
                     <h4 class="card-title text-center mb-4">Riflessioni dal Blog</h4>
-                    <div class="row">
+                    <div class="row"> <!-- inizio row -->
+
                         <div class="col-md-6 mb-3" th:each="article : ${recentArticles}">
                             <div class="card h-100">
                                 <div class="card-body">
+                                    <!-- Titolo -->
                                     <a th:href="@{'/blog/' + ${article.seoUrl}}" class="h6 card-title text-decoration-none">
                                         <span th:text="${article.title}"></span>
                                     </a>
+
+                                    <!-- Data -->
                                     <p class="text-muted mb-2">
                                         <i class="bi bi-calendar-event"></i>
                                         <span th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy')}"></span>
                                     </p>
-                                    <p class="card-text" th:utext="${article.content.length() > 150} ? ${article.content.substring(0,150)} + '...' : ${article.content}"></p>
+
+                                    <!-- Testo abbreviato senza HTML -->
+                                    <p class="card-text"
+                                       th:text="${#strings.abbreviate(article.content.replaceAll('<[^>]*>', ' '), 150)}">
+                                    </p>
                                 </div>
+
                                 <div class="card-footer text-end bg-white">
                                     <a th:href="@{'/blog/' + ${article.seoUrl}}" class="btn btn-sm btn-primary">Leggi articolo</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+
+                    </div> <!-- fine row -->
+
                     <div class="text-center mt-3">
                         <a th:href="@{/blog}" class="btn btn-outline-primary">Vedi tutti gli articoli</a>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+
 
 
     <!-- MAIN CARD: PSICOLOGO IA -->
