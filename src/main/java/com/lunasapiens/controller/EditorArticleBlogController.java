@@ -201,25 +201,25 @@ public class EditorArticleBlogController extends BaseController {
             // Deve essere unico, descrittivo e contenere la parola chiave principale.
             // Un solo H1 e nel Tag <title> contenente il titolo. Lunghezza ideale: 50–60 caratteri.
             if (title != null && !title.isBlank()) {
-                article.setTitle(UtilsArticleSeo.cleanGeneratedText(title));
+                article.setTitle(UtilsArticleSeo.cleanGeneratedText(title).trim());
             } else {
                 String autoTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId(), 0.6);
-                article.setTitle(UtilsArticleSeo.cleanGeneratedText(autoTitle));
+                article.setTitle(UtilsArticleSeo.cleanGeneratedText(autoTitle).trim());
             }
             // 2- Meta description
             // <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
             // Dovrebbe invogliare l’utente al click. Lunghezza ideale: 140–160 caratteri.
             if (metaDescription != null && !metaDescription.isBlank()) {
-                article.setMetaDescription(metaDescription);
+                article.setMetaDescription(metaDescription.trim());
             } else {
                 String autoDesc = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId(), 0.6);
-                article.setMetaDescription(UtilsArticleSeo.cleanGeneratedText(autoDesc));
+                article.setMetaDescription(UtilsArticleSeo.cleanGeneratedText(autoDesc).trim());
             }
             // 3- SEO URL / Slug
             if (seoUrl != null && !seoUrl.isBlank()) {
-                article.setSeoUrl(seoUrl);
+                article.setSeoUrl(seoUrl.trim());
             } else {
-                article.setSeoUrl(UtilsArticleSeo.toSlug(article.getTitle()));
+                article.setSeoUrl(UtilsArticleSeo.toSlug(article.getTitle()).trim());
             }
             // Salvataggio articolo con fallback per unicità
             ArticleContent articleSave;

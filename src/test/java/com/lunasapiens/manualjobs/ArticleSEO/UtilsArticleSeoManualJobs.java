@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,112 +34,58 @@ public class UtilsArticleSeoManualJobs {
     private HuggingfaceLLaMAGenerateSEOTextArticleService huggingfaceLLaMAGenerateSEOTextArticleService;
 
 
-    /**
-     * 1- Il Titolo
-     * Deve essere unico, descrittivo e contenere la parola chiave principale.
-     * Un solo H1 e nel Tag <title> contenente il titolo.
-     * Lunghezza ideale: 50–60 caratteri.
-     *
-     *
-     * 2- Meta description
-     * <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
-     * Dovrebbe invogliare l’utente al click.
-     * Lunghezza ideale: 140–160 caratteri.
-     *
-     *
-     * 3- URL parlante (SEO-friendly)
-     * Es.:
-     * /come-ottimizzare-pagina-html-seo
-     * Evita caratteri strani o numeri inutili.
-     * Ideale: 50–60 caratteri max 100
-     *
-     */
-
-
-
     @Test
     //@Disabled("Disabilitato temporaneamente per debug")
-    public void testSeoGeneration() {
+    public void testTrimFields() {
         List<ArticleContent> articles = articleContentRepository.findAll();
+        List<Long> modifiedArticles = new ArrayList<>();
+
         for (ArticleContent article : articles) {
+            boolean modified = false;
 
-            //if (article.getId() == 147l) {
-
-                String content = article.getContent();
-                System.out.println("=== ARTICOLO ID: " + article.getId() + " ===");
-                System.out.println("content: " + UtilsArticleSeo.cleanText(content) );
-
-                /**
-                 * 1- Il Titolo
-                 * Deve essere unico, descrittivo e contenere la parola chiave principale.
-                 * Un solo H1 e nel Tag <title> contenente il titolo.
-                 * Lunghezza ideale: 50–60 caratteri.
-                 */
-                if (article.getTitle() == null || article.getTitle().isEmpty()) {
-                    //String generateTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId(), 0.6);
-                    String generateTitle = "";
-
-
-                    article.setTitle( UtilsArticleSeo.cleanGeneratedText(generateTitle) );
-                    try {
-                        articleContentRepository.save(article);
-                    } catch (DataIntegrityViolationException e) {
-
-                        article.setTitle(generateTitle + " " + article.getId());
-                        articleContentRepository.save(article);
-                    }
-                    System.out.println("Title      : " + article.getTitle() );
-                    //Il mito della sovranità
-                    //Il Falso Centro dell'Uomo
-                    //Il mito della sovranità
-                    //Il mito dell'io
-                    //Il mito dell'uomo
-                    //Il Declino dell'Ego
+            // Controlla e pulisci title
+            if (article.getTitle() != null) {
+                String trimmedTitle = article.getTitle().trim();
+                if (!trimmedTitle.equals(article.getTitle())) {
+                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel title.");
+                    article.setTitle(trimmedTitle);
+                    modified = true;
                 }
+            }
 
-
-                /**
-                 * 2- Meta description
-                 * <meta name="description" content="Descrizione chiara dell’articolo con parole chiave e invito al clic.">
-                 * Dovrebbe invogliare l’utente al click.
-                 * Lunghezza ideale: 140–160 caratteri.
-                 */
-                if (article.getMetaDescription() == null || article.getMetaDescription().isEmpty()) {
-                    //String generateMetaDescription = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId(), 0.6);
-                    String generateMetaDescription = "";
-                    article.setMetaDescription( UtilsArticleSeo.cleanGeneratedText(generateMetaDescription) );
-                    articleContentRepository.save(article);
-                    System.out.println("MetaDescription: " + article.getMetaDescription());
-                    //La realtà umana, sfidata dalle scoperte scientifiche e psicoanalitiche.
+            // Controlla e pulisci content
+            if (article.getContent() != null) {
+                String trimmedContent = article.getContent().trim();
+                if (!trimmedContent.equals(article.getContent())) {
+                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel content.");
+                    article.setContent(trimmedContent);
+                    modified = true;
                 }
+            }
 
-                /**
-                 * 3- Seo Url
-                 */
-                if (article.getSeoUrl() == null || article.getSeoUrl().isEmpty()) {
-                    String generateSeoUrl = UtilsArticleSeo.toSlug(article.getTitle());
-                    article.setSeoUrl( generateSeoUrl );
-                    try {
-                        articleContentRepository.save(article);
-                    } catch (DataIntegrityViolationException e) {
-                        article.setSeoUrl(generateSeoUrl + "-" + article.getId());
-                        articleContentRepository.save(article);
-                    }
-                    System.out.println("SeoUrl      : " + article.getTitle() );
+            // Controlla e pulisci seoUrl
+            if (article.getSeoUrl() != null) {
+                String trimmedSeoUrl = article.getSeoUrl().trim();
+                if (!trimmedSeoUrl.equals(article.getSeoUrl())) {
+                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel seoUrl.");
+                    article.setSeoUrl(trimmedSeoUrl);
+                    modified = true;
                 }
+            }
 
-                System.out.println("URL        : https://www.lunasapiens.com/blog/" + article.getSeoUrl());
-                System.out.println();
-
-
-
-
-            //}
-
-
+            // Salva solo se ci sono modifiche
+            if (modified) {
+                articleContentRepository.save(article);
+                modifiedArticles.add(article.getId());
+            }
         }
 
+        System.out.println("Totale articoli modificati: " + modifiedArticles.size());
+        if (!modifiedArticles.isEmpty()) {
+            System.out.println("ID articoli modificati: " + modifiedArticles);
+        }
     }
+
 
 
 
