@@ -14,9 +14,15 @@ public class BaseController {
      * un deploy, evitando di usare risorse obsolete dalla cache.
      */
     @ModelAttribute
-    public void versionCssStyle(Model model) {
-        model.addAttribute("version", "0.2"); // cambia a ogni deploy
-    }
+    public void versionCssStyle(Model model) { model.addAttribute("vCssStyle", "0.2"); }
+
+    /**
+     * Aggiunge al model la variabile "version" per il cache-busting di /css/articles.css
+     * Serve a forzare il browser a scaricare nuove versioni del file dopo
+     * un deploy, evitando di usare risorse obsolete dalla cache.
+     */
+    @ModelAttribute
+    public void versionCssArticles(Model model) { model.addAttribute("vCssArticl", "0.3");  }
 
 
     @ModelAttribute
