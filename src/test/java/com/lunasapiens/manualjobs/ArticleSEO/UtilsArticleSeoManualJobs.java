@@ -34,67 +34,6 @@ public class UtilsArticleSeoManualJobs {
     private HuggingfaceLLaMAGenerateSEOTextArticleService huggingfaceLLaMAGenerateSEOTextArticleService;
 
 
-    @Test
-    //@Disabled("Disabilitato temporaneamente per debug")
-    public void testTrimFields() {
-        List<ArticleContent> articles = articleContentRepository.findAll();
-        List<Long> modifiedArticles = new ArrayList<>();
-
-        for (ArticleContent article : articles) {
-            boolean modified = false;
-
-            // Controlla e pulisci title
-            if (article.getTitle() != null) {
-                String trimmedTitle = article.getTitle().trim();
-                if (!trimmedTitle.equals(article.getTitle())) {
-                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel title.");
-                    article.setTitle(trimmedTitle);
-                    modified = true;
-                }
-            }
-
-            // Controlla e pulisci content
-            if (article.getContent() != null) {
-                String trimmedContent = article.getContent().trim();
-                if (!trimmedContent.equals(article.getContent())) {
-                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel content.");
-                    article.setContent(trimmedContent);
-                    modified = true;
-                }
-            }
-
-            // Controlla e pulisci seoUrl
-            if (article.getSeoUrl() != null) {
-                String trimmedSeoUrl = article.getSeoUrl().trim();
-                if (!trimmedSeoUrl.equals(article.getSeoUrl())) {
-                    System.out.println("Articolo ID " + article.getId() + " aveva spazi nel seoUrl.");
-                    article.setSeoUrl(trimmedSeoUrl);
-                    modified = true;
-                }
-            }
-
-            // Salva solo se ci sono modifiche
-            if (modified) {
-                articleContentRepository.save(article);
-                modifiedArticles.add(article.getId());
-            }
-        }
-
-        System.out.println("Totale articoli modificati: " + modifiedArticles.size());
-        if (!modifiedArticles.isEmpty()) {
-            System.out.println("ID articoli modificati: " + modifiedArticles);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
 
     @Test
     @Disabled("Disabilitato temporaneamente per debug")
