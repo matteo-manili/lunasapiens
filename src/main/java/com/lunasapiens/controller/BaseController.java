@@ -8,25 +8,25 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class BaseController {
 
-
+    /**
+     * Aggiunge al model la variabile "version" per il cache-busting di /js/util.js
+     * Serve a forzare il browser a scaricare nuove versioni del file dopo un deploy, evitando di usare risorse obsolete dalla cache.
+     */
     @ModelAttribute
     public void versionJsUtil(Model model) {
         model.addAttribute("vJsUtil", "3.2"); // aggiorna questo numero ad ogni deploy
     }
 
-
     /**
      * Aggiunge al model la variabile "version" per il cache-busting di /css/style.css
-     * Serve a forzare il browser a scaricare nuove versioni del file dopo
-     * un deploy, evitando di usare risorse obsolete dalla cache.
+     * Serve a forzare il browser a scaricare nuove versioni del file dopo un deploy, evitando di usare risorse obsolete dalla cache.
      */
     @ModelAttribute
     public void versionCssStyle(Model model) { model.addAttribute("vCssStyle", "0.2"); }
 
     /**
      * Aggiunge al model la variabile "version" per il cache-busting di /css/articles.css
-     * Serve a forzare il browser a scaricare nuove versioni del file dopo
-     * un deploy, evitando di usare risorse obsolete dalla cache.
+     * Serve a forzare il browser a scaricare nuove versioni del file dopo un deploy, evitando di usare risorse obsolete dalla cache.
      */
     @ModelAttribute
     public void versionCssArticles(Model model) { model.addAttribute("vCssArticl", "0.3");  }
