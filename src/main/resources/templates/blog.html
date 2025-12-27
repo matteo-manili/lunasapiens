@@ -68,8 +68,6 @@
                         </span>
                     </div>
 
-
-
                     <!-- Contenuto articolo -->
                     <div class="card-text collapsible-text" th:utext="${article.content}"></div>
                     <button class="btn btn-link btn-sm toggle-button">Leggi tutto</button>
@@ -78,7 +76,6 @@
         </div>
         <!-- PAGINAZIONE solo se non è ricerca semantica -->
         <div th:if="${hideSearch != true}" th:replace="~{fragments/templateBase :: paginationArticles('/blog')}"></div>
-
     </div>
 
 </div> <!-- fine container -->
@@ -90,29 +87,27 @@
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll(".toggle-button");
 
-        toggleButtons.forEach(function (button) {
+        toggleButtons.forEach(button => {
             const content = button.previousElementSibling;
 
-            // Calcola altezza di una riga usando line-height
-            const style = getComputedStyle(content);
-            const lineHeight = parseFloat(style.lineHeight);
-
-            // Numero massimo di righe visibili (20 righe come nel CSS)
+            // Calcola altezza massima una sola volta
+            const lineHeight = parseFloat(getComputedStyle(content).lineHeight);
             const maxLines = 20;
             const maxHeight = lineHeight * maxLines;
-
             // Altezza reale del contenuto
             const actualHeight = content.scrollHeight;
-
             if (actualHeight <= maxHeight) {
                 // Nascondi il pulsante se il contenuto non supera il limite
                 button.style.display = "none";
             } else {
-                // Mostra il pulsante e aggiungi la logica toggle
+                // Mostra il pulsante
                 button.style.display = "inline-block";
-                button.addEventListener("click", function () {
-                    content.classList.toggle("expanded");
-                    button.textContent = content.classList.contains("expanded") ? "Leggi meno" : "Leggi tutto";
+                // Toggle con requestAnimationFrame per non bloccare scroll
+                button.addEventListener("click", () => {
+                    window.requestAnimationFrame(() => {
+                        content.classList.toggle("expanded");
+                        button.textContent = content.classList.contains("expanded") ? "Leggi meno" : "Leggi tutto";
+                    });
                 });
             }
         });
