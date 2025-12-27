@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.File;
@@ -41,19 +40,16 @@ public class IndexController extends BaseController {
     @GetMapping("/")
     public String rootBase(HttpServletResponse response, Model model) {
         logger.info("sono in rootBase");
-
         // Disabilita la cache del browser per la pagina HTML
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         response.setHeader("Pragma", "no-cache"); // HTTP 1.0
         response.setDateHeader("Expires", 0); // proxy intermedi
-
         // Prendi i 3 articoli più recenti con la query light paginata
         Page<ArticleContent> recentArticlesPage = articleContentRepository.findAllLight(
                 PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"))
         );
         List<ArticleContent> recentArticles = recentArticlesPage.getContent();
         model.addAttribute("recentArticles", recentArticles);
-
         return "index";
     }
 
@@ -83,16 +79,6 @@ public class IndexController extends BaseController {
     public String pageError(HttpServletRequest request, Model model) {
         return "error";
     }
-
-
-    /**
-     * restituisce il codice html del frammento "header menu", il quale ritorna dalla funziona javascript
-     * document.getElementById("header-placeholder").innerHTML = html;
-     * E' necessario quando il browser memorizza in cache alcune pagine (soprattuto la pagina root / ) e non visualizza il menu agguiornato.
-     */
-    @GetMapping("/header")
-    @ResponseStatus(HttpStatus.NOT_FOUND) // Impostiamo un codice 404
-    public String header() { return "fragments/templateBase :: header"; }
 
 
     @GetMapping("/robots.txt")
@@ -168,39 +154,6 @@ public class IndexController extends BaseController {
         public ChangeFreq getChangeFreq() { return changeFreq; }
         public double getPriority() { return priority; }
     }
-
-
-
-/*
-    @GetMapping("/sitemap.xml")
-    public void getSitemap(HttpServletResponse response) throws IOException {
-        // Crea il generatore di sitemap
-        WebSitemapGenerator sitemapGenerator = WebSitemapGenerator.builder(Constants.DOM_LUNA_SAPIENS, new File(".")).build();
-        // Aggiungi URL alla sitemap
-        for (String url : Constants.URL_INDEX_LIST) {
-            if (url.equals("/oroscopo")) {
-                // Aggiungi la pagina oroscopo con lastmod, changefreq e priority
-                Date lastModDate = Utils.toDate((Utils.OggiRomaOre0()));
-                WebSitemapUrl oroscopoUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url)
-                        .lastMod( lastModDate  ) // Data di ultima modifica
-                        .changeFreq(ChangeFreq.DAILY) // Frequenza di aggiornamento
-                        .priority(1.0)                // Priorità alta
-                        .build();
-                sitemapGenerator.addUrl(oroscopoUrl);
-            } else {
-                // Per tutte le altre pagine, aggiungi normalmente
-                WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options(Constants.DOM_LUNA_SAPIENS + url).build();
-                sitemapGenerator.addUrl(sitemapUrl);
-            }
-        }
-        // Genera la sitemap
-        List<String> sitemapUrls = sitemapGenerator.writeAsStrings();
-        // Imposta il tipo di contenuto e restituisci la sitemap
-        response.setContentType("application/xml");
-        response.getWriter().write(String.join("\n", sitemapUrls));
-    }
-
- */
 
 
     @GetMapping("/matteo-manili-programmatore")

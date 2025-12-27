@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class BaseController {
 
+
+    @ModelAttribute
+    public void versionJsUtil(Model model) {
+        model.addAttribute("vJsUtil", "3.2"); // aggiorna questo numero ad ogni deploy
+    }
+
+
     /**
      * Aggiunge al model la variabile "version" per il cache-busting di /css/style.css
      * Serve a forzare il browser a scaricare nuove versioni del file dopo

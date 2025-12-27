@@ -59,7 +59,7 @@ public class EditorArticleBlogController extends BaseController {
     /**
      * Pagina pubblca
      */
-    @GetMapping("/blog/{seoUrl}")
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_BLOG+"/{seoUrl}")
     public Object viewArticle(@PathVariable String seoUrl, Model model) {
         Optional<ArticleContent> articleOpt = articleContentRepository.findLightBySeoUrl(seoUrl);
         // Caso 1 → articolo non trovato → 301
@@ -82,18 +82,17 @@ public class EditorArticleBlogController extends BaseController {
     /**
      * Pagina pubblca
      */
-    @GetMapping("/blog")
+    @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_BLOG)
     public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam,
                        @RequestParam(name = "search", required = false) String search,
                        Model model) {
         if (search != null && !search.isBlank()) {
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
-            // 🔹 Ricerca semantica e FTS
-            List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
+            // 🔹 Ricerca semantica e FTS TODO da usare ma prima bisogna lavorare sul filtro FilterCheckUrls_PROVA_1 per evitare abusi dagli utenti
+            //List<ArticleContent> results = articleSemanticService.searchByEmbeddingThenFTS(search, 10); // 10 risultati max
             // RICERCA FTS
-            //List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
-
+            List<ArticleContent> results = articleContentCustomRepository.searchByKeywordFTS(search, 10); // massimo 10 risultati
             setModelAttributeArticlesPage(results, model, search);
             return "blog";
         }

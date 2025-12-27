@@ -79,7 +79,6 @@
     <th:block th:replace="${scripts}" />
 </head>
 
-<!-- <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li> -->
 <!-- Responsive navbar  -->
 <header th:fragment="header" id="header-placeholder">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -102,22 +101,6 @@
             </div>
         </div>
     </nav>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            //Serve per fare il refresh del fragments header, perché se l'utente si logga deve vedere la username nel header
-            fetch("/header")
-                .then(response => response.text())
-                .then(html => {
-                    // Inserisci l'HTML dell'header nella pagina
-                    document.getElementById("header-placeholder").innerHTML = html;
-                    // Esegui il codice di evidenziazione del link del menu dopo aver aggiornato l'header
-                    highlightActiveMenuLink();
-                })
-                .catch(error => {
-                    console.error('Errore nel caricamento dell\'header:', error);
-                });
-        });
-    </script>
 </header>
 
 
@@ -164,8 +147,7 @@
     </div>
 </footer>
 
-
-<th:block th:fragment="js-util"><script src="/js/util.js?v=3.1"></script></th:block>
+<th:block th:fragment="js-util"><script th:src="@{/js/util.js(v=${vJsUtil})}"></script></th:block>
 
 <!-- sezione di link ricorrenti nelle pagine -->
 <div th:fragment="link-js-util-bootstrap-jquery">

@@ -1,25 +1,17 @@
-
-
-/**
- * Questo script evidenzia dinamicamente il link del menu corrispondente alla pagina corrente.
- *
- * - Quando il documento è completamente caricato,  ottiene l'URL della pagina attuale.
- * - Seleziona tutti i link nel menu di navigazione.
- * - Confronta l'URL della pagina corrente con l'URL di ciascun link nel menu.
- * - Aggiunge la classe 'active' al link corrispondente se l'URL coincide, evidenziandolo.
- */
-// Funzione per evidenziare il link attivo
+// =============================
+// Evidenzia dinamicamente il link attivo del menu
+// =============================
 function highlightActiveMenuLink() {
-    // Ottieni l'URL della pagina corrente
-    var currentUrl = window.location.pathname;
-    // Seleziona tutti i link nel menu di navigazione
-    var menuLinks = document.querySelectorAll(".navbar-nav .nav-link");
-    // Itera su ciascun link e confronta l'URL
-    menuLinks.forEach(function(link) {
-        // Ottieni l'URL del link (rimuove query params e hash)
-        var linkUrl = new URL(link.href).pathname;
-        // Aggiungi la classe 'active' se l'URL corrisponde
-        if (currentUrl === linkUrl) {
+    const currentUrl = window.location.pathname; // ottiene la path attuale
+    const menuLinks = document.querySelectorAll(".navbar-nav .nav-link"); // seleziona tutti i link del menu
+
+    menuLinks.forEach(link => {
+        const linkUrl = new URL(link.href).pathname; // path del link
+        // Se l'URL corrente inizia con quello del link (per sottopagine)
+        if (currentUrl === '/' && linkUrl === '/') {
+            // caso speciale per root
+            link.classList.add("active");
+        } else if (currentUrl.startsWith(linkUrl) && linkUrl !== '/') {
             link.classList.add("active");
         } else {
             link.classList.remove("active");
@@ -27,22 +19,27 @@ function highlightActiveMenuLink() {
     });
 }
 
+// Inizializza al caricamento del DOM
+document.addEventListener("DOMContentLoaded", highlightActiveMenuLink);
 
 
-/**
- * funzione che serve a visualizzare la finestra di attesa quando si fa submit
- */
+// =============================
+// Mostra / nasconde overlay di caricamento
+// =============================
 function showLoadingOverlay() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'flex';
 }
 
 function hideLoadingOverlay() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'none';
 }
 
 
-
-<!-- per fare la WPA -->
+// =============================
+// Registrazione Service Worker per PWA
+// =============================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
