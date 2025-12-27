@@ -2,6 +2,7 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.aiModels.huggngface.HuggingfaceLLaMAGenerateSEOTextArticleService;
+import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.utils.Utils;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.repository.ArticleContentCustomRepositoryImpl;
@@ -11,6 +12,7 @@ import com.lunasapiens.aiModels.huggngface.HuggingfaceTextEmbedding_E5LargeServi
 import com.lunasapiens.service.FileWithMetadata;
 import com.lunasapiens.service.S3Service;
 import com.lunasapiens.utils.UtilsArticleSeo;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +59,9 @@ public class EditorArticleBlogController extends BaseController {
     @Autowired
     private HuggingfaceLLaMAGenerateSEOTextArticleService huggingfaceLLaMAGenerateSEOTextArticleService;
 
+    @Autowired
+    private TelegramBotService telegramBotService;
+
 
     /**
      * Pagina pubblca
@@ -85,8 +92,20 @@ public class EditorArticleBlogController extends BaseController {
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_BLOG)
     public String blog(@RequestParam(name = "page", defaultValue = "0") String pageParam,
                        @RequestParam(name = "search", required = false) String search,
+                       @AuthenticationPrincipal UserDetails userDetails,
+                       HttpServletRequest request,
                        Model model) {
+        // Log dei parametri ricevuti
+        logger.info("Blog request ricevuta: pageParam='{}', search='{}'", pageParam, search);
         if (search != null && !search.isBlank()) {
+
+            // 🔹 Se l'utente è diverso da matteo.manili invia messaggio Telegram
+            String username = (userDetails != null) ? userDetails.getUsername() : "anonimo-" + request.getRemoteAddr();
+            // Invio Telegram solo se non è matteo.manili
+            if (!Constants.MATTEO_MANILI_GMAIL.equals(username)) {
+                telegramBotService.inviaMessaggio("Utente '" + username + "' ha cercato nel blog: '" + search + "'");
+            }
+
             // 🔹 Ricerca semantica
             //List<ArticleContent> results = articleSemanticService.searchByEmbedding(search, 10); // massimo 10 risultati
             // 🔹 Ricerca semantica e FTS TODO da usare ma prima bisogna lavorare sul filtro FilterCheckUrls_PROVA_1 per evitare abusi dagli utenti

@@ -69,8 +69,7 @@ public class PsicologoController extends BaseController {
 
     @GetMapping("/psicologoSubmit")
     public String psicologoSubmit(
-            RedirectAttributes redirectAttributes, HttpServletRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            RedirectAttributes redirectAttributes, HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
 
         logger.info("sono in psicologoSubmit");
 
