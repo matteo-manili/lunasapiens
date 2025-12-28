@@ -109,8 +109,11 @@ public class IndexController extends BaseController {
         // 1️⃣ Pagine statiche
         List<PageInfo> staticPages = Arrays.asList(
                 new PageInfo("/", ChangeFreq.WEEKLY, 1.0),
-                new PageInfo("/psicologo", ChangeFreq.MONTHLY, 0.9),
                 new PageInfo("/blog", ChangeFreq.WEEKLY, 0.9),
+                new PageInfo("/psicologo", ChangeFreq.MONTHLY, 0.9),
+                new PageInfo("/astrologia-sperimentale", ChangeFreq.MONTHLY, 0.9),
+                new PageInfo("/oroscopo", ChangeFreq.MONTHLY, 0.9),
+                new PageInfo("/tema-natale", ChangeFreq.MONTHLY, 0.9),
                 new PageInfo("/register", ChangeFreq.YEARLY, 0.5),
                 new PageInfo("/contatti", ChangeFreq.YEARLY, 0.5),
                 new PageInfo("/info-privacy", ChangeFreq.YEARLY, 0.5)
