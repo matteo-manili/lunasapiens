@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/templateBase :: common_head_title_meta_links(~{::title},~{::meta},~{::links})}">
+    <title th:fragment="title">Luna Sapiens | Astrologia Sperimentale</title>
+
+    <th:block th:fragment="meta">
+        <meta name="description"
+              content="Astrologia Sperimentale è un progetto di Luna Sapiens che esplora l’integrazione tra astrologia tradizionale, dati astronomici e intelligenza artificiale. Un laboratorio aperto alla collaborazione con astrologi esperti." />
+        <meta name="keywords"
+              content="astrologia sperimentale, astrologia e intelligenza artificiale, tema natale IA, oroscopo sperimentale, Luna Sapiens, astrologia simbolica, transiti planetari" />
+    </th:block>
+
+    <th:block th:fragment="links">
+        <link rel="canonical" href="https://www.lunasapiens.com/astrologia" />
+        <link rel="stylesheet" th:href="@{/css/style.css(v=${vCssStyle})}" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    </th:block>
+</head>
+
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4">
+
+    <!-- HERO -->
+    <div class="px-lg-5 my-3">
+        <div class="highlight-section text-center p-5 bg-light shadow rounded">
+            <h1 class="display-4 mb-4">Astrologia Sperimentale</h1>
+            <p class="lead">
+                Un laboratorio aperto di ricerca e sperimentazione astrologica
+                che integra <strong>regole astrologiche</strong>, <strong>dati astronomici</strong>
+                e <strong>intelligenza artificiale</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- DESCRIZIONE PROGETTO -->
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-md-10">
+            <div class="card h-100 p-4 bg-light shadow rounded">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 text-center">Il Progetto</h4>
+
+                    <p>
+                        Astrologia Sperimentale nasce come un <strong>progetto di ricerca aperto</strong>
+                        che ha l’obiettivo di esplorare l’astrologia in modo strutturato,
+                        utilizzando modelli simbolici, regole astrologiche tradizionali
+                        e sistemi astronomici di alta precisione.
+                    </p>
+
+                    <p>
+                        Il progetto non ha finalità divinatorie, ma si configura come
+                        uno <strong>spazio di sperimentazione</strong> in cui osservare
+                        le correlazioni tra cicli celesti, archetipi astrologici
+                        e dimensione psicologica e simbolica dell’essere umano.
+                    </p>
+
+                    <p>
+                        L’intelligenza artificiale viene utilizzata come strumento di supporto
+                        per l’interpretazione, la sintesi e l’analisi dei dati astrologici,
+                        sempre all’interno di regole e criteri definiti.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESPERIMENTI -->
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-md-10">
+            <div class="card h-100 p-4 bg-light shadow rounded">
+                <div class="card-body">
+                    <h4 class="card-title mb-4 text-center">Esperimenti Attivi</h4>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">🌙 Oroscopo</h5>
+                                    <p class="card-text">
+                                        Esperimento basato sull’analisi dei transiti planetari giornalieri,
+                                        calcolati tramite effemeridi astronomiche ad alta precisione
+                                        e interpretati secondo regole astrologiche strutturate.
+                                    </p>
+                                    <a href="/oroscopo" class="btn btn-outline-primary">
+                                        Vai all’Oroscopo
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">⭐ Tema Natale</h5>
+                                    <p class="card-text">
+                                        Esperimento di analisi astrologica personalizzata basata
+                                        sulla configurazione astrale al momento della nascita,
+                                        con supporto di una Chat IA per approfondimenti e domande.
+                                    </p>
+                                    <a href="/tema-natale" class="btn btn-outline-primary">
+                                        Vai al Tema Natale
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLLABORAZIONI -->
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-md-10">
+            <div class="card h-100 p-4 bg-light shadow rounded text-center">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Collaborazioni Aperte</h4>
+                    <p>
+                        Astrologia Sperimentale è un progetto in evoluzione.
+                        Sono alla ricerca di <strong>collaboratori esperti di astrologia</strong>
+                        interessati a contribuire allo sviluppo teorico,
+                        alla definizione delle regole interpretative
+                        e al miglioramento del modello astrologico.
+                    </p>
+                    <p class="text-muted">
+                        Se condividi un approccio serio, simbolico e strutturato all’astrologia,
+                        questo progetto è pensato anche per te.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+</body>
+</html>

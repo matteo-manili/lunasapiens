@@ -54,6 +54,13 @@ public class IndexController extends BaseController {
     }
 
 
+    @GetMapping("/astrologia-sperimentale")
+    public String astrologiaSperimentale(HttpServletResponse response, Model model) {
+        logger.info("astrologia sperimentale");
+        return "astrologia-sperimentale";
+    }
+
+
     @GetMapping("/index")
     public RedirectView index() {
         logger.info("sono in index");

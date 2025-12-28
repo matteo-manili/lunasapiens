@@ -19,6 +19,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,12 +54,15 @@ public class OroscopoController extends BaseController {
 
     // #################################### OROSCOPO #####################################
 
+
+    /*
     @GetMapping("/oroscopo")
     public RedirectView redirect_oroscopo() {
         RedirectView redirectView = new RedirectView("/", true);
         redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY); // Imposta il codice 301
         return redirectView;
     }
+    */
 
 
     /**
@@ -74,7 +79,7 @@ public class OroscopoController extends BaseController {
     /**
      * servizio oroscopo giornaliero
      */
-    @GetMapping("/oroscopo_OLD")
+    @GetMapping("/oroscopo")
     public String mostraOroscopo(Model model, @ModelAttribute(Constants.INFO_MESSAGE) String infoMessage,
                                  @ModelAttribute(Constants.INFO_ALERT) String infoAlert,
                                  @ModelAttribute(Constants.INFO_ERROR) String infoError) {

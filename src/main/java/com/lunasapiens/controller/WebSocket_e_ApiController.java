@@ -124,7 +124,7 @@ public class WebSocket_e_ApiController extends BaseController {
                 //PSICOLOGO
                 try {
                     StringBuilder rispostaIA;
-                    if( message.get("tipoServizio").equals("SINASTRIA") || message.get("tipoServizio").equals("SINASTRIA") ){
+                    if( message.get("tipoServizio").equals("TEMA_NATALE") || message.get("tipoServizio").equals("SINASTRIA") ){
                         chatMessageIaList.add(new ChatMessage("user", domanda));
                         cacheMessageBot.put(paginaChatId, chatMessageIaList);
                         rispostaIA = servizioTemaNatale.chatBotTemaNatale(chatMessageIaList);

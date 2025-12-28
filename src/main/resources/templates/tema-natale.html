@@ -35,7 +35,24 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 <div class="container mt-4">
 
+    <!-- Breadcrumbs SEO -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/astrologia-sperimentale}">Astrologia Sperimentale</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Tema Natale
+            </li>
+        </ol>
+    </nav>
+
+
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
+
 
     <!-- ISCRIZIONE EMAIL RICEVERE AGGIORNAMENTI
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
