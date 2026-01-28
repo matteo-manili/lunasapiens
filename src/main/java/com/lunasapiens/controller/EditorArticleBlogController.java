@@ -250,9 +250,15 @@ public class EditorArticleBlogController extends BaseController {
             }
             // 🔹 Esegui embedding solo se il contenuto è stato modificato
             if (contentChanged) {
-                Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getTitle()+". "+articleSave.getContent()));
-                articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
-                logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
+                try {
+                    Float[] embedding = textEmbeddingHuggingfaceService.embedDocument(Utils.cleanHtmlText(articleSave.getTitle() + ". " + articleSave.getContent()));
+                    articleContentCustomRepository.updateArticleEmbeddingJdbc(articleSave.getId(), embedding);
+                    logger.info("Aggiornato embedding articolo ID: " + articleSave.getId() + ", dimensione embedding: " + embedding.length);
+                } catch (Exception embeddingException) {
+                    logger.error("Errore durante la generazione embedding per articolo ID: " + articleSave.getId(), embeddingException);
+                    redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Articolo salvato, ma errore durante la generazione dell’embedding.");
+                    return "redirect:/private/editorArticles?page=" + page;
+                }
             }
             redirectAttributes.addFlashAttribute(Constants.INFO_MESSAGE, "Articolo " + articleSave.getId() + " salvato con successo!");
             return "redirect:/private/editorArticles?page="+page;

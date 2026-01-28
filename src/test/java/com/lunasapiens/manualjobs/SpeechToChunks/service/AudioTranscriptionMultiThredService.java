@@ -29,7 +29,7 @@ public class AudioTranscriptionMultiThredService {
     /**
      * Trascrive un file audio in testo.
      * Per scaricare il video da youtube usare il sito https://notube.link/it/youtube-app-241
-     * Per convertire da MP3 a WAV usare software free Audacity. Fare Apri mp3 e poi Esporta audio...
+     * Per convertire da MP3 a WAV usare software Audacity (free). Fare Apri mp3 e poi Esporta audio...
      * Il file deve essere WAV, Mono, 16kHz (oppure 16000Hz), PCM 16 bit - (per compatibilità con Vosk)
      */
     public String transcribeAudio(File audioFile) throws Exception {

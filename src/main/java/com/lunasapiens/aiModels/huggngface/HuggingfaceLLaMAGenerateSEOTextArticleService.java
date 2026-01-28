@@ -17,38 +17,14 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
     protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
     private static final String MODEL_NAME = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
-
-    public String generateMetaDescription(String content, Long articleId, double temperatura) {
-        if (content == null || content.isEmpty()) {
-            return "articolo-"+String.valueOf(articleId);
-        } else {
-            String text = UtilsArticleSeo.cleanText(content);
-            System.out.println("text pulito: " + text);
-            String textSystem = "Genera **solo la meta description in italiano**, circa 170–190 caratteri, " +
-                    "per il seguente testo. Non aggiungere frasi come 'Ecco la meta description:' " +
-                    "e non usare virgolette:\n\n" + text;
-
-            int numTokenInput = countTokens(MODEL_NAME, textSystem);
-            int numTokenOutput = estimateTokensFromChars(200);
-            int totalTokens = numTokenInput + numTokenOutput;
-            logger.info("totalTokens: " + totalTokens);
-            String metaDescription = eseguiLLaM(textSystem, "", totalTokens, temperatura);
-            return metaDescription;
-        }
-    }
-
-
-
-
     public String generateTitle(String content, Long articleId, double temperatura) {
         if (content == null || content.isEmpty()) {
             return "articolo-"+String.valueOf(articleId);
         } else {
             String text = UtilsArticleSeo.cleanText(content);
             System.out.println("text pulito: " + text);
-            String textSystem = "Genera **solo un titolo in italiano**, 90–120 caratteri, " +
-                    "per il seguente testo. Non aggiungere frasi come 'Ecco il titolo:' " +
-                    "e non usare virgolette:\n\n" + text;
+            String textSystem = "Genera **un titolo in italiano**, 90–120 caratteri circa, " +
+                    "non aggiungere frasi come 'Ecco il titolo:' e non usare virgolette, per il seguente testo: \n\n" + text;
 
             int numTokenInput = countTokens(MODEL_NAME, textSystem);
             int numTokenOutput = estimateTokensFromChars(100);
@@ -60,6 +36,24 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
         }
     }
 
+
+    public String generateMetaDescription(String content, Long articleId, double temperatura) {
+        if (content == null || content.isEmpty()) {
+            return "articolo-"+String.valueOf(articleId);
+        } else {
+            String text = UtilsArticleSeo.cleanText(content);
+            System.out.println("text pulito: " + text);
+            String textSystem = "Genera **la meta description in italiano**, 170–190 caratteri circa, " +
+                    "non aggiungere frasi come 'Ecco la meta description:' e non usare virgolette, per il seguente testo: \n\n" + text;
+
+            int numTokenInput = countTokens(MODEL_NAME, textSystem);
+            int numTokenOutput = estimateTokensFromChars(200);
+            int totalTokens = numTokenInput + numTokenOutput;
+            logger.info("totalTokens: " + totalTokens);
+            String metaDescription = eseguiLLaM(textSystem, "", totalTokens, temperatura);
+            return metaDescription;
+        }
+    }
 
 
     private String eseguiLLaM(String textSystem, String textUser, int numToken, double temperatura) {

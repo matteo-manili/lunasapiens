@@ -203,6 +203,30 @@ class SpeechToTextManualJob {
 
 
 
+    @Test
+    @Disabled("Disabilitato temporaneamente per debug")
+    public void OperazioniSpeechToChunks_TranscribeAudioFile() throws Exception {
+
+        System.out.println("########## VIDEO X ##########");
+        try {
+
+            // 1️⃣ Trascrivi audio
+            String videoPath = "src/test/resources/video_tupini/" + "XX_1" + ".wav";
+            String trascrizioneAudio = transcribeAudioFile(videoPath);
+
+        } catch (java.io.FileNotFoundException e) {
+            System.err.println("⚠️ File non trovato per VIDEO_ID=" + "XX_1" + ": " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("❌ Errore durante l’elaborazione di VIDEO_ID=" + "XX_1");
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+
 
 
     @Test
@@ -257,7 +281,6 @@ class SpeechToTextManualJob {
         // 🧹 Chiude il pool
         executor.shutdown();
         executor.awaitTermination(1, TimeUnit.HOURS); // o un tempo adeguato
-
     }
 
 

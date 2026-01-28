@@ -5,6 +5,7 @@ const CACHE_NAME = 'pwa-cache-v1';
 const urlsToCache = [
     '/', // la root della pagina
     '/css/style.css', // CSS principale
+    '/js/util.js',
     '/js/1.5.2.sockjs.min.js', // libreria JS SockJS
     '/js/2.3.3.stomp.min.js', // libreria JS STOMP
     '/js/jquery-3.6.0.min.js', // jQuery
