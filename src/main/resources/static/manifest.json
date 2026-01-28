@@ -1,7 +1,7 @@
 {
   "name": "LunaSapiens.com",
   "short_name": "LunaSapiens",
-  "description": "Scopri un nuovo modo di esplorare l'astrologia basato su reali fattori astronomici e astrologici. Utilizziamo tecniche di intelligenza artificiale per offrirti un'esperienza unica nel comprendere le influenze celesti sulla tua vita. Scopri l'Oroscopo giornaliero e genera il tuo Tema Natale con la nostra IA.",
+  "description": "Luna Sapiens: esplora la mente, le emozioni e la consapevolezza con una ChatBot psicologica basata su intelligenza artificiale. Trova ispirazione nel blog di riflessioni e scopri progetti come Astrologia Sperimentale per integrare psicologia, crescita personale e conoscenza interiore.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
