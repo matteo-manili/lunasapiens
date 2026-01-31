@@ -221,7 +221,7 @@ public class EditorArticleBlogController extends BaseController {
             if (title != null && !title.isBlank()) {
                 article.setTitle(UtilsArticleSeo.cleanGeneratedText(title).trim());
             } else {
-                String autoTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, article.getId(), 0.6);
+                String autoTitle = huggingfaceLLaMAGenerateSEOTextArticleService.generateTitle(content, 0.6);
                 article.setTitle(UtilsArticleSeo.cleanGeneratedText(autoTitle).trim());
             }
             // 2- Meta description
@@ -230,7 +230,7 @@ public class EditorArticleBlogController extends BaseController {
             if (metaDescription != null && !metaDescription.isBlank()) {
                 article.setMetaDescription(metaDescription.trim());
             } else {
-                String autoDesc = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, article.getId(), 0.6);
+                String autoDesc = huggingfaceLLaMAGenerateSEOTextArticleService.generateMetaDescription(content, 0.6);
                 article.setMetaDescription(UtilsArticleSeo.cleanGeneratedText(autoDesc).trim());
             }
             // 3- SEO URL / Slug

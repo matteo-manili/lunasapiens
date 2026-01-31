@@ -17,9 +17,9 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
     protected static final String URL_HUGGING_FACE_CHAT_COMPLETIONS = "/v1/chat/completions";
     private static final String MODEL_NAME = "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA";
 
-    public String generateTitle(String content, Long articleId, double temperatura) {
+    public String generateTitle(String content, double temperatura) {
         if (content == null || content.isEmpty()) {
-            return "articolo-"+String.valueOf(articleId);
+            return "articolo-vuoto";
         } else {
             String text = UtilsArticleSeo.cleanText(content);
             System.out.println("text pulito: " + text);
@@ -37,9 +37,9 @@ public class HuggingfaceLLaMAGenerateSEOTextArticleService extends HuggingFaceBa
     }
 
 
-    public String generateMetaDescription(String content, Long articleId, double temperatura) {
+    public String generateMetaDescription(String content, double temperatura) {
         if (content == null || content.isEmpty()) {
-            return "articolo-"+String.valueOf(articleId);
+            return "articolo-vuoto";
         } else {
             String text = UtilsArticleSeo.cleanText(content);
             System.out.println("text pulito: " + text);
