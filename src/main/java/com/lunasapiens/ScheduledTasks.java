@@ -50,7 +50,6 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void closeInactiveSessions() {
-        logger.info("eseguo closeInactiveSessions");
         LocalDateTime cutoff = LocalDateTime.now().minusSeconds(60);
         pageVisitRepository.closeInactiveSessions(cutoff);
     }

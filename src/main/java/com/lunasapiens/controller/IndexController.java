@@ -92,13 +92,12 @@ public class IndexController extends BaseController {
     }
 
 
-    @PostMapping("/start-visit")
+    @PostMapping(Constants.START_VISIT)
     public ResponseEntity<Void> startVisit(@RequestBody Map<String, String> body,
                                            HttpServletRequest request) {
         if (isMatteoManilIdUser()) {
             return ResponseEntity.ok().build();
         }
-        logger.info("eseguo start-visit");
         HttpSession session = request.getSession(true);
         PageVisit visit = new PageVisit(
                 session.getId(),
@@ -117,10 +116,7 @@ public class IndexController extends BaseController {
         if (isMatteoManilIdUser()) {
             return ResponseEntity.ok().build();
         }
-        logger.info("PAGE ACTIVITY ARRIVATA tipo=" + type);
         HttpSession session = request.getSession(false);
-        logger.info("SESSION ID = " + session.getId());
-
         if (session == null) return ResponseEntity.ok().build();
         pageVisitRepository.updateHeartbeat(session.getId());
         return ResponseEntity.ok().build();
