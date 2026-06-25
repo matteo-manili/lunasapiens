@@ -1,6 +1,8 @@
 package com.lunasapiens;
 
+import com.lunasapiens.entity.PageVisit;
 import com.lunasapiens.repository.DatabaseMaintenanceRepository;
+import com.lunasapiens.repository.PageVisitRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.service.S3Service;
 import com.lunasapiens.service.TelegramBotService;
@@ -11,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class ScheduledTasks {
@@ -32,10 +37,26 @@ public class ScheduledTasks {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PageVisitRepository pageVisitRepository;
+
 
     // (* secondi * minuti * ore * giorno del mese * mese * giorno della settimana)
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
     // settato per le 00:05 ogni giorno: "0 5 0 * * *"
+
+
+
+
+    @Scheduled(fixedRate = 60000)
+    public void closeInactiveSessions() {
+        logger.info("eseguo closeInactiveSessions");
+        LocalDateTime cutoff = LocalDateTime.now().minusSeconds(60);
+        pageVisitRepository.closeInactiveSessions(cutoff);
+    }
+
+
+
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Rome")
     public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {

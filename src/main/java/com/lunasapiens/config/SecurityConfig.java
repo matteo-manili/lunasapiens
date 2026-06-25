@@ -5,7 +5,6 @@ import com.lunasapiens.filter.FilterAuthenticationJwt;
 
 import com.lunasapiens.filter.FilterCSRF;
 import com.lunasapiens.filter.FilterCheckUrls;
-import com.lunasapiens.filter.PageVisitFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ public class SecurityConfig {
 
     @Autowired
     private FilterCheckUrls filterCheckUrls;
-
-    @Autowired
-    private PageVisitFilter pageVisitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -141,19 +137,7 @@ public class SecurityConfig {
          * Dopo questo filtro gli altri componenti possono sapere
          * se l'utente è autenticato oppure no.
          */
-        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class)
-        /*
-         * FILTRO STATISTICHE VISITATORI
-         *
-         * Viene eseguito dopo il filtro JWT.
-         *
-         * Questo ordine è importante perché PageVisitFilter deve sapere
-         * se la richiesta appartiene ad un utente autenticato.
-         *
-         * Se il JWT ha autenticato Matteo, il filtro può ignorare la visita.
-         * Se invece è un visitatore anonimo reale, salva la visita nel database.
-         */
-        .addFilterAfter(pageVisitFilter, FilterAuthenticationJwt.class);
+        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

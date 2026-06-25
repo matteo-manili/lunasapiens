@@ -1,6 +1,7 @@
 package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.dto.PageVisitDTO;
 import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.entity.PageVisit;
 import com.lunasapiens.repository.ArticleContentRepository;
@@ -25,7 +26,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -33,9 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -75,35 +75,62 @@ public class IndexController extends BaseController {
             return "redirect:/error";
         }
         List<PageVisit> visits = pageVisitRepository.findAllByOrderByIdDesc();
-        model.addAttribute("visits", visits);
+        List<PageVisitDTO> enrichedVisits = new ArrayList<>();
+        for (PageVisit v : visits) {
+            PageVisitDTO dto = new PageVisitDTO();
+            dto.setId(v.getId());
+            dto.setPath(v.getPath());
+            dto.setIp(v.getIp());
+            dto.setSessionId(v.getSessionId());
+            dto.setStartTime(v.getStartTime());
+            dto.setLastSeen(v.getLastSeen());
+            dto.setUserAgent(v.getUserAgent());
+            enrichedVisits.add(dto);
+        }
+        model.addAttribute("visits", enrichedVisits);
         return "private/page-visits";
     }
 
 
-    @PostMapping(Constants.PAGE_ACTIVITY)
-    @ResponseBody
-    public void heartbeat(HttpServletRequest request){
-        HttpSession session = request.getSession(false);
-        if(session == null){
-            //logger.info("SESSIONE NULL");
-            return;
+    @PostMapping("/start-visit")
+    public ResponseEntity<Void> startVisit(@RequestBody Map<String, String> body,
+                                           HttpServletRequest request) {
+        if (isMatteoManilIdUser()) {
+            return ResponseEntity.ok().build();
         }
-        String sessionId=session.getId();
-        PageVisit visit = pageVisitRepository.findTopBySessionIdOrderByIdDesc(sessionId);
-        if(visit == null){
-            return;
-        }
-        //logger.info("VISITA TROVATA id={} start={}", visit.getId(), visit.getStartTime());
-        LocalDateTime now=LocalDateTime.now();
-        if(visit.getStartTime()==null){
-            return;
-        }
-        long seconds = Duration.between(visit.getStartTime(), now).getSeconds();
-        visit.setLastHeartbeat(now);
-        visit.setSecondsSpent((int)seconds);
-        //logger.info("TEMPO {} secondi", seconds);
+        logger.info("eseguo start-visit");
+        HttpSession session = request.getSession(true);
+        PageVisit visit = new PageVisit(
+                session.getId(),
+                body.get("path"),
+                request.getRemoteAddr(),
+                request.getHeader("User-Agent")
+        );
         pageVisitRepository.save(visit);
+        return ResponseEntity.ok().build();
     }
+
+
+    @PostMapping(Constants.PAGE_ACTIVITY)
+    public ResponseEntity<Void> heartbeat(HttpServletRequest request,
+                                          @RequestParam(required = false) String type) {
+        if (isMatteoManilIdUser()) {
+            return ResponseEntity.ok().build();
+        }
+        logger.info("PAGE ACTIVITY ARRIVATA tipo=" + type);
+        HttpSession session = request.getSession(false);
+        logger.info("SESSION ID = " + session.getId());
+
+        if (session == null) return ResponseEntity.ok().build();
+        pageVisitRepository.updateHeartbeat(session.getId());
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+
+
 
 
     @GetMapping("/astrologia-sperimentale")

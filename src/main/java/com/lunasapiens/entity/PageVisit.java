@@ -4,37 +4,34 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="page_visit")
+@Table(name = "page_visit")
 public class PageVisit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String sessionId;
     private String path;
     private String ip;
     private String userAgent;
-    private String sessionId;
+
     private LocalDateTime startTime;
-    private LocalDateTime lastHeartbeat;
-    private Integer secondsSpent;
+    private LocalDateTime lastSeen;
+    private LocalDateTime endTime;
 
+    @Version
+    private Long version;
 
-    public PageVisit(){}
+    public PageVisit() {}
 
-    public PageVisit(
-            String path,
-            String ip,
-            String userAgent,
-            String sessionId
-    ){
-        this.path=path;
-        this.ip=ip;
-        this.userAgent=userAgent;
-        this.sessionId=sessionId;
-        this.startTime=LocalDateTime.now();
-        this.lastHeartbeat=LocalDateTime.now();
-        this.secondsSpent=0;
+    public PageVisit(String sessionId, String path, String ip, String userAgent) {
+        this.sessionId = sessionId;
+        this.path = path;
+        this.ip = ip;
+        this.userAgent = userAgent;
+        this.startTime = LocalDateTime.now();
+        this.lastSeen = this.startTime;
     }
 
 
@@ -44,6 +41,14 @@ public class PageVisit {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public String getPath() {
@@ -70,14 +75,6 @@ public class PageVisit {
         this.userAgent = userAgent;
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -86,19 +83,27 @@ public class PageVisit {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getLastHeartbeat() {
-        return lastHeartbeat;
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
     }
 
-    public void setLastHeartbeat(LocalDateTime lastHeartbeat) {
-        this.lastHeartbeat = lastHeartbeat;
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
-    public Integer getSecondsSpent() {
-        return secondsSpent;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
-    public void setSecondsSpent(Integer secondsSpent) {
-        this.secondsSpent = secondsSpent;
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

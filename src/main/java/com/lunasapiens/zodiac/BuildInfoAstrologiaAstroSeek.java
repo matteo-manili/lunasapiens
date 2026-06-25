@@ -13,6 +13,10 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -300,11 +304,26 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
             return buildInfoAstrologiaAstroSeek;
 
         }else{
-
             logger.info( urlAstroSeek );
             List<Pianeti> pianetiList = new ArrayList<Pianeti>();
             List<CasePlacide> casePlacidesList = new ArrayList<CasePlacide>();
-            String html = restTemplate.getForObject(urlAstroSeek, String.class);
+
+            // nuovo
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " + "AppleWebKit/537.36 (KHTML, like Gecko) " + "Chrome/120.0 Safari/537.36");
+            headers.set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+
+            headers.set("Accept-Language", "it-IT,it;q=0.9,en;q=0.8");
+            headers.set("Cache-Control", "no-cache");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(urlAstroSeek, HttpMethod.GET, entity, String.class);
+            String html = response.getBody();
+
+
+            // vecchio
+            //String html = restTemplate.getForObject(urlAstroSeek, String.class);
+
+
 
             Document document = Jsoup.parse(html);
 
