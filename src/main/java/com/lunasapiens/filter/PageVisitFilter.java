@@ -26,9 +26,7 @@ import java.util.List;
 public class PageVisitFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(PageVisitFilter.class);
 
-
     private final PageVisitRepository repository;
-
 
 
     public PageVisitFilter(PageVisitRepository repository){
