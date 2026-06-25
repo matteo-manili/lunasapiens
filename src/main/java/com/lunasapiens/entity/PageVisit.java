@@ -20,9 +20,6 @@ public class PageVisit {
     private LocalDateTime lastSeen;
     private LocalDateTime endTime;
 
-    @Version
-    private Long version;
-
     public PageVisit() {}
 
     public PageVisit(String sessionId, String path, String ip, String userAgent) {
@@ -99,11 +96,4 @@ public class PageVisit {
         this.endTime = endTime;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 }
