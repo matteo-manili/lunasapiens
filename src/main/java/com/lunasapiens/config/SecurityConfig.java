@@ -63,7 +63,6 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/",
                             "/*",
-                            //Constants.PAGE_ACTIVITY,
                             "/video-oroscopo-giornaliero/*",
                             "/fragments/**",
                             "/chat-websocket/**",
