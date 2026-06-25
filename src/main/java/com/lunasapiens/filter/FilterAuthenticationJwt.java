@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -33,7 +32,6 @@ import java.util.UUID;
  */
 
 @Component
-@Order(3)  // Imposta un ordine preferito
 public class FilterAuthenticationJwt extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterAuthenticationJwt.class);

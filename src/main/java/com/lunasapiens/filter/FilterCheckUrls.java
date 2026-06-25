@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,7 +24,6 @@ import java.util.Set;
  */
 
 @Component
-@Order(2)
 public class FilterCheckUrls extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterCheckUrls.class);
@@ -83,13 +81,28 @@ public class FilterCheckUrls extends OncePerRequestFilter {
         }
 
 
-        // ######################### url no index #########################
-        for (String urlNoIndex : Constants.URL_NO_INDEX_STATUS_410_LIST) {
-            if (request.getRequestURI().equals( urlNoIndex )) {
-                response.setStatus(HttpStatus.GONE.value());  // Imposta il codice di stato a 410
+        // URL esistenti ma che non devono comparire su Google
+        for(String urlNoIndex : Constants.URL_NO_INDEX_LIST){
+            if(request.getRequestURI().equals(urlNoIndex)){
                 response.setHeader("X-Robots-Tag", "noindex, nofollow");
             }
         }
+
+
+        // URL rimossi definitivamente
+        for(String urlGone : Constants.URL_NO_INDEX_STATUS_410_LIST){
+            if(request.getRequestURI().equals(urlGone)){
+                response.setStatus(HttpStatus.GONE.value()); // Imposta il codice di stato a 410
+                response.setHeader("X-Robots-Tag", "noindex, nofollow");
+
+                return;
+            }
+        }
+
+
+
+
+
 
 
         filterChain.doFilter(request, response);

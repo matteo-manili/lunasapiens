@@ -65,7 +65,7 @@ public class Constants {
             new RelationshipOption("PR", "Professionale"),
             new RelationshipOption("N", "Preferisco non dirlo")));
 
-
+    public static final String PAGE_ACTIVITY = "/page-activity";
 
 
     public static final List<String> URL_INDEX_LIST_OLD = Collections.unmodifiableList(Arrays.asList(
@@ -81,16 +81,29 @@ public class Constants {
             "/contatti",
             "/info-privacy"));
 
-    public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
+
+    /**
+     * URL funzionanti ma non da indicizzare
+     */
+    public static final List<String> URL_NO_INDEX_LIST = Collections.unmodifiableList(Arrays.asList(
+            PAGE_ACTIVITY,
             "/chat-websocket",
             "/user/queue/reply",
             "/app/message",
             "/coordinate",
             "/private",
-            "/header",
-            "/greeting",
+            "/header"
+    ));
+
+
+    /**
+     * URL eliminati definitivamente
+     */
+    public static final List<String> URL_NO_INDEX_STATUS_410_LIST = Collections.unmodifiableList(Arrays.asList(
             "/facebook",
-            "/error"));
+            "/error",
+            "/greeting"
+    ));
 
 
     public static final String USER = "USER";

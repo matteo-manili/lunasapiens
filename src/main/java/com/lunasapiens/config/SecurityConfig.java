@@ -5,6 +5,7 @@ import com.lunasapiens.filter.FilterAuthenticationJwt;
 
 import com.lunasapiens.filter.FilterCSRF;
 import com.lunasapiens.filter.FilterCheckUrls;
+import com.lunasapiens.filter.PageVisitFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class SecurityConfig {
 
     @Autowired
     private FilterCheckUrls filterCheckUrls;
+
+    @Autowired
+    private PageVisitFilter pageVisitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,8 +64,19 @@ public class SecurityConfig {
             // "/*" = significa tutti gli url ma non i sotto url (esempio localhost:/contatti)
             // "/*" = significa tutti gli url e anche i sotto url (esempio localhost:/private/privatePage)
             .authorizeHttpRequests(requests -> requests
-                    .requestMatchers("/", "/*", "/video-oroscopo-giornaliero/*", "/fragments/**", "/chat-websocket/**", "/css/**", "/js/**",
-                            "/blog/*", "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*", "/s3-download/*" ).permitAll()    // Accesso pubblico alle risorse specificate
+                    .requestMatchers(
+                            "/",
+                            "/*",
+                            Constants.PAGE_ACTIVITY,
+                            "/video-oroscopo-giornaliero/*",
+                            "/fragments/**",
+                            "/chat-websocket/**",
+                            "/css/**",
+                            "/js/**",
+                            "/blog/*",
+                            "/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/*",
+                            "/s3-download/*"
+                    ).permitAll()    // Accesso pubblico alle risorse specificate
                     .requestMatchers("/private/**").authenticated()     // Richiede autenticazione per le risorse private
                     .anyRequest().denyAll()     // Blocca tutte le altre richieste
             )
@@ -90,22 +105,55 @@ public class SecurityConfig {
          * nome utente e password. Se hai un filtro che gestisce l'autenticazione tramite JWT (JSON Web Token), dovresti assicurarti che venga eseguito
          * prima del filtro che gestisce la logica di autenticazione tradizionale, altrimenti i token JWT potrebbero non essere validati correttamente.
          */
-
-
         /*
-         * Filtro per aggiungere il token CSRF alle intestazioni della risposta HTTP.
+         * FILTRO CSRF
          *
-         * Questo filtro viene eseguito dopo il filtro CSRF di Spring (CsrfFilter). Il token CSRF, che è stato precedentemente
-         * generato e associato alla richiesta, viene estratto e aggiunto all'intestazione della risposta come "X-CSRF-TOKEN".
-         * Questo permette al client (ad esempio, un'applicazione frontend) di accedere al token e includerlo nelle richieste future,
-         * garantendo che le richieste siano protette da attacchi di tipo Cross-Site Request Forgery (CSRF).
+         * Viene eseguito dopo il filtro interno CsrfFilter di Spring Security.
+         * Il filtro recupera il token CSRF già generato da Spring e lo inserisce
+         * nell'header della risposta HTTP "X-XSRF-TOKEN".
          *
-         * Il filtro è progettato per essere eseguito una sola volta per ogni richiesta, come indicato dalla classe
-         * `OncePerRequestFilter`. Dopo aver aggiunto l'intestazione, la richiesta viene passata al filtro successivo nella catena.
+         * In questo modo il frontend può leggere il token e inviarlo nelle
+         * successive richieste POST/PUT/DELETE proteggendo l'applicazione
+         * dagli attacchi Cross-Site Request Forgery.
          */
         .addFilterAfter(new FilterCSRF(), CsrfFilter.class)
-        .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)  // filterCheckUrls prima di JWT
-        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class); // JWT prima dell'autenticazione standard
+        /*
+         * FILTRO CONTROLLO URL / ANTI ABUSO
+         *
+         * Viene eseguito prima del filtro JWT.
+         *
+         * Controlla richieste sospette, limiti di chiamate e URL bloccati.
+         * Se una richiesta supera i limiti o proviene da un IP bloccato,
+         * viene fermata prima di arrivare all'autenticazione.
+         *
+         * Deve stare prima del JWT perché vogliamo bloccare traffico malevolo
+         * prima di eseguire logiche più pesanti.
+         */
+        .addFilterBefore(filterCheckUrls, UsernamePasswordAuthenticationFilter.class)
+        /*
+         * FILTRO AUTENTICAZIONE JWT
+         *
+         * Viene eseguito prima del filtro standard di autenticazione di Spring.
+         *
+         * Controlla il cookie JWT, valida il token e se valido crea
+         * l'Authentication dentro SecurityContextHolder.
+         *
+         * Dopo questo filtro gli altri componenti possono sapere
+         * se l'utente è autenticato oppure no.
+         */
+        .addFilterBefore(filterAuthenticationJwt, UsernamePasswordAuthenticationFilter.class)
+        /*
+         * FILTRO STATISTICHE VISITATORI
+         *
+         * Viene eseguito dopo il filtro JWT.
+         *
+         * Questo ordine è importante perché PageVisitFilter deve sapere
+         * se la richiesta appartiene ad un utente autenticato.
+         *
+         * Se il JWT ha autenticato Matteo, il filtro può ignorare la visita.
+         * Se invece è un visitatore anonimo reale, salva la visita nel database.
+         */
+        .addFilterAfter(pageVisitFilter, FilterAuthenticationJwt.class);
 
 
         return http.build();

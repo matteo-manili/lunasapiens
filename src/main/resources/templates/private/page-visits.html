@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
+    <title th:fragment="title">Statistiche visite</title>
+    <th:block th:fragment="links">
+        <link rel="stylesheet" th:href="@{/css/style.css(v=${vCssStyle})}">
+    </th:block>
+</head>
+
+<body>
+<header th:replace="~{fragments/templateBase :: header}"></header>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Statistiche visite pagine</h1>
+
+    <div class="table-responsive">
+
+        <table class="table table-striped table-bordered table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Pagina</th>
+                <th>IP</th>
+                <th>Sessione</th>
+                <th>Inizio</th>
+                <th>Ultimo heartbeat</th>
+                <th>Secondi</th>
+                <th>User Agent</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            <tr th:each="v : ${visits}">
+
+                <td th:text="${v.id}"></td>
+
+                <td>
+                    <a th:href="${v.path}" th:text="${v.path}" target="_blank"></a>
+                </td>
+
+                <td th:text="${v.ip}"></td>
+
+                <td style="font-size:12px" th:text="${v.sessionId}"></td>
+
+
+                <td th:text="${#temporals.format(v.startTime,'dd/MM/yyyy HH:mm:ss')}"></td>
+
+                <td th:text="${#temporals.format(v.lastHeartbeat,'HH:mm:ss')}"></td>
+
+                <td>
+                    <span class="badge bg-primary" th:text="${v.secondsSpent} + ' sec'"></span>
+                </td>
+
+                <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                    th:title="${v.userAgent}"
+                    th:text="${v.userAgent}">
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<footer th:replace="~{fragments/templateBase :: footer}"></footer>
+<div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
+
+
+</body>
+
+</html>

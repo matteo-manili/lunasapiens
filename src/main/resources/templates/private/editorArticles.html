@@ -159,7 +159,7 @@
                 // Enable the XMLHttpRequest.withCredentials property.
                 withCredentials: true,
                 // Recupera il token CSRF dal campo hidden del form
-                headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value }
+                headers: { 'X-XSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content }
             }
         })
         .then(editor => {

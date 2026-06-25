@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,7 +17,6 @@ import java.io.IOException;
  */
 
 @Component
-@Order(1)
 public class FilterCSRF extends OncePerRequestFilter {
 
     @Override
@@ -28,9 +26,9 @@ public class FilterCSRF extends OncePerRequestFilter {
         // Recupera il token CSRF dall'attributo della richiesta
         CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 
-        // Se il token CSRF è presente, aggiungilo nell'intestazione della risposta
+
         if (csrf != null) {
-            response.setHeader("X-CSRF-TOKEN", csrf.getToken());
+            response.setHeader(csrf.getHeaderName(), csrf.getToken());
         }
 
         // Continua la catena di filtri

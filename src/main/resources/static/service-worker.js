@@ -1,5 +1,5 @@
 // Nome della cache dove salveremo le risorse
-const CACHE_NAME = 'pwa-cache-v1';
+const CACHE_NAME = 'pwa-cache-v3';
 
 // Lista di URL da memorizzare nella cache quando il service worker viene installato
 const urlsToCache = [
@@ -19,24 +19,37 @@ const urlsToCache = [
 // Evento 'install': viene eseguito quando il service worker viene installato
 // Serve a precaricare le risorse indicate nella cache
 self.addEventListener('install', event => {
-    // event.waitUntil fa sì che il service worker non venga considerato installato finché la promise non si risolve
+    // Attiva subito il nuovo service worker
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME) // apre o crea la cache con il nome CACHE_NAME
-            .then(cache => cache.addAll(urlsToCache)) // aggiunge tutti gli URL alla cache
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(urlsToCache))
     );
 });
 
-// Evento 'fetch': intercetta tutte le richieste di rete
 self.addEventListener('fetch', event => {
-    // Se la richiesta è per la root ('/'), fetch sempre dal server
-    if (event.request.url.endsWith('/')) {
-        event.respondWith(fetch(event.request)); // bypassa la cache per la home
-    } else {
-        // Per tutte le altre richieste, prima prova a servire dalla cache
+    // Il service worker gestisce solo richieste GET.
+    // Le richieste POST/PUT/DELETE vengono lasciate direttamente al browser
+    // perché possono contenere dati dinamici, CSRF token o chiamate API.
+    if(event.request.method !== 'GET'){
+        return;
+    }
+    // Per la home non usare la cache.
+    // Viene sempre richiesta al server per avere sempre la versione aggiornata.
+    if(event.request.url.endsWith('/')) {
         event.respondWith(
-            caches.match(event.request) // cerca la risorsa nella cache
-                .then(response => response || fetch(event.request))
-            // se la trovi in cache, la restituisce; altrimenti la prende dalla rete
+            fetch(event.request)
+                .catch(() => caches.match('/'))
+        );
+    } else {
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => {
+                    // Se la risorsa è in cache la restituisce,
+                    // altrimenti prova a scaricarla dal server.
+                    return response || fetch(event.request);
+
+                })
         );
     }
 });
@@ -44,17 +57,20 @@ self.addEventListener('fetch', event => {
 // Evento 'activate': viene eseguito quando il service worker diventa attivo
 // Serve a pulire vecchie cache che non usiamo più
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME]; // cache da mantenere
     event.waitUntil(
-        caches.keys().then(cacheNames =>
-            Promise.all(
-                cacheNames.map(cacheName => {
-                    // Se la cache non è nella whitelist, la elimino
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName);
-                    }
-                })
+        Promise.all([
+            // Il nuovo service worker prende subito il controllo
+            clients.claim(),
+            // Cancella cache vecchie
+            caches.keys().then(cacheNames =>
+                Promise.all(
+                    cacheNames.map(cacheName => {
+                        if(cacheName !== CACHE_NAME){
+                            return caches.delete(cacheName);
+                        }
+                    })
+                )
             )
-        )
+        ])
     );
 });

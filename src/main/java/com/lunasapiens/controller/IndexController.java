@@ -2,29 +2,40 @@ package com.lunasapiens.controller;
 
 import com.lunasapiens.Constants;
 import com.lunasapiens.entity.ArticleContent;
+import com.lunasapiens.entity.PageVisit;
 import com.lunasapiens.repository.ArticleContentRepository;
+import com.lunasapiens.repository.PageVisitRepository;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -35,6 +46,9 @@ public class IndexController extends BaseController {
 
     @Autowired
     private ArticleContentRepository articleContentRepository;
+
+    @Autowired
+    private PageVisitRepository pageVisitRepository;
 
 
     @GetMapping("/")
@@ -51,6 +65,44 @@ public class IndexController extends BaseController {
         List<ArticleContent> recentArticles = recentArticlesPage.getContent();
         model.addAttribute("recentArticles", recentArticles);
         return "index";
+    }
+
+
+    @GetMapping("/private/page-visits")
+    public String pageVisits(Model model, RedirectAttributes redirectAttributes) {
+        if (!isMatteoManilIdUser()) {
+            redirectAttributes.addFlashAttribute(Constants.INFO_ERROR, "Accesso negato: non hai i permessi.");
+            return "redirect:/error";
+        }
+        List<PageVisit> visits = pageVisitRepository.findAllByOrderByIdDesc();
+        model.addAttribute("visits", visits);
+        return "private/page-visits";
+    }
+
+
+    @PostMapping(Constants.PAGE_ACTIVITY)
+    @ResponseBody
+    public void heartbeat(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session == null){
+            //logger.info("SESSIONE NULL");
+            return;
+        }
+        String sessionId=session.getId();
+        PageVisit visit = pageVisitRepository.findTopBySessionIdOrderByIdDesc(sessionId);
+        if(visit == null){
+            return;
+        }
+        //logger.info("VISITA TROVATA id={} start={}", visit.getId(), visit.getStartTime());
+        LocalDateTime now=LocalDateTime.now();
+        if(visit.getStartTime()==null){
+            return;
+        }
+        long seconds = Duration.between(visit.getStartTime(), now).getSeconds();
+        visit.setLastHeartbeat(now);
+        visit.setSecondsSpent((int)seconds);
+        //logger.info("TEMPO {} secondi", seconds);
+        pageVisitRepository.save(visit);
     }
 
 
@@ -87,6 +139,14 @@ public class IndexController extends BaseController {
         return "error";
     }
 
+
+    @GetMapping("/service-worker.js")
+    public ResponseEntity<Resource> serviceWorker() {
+        //logger.info("prendi service-worker.js");
+        return ResponseEntity.ok()
+                .header("Cache-Control","no-cache, no-store, must-revalidate")
+                .body(new ClassPathResource("static/service-worker.js"));
+    }
 
     @GetMapping("/robots.txt")
     public void getRobotsTxt(HttpServletResponse response) throws IOException {

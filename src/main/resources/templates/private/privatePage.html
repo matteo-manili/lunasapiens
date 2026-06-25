@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
     <title th:fragment="title">Luna Sapiens | Pagina privata</title>
     <th:block th:fragment="links">
@@ -11,7 +12,6 @@
 <header th:replace="~{fragments/templateBase :: header}"></header>
 
 <div class="container mt-4">
-
     <h1 class="mb-4">Pagina Utente</h1>
 
     <div th:replace="~{fragments/templateBase :: message_alerts}"></div>
@@ -29,6 +29,13 @@
     <div sec:authorize="authentication.principal.username == 'matteo.manili@gmail.com'">
         <div class="alert alert-dark mb-4">
             <p class="mt-2"><a href="/private/editorArticles">Editor Articoli - Blog</a></p>
+        </div>
+    </div>
+
+
+    <div sec:authorize="authentication.principal.username == 'matteo.manili@gmail.com'">
+        <div class="alert alert-dark mb-4">
+            <p class="mt-2"><a href="/private/page-visits">Statistiche Visite</a></p>
         </div>
     </div>
 

@@ -377,7 +377,7 @@ public class EditorArticleBlogController extends BaseController {
     @Cacheable(value = Constants.IMAGES_ARTICLE_CACHE, key = "#nameImage")
     @GetMapping("/"+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}")
     public ResponseEntity<byte[]> getImage(@PathVariable String nameImage) {
-        logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
+        //logger.info("sono in "+Constants.DOM_LUNA_SAPIENS_IMAGES_ARTICLE+"/{nameImage}");
         try {
             // Recupera i byte dell'immagine dal bucket S3
             FileWithMetadata fileWithMetadata = s3Service.getImageFromS3(nameImage);
