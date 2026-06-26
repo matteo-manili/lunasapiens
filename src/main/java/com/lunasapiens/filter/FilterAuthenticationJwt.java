@@ -54,7 +54,7 @@ public class FilterAuthenticationJwt extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getValue() != null && cookie.getName().equals(Constants.COOKIE_LUNASAPIENS_AUTH_TOKEN) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    logger.info("authenticationNow è null");
+                    //logger.info("authenticationNow è null");
                     JwtElements.JwtDetails jwtDetails = jwtService.validateToken(cookie.getValue());
                     if (jwtDetails.isSuccess()) {
                         Optional<ProfiloUtente> profiloUtenteOpt = profiloUtenteRepository.findByEmail(jwtDetails.getSubject());

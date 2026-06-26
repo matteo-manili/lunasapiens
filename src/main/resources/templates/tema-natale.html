@@ -134,9 +134,23 @@
             <div id="paper"></div>
         </div>
 
-        <div class="alert alert-dark mb-4" th:if="${temaNataleDescIstruzioniBOTSystem != null and temaNataleDescIstruzioniBOTSystem != ''}">
-            <strong>PROMPT:</strong> <br> <div th:utext="${temaNataleDescIstruzioniBOTSystem}"></div>.
+        <!-- prompt istruzioni BOT -->
+        <div class="d-flex align-items-center" th:if="${temaNataleDescIstruzioniBOTSystem != null and temaNataleDescIstruzioniBOTSystem != ''}">
+            <h6 class="mb-0 me-2">Prompt IA</h6>
+            <h7 class="mb-0">
+                <a id="togglePromptLink" href="#" class="link-primary">
+                    Visualizza Prompt
+                </a>
+            </h7>
         </div>
+
+        <div id="promptSection" class="d-none mt-3" th:if="${temaNataleDescIstruzioniBOTSystem != null and temaNataleDescIstruzioniBOTSystem != ''}">
+            <div class="alert alert-dark mb-4">
+                <strong>PROMPT:</strong><br>
+                <div th:utext="${temaNataleDescIstruzioniBOTSystem}"></div>
+            </div>
+        </div>
+
 
         <!-- descrizione tema natale -->
         <div class="d-flex align-items-center">
@@ -209,10 +223,6 @@ $(document).ready(function() {
         });
         radix.aspects();
     }
-
-
-
-
 
 });
 
@@ -318,6 +328,34 @@ document.addEventListener("DOMContentLoaded", function() {
             resultsContainer.innerHTML = '';
         }
     });
+
+
+    // ############################# MOSTRA/NASCONDI PROMPT BOT #############################
+    document.getElementById('togglePromptLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        var promptSection = document.getElementById('promptSection');
+        if (promptSection.classList.contains('d-none')) {
+            promptSection.classList.remove('d-none');
+            this.textContent = 'Nascondi Prompt';
+        } else {
+            promptSection.classList.add('d-none');
+            this.textContent = 'Visualizza Prompt';
+        }
+    });
+
+    // ############################# MOSTRA/NASCONDI DESCRIZIONE TEMA NATALE #############################
+    document.getElementById('toggleLink').addEventListener('click', function(event) {
+        event.preventDefault(); // Evita il comportamento di default del link
+        var textSection = document.getElementById('textSection');
+        if (textSection.classList.contains('d-none')) {
+            textSection.classList.remove('d-none');
+            this.textContent = 'Nascondi descrizione Tema Natale';
+        } else {
+            textSection.classList.add('d-none');
+            this.textContent = 'Visualizza descrizione Tema Natale';
+        }
+    });
+
 
 
 
