@@ -108,9 +108,11 @@ public class ServizioTemaNatale {
             if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.LILITH.getNumero() ){
                 planets.put(Constants.Pianeti.LILITH.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
             }
+            /*
             if( pianetaIte.getNumeroPianeta() == Constants.Pianeti.CHIRON.getNumero() ){
                 planets.put(Constants.Pianeti.CHIRON.getNomeAstroChart(), gradiPianetaAstroChart(pianetaIte.isRetrogrado(),pianetaIte.getGradi()));
             }
+            */
         }
 
         List<Double> cusps = new ArrayList<>();

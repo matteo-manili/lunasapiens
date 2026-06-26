@@ -79,10 +79,8 @@ public class CalculatorAstrologiaSwiss {
                     SweConst.SE_URANUS,
                     SweConst.SE_NEPTUNE,
                     SweConst.SE_PLUTO,
-
-                    SweConst.SE_MEAN_NODE, // Nodo Nord
+                    SweConst.SE_MEAN_NODE, // Nodo Nord, da questo si determina il Nod Sud
                     SweConst.SE_MEAN_APOG, // Lilith Medio
-                    SweConst.SE_CHIRON // Chiron
             };
 
 
@@ -99,7 +97,6 @@ public class CalculatorAstrologiaSwiss {
                     Constants.Pianeti.PLUTONE,
                     Constants.Pianeti.NODE_M,
                     Constants.Pianeti.LILITH,
-                    Constants.Pianeti.CHIRON
             };
 
             //Properties transitiPianetiSegniProperties = appConfig.transitiSegniPianeti_OroscopoDelGiorno();
@@ -121,24 +118,30 @@ public class CalculatorAstrologiaSwiss {
                     boolean retrogrado = position[3] < 0;
                     // posizione assoluta eclittica
                     double gradoTotale = position[0];
-
                     // aggiungi Nodo Sud
                     if(planetIds[i] == SweConst.SE_MEAN_NODE){
-                        double nodoNord = position[0];
-                        double nodoSud = nodoNord + 180;
+                        double nodoSud = position[0] + 180;
                         if(nodoSud >= 360){
                             nodoSud -= 360;
                         }
-
-                        Constants.Pianeti nodoSudEnum = Constants.Pianeti.NODE_S;
-                        Map.Entry<Integer, String> segnoNodoSud =
-                                UtilsZodiac.determinaSegnoZodiacale(nodoSud)
+                        Map.Entry<Integer, String> segno = UtilsZodiac.determinaSegnoZodiacale(nodoSud)
                                         .entrySet()
                                         .iterator()
                                         .next();
-                        Pianeti nodoSudPianeta = new Pianeti(nodoSudEnum.getNumero(), nodoSudEnum.getNome(), nodoSud, (int)(nodoSud % 30), 0, 0,
-                                segnoNodoSud.getKey(), segnoNodoSud.getValue(), false, "");
+                        Pianeti nodoSudPianeta = new Pianeti(
+                                Constants.Pianeti.NODE_S.getNumero(),
+                                Constants.Pianeti.NODE_S.getNome(),
+                                nodoSud,
+                                (int)(nodoSud % 30),
+                                0,
+                                0,
+                                segno.getKey(),
+                                segno.getValue(),
+                                retrogrado,
+                                ""
+                        );
                         pianetaArrayList.add(nodoSudPianeta);
+                        logger.info("Nodo Sud aggiunto: {}° {}", nodoSud, segno);
                     }
 
                     // segno zodiacale
@@ -170,7 +173,16 @@ public class CalculatorAstrologiaSwiss {
                             significatoTransitoPianetaSegno
                     );
                     pianetaArrayList.add(pianeta);
-                    logger.info("Result: "+result +" "+ Constants.Pianeti.fromNumero(i).getNome() + ": " + position[0] + "° " + UtilsZodiac.determinaSegnoZodiacale(position[0]) + " retrogrado: "+retrogrado );
+
+                    logger.info("Result: {} {}: {}° {} retrogrado: {}",
+                            result,
+                            pianetaEnum.getNome(),
+                            position[0],
+                            UtilsZodiac.determinaSegnoZodiacale(position[0]),
+                            retrogrado
+                    );
+
+
                 } else {
                     // Print error message if calculation failed
                     System.err.println("Calculation failed with error code: " + result);

@@ -192,10 +192,6 @@ public class TemaNataleController extends BaseController {
         AstroChartDTO astroChartDTO = servizioTemaNatale.astroChart_AstrologiaAstroSwiss(giornoOraPosizioneDTO);
         redirectAttributes.addFlashAttribute("planets", astroChartDTO.getPlanets());
         redirectAttributes.addFlashAttribute("cusps", astroChartDTO.getCusps());
-        redirectAttributes.addFlashAttribute("ascendente", astroChartDTO.getAscendente());
-        redirectAttributes.addFlashAttribute("medioCielo", astroChartDTO.getMedioCielo());
-
-
 
 
 
