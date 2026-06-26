@@ -10,16 +10,44 @@ public class Pianeti {
     private double gradi;
     private int minuti;
     private int secondi;
-
     private int numeroSegnoZodiacale;
     private String nomeSegnoZodiacale;
     private boolean retrogrado;
-
     private String nomeCasa;
-
     private String significatoPianetaSegno;
+    private int gradiSegno;
 
 
+    // COSTRUTTORE NUOVO SWISSEPH (con secondi)
+    public Pianeti(
+            int numeroPianeta,
+            String nomePianeta,
+            double longitudineTotale,
+            int gradiSegno,
+            int minuti,
+            int secondi,
+            int numeroSegnoZodiacale,
+            String nomeSegnoZodiacale,
+            boolean retrogrado,
+            String significatoPianetaSegno
+    )
+    {
+        this.numeroPianeta = numeroPianeta;
+        this.nomePianeta = nomePianeta;
+        this.gradi = longitudineTotale;   // longitudine assoluta 0..360
+        this.gradiSegno = gradiSegno;      // 0..29
+        this.minuti = minuti;
+        this.secondi = secondi;
+        this.numeroSegnoZodiacale = numeroSegnoZodiacale;
+        this.nomeSegnoZodiacale = nomeSegnoZodiacale;
+        this.retrogrado = retrogrado;
+        this.significatoPianetaSegno = significatoPianetaSegno;
+    }
+
+
+
+
+    // COSTRUTTORE VECCHIO per CalculatorAstrologiaAstroSeek e CalculatorAstrologiaAstroLib (senza secondi)
     public Pianeti(int numeroPianeta, String nomePianeta, double gradi, int minuti, int secondi, int numeroSegnoZodiacale, String nomeSegnoZodiacale, boolean retrogrado,
                    String significatoPianetaSegno) {
         this.numeroPianeta = numeroPianeta;
@@ -32,6 +60,7 @@ public class Pianeti {
         this.retrogrado = retrogrado;
         this.significatoPianetaSegno = significatoPianetaSegno;
     }
+
 
     public Pianeti() { }
 
@@ -63,6 +92,8 @@ public class Pianeti {
 
     public void setNomeCasa(String nomeCasa) { this.nomeCasa = nomeCasa; }
 
+    public int getGradiSegno() { return gradiSegno; }
+
 
     // ---- descrizioni ----
 
@@ -79,20 +110,20 @@ public class Pianeti {
     }
 
     public String descrizione_Pianeta_Segno_Gradi_Retrogrado() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + ". ";
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + gradiSegno + "°" + minuti + "’" + (retrogrado ? " (Retrogrado)" : "") + ". ";
     }
 
     public String descrizione_Pianeta_Segno_Gradi_Retrogrado_Casa() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + " in Casa "+nomeCasa+":";
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + gradiSegno + "°" + minuti + "’" + (retrogrado ? " (Retrogrado)" : "") + " in Casa "+nomeCasa+":";
     }
 
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno() {
-        return nomePianeta + " in " + nomeSegnoZodiacale + " " + minuti + "°" + secondi + "’" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno;
+        return nomePianeta + " in " + nomeSegnoZodiacale + " " + gradiSegno + "°" + minuti + "’" + (retrogrado ? " (Retrogrado)" : "") + " "+significatoPianetaSegno;
    }
 
     /**
      * deprecato perché i grandi si devono sempre intendere in minuti-secondi. E inoltre questi gradi provengono
-     * da BuildInfoAstrologiaSwiss che è stata sostituita da BuildInfoAstrologiaAstroSeek
+     * da BuildInfoAstrologiaSwiss che è stata sostituita da CalculatorAstrologiaAstroSeek
      */
     @Deprecated
     public String descrizione_Pianeta_Gradi_Retrogrado_SignificatoPianetaSegno_OROSCOPO() {
@@ -103,7 +134,9 @@ public class Pianeti {
 
     @Override
     public String toString() {
-        return nomePianeta + " ("+gradi+"° "+minuti+"' "+secondi+"\") in " + nomeSegnoZodiacale + ". ";
+
+
+        return nomePianeta + " (" + gradiSegno + "°" + minuti + "'" + secondi + "\") in " + nomeSegnoZodiacale + " [lon=" + gradi + "°]";
     }
 
 

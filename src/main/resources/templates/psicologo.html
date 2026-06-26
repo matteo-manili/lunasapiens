@@ -111,11 +111,13 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(function() {
             var chatInput = document.getElementById("userMessage");
             if (chatInput) {
-                chatInput.scrollIntoView({ behavior: "smooth", block: "center" });
+                chatInput.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
                 chatInput.focus(); // porta il cursore direttamente nel campo di input
             }
         }, 600); // leggero delay per sicurezza
-
 
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
@@ -130,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (parsedMessage && typeof parsedMessage.numDomandeRimanenti !== 'undefined') {
                         showMessage('Domande Rimanenti: ' + parsedMessage.numDomandeRimanenti, true);
                     }
-
                 } catch (e) {
                     console.error('Error parsing message:', e);
                     showMessage('Errore nel messaggio ricevuto.', true);
@@ -188,6 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
             messageElement.innerHTML = formattedMessage; // messageElement.innerText = message; // solo testo
             chatMessages.appendChild(messageElement);
         }
+
         document.getElementById("sendMessage").addEventListener("click", sendMessage);
         document.getElementById("userMessage").addEventListener("keyup", function (event) {
             if (event.key === "Enter") { sendMessage(); }
@@ -196,11 +198,9 @@ document.addEventListener("DOMContentLoaded", function() {
         function showLoadingIndicator() {
             document.getElementById("loading-indicator").classList.remove("hidden-text");
         }
-
         function hideLoadingIndicator() {
             document.getElementById("loading-indicator").classList.add("hidden-text");
         }
-
         function eseguiScrollChatBox() {
             // rimosso alert che blocca l'esecuzione
             var chatBox = document.querySelector('.chat-box');
@@ -208,9 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
-
-
-
     }
 });
 </script>

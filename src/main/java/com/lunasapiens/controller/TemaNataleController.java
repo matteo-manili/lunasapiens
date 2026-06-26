@@ -6,7 +6,7 @@ import com.lunasapiens.entity.ProfiloUtente;
 import com.lunasapiens.repository.ProfiloUtenteRepository;
 import com.lunasapiens.service.EmailService;
 import com.lunasapiens.utils.Utils;
-import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
+import com.lunasapiens.zodiac.CalculatorAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioTemaNatale;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -183,15 +183,20 @@ public class TemaNataleController extends BaseController {
 
         final GiornoOraPosizioneDTO giornoOraPosizioneDTO = new GiornoOraPosizioneDTO(hour, minute, day, month, year, Double.parseDouble(cityLat), Double.parseDouble(cityLng));
         CoordinateDTO coordinateDTO = new CoordinateDTO(cityName, regioneName, statoName, statoCode);
-        StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        StringBuilder temaNataleDescrizione = servizioTemaNatale.temaNataleDescrizione_AstrologiaAstroSwiss(giornoOraPosizioneDTO, coordinateDTO);
 
         //StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatiTemaNataleDescrizione();
         StringBuilder significatiTemaNataleDescrizione = servizioTemaNatale.significatoTemaNatalePianeti();
         temaNataleDescrizione.append( significatiTemaNataleDescrizione );
 
-        AstroChartDTO astroChartDTO = servizioTemaNatale.astroChart_AstrologiaAstroSeek(giornoOraPosizioneDTO, coordinateDTO);
+        AstroChartDTO astroChartDTO = servizioTemaNatale.astroChart_AstrologiaAstroSwiss(giornoOraPosizioneDTO);
         redirectAttributes.addFlashAttribute("planets", astroChartDTO.getPlanets());
         redirectAttributes.addFlashAttribute("cusps", astroChartDTO.getCusps());
+        redirectAttributes.addFlashAttribute("ascendente", astroChartDTO.getAscendente());
+        redirectAttributes.addFlashAttribute("medioCielo", astroChartDTO.getMedioCielo());
+
+
+
 
 
         redirectAttributes.addFlashAttribute("temaNataleDescrizione", temaNataleDescrizione.toString());
@@ -207,7 +212,7 @@ public class TemaNataleController extends BaseController {
             return "redirect:/tema-natale";
         }
 
-        StringBuilder temaNataleDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), dateTime, luogoNascita);
+        StringBuilder temaNataleDescIstruzioniBOTSystem = CalculatorAstrologiaAstroSeek.temaNataleIstruzioneBOTSystem(temaNataleDescrizione.toString(), dateTime, luogoNascita);
         if( userDetails != null
                 && (userDetails.getUsername().equals(Constants.MATTEO_MANILI_GMAIL) || userDetails.getUsername().equals("benama75@gmail.com")) ){
             redirectAttributes.addFlashAttribute("temaNataleDescIstruzioniBOTSystem", Utils.convertPlainTextToHtml(temaNataleDescIstruzioniBOTSystem.toString()));

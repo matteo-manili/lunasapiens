@@ -51,6 +51,9 @@ public class ServizioOroscopoDelGiorno {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private CalculatorAstrologiaSwiss calculatorAstrologiaSwiss;
+
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
     private Double temperature = 0.3;
@@ -81,9 +84,8 @@ public class ServizioOroscopoDelGiorno {
 
         // Lista dei transiti
         JSONArray transitiArray = new JSONArray();
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
         // Aggiungi i pianeti con descrizione e retrogradazione
-        for (Pianeti pianeta : buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno())) {
+        for (Pianeti pianeta : calculatorAstrologiaSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno())) {
             if (pianeta.getNumeroPianeta() >= 0 && pianeta.getNumeroPianeta() <= 9) {
                 JSONObject pianetaObject = new JSONObject();
                 pianetaObject.put("name", pianeta.getNomePianeta());
@@ -105,8 +107,7 @@ public class ServizioOroscopoDelGiorno {
      */
     public OroscopoDelGiornoDescrizioneDTO descrizioneOroscopoDelGiorno(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
         String descrizioneOggi = "<p><b>Transiti:</b><br>";
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeti> pianetiTransiti = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<Pianeti> pianetiTransiti = calculatorAstrologiaSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
         for (Pianeti var : pianetiTransiti) {
             if (var.getNumeroPianeta() == Constants.Pianeti.fromNumero(0).getNumero() ||
                     var.getNumeroPianeta() == Constants.Pianeti.fromNumero(1).getNumero() ||
@@ -192,8 +193,7 @@ public class ServizioOroscopoDelGiorno {
         Properties pianetiOroscopoSignificatoProperties = propertiesConfig.pianetiOroscopoSignificato();
 
         GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeti> pianeta = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
+        ArrayList<Pianeti> pianeta = calculatorAstrologiaSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiSegniPianeti_OroscopoDelGiorno());
 
         logger.info( "---------- Inizio!!! segno "+numeroSegno +" ----------" );
 

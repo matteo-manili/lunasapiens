@@ -31,13 +31,16 @@ public class ServizioSinastria {
     private PropertiesConfig propertiesConfig;
 
     @Autowired
-    SegnoZodiacale segnoZodiacale;
+    private SegnoZodiacale segnoZodiacale;
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private CalculatorAstrologiaSwiss calculatorAstrologiaSwiss;
 
 
     // tokensRisposta signfiica i token da aggiungere oltre i token per la domanda
@@ -55,8 +58,8 @@ public class ServizioSinastria {
 
 
     public StringBuilder sinastriaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
-        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
-        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
+        CalculatorAstrologiaAstroSeek calculatorAstrologiaAstroSeek = new CalculatorAstrologiaAstroSeek();
+        CalculatorAstrologiaAstroSeek result = calculatorAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate,
                 cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE), giornoOraPosizioneDTO, coordinateDTO,
                 propertiesConfig.transitiPianetiSegni_TemaNatale() );
         StringBuilder sinastriaDesc = sinastriaDescrizione(result.getPianetiPosizTransitoList(), result.getCasePlacidesList());
@@ -65,9 +68,8 @@ public class ServizioSinastria {
 
 
     public StringBuilder sinastriaDescrizione_AstrologiaSwiss(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
-        BuildInfoAstrologiaSwiss buildInfoAstroSwiss = new BuildInfoAstrologiaSwiss();
-        ArrayList<Pianeti> pianetiList = buildInfoAstroSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
-        ArrayList<CasePlacide> casePlacideArrayList = buildInfoAstroSwiss.getCasePlacide(giornoOraPosizioneDTO);
+        ArrayList<Pianeti> pianetiList = calculatorAstrologiaSwiss.getPianetiTransiti(giornoOraPosizioneDTO, propertiesConfig.transitiPianetiSegni_TemaNatale());
+        ArrayList<CasePlacide> casePlacideArrayList = calculatorAstrologiaSwiss.getCasePlacide(giornoOraPosizioneDTO);
         return sinastriaDescrizione(pianetiList, casePlacideArrayList);
     }
 
@@ -125,7 +127,7 @@ public class ServizioSinastria {
                 for (int pianetaSign : pianetiSignori) {
                     for (Pianeti varPianeta : pianetiTransiti) {
                         if(varPianeta.getNumeroPianeta() == pianetaSign ){
-                            descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+BuildInfoAstrologiaAstroSeek.pianetaDomicioSegnoCasa
+                            descSinastria.append("<li>Pianeta nella casa: "+varPianeta.descrizione_Pianeta_Retrogrado()+"<i>"+" "+CalculatorAstrologiaAstroSeek.pianetaDomicioSegnoCasa
                                 +" "+"</i>"+ pianetiCaseSignificatoProperties.getProperty(varPianeta.getNumeroPianeta()+"_"+varCasa.getNumeroCasa()) + "</li>");
                         }
                     }

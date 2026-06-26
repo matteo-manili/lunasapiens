@@ -73,9 +73,9 @@ public class ServizioOmeopatiaAstrologica {
 
 
     public StringBuilder omeopatiaAstrologicaDescrizione_AstrologiaAstroSeek(GiornoOraPosizioneDTO giornoOraPosizioneDTO, CoordinateDTO coordinateDTO) {
-        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek();
+        CalculatorAstrologiaAstroSeek calculatorAstrologiaAstroSeek = new CalculatorAstrologiaAstroSeek();
 
-        BuildInfoAstrologiaAstroSeek result = buildInfoAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE),
+        CalculatorAstrologiaAstroSeek result = calculatorAstrologiaAstroSeek.catturaTemaNataleAstroSeek(restTemplate, cacheManager.getCache(Constants.URLS_ASTRO_SEEK_CACHE),
                 giornoOraPosizioneDTO, coordinateDTO, propertiesConfig.transitiPianetiSegni_TemaNatale() );
 
         return omeopatiaAstrologicaDescrizione(result.getPianetiPosizTransitoList(), result.getCasePlacidesList());

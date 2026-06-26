@@ -3,7 +3,7 @@ package com.lunasapiens.controller;
 import com.lunasapiens.Constants;
 import com.lunasapiens.dto.CoordinateDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
-import com.lunasapiens.zodiac.BuildInfoAstrologiaAstroSeek;
+import com.lunasapiens.zodiac.CalculatorAstrologiaAstroSeek;
 import com.lunasapiens.zodiac.ServizioSinastria;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -262,7 +262,7 @@ public class SinastriaController extends BaseController {
             return "redirect:/sinastria";
         }
         List<ChatMessage> chatMessageIa = new ArrayList<>();
-        StringBuilder sinastriaDescIstruzioniBOTSystem = BuildInfoAstrologiaAstroSeek.sinastriaIstruzioneBOTSystem(relationship, nome, nome_2,
+        StringBuilder sinastriaDescIstruzioniBOTSystem = CalculatorAstrologiaAstroSeek.sinastriaIstruzioneBOTSystem(relationship, nome, nome_2,
                 sinastria_1.toString(), sinastria_2.toString(), significatiTemaNatale.toString(), dateTime, dateTime_2, luogoNascita, luogoNascita_2);
 
         logger.info( "sinastriaDescrizioneIstruzioneBOTSystem: "+sinastriaDescIstruzioniBOTSystem );

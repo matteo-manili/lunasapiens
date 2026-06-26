@@ -94,20 +94,24 @@ import java.util.*;
  #tabs_redraw: Indica che la sezione dei tab deve essere ridisegnata dopo il calcolo.
  */
 
-public class BuildInfoAstrologiaAstroSeek {
+/**
+ * Astroseek NON FUNZIINA ha messo il sistema anti-bot Cloudflare
+ */
+@Deprecated
+public class CalculatorAstrologiaAstroSeek {
 
-    private static final Logger logger = LoggerFactory.getLogger(BuildInfoAstrologiaAstroSeek.class);
+    private static final Logger logger = LoggerFactory.getLogger(CalculatorAstrologiaAstroSeek.class);
 
     private final List<Pianeti> pianetiList; private final List<CasePlacide> casePlacidesList;
 
     public List<Pianeti> getPianetiPosizTransitoList() { return pianetiList; }
     public List<CasePlacide> getCasePlacidesList() { return casePlacidesList; }
 
-    public BuildInfoAstrologiaAstroSeek() {
+    public CalculatorAstrologiaAstroSeek() {
         this.pianetiList = Collections.emptyList(); this.casePlacidesList = Collections.emptyList();
     }
 
-    public BuildInfoAstrologiaAstroSeek(List<Pianeti> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
+    public CalculatorAstrologiaAstroSeek(List<Pianeti> pianetaArrayList, List<CasePlacide> casePlacidesArrayList) {
         this.pianetiList = Collections.unmodifiableList(pianetaArrayList);
         this.casePlacidesList = Collections.unmodifiableList(casePlacidesArrayList);
     }
@@ -264,7 +268,7 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
     }
 
 
-    public BuildInfoAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
+    public CalculatorAstrologiaAstroSeek catturaTemaNataleAstroSeek(RestTemplate restTemplate, Cache cache, GiornoOraPosizioneDTO giornoOraPosizioneDTO,
                                                                    CoordinateDTO coordinateDTO, Properties transitiPianetiSegniProperties ){
 
         String urlAstroSeek = "https://horoscopes.astro-seek.com/calculate-birth-chart-horoscope-online/?input_natal=1" +
@@ -299,9 +303,9 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 "&tolerance_paral=1.2#tabs_redraw";
 
 
-        BuildInfoAstrologiaAstroSeek buildInfoAstrologiaAstroSeek = cache.get(urlAstroSeek, BuildInfoAstrologiaAstroSeek.class);
-        if ( buildInfoAstrologiaAstroSeek != null ){
-            return buildInfoAstrologiaAstroSeek;
+        CalculatorAstrologiaAstroSeek calculatorAstrologiaAstroSeek = cache.get(urlAstroSeek, CalculatorAstrologiaAstroSeek.class);
+        if ( calculatorAstrologiaAstroSeek != null ){
+            return calculatorAstrologiaAstroSeek;
 
         }else{
             logger.info( urlAstroSeek );
@@ -407,10 +411,10 @@ Relazione tra gli Ascendenti: Le interazioni tra gli Ascendenti (tramite aspetti
                 });
 
 
-                buildInfoAstrologiaAstroSeek = new BuildInfoAstrologiaAstroSeek(pianetiList, casePlacidesList);
-                cache.put(urlAstroSeek, buildInfoAstrologiaAstroSeek);
+                calculatorAstrologiaAstroSeek = new CalculatorAstrologiaAstroSeek(pianetiList, casePlacidesList);
+                cache.put(urlAstroSeek, calculatorAstrologiaAstroSeek);
 
-                return buildInfoAstrologiaAstroSeek;
+                return calculatorAstrologiaAstroSeek;
 
             } else {
                 System.out.println("Il div con id 'vypocty_id_nativ' non è stato trovato.");

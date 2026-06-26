@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -119,7 +120,67 @@ public class Utils {
     }
 
 
-    public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO giornOraPosDTO) {
+
+    public static double convertiGiornoOraPosizioneDTO_in_JulianDate(GiornoOraPosizioneDTO dto) {
+        LocalDateTime dataOraLocale = LocalDateTime.of(
+                dto.getAnno(),
+                dto.getMese(),
+                dto.getGiorno(),
+                dto.getOra(),
+                dto.getMinuti()
+        );
+        ZonedDateTime roma = dataOraLocale.atZone(ZoneId.of("Europe/Rome"));
+        ZonedDateTime utc = roma.withZoneSameInstant(ZoneOffset.UTC);
+        double oraUT = utc.getHour() + utc.getMinute() / 60.0 + utc.getSecond() / 3600.0;
+        double jd = SweDate.getJulDay(utc.getYear(), utc.getMonthValue(), utc.getDayOfMonth(), oraUT, true);
+        logger.info("Local time: {} - UTC: {} - JD: {}", roma, utc, jd);
+        return jd;
+    }
+
+
+
+    public static double convertiGiornoOraPosizioneDTO_in_JulianDate_OLD(GiornoOraPosizioneDTO giornOraPosDTO) {
+
+        LocalDateTime localDateTime = LocalDateTime.of(
+                giornOraPosDTO.getAnno(),
+                giornOraPosDTO.getMese(),
+                giornOraPosDTO.getGiorno(),
+                giornOraPosDTO.getOra(),
+                giornOraPosDTO.getMinuti()
+        );
+
+
+        // Ora locale del luogo di nascita
+        ZonedDateTime zonaLocale =
+                localDateTime.atZone(
+                        ZoneId.of("Europe/Rome")
+                );
+
+
+        // Conversione in UTC
+        ZonedDateTime utc =
+                zonaLocale.withZoneSameInstant(
+                        ZoneOffset.UTC
+                );
+
+
+        double hour =
+                utc.getHour()
+                        +
+                        utc.getMinute() / 60.0;
+
+
+        return SweDate.getJulDay(
+                utc.getYear(),
+                utc.getMonthValue(),
+                utc.getDayOfMonth(),
+                hour,
+                true
+        );
+    }
+
+
+    public static double convertiGiornoOraPosizioneDTO_in_JulianDate_OLD_OLD(GiornoOraPosizioneDTO giornOraPosDTO) {
         double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);
         return SweDate.getJulDay(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), hour, true);
     }

@@ -14,13 +14,13 @@ import java.util.Map;
  * questa classe si interfaccia con la libreria at.kugel.zodiac
  */
 @Deprecated
-public class BuildInfoAstrologiaAstroLib {
+public class CalculatorAstrologiaAstroLib {
 
     private String horoscop;
     private GiornoOraPosizioneDTO giornoOraPosizioneDTO;
 
     // Roma 41.89 e 12.48
-    public BuildInfoAstrologiaAstroLib(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
+    public CalculatorAstrologiaAstroLib(GiornoOraPosizioneDTO giornoOraPosizioneDTO) {
 
         this.horoscop = textHoroscop(giornoOraPosizioneDTO.getOra(), giornoOraPosizioneDTO.getMinuti(), giornoOraPosizioneDTO.getGiorno(), giornoOraPosizioneDTO.getMese(),
                 giornoOraPosizioneDTO.getAnno(), giornoOraPosizioneDTO.getLon(), giornoOraPosizioneDTO.getLat());
@@ -82,7 +82,22 @@ public class BuildInfoAstrologiaAstroLib {
                         String significatoTransitoPianetaSegno = UtilsZodiac.significatoTransitoPianetaSegno(null,0, entry.getKey());
 
                         // non valorizzo significatoTransitoPianetaSegno perchè non è implementato in questa classe. Ma solo nella clase BuildInfoAstrologiaSwiss
-                        Pianeti pianeta = new Pianeti(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
+                        //Pianeti pianeta = new Pianeti(0, planetName, degrees, minutes, seconds, entry.getKey(), entry.getValue(), false, significatoTransitoPianetaSegno);
+
+                        Pianeti pianeta = new Pianeti(
+                                0,
+                                planetName,
+                                degrees,
+                                minutes,
+                                seconds,
+                                entry.getKey(),
+                                entry.getValue(),
+                                false,
+                                significatoTransitoPianetaSegno
+                        );
+
+
+
                         pianetaArrayList.add( pianeta );
                     }
                 }

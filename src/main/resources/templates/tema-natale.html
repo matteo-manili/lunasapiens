@@ -190,14 +190,30 @@ $(document).ready(function() {
         }
     });
 
-    // ############################# ASTRO CHART #############################
-    const data = { "planets": /*[[${planets}]]*/ 'default', "cusps": /*[[${cusps}]]*/ 'default' };
+// ############################# ASTRO CHART #############################
+
+    const data = {
+        planets: [[${planets}]],
+        cusps: [[${cusps}]],
+        ascendente: [[${ascendente}]],
+        medioCielo: [[${medioCielo}]]
+    };
+    console.log(data);
     if(data.planets != null && data.cusps != null) {
-        const radix = new astrochart.Chart('paper', 600, 600).radix( data );
-        // Aspect calculation
-        radix.addPointsOfInterest( {"As":[data.cusps[0]],"Ic":[data.cusps[3]],"Ds":[data.cusps[6]],"Mc":[data.cusps[9]]});
+        const radix = new astrochart.Chart('paper', 600, 600).radix(data);
+        radix.addPointsOfInterest({
+            "As": [data.ascendente],
+            "Ic": [data.cusps[3]],
+            "Ds": [data.cusps[6]],
+            "Mc": [data.medioCielo]
+        });
         radix.aspects();
     }
+
+
+
+
+
 });
 
 
@@ -307,8 +323,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // ############################# CODICE CHAT-BOT #############################
     var temaNataleDescrizione = document.getElementById('temaNataleDescrizione').value;
+
     // Verifica se temaNataleDescrizione non è null o una stringa vuota
-    if (temaNataleDescrizione) {
+    if (temaNataleDescrizione && temaNataleDescrizione.trim() !== "") {
+        setTimeout(function() {
+            var chatInput = document.getElementById("userMessage");
+            if (chatInput) {
+                chatInput.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+                chatInput.focus();
+            }
+        }, 600);
+
         var socket = new SockJS('/chat-websocket');
         var stompClient = Stomp.over(socket);
 
@@ -322,21 +350,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (parsedMessage && typeof parsedMessage.numDomandeRimanenti !== 'undefined') {
                         showMessage('Domande Rimanenti: ' + parsedMessage.numDomandeRimanenti, true);
                     }
-                    hideLoadingIndicator(); // Nascondi l'indicatore quando ricevi un messaggio
                 } catch (e) {
                     console.error('Error parsing message:', e);
                     showMessage('Errore nel messaggio ricevuto.', true);
-                    hideLoadingIndicator(); // Nascondi l'indicatore in caso di errore
                 }
+                hideLoadingIndicator();
+                eseguiScrollChatBox();
             });
         });
-
-        function showLoadingIndicator() {
-            document.getElementById("loading-indicator").classList.remove("hidden-text");
-        }
-        function hideLoadingIndicator() {
-            document.getElementById("loading-indicator").classList.add("hidden-text");
-        }
 
         function sendMessage() {
             var message = document.getElementById("userMessage").value;
@@ -353,9 +374,22 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("userMessage").value = "";
                 showMessage(message, false); // Visualizza il messaggio inviato nella chat
                 showLoadingIndicator(); // Mostra l'indicatore di caricamento
+                eseguiScrollChatBox();
             } else {
                 console.log('Message is empty');
             }
+        }
+
+
+        function showMessage(message, isBotMessage) {
+            var chatMessages = document.getElementById("chat-messages");
+            var messageElement = document.createElement("div");
+            messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
+            // interpeta il codice html nel message (perché devo fare vedere i link nel messaggio ma non converte \n in <br>).
+            // Gli \n li mette le risposte della IA
+            let formattedMessage = message.replace(/\n/g, '<br>'); // // Sostituisci tutti i \n con <br>
+            messageElement.innerHTML = formattedMessage; // messageElement.innerText = message; // solo testo
+            chatMessages.appendChild(messageElement);
         }
 
         document.getElementById("sendMessage").addEventListener("click", sendMessage);
@@ -363,32 +397,19 @@ document.addEventListener("DOMContentLoaded", function() {
             if (event.key === "Enter") { sendMessage(); }
         });
 
-        function showMessage(message, isBotMessage) {
-            var chatMessages = document.getElementById("chat-messages");
-            var messageElement = document.createElement("div");
-            messageElement.className = "chat-message " + (isBotMessage ? "bot-message" : "user-message");
-
-            // interpeta il codice html nel message (perché devo fare vedere i link nel messaggio ma non converte \n in <br>).
-            // Gli \n li mette le risposte della IA
-            let formattedMessage = message.replace(/\n/g, '<br>'); // // Sostituisci tutti i \n con <br>
-            messageElement.innerHTML = formattedMessage; // messageElement.innerText = message; // solo testo
-
-
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function showLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.remove("hidden-text");
         }
-
-        document.getElementById('toggleLink').addEventListener('click', function(event) {
-            event.preventDefault(); // Evita il comportamento di default del link
-            var textSection = document.getElementById('textSection');
-            if (textSection.classList.contains('d-none')) {
-                textSection.classList.remove('d-none');
-                this.textContent = 'Nascondi descrizione Tema natale';
-            } else {
-                textSection.classList.add('d-none');
-                this.textContent = 'Visualizza descrizione Tema natale';
+        function hideLoadingIndicator() {
+            document.getElementById("loading-indicator").classList.add("hidden-text");
+        }
+        function eseguiScrollChatBox() {
+            // rimosso alert che blocca l'esecuzione
+            var chatBox = document.querySelector('.chat-box');
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
-        });
+        }
     }
 });
 </script>
