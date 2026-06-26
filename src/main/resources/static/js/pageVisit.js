@@ -25,7 +25,6 @@ function initPageVisit(csrf) {
     window.addEventListener("scroll", startVisit, { once: true });
     window.addEventListener("click", startVisit, { once: true });
     window.addEventListener("touchstart", startVisit, { once: true });
-    window.addEventListener("keydown", startVisit, { once: true });
 
 
     // *************** heartbeat leggero ***************
