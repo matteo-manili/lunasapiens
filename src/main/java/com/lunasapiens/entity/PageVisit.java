@@ -1,5 +1,6 @@
 package com.lunasapiens.entity;
 
+import com.lunasapiens.utils.Utils;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -27,7 +28,7 @@ public class PageVisit {
         this.path = path;
         this.ip = ip;
         this.userAgent = userAgent;
-        this.startTime = LocalDateTime.now();
+        this.startTime = Utils.getNowRomeEurope().toLocalDateTime();
         this.lastSeen = this.startTime;
     }
 

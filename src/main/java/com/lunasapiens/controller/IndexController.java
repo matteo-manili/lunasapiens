@@ -6,6 +6,7 @@ import com.lunasapiens.entity.ArticleContent;
 import com.lunasapiens.entity.PageVisit;
 import com.lunasapiens.repository.ArticleContentRepository;
 import com.lunasapiens.repository.PageVisitRepository;
+import com.lunasapiens.utils.Utils;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
@@ -98,6 +99,22 @@ public class IndexController extends BaseController {
         if (isMatteoManilIdUser()) {
             return ResponseEntity.ok().build();
         }
+
+        String ua = request.getHeader("User-Agent");
+        if (ua != null) {
+            String lower = ua.toLowerCase();
+            if (lower.contains("googlebot")
+                    || lower.contains("applebot")
+                    || lower.contains("bytespider")
+                    || lower.contains("meta-externalagent")
+                    || lower.contains("facebookexternalhit")
+                    || lower.contains("crawler")
+                    || lower.contains("spider")
+                    || lower.contains("bot")) {
+                return ResponseEntity.ok().build();
+            }
+        }
+
         HttpSession session = request.getSession(true);
         PageVisit visit = new PageVisit(
                 session.getId(),
@@ -118,7 +135,7 @@ public class IndexController extends BaseController {
         }
         HttpSession session = request.getSession(false);
         if (session == null) return ResponseEntity.ok().build();
-        pageVisitRepository.updateHeartbeat(session.getId());
+        pageVisitRepository.updateHeartbeat(session.getId(), Utils.getNowRomeEurope().toLocalDateTime());
         return ResponseEntity.ok().build();
     }
 

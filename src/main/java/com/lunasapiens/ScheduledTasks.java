@@ -50,7 +50,7 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void closeInactiveSessions() {
-        LocalDateTime cutoff = LocalDateTime.now().minusSeconds(60);
+        LocalDateTime cutoff = Utils.getNowRomeEurope().toLocalDateTime().minusSeconds(60);
         pageVisitRepository.closeInactiveSessions(cutoff);
     }
 

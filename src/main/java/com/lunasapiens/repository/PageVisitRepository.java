@@ -22,11 +22,11 @@ public interface PageVisitRepository extends JpaRepository<PageVisit, Long> {
     @Transactional
     @Query("""
         update PageVisit v
-        set v.lastSeen = CURRENT_TIMESTAMP
+        set v.lastSeen = :now
         where v.sessionId = :sessionId
         and v.endTime is null
     """)
-    void updateHeartbeat(String sessionId);
+    void updateHeartbeat(String sessionId, LocalDateTime now);
 
 
     @Modifying

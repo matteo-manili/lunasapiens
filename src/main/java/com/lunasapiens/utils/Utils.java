@@ -35,6 +35,12 @@ public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+    private static final ZoneId ZONE_ID_ROME = ZoneId.of("Europe/Rome");
+
+    public static ZoneId getZoneIdRomeEurope() { return ZONE_ID_ROME; }
+
+    public static ZonedDateTime getNowRomeEurope() { return ZonedDateTime.now( getZoneIdRomeEurope() ); }
+
 
 
 
@@ -129,67 +135,13 @@ public class Utils {
                 dto.getOra(),
                 dto.getMinuti()
         );
-        ZonedDateTime roma = dataOraLocale.atZone(ZoneId.of("Europe/Rome"));
+        ZonedDateTime roma = dataOraLocale.atZone(ZONE_ID_ROME);
         ZonedDateTime utc = roma.withZoneSameInstant(ZoneOffset.UTC);
         double oraUT = utc.getHour() + utc.getMinute() / 60.0 + utc.getSecond() / 3600.0;
         double jd = SweDate.getJulDay(utc.getYear(), utc.getMonthValue(), utc.getDayOfMonth(), oraUT, true);
         logger.info("Local time: {} - UTC: {} - JD: {}", roma, utc, jd);
         return jd;
     }
-
-
-
-    public static double convertiGiornoOraPosizioneDTO_in_JulianDate_OLD(GiornoOraPosizioneDTO giornOraPosDTO) {
-
-        LocalDateTime localDateTime = LocalDateTime.of(
-                giornOraPosDTO.getAnno(),
-                giornOraPosDTO.getMese(),
-                giornOraPosDTO.getGiorno(),
-                giornOraPosDTO.getOra(),
-                giornOraPosDTO.getMinuti()
-        );
-
-
-        // Ora locale del luogo di nascita
-        ZonedDateTime zonaLocale =
-                localDateTime.atZone(
-                        ZoneId.of("Europe/Rome")
-                );
-
-
-        // Conversione in UTC
-        ZonedDateTime utc =
-                zonaLocale.withZoneSameInstant(
-                        ZoneOffset.UTC
-                );
-
-
-        double hour =
-                utc.getHour()
-                        +
-                        utc.getMinute() / 60.0;
-
-
-        return SweDate.getJulDay(
-                utc.getYear(),
-                utc.getMonthValue(),
-                utc.getDayOfMonth(),
-                hour,
-                true
-        );
-    }
-
-
-    public static double convertiGiornoOraPosizioneDTO_in_JulianDate_OLD_OLD(GiornoOraPosizioneDTO giornOraPosDTO) {
-        double hour = giornOraPosDTO.getOra() + (giornOraPosDTO.getMinuti() / 60.0);
-        return SweDate.getJulDay(giornOraPosDTO.getAnno(), giornOraPosDTO.getMese(), giornOraPosDTO.getGiorno(), hour, true);
-    }
-
-
-
-    public static ZoneId getZoneIdRomeEurope() { return ZoneId.of("Europe/Rome"); }
-
-    public static ZonedDateTime getNowRomeEurope() { return ZonedDateTime.now( getZoneIdRomeEurope() ); }
 
 
     public static LocalDateTime OggiRomaOre12() {
