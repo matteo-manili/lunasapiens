@@ -30,10 +30,8 @@ function initPageVisit(csrf) {
         }).catch(() => {});
     }
 
-
     // Se l'utente interagisce con la pagina,
     // la visita viene registrata subito senza aspettare i 10 secondi
-
     // Scroll della pagina
     window.addEventListener("scroll", startVisit, { once: true });
     // Click del mouse
@@ -45,7 +43,6 @@ function initPageVisit(csrf) {
 
 
     // *************** HEARTBEAT LEGGERO ***************
-
     // Invia periodicamente un segnale al server per indicare
     // che l'utente è ancora sulla pagina.
     // Serve ad aggiornare il campo "lastSeen" della visita.
