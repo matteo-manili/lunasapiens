@@ -5,14 +5,38 @@
     <title th:fragment="title">Statistiche visite</title>
     <th:block th:fragment="links">
         <link rel="stylesheet" th:href="@{/css/style.css(v=${vCssStyle})}">
-
         <style>
-            .user-agent {
-                max-width: 500px;
-                white-space: normal;
-                overflow-wrap: anywhere;
-                word-break: break-word;
-                font-size: 12px;
+            .table-responsive {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 1000px;
+            }
+            .collapse-row td {
+                border:0;
+                background:white;
+            }
+            .referer {
+                max-width:250px;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
+                cursor: help;
+            }
+            .user-agent-detail {
+                font-size:12px;
+                white-space:pre-wrap;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                background:#f8f9fa;
+                padding:10px;
+                border-radius:5px;
+                margin:0;
+            }
+            @media(max-width:768px){
+                table {
+                    min-width:900px;
+                }
             }
         </style>
 
@@ -27,7 +51,7 @@
 
     <div class="table-responsive">
 
-        <table class="table table-striped table-bordered table-hover align-middle text-break">
+        <table class="table table-striped table-bordered table-hover align-middle">
 
             <thead class="table-dark">
             <tr>
@@ -43,35 +67,36 @@
                 <th>User Agent</th>
             </tr>
             </thead>
+
             <tbody>
-
-            <tr th:each="v : ${visits}">
-                <td th:text="${v.id}"></td>
-
-                <td><a th:href="${v.path}" th:text="${v.path}" target="_blank"></a></td>
-
-                <td th:text="${v.ip}"></td>
-
-                <td style="font-size:12px" th:text="${v.sessionId}"></td>
-
-                <td th:text="${#temporals.format(v.startTime,'dd/MM/yyyy HH:mm:ss')}"></td>
-
-                <td th:text="${#temporals.format(v.lastSeen,'HH:mm:ss')}"></td>
-
-                <td><span class="badge bg-primary" th:text="${v.formattedSeconds}"></span></td>
-
-                <td th:text="${v.acceptLanguage}"></td>
-
-                <td th:text="${v.referer}"></td>
-
-                <!--
-                <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
-                    th:title="${v.userAgent}" th:text="${v.userAgent}"></td> -->
-
-                <td class="user-agent" th:text="${v.userAgent}"></td>
-
-            </tr>
+            <th:block th:each="v : ${visits}">
+                <tr>
+                    <td th:text="${v.id}"></td>
+                    <td><a th:href="${v.path}" th:text="${v.path}" target="_blank"></a></td>
+                    <td th:text="${v.ip}"></td>
+                    <td style="font-size:12px" th:text="${v.sessionId}"></td>
+                    <td th:text="${#temporals.format(v.startTime,'dd/MM/yyyy HH:mm:ss')}"></td>
+                    <td th:text="${#temporals.format(v.lastSeen,'HH:mm:ss')}"></td>
+                    <td><span class="badge bg-primary" th:text="${v.formattedSeconds}"></span></td>
+                    <td th:text="${v.acceptLanguage}"></td>
+                    <td class="referer" th:title="${v.referer}" th:text="${v.referer}"></td>
+                    <td><button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                                th:data-bs-target="'#ua-' + ${v.id}">Mostra UA</button></td>
+                </tr>
+                <!-- dettaglio user agent della stessa visita -->
+                <tr class="collapse-row">
+                    <td colspan="10" class="p-0">
+                        <div class="collapse" th:id="'ua-' + ${v.id}">
+                            <div class="alert alert-light m-2">
+                                <strong>User Agent completo</strong>
+                                <pre class="mt-2 user-agent-detail" th:text="${v.userAgent}"></pre>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </th:block>
             </tbody>
+
         </table>
     </div>
 </div>
