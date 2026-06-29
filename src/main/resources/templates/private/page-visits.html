@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-
 <head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
     <title th:fragment="title">Statistiche visite</title>
     <th:block th:fragment="links">
         <link rel="stylesheet" th:href="@{/css/style.css(v=${vCssStyle})}">
+
+        <style>
+            .user-agent {
+                max-width: 500px;
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                font-size: 12px;
+            }
+        </style>
+
     </th:block>
 </head>
 
@@ -17,7 +27,7 @@
 
     <div class="table-responsive">
 
-        <table class="table table-striped table-bordered table-hover align-middle">
+        <table class="table table-striped table-bordered table-hover align-middle text-break">
 
             <thead class="table-dark">
             <tr>
@@ -28,6 +38,8 @@
                 <th>Inizio</th>
                 <th>Ultimo heartbeat</th>
                 <th>Secondi</th>
+                <th>Lingua</th>
+                <th>Referer</th>
                 <th>User Agent</th>
             </tr>
             </thead>
@@ -48,8 +60,15 @@
 
                 <td><span class="badge bg-primary" th:text="${v.formattedSeconds}"></span></td>
 
+                <td th:text="${v.acceptLanguage}"></td>
+
+                <td th:text="${v.referer}"></td>
+
+                <!--
                 <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
-                    th:title="${v.userAgent}" th:text="${v.userAgent}"></td>
+                    th:title="${v.userAgent}" th:text="${v.userAgent}"></td> -->
+
+                <td class="user-agent" th:text="${v.userAgent}"></td>
 
             </tr>
             </tbody>

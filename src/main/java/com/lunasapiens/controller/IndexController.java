@@ -86,6 +86,8 @@ public class IndexController extends BaseController {
             dto.setStartTime(v.getStartTime());
             dto.setLastSeen(v.getLastSeen());
             dto.setUserAgent(v.getUserAgent());
+            dto.setReferer(v.getReferer());
+            dto.setAcceptLanguage(v.getAcceptLanguage());
             enrichedVisits.add(dto);
         }
         model.addAttribute("visits", enrichedVisits);
@@ -120,8 +122,22 @@ public class IndexController extends BaseController {
                 session.getId(),
                 body.get("path"),
                 request.getRemoteAddr(),
-                request.getHeader("User-Agent")
+                request.getHeader("User-Agent"),
+                request.getHeader("Referer"),
+                request.getHeader("Accept-Language")
         );
+
+
+        System.out.println("UA length: " +
+                (request.getHeader("User-Agent") != null ? request.getHeader("User-Agent").length() : 0));
+
+        System.out.println("Referer length: " +
+                (request.getHeader("Referer") != null ? request.getHeader("Referer").length() : 0));
+
+        System.out.println("Accept-Language length: " +
+                (request.getHeader("Accept-Language") != null ? request.getHeader("Accept-Language").length() : 0));
+
+
         pageVisitRepository.save(visit);
         return ResponseEntity.ok().build();
     }

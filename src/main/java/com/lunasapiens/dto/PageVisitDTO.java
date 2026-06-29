@@ -11,6 +11,8 @@ public class PageVisitDTO {
     private LocalDateTime startTime;
     private LocalDateTime lastSeen;
     private String userAgent;
+    private String referer;
+    private String acceptLanguage;
 
     public Long getId() {
         return id;
@@ -68,7 +70,13 @@ public class PageVisitDTO {
         this.userAgent = userAgent;
     }
 
+    public String getReferer() { return referer; }
 
+    public void setReferer(String referer) { this.referer = referer; }
+
+    public String getAcceptLanguage() { return acceptLanguage; }
+
+    public void setAcceptLanguage(String acceptLanguage) { this.acceptLanguage = acceptLanguage; }
 
     public long getSeconds() {
         if (startTime == null) return 0;

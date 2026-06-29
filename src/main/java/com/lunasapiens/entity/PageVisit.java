@@ -15,7 +15,11 @@ public class PageVisit {
     private String sessionId;
     private String path;
     private String ip;
+    @Column(columnDefinition = "TEXT")
     private String userAgent;
+    @Column(columnDefinition = "TEXT")
+    private String referer;
+    private String acceptLanguage;
 
     private LocalDateTime startTime;
     private LocalDateTime lastSeen;
@@ -23,11 +27,13 @@ public class PageVisit {
 
     public PageVisit() {}
 
-    public PageVisit(String sessionId, String path, String ip, String userAgent) {
+    public PageVisit(String sessionId, String path, String ip, String userAgent, String referer, String acceptLanguage) {
         this.sessionId = sessionId;
         this.path = path;
         this.ip = ip;
         this.userAgent = userAgent;
+        this.referer = referer;
+        this.acceptLanguage = acceptLanguage;
         this.startTime = Utils.getNowRomeEurope().toLocalDateTime();
         this.lastSeen = this.startTime;
     }
@@ -72,6 +78,14 @@ public class PageVisit {
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
+
+    public String getReferer() { return referer; }
+
+    public void setReferer(String referer) { this.referer = referer; }
+
+    public String getAcceptLanguage() { return acceptLanguage; }
+
+    public void setAcceptLanguage(String acceptLanguage) { this.acceptLanguage = acceptLanguage; }
 
     public LocalDateTime getStartTime() {
         return startTime;
