@@ -96,8 +96,7 @@ public class IndexController extends BaseController {
 
 
     @PostMapping(Constants.START_VISIT)
-    public ResponseEntity<Void> startVisit(@RequestBody Map<String, String> body,
-                                           HttpServletRequest request) {
+    public ResponseEntity<Void> startVisit(@RequestBody Map<String, String> body, HttpServletRequest request) {
         if (isMatteoManilIdUser()) {
             return ResponseEntity.ok().build();
         }
@@ -123,21 +122,9 @@ public class IndexController extends BaseController {
                 body.get("path"),
                 request.getRemoteAddr(),
                 request.getHeader("User-Agent"),
-                request.getHeader("Referer"),
+                body.get("referer"),
                 request.getHeader("Accept-Language")
         );
-
-
-        System.out.println("UA length: " +
-                (request.getHeader("User-Agent") != null ? request.getHeader("User-Agent").length() : 0));
-
-        System.out.println("Referer length: " +
-                (request.getHeader("Referer") != null ? request.getHeader("Referer").length() : 0));
-
-        System.out.println("Accept-Language length: " +
-                (request.getHeader("Accept-Language") != null ? request.getHeader("Accept-Language").length() : 0));
-
-
         pageVisitRepository.save(visit);
         return ResponseEntity.ok().build();
     }

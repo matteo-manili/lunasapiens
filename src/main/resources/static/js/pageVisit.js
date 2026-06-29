@@ -24,8 +24,8 @@ function initPageVisit(csrf) {
             headers: {
                 'Content-Type': 'application/json', 'X-XSRF-TOKEN': csrf
             },
-            // Invia il percorso della pagina corrente
-            body: JSON.stringify({ path: window.location.pathname })
+            // Invia il percorso della pagina corrente e il referrer
+            body: JSON.stringify({ path: window.location.pathname, referer: document.referrer })
         // Ignora eventuali errori perché il tracking non deve bloccare il sito
         }).catch(() => {});
     }
@@ -57,11 +57,10 @@ function initPageVisit(csrf) {
                 // Token CSRF per permettere la richiesta protetta da Spring Security
                 'X-XSRF-TOKEN': csrf
             }
-        // Gli errori del tracking vengono ignorati:
-        // una mancata chiamata heartbeat non deve influire sulla navigazione
+        // Gli errori del tracking vengono ignorati: una mancata chiamata heartbeat non deve influire sulla navigazione
         }).catch(() => {});
-
-    }, 15000); // Esegue il controllo ogni 15 secondi
+        // Esegue il controllo ogni 15 secondi
+    }, 15000);
 
 
 } // <-- FINE initPageVisit
