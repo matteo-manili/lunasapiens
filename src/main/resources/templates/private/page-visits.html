@@ -78,14 +78,14 @@
                     <td th:text="${v.acceptLanguage}"></td>
                     <td class="referer" th:title="${v.referer}" th:text="${v.referer}"></td>
                     <td><button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
-                                th:data-bs-target="'#ua-' + ${v.id}">Mostra UA</button></td>
+                                th:data-bs-target="'#ua-' + ${v.id}">Mostra</button></td>
                 </tr>
                 <!-- dettaglio user agent della stessa visita -->
                 <tr class="collapse-row">
                     <td colspan="10" class="p-0">
                         <div class="collapse" th:id="'ua-' + ${v.id}">
                             <div class="alert alert-light m-2">
-                                <strong>User Agent completo</strong>
+                                <strong>User Agent</strong>
                                 <pre class="mt-2 user-agent-detail" th:text="${v.userAgent}"></pre>
                             </div>
                         </div>
