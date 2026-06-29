@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{fragments/templateBase :: common_head_title_links(~{::title},~{::links})}">
-    <title th:fragment="title">Statistiche visite</title>
+    <title th:fragment="title">Statistiche visite pagine</title>
     <th:block th:fragment="links">
         <link rel="stylesheet" th:href="@{/css/style.css(v=${vCssStyle})}">
         <style>
@@ -39,7 +39,6 @@
                 }
             }
         </style>
-
     </th:block>
 </head>
 
@@ -50,9 +49,7 @@
     <h1 class="mb-4">Statistiche visite pagine</h1>
 
     <div class="table-responsive">
-
         <table class="table table-striped table-bordered table-hover align-middle">
-
             <thead class="table-dark">
             <tr>
                 <th>ID</th>
@@ -101,12 +98,8 @@
     </div>
 </div>
 
-
-
 <footer th:replace="~{fragments/templateBase :: footer}"></footer>
 <div th:replace="~{fragments/templateBase :: link-js-util-bootstrap}"></div>
 
-
 </body>
-
 </html>
