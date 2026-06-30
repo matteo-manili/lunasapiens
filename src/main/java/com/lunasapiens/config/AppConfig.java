@@ -44,7 +44,6 @@ import java.util.Properties;
 
 
 @Configuration
-@ComponentScan(basePackages = {"com.lunasapiens", "com.lunasapiens.zodiac", "com.lunasapiens.filter", "com.lunasapiens.service"})
 @EnableCaching
 public class AppConfig implements WebMvcConfigurer {
 
