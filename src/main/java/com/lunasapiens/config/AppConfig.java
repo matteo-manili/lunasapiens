@@ -323,33 +323,8 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
 
+
     /*
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        try{
-            dataSource.setUrl(environment.getProperty("spring.datasource.url"));
-            dataSource.setUsername(environment.getProperty("spring.datasource.username"));
-            dataSource.setPassword(environment.getProperty("spring.datasource.password"));
-        } catch (IllegalArgumentException e) {
-            // In caso di eccezione, utilizza il file di configurazione esterno
-            Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
-                properties.load(fis);
-                dataSource.setUrl(properties.getProperty("spring.datasource.url"));
-                dataSource.setUsername(properties.getProperty("spring.datasource.username"));
-                dataSource.setPassword(properties.getProperty("spring.datasource.password"));
-            } catch (IOException ioException) {
-                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
-            }
-        }
-        logger.info("getPostgreSQLVersion: "+getPostgreSQLVersion(dataSource));
-        return dataSource;
-    }
-    */
-
-
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -359,7 +334,7 @@ public class AppConfig implements WebMvcConfigurer {
             dataSource.setUsername(environment.getProperty("spring.datasource.username"));
             dataSource.setPassword(environment.getProperty("spring.datasource.password"));
         } else {
-            // In caso di eccezione, utilizza il file di configurazione esterno
+            // ambiente dev (legge properties esterno C:/intellij_work/lunasapiens-application-db.properties
             Properties properties = new Properties();
             try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
                 properties.load(fis);
@@ -374,9 +349,48 @@ public class AppConfig implements WebMvcConfigurer {
         return dataSource;
     }
 
+     */
+
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName("org.postgresql.Driver");
+
+        Properties props = loadDbProperties();
+
+        ds.setUrl(props.getProperty("spring.datasource.url"));
+        ds.setUsername(props.getProperty("spring.datasource.username"));
+        ds.setPassword(props.getProperty("spring.datasource.password"));
+
+        return ds;
+    }
+
+    private Properties loadDbProperties() {
+        if (isProduction()) {
+            Properties p = new Properties();
+            p.setProperty("spring.datasource.url", environment.getProperty("spring.datasource.url"));
+            p.setProperty("spring.datasource.username", environment.getProperty("spring.datasource.username"));
+            p.setProperty("spring.datasource.password", environment.getProperty("spring.datasource.password"));
+            return p;
+        }
+
+        try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
+            Properties p = new Properties();
+            p.load(fis);
+            return p;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
-    // Metodo per ottenere la versione di PostgreSQL dal database
+
+
+
+
+    /**
+     * Metodo per ottenere la versione di PostgreSQL dal database
+     */
     private String getPostgreSQLVersion(DataSource dataSource) {
         String version = null;
         try (Connection connection = dataSource.getConnection();
