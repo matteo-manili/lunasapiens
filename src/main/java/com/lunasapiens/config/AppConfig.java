@@ -324,7 +324,6 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-    /*
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -345,46 +344,9 @@ public class AppConfig implements WebMvcConfigurer {
                 throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
             }
         }
-        logger.info("getPostgreSQLVersion: "+getPostgreSQLVersion(dataSource));
+        //logger.info("getPostgreSQLVersion: "+getPostgreSQLVersion(dataSource));
         return dataSource;
     }
-
-     */
-
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName("org.postgresql.Driver");
-
-        Properties props = loadDbProperties();
-
-        ds.setUrl(props.getProperty("spring.datasource.url"));
-        ds.setUsername(props.getProperty("spring.datasource.username"));
-        ds.setPassword(props.getProperty("spring.datasource.password"));
-
-        return ds;
-    }
-
-    private Properties loadDbProperties() {
-        if (isProduction()) {
-            Properties p = new Properties();
-            p.setProperty("spring.datasource.url", environment.getProperty("spring.datasource.url"));
-            p.setProperty("spring.datasource.username", environment.getProperty("spring.datasource.username"));
-            p.setProperty("spring.datasource.password", environment.getProperty("spring.datasource.password"));
-            return p;
-        }
-
-        try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
-            Properties p = new Properties();
-            p.load(fis);
-            return p;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-
 
 
 
