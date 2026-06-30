@@ -295,7 +295,7 @@ public class Utils {
     public static List<String> loadPropertiesEsternoLunaSapiens(List<String> keysProperties ) {
         List<String> keysPropertiesResult = new ArrayList<>();
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+        try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
             properties.load(fis);
             for (String str : keysProperties) {
                 //logger.info("keysProperties: "+str);

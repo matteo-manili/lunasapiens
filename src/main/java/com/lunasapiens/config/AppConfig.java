@@ -1,6 +1,7 @@
 package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.lunasapiens.Constants;
 import com.lunasapiens.utils.Utils;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +160,7 @@ public class AppConfig implements WebMvcConfigurer {
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno. Prima che sviluppassio il metodo isLocalhost()
             Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+            try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
                 properties.load(fis);
                 apiKeyOpenAI = properties.getProperty("api.key.openai");
                 //System.out.println("222 api_openai: " + apiKeyOpenAI);
@@ -341,7 +342,7 @@ public class AppConfig implements WebMvcConfigurer {
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
             Properties properties = new Properties();
-            try (FileInputStream fis = new FileInputStream("C:/intellij_work/lunasapiens-application-db.properties")) {
+            try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
                 properties.load(fis);
                 dataSource.setUrl(properties.getProperty("spring.datasource.url"));
                 dataSource.setUsername(properties.getProperty("spring.datasource.username"));

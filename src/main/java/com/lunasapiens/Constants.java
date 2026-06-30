@@ -10,6 +10,10 @@ public class Constants {
 
     public static final String DOM_LUNA_SAPIENS = "https://www.lunasapiens.com";
 
+    // file di configurazione esterno
+    public static final String FILE_CONFIG_ESTERNO = "C:/intellij_work/lunasapiens-application-db.properties";
+
+
     public static final String MATTEO_MANILI_GMAIL = "matteo.manili@gmail.com"; // Imposta il mittente predefinito
 
     public static final String PATH_STATIC = "src/main/resources/static/";
