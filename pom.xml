@@ -255,20 +255,12 @@
         </dependency>
 
 
-        <!-- ###################### AWS SES EMAIL ###################### -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>ses</artifactId>
-            <version>2.31.71</version>
-        </dependency>
-
         <!-- ###################### AWS S3 ###################### -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
             <version>2.30.8</version>
         </dependency>
-
 
 
         <!-- ###################### LIBRERIA ASTROLOGICA swisseph ###################### -->

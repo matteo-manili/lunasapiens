@@ -23,8 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -308,6 +306,8 @@ public class Utils {
     }
 
 
+    /*
+
     public static boolean isLocalhost() {
         try {
             InetAddress localhost = InetAddress.getLocalHost();
@@ -329,6 +329,7 @@ public class Utils {
             return true; // Ritorna true se si verifica un'eccezione (es. per sicurezza in sviluppo)
         }
     }
+     */
 
 
 }

@@ -56,10 +56,13 @@ public class EmailService {
     private TelegramBotService telegramBotService;
 
     @Autowired
-    ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
+    private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
 
     @Autowired
-    OroscopoGiornalieroService oroscopoGiornalieroService;
+    private OroscopoGiornalieroService oroscopoGiornalieroService;
+
+    @Autowired
+    private EnvironmentUtils environmentUtils;
 
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
     private final String defaultFromGmailMatteoManili = "LunaSapiens <matteo.manili@gmail.com>"; // Imposta il mittente predefinito
@@ -216,36 +219,6 @@ public class EmailService {
     }
 
 
-    public int inviaEmailOroscopoGioraliero_OLD() {
-        GiornoOraPosizioneDTO giornoOraPosizioneDTO = Utils.GiornoOraPosizione_OggiRomaOre12();
-        OroscopoDelGiornoDescrizioneDTO oroscDelGiornDescDTO = servizioOroscopoDelGiorno.descrizioneOroscopoDelGiorno(giornoOraPosizioneDTO);
-        List<OroscopoGiornaliero> listOroscopoGiorn = oroscopoGiornalieroService.findAllByDataOroscopoWithoutVideo(Utils.OggiRomaOre12());
-        List<ProfiloUtente> utentiConOroscopoAttivoList = profiloUtenteService.getUtentiConOroscopoAttivo();
-        int totaleNumEmailInviate = 0;
-        for(ProfiloUtente emailUtente: utentiConOroscopoAttivoList){
-            try{
-                String subject = "Orosocpo "+giornoOraPosizioneDTO.getGiornoMeseAnnoFormattato() +" - LunaSapiens";
-                Context context = new Context();
-                List<OroscopoGiornalieroDTO> listOroscopoGiornoDTO = new ArrayList<>();
-                for(OroscopoGiornaliero oroscopo : listOroscopoGiorn) {
-                    OroscopoGiornalieroDTO dto = new OroscopoGiornalieroDTO(oroscopo);
-                    listOroscopoGiornoDTO.add(dto);
-                }
-                context.setVariable("oroscDelGiornDescDTO", oroscDelGiornDescDTO);
-                context.setVariable("listOroscopoGiornoDTO", listOroscopoGiornoDTO);
-                context.setVariable("confirmationCode", emailUtente.getConfirmationCode());
-
-                sendHtmlEmail(emailUtente.getEmail(), subject, emailOroscopo, context);
-                totaleNumEmailInviate += 1;
-                logger.info("inviaEmailOrosciopoGioraliero Email inviata a: {}", emailUtente.getEmail());
-
-            } catch (Exception e) {
-                logger.error("inviaEmailOroscopoGioraliero Exception per utente {}: {}", emailUtente.getEmail(), e.getMessage(), e);
-                telegramBotService.inviaMessaggio("inviaEmailOroscopoGioraliero Exception: " + e.getMessage());
-            }
-        }
-        return totaleNumEmailInviate;
-    }
 
 
     public Object[] salvaEmail(String email, String ipAddress) {
@@ -302,7 +275,7 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom(Utils.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
+            helper.setFrom(environmentUtils.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
             helper.setTo(to);
             helper.setSubject(subject);
             String htmlContent = templateEngine.process(templateName, context);
@@ -325,7 +298,7 @@ public class EmailService {
 
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( Utils.isLocalhost() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
+        message.setFrom( environmentUtils.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

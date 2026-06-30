@@ -2,8 +2,12 @@ package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.lunasapiens.Constants;
+import com.lunasapiens.service.EnvironmentUtils;
 import com.lunasapiens.utils.Utils;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.MultipartConfigElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -46,18 +50,29 @@ import java.util.Properties;
 @EnableCaching
 public class AppConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private Environment env;
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final Environment env;
+    private final ApplicationContext applicationContext;
+    private final EnvironmentUtils environmentUtils;
+
+    public AppConfig(Environment env,
+                     ApplicationContext applicationContext,
+                     EnvironmentUtils environmentUtils) {
+        this.env = env;
+        this.applicationContext = applicationContext;
+        this.environmentUtils = environmentUtils;
+    }
 
 
-
+    @PostConstruct
+    public void printProfile() {
+        logger.info("ACTIVE PROFILES: {}", (Object) env.getActiveProfiles());
+    }
 
     @Bean
     public HuggingFaceConfig huggingFaceConfig() {
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("hugging.face.name", "hugging.face.token")));
             return new HuggingFaceConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
@@ -78,7 +93,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtElements.JwtRsaKeys jwtRsaKeys() {
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
             return new JwtElements.JwtRsaKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
@@ -89,7 +104,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public ApiGeonamesConfig getApiGeonames() {
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
             return new ApiGeonamesConfig(loadPorpoerty.get(0)) ;
         }else{
@@ -101,7 +116,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public GoogleRecaptchaConfig getRecaptchaKeys() {
         GoogleRecaptchaConfig googleRecaptchaConfig;
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "google.recaptcha.api-key", "google.recaptcha.site-key", "google.recaptcha.project-id")) );
             googleRecaptchaConfig = new GoogleRecaptchaConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
@@ -114,7 +129,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public S3ClientConfig s3ClientConfig() {
-        if(Utils.isLocalhost()) {
+        if(environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "aws.access.key.id", "aws.secret.access.key", "aws.region", "aws.s3.bucket.name" )) );
             return new S3ClientConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2), loadPorpoerty.get(3));
@@ -128,7 +143,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "api.facebook.appid", "api.facebook.appsecret", "api.facebook.idpage" )) );
             facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
@@ -141,7 +156,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public TelegramConfig getParamTelegram() {
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
                     "api.telegram.bot.username")) );
             return new TelegramConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
@@ -179,7 +194,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public JavaMailSender javaMailSender() {
-        if (Utils.isLocalhost()) {
+        if (environmentUtils.isDevelopment()) {
             return javaMailSenderGmailDev();
         } else {
             return javaMailSenderLunaSapiensProd();
@@ -196,9 +211,9 @@ public class AppConfig implements WebMvcConfigurer {
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
-        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable"));
-        props.put("mail.debug", env.getProperty("mail.debug"));
+        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth", "true"));
+        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable", "true"));
+        props.put("mail.debug", env.getProperty("mail.debug", "false"));
 
         // questa impoistazion evita errori di certificato.
         // Questa impostazione configura il client JavaMail per fidarsi specificamente del certificato SSL fornito dal server smtp.gmail.comdurantesmtp.gmail.com
@@ -220,9 +235,9 @@ public class AppConfig implements WebMvcConfigurer {
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth"));
-        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable"));
-        props.put("mail.debug", env.getProperty("mail.debug"));
+        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth", "true"));
+        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable", "true"));
+        props.put("mail.debug", env.getProperty("mail.debug", "false"));
 
         mailSender.setJavaMailProperties(props);
         return mailSender;
