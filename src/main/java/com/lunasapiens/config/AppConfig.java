@@ -2,13 +2,11 @@ package com.lunasapiens.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.lunasapiens.Constants;
-import com.lunasapiens.service.EnvironmentUtils;
 import com.lunasapiens.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.MultipartConfigElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -52,31 +50,27 @@ public class AppConfig implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-    private final Environment env;
+    private final Environment environment;
     private final ApplicationContext applicationContext;
-    private final EnvironmentUtils environmentUtils;
 
-    public AppConfig(Environment env,
-                     ApplicationContext applicationContext,
-                     EnvironmentUtils environmentUtils) {
-        this.env = env;
+    public AppConfig(Environment environment, ApplicationContext applicationContext) {
+        this.environment = environment;
         this.applicationContext = applicationContext;
-        this.environmentUtils = environmentUtils;
     }
 
 
     @PostConstruct
     public void printProfile() {
-        logger.info("ACTIVE PROFILES: {}", (Object) env.getActiveProfiles());
+        logger.info("ACTIVE PROFILES: {}", (Object) environment.getActiveProfiles());
     }
 
     @Bean
     public HuggingFaceConfig huggingFaceConfig() {
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("hugging.face.name", "hugging.face.token")));
             return new HuggingFaceConfig(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
-            return new HuggingFaceConfig(env.getProperty("hugging.face.name"), env.getProperty("hugging.face.token") );
+            return new HuggingFaceConfig(environment.getProperty("hugging.face.name"), environment.getProperty("hugging.face.token") );
         }
     }
 
@@ -93,22 +87,22 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtElements.JwtRsaKeys jwtRsaKeys() {
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("jwt.rsa.public.key", "jwt.rsa.private.key")));
             return new JwtElements.JwtRsaKeys(loadPorpoerty.get(0), loadPorpoerty.get(1));
         }else{
-            return new JwtElements.JwtRsaKeys(env.getProperty("jwt.rsa.public.key"), env.getProperty("jwt.rsa.private.key") );
+            return new JwtElements.JwtRsaKeys(environment.getProperty("jwt.rsa.public.key"), environment.getProperty("jwt.rsa.private.key") );
         }
     }
 
 
     @Bean
     public ApiGeonamesConfig getApiGeonames() {
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.geonames.username")) );
             return new ApiGeonamesConfig(loadPorpoerty.get(0)) ;
         }else{
-            return new ApiGeonamesConfig( env.getProperty("api.geonames.username") ) ;
+            return new ApiGeonamesConfig( environment.getProperty("api.geonames.username") ) ;
         }
     }
 
@@ -116,12 +110,12 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public GoogleRecaptchaConfig getRecaptchaKeys() {
         GoogleRecaptchaConfig googleRecaptchaConfig;
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "google.recaptcha.api-key", "google.recaptcha.site-key", "google.recaptcha.project-id")) );
             googleRecaptchaConfig = new GoogleRecaptchaConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            googleRecaptchaConfig = new GoogleRecaptchaConfig( env.getProperty("google.recaptcha.api-key"), env.getProperty("google.recaptcha.site-key"), env.getProperty("google.recaptcha.project-id") );
+            googleRecaptchaConfig = new GoogleRecaptchaConfig( environment.getProperty("google.recaptcha.api-key"), environment.getProperty("google.recaptcha.site-key"), environment.getProperty("google.recaptcha.project-id") );
         }
         return googleRecaptchaConfig;
     }
@@ -129,13 +123,13 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public S3ClientConfig s3ClientConfig() {
-        if(environmentUtils.isDevelopment()) {
+        if(isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "aws.access.key.id", "aws.secret.access.key", "aws.region", "aws.s3.bucket.name" )) );
             return new S3ClientConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2), loadPorpoerty.get(3));
         }else{
-            return new S3ClientConfig(env.getProperty("aws.access.key.id"), env.getProperty("aws.secret.access.key"),
-                    env.getProperty("aws.region"), env.getProperty("aws.s3.bucket.name"));
+            return new S3ClientConfig(environment.getProperty("aws.access.key.id"), environment.getProperty("aws.secret.access.key"),
+                    environment.getProperty("aws.region"), environment.getProperty("aws.s3.bucket.name"));
         }
     }
 
@@ -143,12 +137,12 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public FacebookConfig getfacebookConfig() {
         FacebookConfig facebookConfig;
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList(
                     "api.facebook.appid", "api.facebook.appsecret", "api.facebook.idpage" )) );
             facebookConfig = new FacebookConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            facebookConfig = new FacebookConfig( env.getProperty("api.facebook.appid"), env.getProperty("api.facebook.appsecret"), env.getProperty("api.facebook.idpage") );
+            facebookConfig = new FacebookConfig( environment.getProperty("api.facebook.appid"), environment.getProperty("api.facebook.appsecret"), environment.getProperty("api.facebook.idpage") );
         }
         return facebookConfig;
     }
@@ -156,12 +150,12 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public TelegramConfig getParamTelegram() {
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("api.telegram.token", "api.telegram.chatId",
                     "api.telegram.bot.username")) );
             return new TelegramConfig(loadPorpoerty.get(0), loadPorpoerty.get(1), loadPorpoerty.get(2));
         }else{
-            return new TelegramConfig(env.getProperty("api.telegram.token") , env.getProperty("api.telegram.chatId"), env.getProperty("api.telegram.bot.username"));
+            return new TelegramConfig(environment.getProperty("api.telegram.token") , environment.getProperty("api.telegram.chatId"), environment.getProperty("api.telegram.bot.username"));
         }
     }
 
@@ -170,7 +164,7 @@ public class AppConfig implements WebMvcConfigurer {
     public OpenAiGptConfig getParamOpenAi() {
         String apiKeyOpenAI = "";
         try{
-            apiKeyOpenAI = env.getProperty("api.key.openai");
+            apiKeyOpenAI = environment.getProperty("api.key.openai");
             //System.out.println("111 api_openai: " + apiKeyOpenAI);
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno. Prima che sviluppassio il metodo isLocalhost()
@@ -184,17 +178,17 @@ public class AppConfig implements WebMvcConfigurer {
             }
         }
         OpenAiGptConfig openAiGptConfig = new OpenAiGptConfig(apiKeyOpenAI,
-                env.getProperty("api.openai.model.gpt.4"),
-                env.getProperty("api.openai.model.gpt.4.mini"),
-                env.getProperty("api.openai.model.gpt.3.5"),
-                env.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
+                environment.getProperty("api.openai.model.gpt.4"),
+                environment.getProperty("api.openai.model.gpt.4.mini"),
+                environment.getProperty("api.openai.model.gpt.3.5"),
+                environment.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
         return openAiGptConfig;
     }
 
 
     @Bean
     public JavaMailSender javaMailSender() {
-        if (environmentUtils.isDevelopment()) {
+        if (isDevelopment()) {
             return javaMailSenderGmailDev();
         } else {
             return javaMailSenderLunaSapiensProd();
@@ -203,17 +197,17 @@ public class AppConfig implements WebMvcConfigurer {
 
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setUsername(env.getProperty("gmail.mail.username"));
+        mailSender.setUsername(environment.getProperty("gmail.mail.username"));
         List<String> loadPorpoerty = Utils.loadPropertiesEsternoLunaSapiens( new ArrayList<String>(Arrays.asList("gmail.mail.password")) );
         mailSender.setPassword( loadPorpoerty.get(0) );
-        mailSender.setHost(env.getProperty("gmail.mail.smtp.host"));
-        mailSender.setPort(Integer.parseInt(env.getProperty("gmail.mail.smtp.port")));
+        mailSender.setHost(environment.getProperty("gmail.mail.smtp.host"));
+        mailSender.setPort(Integer.parseInt(environment.getProperty("gmail.mail.smtp.port")));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth", "true"));
-        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable", "true"));
-        props.put("mail.debug", env.getProperty("mail.debug", "false"));
+        props.put("mail.smtp.auth", environment.getProperty("mail.smtp.auth", "true"));
+        props.put("mail.smtp.starttls.enable", environment.getProperty("mail.smtp.starttls.enable", "true"));
+        props.put("mail.debug", environment.getProperty("mail.debug", "false"));
 
         // questa impoistazion evita errori di certificato.
         // Questa impostazione configura il client JavaMail per fidarsi specificamente del certificato SSL fornito dal server smtp.gmail.comdurantesmtp.gmail.com
@@ -228,16 +222,16 @@ public class AppConfig implements WebMvcConfigurer {
 
     private JavaMailSender javaMailSenderLunaSapiensProd() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setUsername(env.getProperty("mail.username"));
-        mailSender.setPassword(env.getProperty("mail.password"));
-        mailSender.setHost(env.getProperty("mail.smtp.host"));
-        mailSender.setPort(Integer.parseInt(env.getProperty("mail.smtp.port")));
+        mailSender.setUsername(environment.getProperty("mail.username"));
+        mailSender.setPassword(environment.getProperty("mail.password"));
+        mailSender.setHost(environment.getProperty("mail.smtp.host"));
+        mailSender.setPort(Integer.parseInt(environment.getProperty("mail.smtp.port")));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", env.getProperty("mail.smtp.auth", "true"));
-        props.put("mail.smtp.starttls.enable", env.getProperty("mail.smtp.starttls.enable", "true"));
-        props.put("mail.debug", env.getProperty("mail.debug", "false"));
+        props.put("mail.smtp.auth", environment.getProperty("mail.smtp.auth", "true"));
+        props.put("mail.smtp.starttls.enable", environment.getProperty("mail.smtp.starttls.enable", "true"));
+        props.put("mail.debug", environment.getProperty("mail.debug", "false"));
 
         mailSender.setJavaMailProperties(props);
         return mailSender;
@@ -350,9 +344,9 @@ public class AppConfig implements WebMvcConfigurer {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         try{
-            dataSource.setUrl(env.getProperty("spring.datasource.url"));
-            dataSource.setUsername(env.getProperty("spring.datasource.username"));
-            dataSource.setPassword(env.getProperty("spring.datasource.password"));
+            dataSource.setUrl(environment.getProperty("spring.datasource.url"));
+            dataSource.setUsername(environment.getProperty("spring.datasource.username"));
+            dataSource.setPassword(environment.getProperty("spring.datasource.password"));
             //System.out.println("111 Versione di PostgreSQL: " + getPostgreSQLVersion(dataSource));
         } catch (IllegalArgumentException e) {
             // In caso di eccezione, utilizza il file di configurazione esterno
@@ -400,6 +394,16 @@ public class AppConfig implements WebMvcConfigurer {
                 .setCachePeriod(0);
 
          */
+    }
+
+    public boolean isProduction(){
+        return Arrays.asList(environment.getActiveProfiles()).contains("prod");
+    }
+
+
+    public boolean isDevelopment(){
+        return Arrays.asList(environment.getActiveProfiles()).contains("dev");
+
     }
 
 

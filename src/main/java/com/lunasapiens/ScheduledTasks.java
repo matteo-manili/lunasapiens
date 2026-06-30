@@ -1,9 +1,9 @@
 package com.lunasapiens;
 
+import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.repository.DatabaseMaintenanceRepository;
 import com.lunasapiens.repository.PageVisitRepository;
 import com.lunasapiens.service.EmailService;
-import com.lunasapiens.service.EnvironmentUtils;
 import com.lunasapiens.service.S3Service;
 import com.lunasapiens.service.TelegramBotService;
 import com.lunasapiens.utils.Utils;
@@ -22,7 +22,7 @@ public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Autowired
-    private EnvironmentUtils environmentUtils;
+    private AppConfig appConfig;
 
     @Autowired
     private ServizioOroscopoDelGiorno servizioOroscopoDelGiorno;
@@ -63,7 +63,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Rome")
     public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {
-        if(environmentUtils.isDevelopment() == false) {
+        if(appConfig.isDevelopment() == false) {
             s3Service.eliminaImmaginiArticoloNonUtilizzateBucketS3();
             logger.info("executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3");
         }
@@ -71,7 +71,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 3 0 * * *", zone = "Europe/Rome")
     public void executeTask_CreaOroscopoGiornaliero() {
-        if(environmentUtils.isDevelopment() == false) {
+        if(appConfig.isDevelopment() == false) {
             servizioOroscopoDelGiorno.creaOroscopoGiornaliero(); // per fare questo processo ci mette circa 5 minuti (su server)
             telegramBotService.inviaMessaggio("executeTask Eseguito! ScheduledTasks.executeTask() " + Utils.getNowRomeEurope());
             logger.info("executeTask_CreaOroscopoGiornaliero eseguito alle " + Utils.getNowRomeEurope());
@@ -80,7 +80,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 15 0 * * *", zone = "Europe/Rome")
     public void executeTask_PulisciOldRecordsOroscopoGiornaliero() {
-        if(environmentUtils.isDevelopment() == false) {
+        if(appConfig.isDevelopment() == false) {
             databaseMaintenanceRepository.deleteOldOroscopoRecords();
             databaseMaintenanceRepository.vacuum();
             logger.info("executeTask_PulisciOldRecordsOroscopoGiornaliero");
@@ -89,7 +89,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 20 0 * * *", zone = "Europe/Rome")
     public void executeTask_InviaEmailOroscopoGioraliero() {
-        if(environmentUtils.isDevelopment() == false){
+        if(appConfig.isDevelopment() == false){
             int totaleNumEmailInviate = emailService.inviaEmailOroscopoGioraliero();
             telegramBotService.inviaMessaggio("totaleNumEmailInviate Oroscopo Giornaliero: "+totaleNumEmailInviate);
             logger.info("executeTask_InviaEmailOroscopoGioraliero eseguito alle " + Utils.getNowRomeEurope());

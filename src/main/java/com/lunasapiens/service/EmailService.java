@@ -1,6 +1,7 @@
 package com.lunasapiens.service;
 
 import com.lunasapiens.Constants;
+import com.lunasapiens.config.AppConfig;
 import com.lunasapiens.utils.Utils;
 import com.lunasapiens.dto.ContactFormDTO;
 import com.lunasapiens.dto.GiornoOraPosizioneDTO;
@@ -62,7 +63,7 @@ public class EmailService {
     private OroscopoGiornalieroService oroscopoGiornalieroService;
 
     @Autowired
-    private EnvironmentUtils environmentUtils;
+    private AppConfig appConfig;
 
     private final String defaultFromLunaSapiens = "LunaSapiens <info@lunasapiens.com>"; // Imposta il mittente predefinito
     private final String defaultFromGmailMatteoManili = "LunaSapiens <matteo.manili@gmail.com>"; // Imposta il mittente predefinito
@@ -275,7 +276,7 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom(environmentUtils.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
+            helper.setFrom(appConfig.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens);
             helper.setTo(to);
             helper.setSubject(subject);
             String htmlContent = templateEngine.process(templateName, context);
@@ -298,7 +299,7 @@ public class EmailService {
 
     public void sendTextEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom( environmentUtils.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
+        message.setFrom( appConfig.isDevelopment() ? defaultFromGmailMatteoManili : defaultFromLunaSapiens );
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
