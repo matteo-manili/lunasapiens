@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -80,6 +81,7 @@ public class AppConfig implements WebMvcConfigurer {
         }
     }
 
+
     /**
      * Imposta la dimensione massima di un file caricato su 5 MB (per l'upload delle immagini in EditorArticleController)
      */
@@ -88,6 +90,7 @@ public class AppConfig implements WebMvcConfigurer {
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement("", 6 * 1024 * 1024, 6 * 1024 * 1024, 0); // 6MB
         return multipartConfigElement;
     }
+
 
     @Bean
     public JwtElements.JwtRsaKeys jwtRsaKeys() {
@@ -99,6 +102,7 @@ public class AppConfig implements WebMvcConfigurer {
         }
     }
 
+
     @Bean
     public ApiGeonamesConfig getApiGeonames() {
         if (isDevelopment()) {
@@ -108,6 +112,7 @@ public class AppConfig implements WebMvcConfigurer {
             return new ApiGeonamesConfig( environment.getProperty("api.geonames.username") ) ;
         }
     }
+
 
     @Bean
     public GoogleRecaptchaConfig getRecaptchaKeys() {
@@ -122,6 +127,7 @@ public class AppConfig implements WebMvcConfigurer {
         return googleRecaptchaConfig;
     }
 
+
     @Bean
     public S3ClientConfig s3ClientConfig() {
         if(isDevelopment()) {
@@ -133,6 +139,7 @@ public class AppConfig implements WebMvcConfigurer {
                     environment.getProperty("aws.region"), environment.getProperty("aws.s3.bucket.name"));
         }
     }
+
 
     @Bean
     public FacebookConfig getfacebookConfig() {
@@ -147,6 +154,7 @@ public class AppConfig implements WebMvcConfigurer {
         return facebookConfig;
     }
 
+
     @Bean
     public TelegramConfig getParamTelegram() {
         if (isDevelopment()) {
@@ -157,6 +165,7 @@ public class AppConfig implements WebMvcConfigurer {
             return new TelegramConfig(environment.getProperty("api.telegram.token") , environment.getProperty("api.telegram.chatId"), environment.getProperty("api.telegram.bot.username"));
         }
     }
+
 
     @Bean
     public OpenAiGptConfig getParamOpenAi() {
@@ -182,6 +191,7 @@ public class AppConfig implements WebMvcConfigurer {
                 environment.getProperty("api.openai.model.gpt.3.5.turbo.instruct"));
         return openAiGptConfig;
     }
+
 
     @Bean
     public JavaMailSender javaMailSender() {
@@ -216,6 +226,7 @@ public class AppConfig implements WebMvcConfigurer {
         return mailSender;
     }
 
+
     private JavaMailSender javaMailSenderLunaSapiensProd() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(environment.getProperty("mail.username"));
@@ -233,6 +244,8 @@ public class AppConfig implements WebMvcConfigurer {
         return mailSender;
     }
 
+
+
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
@@ -242,10 +255,12 @@ public class AppConfig implements WebMvcConfigurer {
         return cacheManager;
     }
 
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 
     /**
      * Più recente adatto per le chiamate asincrone e in un ambiente reattivo in cui le operazioni non sono bloccanti
@@ -302,6 +317,11 @@ public class AppConfig implements WebMvcConfigurer {
         return viewResolver;
     }
 
+
+
+
+    // ----------------------------------------------------
+
     /**
      * Configura un filtro per abilitare i metodi HTTP non standard (PUT, DELETE) nei form HTML.
      * Il filtro intercetta le richieste HTTP e, se trova un parametro `_method`, ne modifica il
@@ -323,6 +343,37 @@ public class AppConfig implements WebMvcConfigurer {
         return new JdbcTemplate(dataSource);
     }
 
+
+
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        try{
+            dataSource.setUrl(environment.getProperty("spring.datasource.url"));
+            dataSource.setUsername(environment.getProperty("spring.datasource.username"));
+            dataSource.setPassword(environment.getProperty("spring.datasource.password"));
+            //System.out.println("111 Versione di PostgreSQL: " + getPostgreSQLVersion(dataSource));
+        } catch (IllegalArgumentException e) {
+            // In caso di eccezione, utilizza il file di configurazione esterno
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream(Constants.FILE_CONFIG_ESTERNO)) {
+                properties.load(fis);
+                dataSource.setUrl(properties.getProperty("spring.datasource.url"));
+                dataSource.setUsername(properties.getProperty("spring.datasource.username"));
+                dataSource.setPassword(properties.getProperty("spring.datasource.password"));
+                //System.out.println("222 Versione di PostgreSQL: " + getPostgreSQLVersion(dataSource));
+            } catch (IOException ioException) {
+                throw new RuntimeException("Errore nella lettura del file di configurazione esterno.", ioException);
+            }
+        }
+        logger.info("getPostgreSQLVersion: "+getPostgreSQLVersion(dataSource));
+        return dataSource;
+    }
+
+
+
+    /*
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -352,6 +403,8 @@ public class AppConfig implements WebMvcConfigurer {
         }
         return properties;
     }
+
+     */
 
 
     // Metodo per ottenere la versione di PostgreSQL dal database
