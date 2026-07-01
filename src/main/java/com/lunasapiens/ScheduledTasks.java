@@ -42,14 +42,9 @@ public class ScheduledTasks {
     @Autowired
     private PageVisitRepository pageVisitRepository;
 
-
-
-
     // (* secondi * minuti * ore * giorno del mese * mese * giorno della settimana)
     // settato per le 23:50 ogni giorno: "0 50 23 * * *"
     // settato per le 00:05 ogni giorno: "0 5 0 * * *"
-
-
 
 
     @Scheduled(fixedRate = 60000)
@@ -57,9 +52,6 @@ public class ScheduledTasks {
         LocalDateTime cutoff = Utils.getNowRomeEurope().toLocalDateTime().minusSeconds(60);
         pageVisitRepository.closeInactiveSessions(cutoff);
     }
-
-
-
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Rome")
     public void executeTask_eliminaImmaginiArticoloNonUtilizzateBucketS3() {

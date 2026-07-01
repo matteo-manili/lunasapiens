@@ -52,6 +52,7 @@ public class IndexController extends BaseController {
     private PageVisitRepository pageVisitRepository;
 
 
+
     @GetMapping("/")
     public String rootBase(HttpServletResponse response, Model model) {
         logger.info("sono in rootBase");

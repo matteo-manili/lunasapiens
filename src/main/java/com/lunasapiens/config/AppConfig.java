@@ -60,9 +60,7 @@ public class AppConfig implements WebMvcConfigurer {
         return Arrays.asList(environment.getActiveProfiles()).contains("prod");
     }
 
-    public boolean isDevelopment(){
-        return Arrays.asList(environment.getActiveProfiles()).contains("dev");
-    }
+    public boolean isDevelopment(){ return Arrays.asList(environment.getActiveProfiles()).contains("dev"); }
 
     @PostConstruct
     public void printProfile() {
@@ -191,6 +189,8 @@ public class AppConfig implements WebMvcConfigurer {
         }
     }
 
+
+
     private JavaMailSender javaMailSenderGmailDev() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(environment.getProperty("gmail.mail.username"));
@@ -227,6 +227,11 @@ public class AppConfig implements WebMvcConfigurer {
         props.put("mail.smtp.auth", environment.getProperty("mail.smtp.auth", "true"));
         props.put("mail.smtp.starttls.enable", environment.getProperty("mail.smtp.starttls.enable", "true"));
         props.put("mail.debug", environment.getProperty("mail.debug", "false"));
+
+        // per evitare thread bloccati nello scheduler.
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.writetimeout", "10000");
 
         mailSender.setJavaMailProperties(props);
         return mailSender;
